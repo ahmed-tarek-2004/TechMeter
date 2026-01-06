@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36705.20 d17.14
+VisualStudioVersion = 17.14.36705.20
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.API", "TechMeter.API.csproj", "{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Application", "..\Application\TechMeter.Application.csproj", "{7B9ED932-225D-447D-98DF-21C885E75E93}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Domain", "..\Domain\TechMeter.Domain.csproj", "{645B46CD-8FBB-47E4-BB6E-8560EED6AAEC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Infrastructure", "..\TechMeter.Infrastructure\TechMeter.Infrastructure.csproj", "{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Application", "..\TechMeter.Application\TechMeter.Application.csproj", "{51D9C99A-CC02-5E74-96D5-FEC54B4D5C73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Domain", "..\TechMeter.Domain\TechMeter.Domain.csproj", "{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +21,18 @@ Global
 		{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B9ED932-225D-447D-98DF-21C885E75E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B9ED932-225D-447D-98DF-21C885E75E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B9ED932-225D-447D-98DF-21C885E75E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B9ED932-225D-447D-98DF-21C885E75E93}.Release|Any CPU.Build.0 = Release|Any CPU
-		{645B46CD-8FBB-47E4-BB6E-8560EED6AAEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{645B46CD-8FBB-47E4-BB6E-8560EED6AAEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{645B46CD-8FBB-47E4-BB6E-8560EED6AAEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{645B46CD-8FBB-47E4-BB6E-8560EED6AAEC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51D9C99A-CC02-5E74-96D5-FEC54B4D5C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51D9C99A-CC02-5E74-96D5-FEC54B4D5C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51D9C99A-CC02-5E74-96D5-FEC54B4D5C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51D9C99A-CC02-5E74-96D5-FEC54B4D5C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

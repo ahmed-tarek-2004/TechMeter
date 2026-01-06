@@ -1,0 +1,13 @@
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\bin\Debug\net9.0\TechMeter.Domain.deps.json
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\bin\Debug\net9.0\TechMeter.Domain.dll
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\bin\Debug\net9.0\TechMeter.Domain.pdb
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.csproj.AssemblyReference.cache
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.AssemblyInfoInputs.cache
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.AssemblyInfo.cs
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.csproj.CoreCompileInputs.cache
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.sourcelink.json
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.dll
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\refint\TechMeter.Domain.dll
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\TechMeter.Domain.pdb
+E:\Visual Studio Codes\TechMeter\TechMeter.Domain\obj\Debug\net9.0\ref\TechMeter.Domain.dll

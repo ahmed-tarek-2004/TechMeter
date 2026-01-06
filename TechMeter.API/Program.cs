@@ -1,7 +1,12 @@
 
-using Microsoft.OpenApi.MicrosoftExtensions;
+using Microsoft.AspNetCore.Identity;
+//using Microsoft.OpenApi.MicrosoftExtensions;
 using Microsoft.OpenApi.Models;
+using TechMeter.Domain.Identity;
+using TechMeter.Domain.Shared.Bases;
 using TechMeter.Extensions;
+using TechMeter.Infrastructure.Extensions;
+using TechMeter;
 
 namespace TechMeter
 {
@@ -11,13 +16,18 @@ namespace TechMeter
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            builder.Services.AddOpenApi();
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                options.SuppressModelStateInvalidFilter = true);
+            
+            
+            //builder.Services.AddOpenApi();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-            builder.Services.AddSwagger();
+            //builder.Services.AddOpenApi();
+
+            builder.Services.AddSwaggerConfiguration();
+            builder.Services.AddDatabase(builder.Configuration);
+            builder.Services.AddScoped<ResponseHandlr>();
                 
             builder.Services.AddEndpointsApiExplorer();//To See All EndPoint for Minimal Api
 
@@ -26,7 +36,7 @@ namespace TechMeter
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                //app.MapOpenApi();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }

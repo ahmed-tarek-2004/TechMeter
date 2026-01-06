@@ -1,4 +1,9 @@
+using Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using TechMeter.Domain.Shared.Bases;
+using TechMeter.Infrastructure.ApplicationContext;
 
 namespace TechMeter.Controllers
 {
@@ -6,28 +11,35 @@ namespace TechMeter.Controllers
     [Route("api/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly ApplicationDbContext context;
+        private readonly ResponseHandlr _responseHanldr;
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ApplicationDbContext dbContext,ResponseHandlr responseHandlr)
         {
             _logger = logger;
+            context = dbContext;
+            _responseHanldr = responseHandlr;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        //[HttpPost("add/{quantity:int}")]
+        //public IActionResult ResultAdd(int quantity)
+        //{
+        //    var order = new Order()
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        quantity = quantity
+        //    };
+        //    context.orders.Add(order);
+
+        //    context.SaveChanges();
+        //    //return _responseHanldr.Success<string>("ss","s");
+        //}
+        [HttpPost("buy")]
+        public async Task<ActionResult<Response<string>>> Resultbut()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return _responseHanldr.Success<string>("ss","ass");
         }
     }
 }

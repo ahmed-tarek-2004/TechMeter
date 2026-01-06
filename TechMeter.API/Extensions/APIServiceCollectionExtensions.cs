@@ -1,20 +1,20 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using TechMeter.Domain.Identity;
+using TechMeter.Domain.Shared.Bases;
+using TechMeter.Infrastructure.ApplicationContext;
+
 
 namespace TechMeter.Extensions
 {
     public static class APIServiceCollectionExtensions
     {
-        public static IServiceCollection AddSwagger(this IServiceCollection service)
+        public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
         {
-            service.AddSwaggerGen(option =>
+            services.AddSwaggerGen(option =>
             {
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "Tech Meter", Version = "v1" });
-
-                // For XML Comments we will use it later
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //option.IncludeXmlComments(xmlPath);
-
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -40,7 +40,33 @@ namespace TechMeter.Extensions
                     }
                 });
             });
-            return service;
+            return services;
+        }
+        public static IServiceCollection AddInfrastructureIdentity(this IServiceCollection services)
+        {
+            services.AddIdentity<User, Role>(opt =>
+            {
+                opt.Password.RequireLowercase = true;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireNonAlphanumeric = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddRoleManager<RoleManager<Role>>()
+            .AddUserManager<UserManager<User>>()
+            .AddDefaultTokenProviders();
+
+            return services;
+        }
+        public static IServiceCollection AddApplicationService(IServiceCollection services)
+        {
+           
+            return services;
+        }
+        public static IServiceCollection infService(IServiceCollection services)
+        {
+            return services;
         }
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Visual Studio Codes\\TechMeter\\Domain\\TechMeter.Domain.csproj": {}
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\TechMeter.Domain.csproj": {}
   },
   "projects": {
-    "E:\\Visual Studio Codes\\TechMeter\\Domain\\TechMeter.Domain.csproj": {
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\TechMeter.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Visual Studio Codes\\TechMeter\\Domain\\TechMeter.Domain.csproj",
+        "projectUniqueName": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\TechMeter.Domain.csproj",
         "projectName": "TechMeter.Domain",
-        "projectPath": "E:\\Visual Studio Codes\\TechMeter\\Domain\\TechMeter.Domain.csproj",
+        "projectPath": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\TechMeter.Domain.csproj",
         "packagesPath": "C:\\Users\\DESKTOP\\.nuget\\packages\\",
-        "outputPath": "E:\\Visual Studio Codes\\TechMeter\\Domain\\obj\\",
+        "outputPath": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -49,6 +49,12 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
