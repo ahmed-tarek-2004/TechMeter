@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Domain.Identity
+namespace TechMeter.Domain.Models.Auth.Identity
 {
-    public class Role:IdentityRole<Guid>
+    public class Role:IdentityRole
     {
 
     }

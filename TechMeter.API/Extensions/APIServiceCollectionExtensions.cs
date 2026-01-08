@@ -1,15 +1,37 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using TechMeter.Domain.Identity;
+using Serilog;
+using StackExchange.Redis;
+using TechMeter.Application.Interfaces;
+using TechMeter.Application.Service;
+using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.ApplicationContext;
+using TechMeter.Infrastructure.Adapters.Cloudinary;
+using TechMeter.Infrastructure.Persistence;
 
 
 namespace TechMeter.Extensions
 {
     public static class APIServiceCollectionExtensions
     {
+        public static IHostBuilder UseSerilogLogging(this IHostBuilder hostBuilder)
+        {
+            return hostBuilder.UseSerilog((context, services,configuration) =>
+            {
+                Log.Logger = new LoggerConfiguration()
+                   .WriteTo.Console()
+                   .CreateBootstrapLogger();
+
+                Log.Information("Starting up...");
+
+                configuration.ReadFrom.Configuration(context.Configuration) 
+                              .ReadFrom.Services(services) 
+                              .Enrich.FromLogContext()
+                              .Enrich.WithMachineName()
+                              .Enrich.WithThreadId();
+            });
+        }
         public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
         {
             services.AddSwaggerGen(option =>
@@ -44,7 +66,7 @@ namespace TechMeter.Extensions
         }
         public static IServiceCollection AddInfrastructureIdentity(this IServiceCollection services)
         {
-            services.AddIdentity<User, Role>(opt =>
+            services.AddIdentity<User, Domain.Models.Auth.Identity.Role>(opt =>
             {
                 opt.Password.RequireLowercase = true;
                 opt.Password.RequireUppercase = true;
@@ -53,19 +75,17 @@ namespace TechMeter.Extensions
                 opt.Password.RequireNonAlphanumeric = true;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddRoleManager<RoleManager<Role>>()
+            .AddRoleManager<RoleManager<Domain.Models.Auth.Identity.Role>>()
             .AddUserManager<UserManager<User>>()
             .AddDefaultTokenProviders();
 
             return services;
         }
-        public static IServiceCollection AddApplicationService(IServiceCollection services)
+
+        public static IServiceCollection ApplicationService(this IServiceCollection services)
         {
-           
-            return services;
-        }
-        public static IServiceCollection infService(IServiceCollection services)
-        {
+            services.AddScoped<OTPService>();
+            services.AddScoped<IImageUploading, CloudinaryImageService>();
             return services;
         }
     }

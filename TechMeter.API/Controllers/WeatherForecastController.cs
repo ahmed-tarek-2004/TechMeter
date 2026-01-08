@@ -1,9 +1,11 @@
-using Domain;
+using TechMeter.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using TechMeter.Application.Service;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.ApplicationContext;
+using TechMeter.Infrastructure.Persistence;
+using TechMeter.Application.Interfaces;
 
 namespace TechMeter.Controllers
 {
@@ -11,16 +13,22 @@ namespace TechMeter.Controllers
     [Route("api/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private readonly ApplicationDbContext context;
+        //private readonly ApplicationDbContext context;
         private readonly ResponseHandlr _responseHanldr;
+        private readonly OTPService _otpService;
+        private readonly IImageUploading _imageUploading;
+        //private readonly ILogger<WeatherForecastController> logger;
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, ApplicationDbContext dbContext,ResponseHandlr responseHandlr)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ApplicationDbContext dbContext,
+            ResponseHandlr responseHandlr, OTPService otpService,IImageUploading imageUploading)
         {
             _logger = logger;
-            context = dbContext;
+            _imageUploading = imageUploading;
             _responseHanldr = responseHandlr;
+            _otpService = otpService;
+
         }
 
         //[HttpPost("add/{quantity:int}")]
@@ -37,9 +45,10 @@ namespace TechMeter.Controllers
         //    //return _responseHanldr.Success<string>("ss","s");
         //}
         [HttpPost("buy")]
-        public async Task<ActionResult<Response<string>>> Resultbut()
+        public async Task<ActionResult<Response<string>>> Resultbut(IFormFile?form)
         {
-            return _responseHanldr.Success<string>("ss","ass");
+           var r= await _imageUploading.UploadAsync(form);
+            return _responseHanldr.Success(r,"s");
         }
     }
 }
