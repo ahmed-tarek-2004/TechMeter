@@ -3,11 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
+using System.Net;
+using System.Net.Mail;
+using System.Threading.RateLimiting;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
+using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Persistence;
 
 
@@ -64,6 +68,7 @@ namespace TechMeter.Extensions
             });
             return services;
         }
+
         public static IServiceCollection AddInfrastructureIdentity(this IServiceCollection services)
         {
             services.AddIdentity<User, Domain.Models.Auth.Identity.Role>(opt =>
@@ -82,11 +87,48 @@ namespace TechMeter.Extensions
             return services;
         }
 
-        public static IServiceCollection ApplicationService(this IServiceCollection services)
+        public static IServiceCollection AddEmailServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<OTPService>();
-            services.AddScoped<IImageUploading, CloudinaryImageService>();
+            var emailSettings = configuration.GetSection("EmailSettings").Get<EmailSettings>();
+
+            services.AddFluentEmail(emailSettings.FromEmail)
+                .AddSmtpSender(new SmtpClient(emailSettings.SmtpServer)
+                {
+                    Port = emailSettings.SmtpPort,
+                    Credentials = new NetworkCredential(emailSettings.Username, emailSettings.Password),
+                    EnableSsl = emailSettings.EnableSsl,
+                    UseDefaultCredentials = false,
+                });
+
             return services;
+        }
+
+        public static IServiceCollection AddResendOtpRateLimiter(this IServiceCollection services)
+        {
+            services.AddRateLimiter(options =>
+            {
+                options.AddPolicy("SendOtpPolicy", context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: GetClientIp(context),
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 3,
+                            QueueLimit = 0,
+                            Window = TimeSpan.FromMinutes(1)
+                        }));
+            });
+            return services;
+        }
+
+        private static string GetClientIp(HttpContext context)
+        {
+            if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+            {
+                return forwardedFor.ToString().Split(',')[0];
+            }
+
+            return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
         }
     }
 }

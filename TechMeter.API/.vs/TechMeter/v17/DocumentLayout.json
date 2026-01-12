@@ -3,20 +3,39 @@
   "WorkspaceRootPath": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\extensions\\infrustructureservicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\extensions\\apiservicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:extensions\\apiservicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\adapters\\emailsender\\emailsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\adapters\\emailsender\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\wwwroot\\emailtemplates\\otpverificationemail.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:wwwroot\\emailtemplates\\otpverificationemail.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\adapters\\emailsender\\iemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\techmeter.infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,47 +45,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAALAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-12T20:13:59.69Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Properties\\launchSettings.json",
-              "RelativeToolTip": "Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-12T20:13:56.316Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "APIServiceCollectionExtensions.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs",
-              "RelativeDocumentMoniker": "Extensions\\APIServiceCollectionExtensions.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs",
-              "RelativeToolTip": "Extensions\\APIServiceCollectionExtensions.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAABkAAAAyAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T20:09:03.714Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 3,
@@ -75,10 +55,119 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACAAAAAAAAAAAAAawCoAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T20:07:08.878Z",
+              "WhenOpened": "2026-01-12T21:00:41.828Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "InfrustructureServiceCollectionExtensions.cs",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs",
+              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs*",
+              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs*",
+              "ViewState": "AgIAABUAAAAAAAAAAAAmwCYAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-12T20:42:34.476Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "APIServiceCollectionExtensions.cs",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs",
+              "RelativeDocumentMoniker": "Extensions\\APIServiceCollectionExtensions.cs",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs*",
+              "RelativeToolTip": "Extensions\\APIServiceCollectionExtensions.cs*",
+              "ViewState": "AgIAAFkAAAAAAAAAAAA+wGgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-12T20:41:50.379Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "OtpVerificationEmail.html",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\wwwroot\\EmailTemplates\\OtpVerificationEmail.html",
+              "RelativeDocumentMoniker": "wwwroot\\EmailTemplates\\OtpVerificationEmail.html",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\wwwroot\\EmailTemplates\\OtpVerificationEmail.html",
+              "RelativeToolTip": "wwwroot\\EmailTemplates\\OtpVerificationEmail.html",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAiwG4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-12T20:37:29.093Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IEmailService.cs",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\IEmailService.cs",
+              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Adapters\\EmailSender\\IEmailService.cs",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\IEmailService.cs",
+              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Adapters\\EmailSender\\IEmailService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-12T20:30:31.099Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "TechMeter.Infrastructure.csproj",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj",
+              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj",
+              "RelativeToolTip": "..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-12T20:28:42.982Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "EmailService.cs",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailService.cs",
+              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailService.cs",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailService.cs",
+              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailService.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAYwCkAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-12T20:27:38.837Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EmailSettings.cs",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailSettings.cs",
+              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailSettings.cs",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailSettings.cs",
+              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAgAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-12T20:27:38.497Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-12T20:13:59.69Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-12T20:13:56.316Z"
             }
           ]
         }
