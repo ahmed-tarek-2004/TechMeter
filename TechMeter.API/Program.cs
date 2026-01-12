@@ -40,12 +40,13 @@ namespace TechMeter
 
             builder.Services.AddSwaggerConfiguration();
             builder.Services.AddDatabase(builder.Configuration);
+            builder.Services.AddEmailServices(builder.Configuration);
             builder.Services.AddDistributedCache(builder.Configuration);
             builder.Services.AddScoped<ResponseHandler>();
             builder.Services.AddInfrastructureIdentity();
             builder.Services.ApplicationService();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary")); 
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 
 
             builder.Services.AddDataProtection()
