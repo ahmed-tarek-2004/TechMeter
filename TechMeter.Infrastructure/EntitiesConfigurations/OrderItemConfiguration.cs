@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Domain.Models
+namespace TechMeter.Infrastructure.EntitiesConfigurations
 {
-    public class Order
+    internal class OrderItemConfiguration
     {
-
     }
 }

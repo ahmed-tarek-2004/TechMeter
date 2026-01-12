@@ -25,8 +25,9 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
                 .IsRequired();
 
 
-            //builder.Property(b => b.CertificateUrl)
-            //    .HasMaxLength(100);
+            builder.HasMany(p => p.certificatesUrls)
+                .WithOne(c => c.Provider)
+                .HasForeignKey(p => p.ProviderId);
 
 
             builder.HasOne(s => s.User)

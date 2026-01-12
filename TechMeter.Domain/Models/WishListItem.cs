@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Domain.Models
 {
-    public class WishListItem
+    public class WishlistItem
     {
     }
 }

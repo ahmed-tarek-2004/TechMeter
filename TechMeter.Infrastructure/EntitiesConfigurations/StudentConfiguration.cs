@@ -27,9 +27,14 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
 
 
             builder.HasOne(s => s.User)
-                 .WithOne(u=>u.Student)
+                 .WithOne(u => u.Student)
                  .HasForeignKey<Student>(b => b.Id)
                  .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(s => s.Cart)
+              .WithOne(b => b.Student)
+              .HasForeignKey<Cart>(b => b.StudentId);
+
         }
     }
 }

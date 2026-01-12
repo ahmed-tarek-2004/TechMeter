@@ -1,7 +1,5 @@
 using TechMeter.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;
@@ -14,7 +12,7 @@ namespace TechMeter.Controllers
     public class WeatherForecastController : ControllerBase
     {
         //private readonly ApplicationDbContext context;
-        private readonly ResponseHandlr _responseHanldr;
+        private readonly ResponseHandler _responseHanldr;
         private readonly OTPService _otpService;
         private readonly IImageUploading _imageUploading;
         //private readonly ILogger<WeatherForecastController> logger;
@@ -22,7 +20,7 @@ namespace TechMeter.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger, ApplicationDbContext dbContext,
-            ResponseHandlr responseHandlr, OTPService otpService,IImageUploading imageUploading)
+            ResponseHandler responseHandlr, OTPService otpService,IImageUploading imageUploading)
         {
             _logger = logger;
             _imageUploading = imageUploading;

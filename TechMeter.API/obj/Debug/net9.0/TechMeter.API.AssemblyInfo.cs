@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TechMeter.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ec1968ea1a1cfdad2469aa2e83aee6ed22c3f2d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8510d9b1894161b0eb4e5e769dff6829a912f9e")]
 [assembly: System.Reflection.AssemblyProductAttribute("TechMeter.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TechMeter.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
