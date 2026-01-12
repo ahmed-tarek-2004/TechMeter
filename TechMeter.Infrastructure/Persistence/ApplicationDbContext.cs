@@ -17,11 +17,19 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
         public DbSet<Student> Student {  get; set; }
         public DbSet<Provider> Provider {  get; set; }
+        public DbSet<Category> Category { get; set; }
+        public DbSet<Course> Course { get; set; }
+        public DbSet<Cart> Cart { get; set; }
+        public DbSet<CartItem> CartItem { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new ProviderConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new CartItemConfiguration());
             modelBuilder.ApplyConfiguration(new StudentConfiguration());
+            modelBuilder.ApplyConfiguration(new CourseConfiguration());
+            modelBuilder.ApplyConfiguration(new CartConfiguration());
         }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {

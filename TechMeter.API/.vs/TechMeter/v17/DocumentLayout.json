@@ -3,40 +3,20 @@
   "WorkspaceRootPath": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\adapters\\cloudinary\\cloudinaryimageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\extensions\\infrustructureservicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\persistence\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\entitiesconfigurations\\providerconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}|..\\TechMeter.Domain\\TechMeter.Domain.csproj|e:\\visual studio codes\\techmeter\\techmeter.domain\\shared\\bases\\responsehandlr.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}|..\\TechMeter.Domain\\TechMeter.Domain.csproj|e:\\visual studio codes\\techmeter\\techmeter.domain\\shared\\bases\\response.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\extensions\\apiservicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:extensions\\apiservicecollectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\adapters\\cloudinary\\cloudinarysettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\exceptions\\globalexceptionhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:exceptions\\globalexceptionhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CEA02A91-FAA0-45F1-97B8-C0822E0C94C2}|..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj|e:\\visual studio codes\\techmeter\\techmeter.infrastructure\\techmeter.infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|e:\\visual studio codes\\techmeter\\techmeter.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{05655EEE-C43A-4AD8-884E-ADC8DE2D2E87}|TechMeter.API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,149 +26,58 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "InfrustructureServiceCollectionExtensions.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs",
-              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs",
-              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T18:30:14.739Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ProviderConfiguration.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\ProviderConfiguration.cs",
-              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\EntitiesConfigurations\\ProviderConfiguration.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\ProviderConfiguration.cs",
-              "RelativeToolTip": "..\\TechMeter.Infrastructure\\EntitiesConfigurations\\ProviderConfiguration.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T18:25:50.395Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Response.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Shared\\Bases\\Response.cs",
-              "RelativeDocumentMoniker": "..\\TechMeter.Domain\\Shared\\Bases\\Response.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Shared\\Bases\\Response.cs",
-              "RelativeToolTip": "..\\TechMeter.Domain\\Shared\\Bases\\Response.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T18:23:58.822Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ResponseHandlr.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Shared\\Bases\\ResponseHandlr.cs",
-              "RelativeDocumentMoniker": "..\\TechMeter.Domain\\Shared\\Bases\\ResponseHandlr.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Shared\\Bases\\ResponseHandlr.cs",
-              "RelativeToolTip": "..\\TechMeter.Domain\\Shared\\Bases\\ResponseHandlr.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T18:23:53.471Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "APIServiceCollectionExtensions.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs",
-              "RelativeDocumentMoniker": "Extensions\\APIServiceCollectionExtensions.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs*",
-              "RelativeToolTip": "Extensions\\APIServiceCollectionExtensions.cs*",
-              "ViewState": "AgIAAEwAAAAAAAAAAAAgwFcAAABKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T18:21:52.374Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CloudinarySettings.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinarySettings.cs",
-              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinarySettings.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinarySettings.cs*",
-              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinarySettings.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T18:12:54.851Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "TechMeter.Infrastructure",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj",
-              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj*",
-              "RelativeToolTip": "..\\TechMeter.Infrastructure\\TechMeter.Infrastructure.csproj*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-12T18:06:27.431Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 0,
               "Title": "appsettings.json",
               "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAABMAAAAAAAAAAAAAACsAAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-12T17:44:47.967Z",
+              "WhenOpened": "2026-01-12T20:13:59.69Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CloudinaryImageService.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinaryImageService.cs",
-              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinaryImageService.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinaryImageService.cs*",
-              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinaryImageService.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T17:38:33.588Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "GlobalExceptionHandler.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Exceptions\\GlobalExceptionHandler.cs",
-              "RelativeDocumentMoniker": "Exceptions\\GlobalExceptionHandler.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Exceptions\\GlobalExceptionHandler.cs",
-              "RelativeToolTip": "Exceptions\\GlobalExceptionHandler.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T17:36:45.806Z",
+              "DocumentIndex": 1,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-12T20:13:56.316Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Persistence\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "..\\TechMeter.Infrastructure\\Persistence\\ApplicationDbContext.cs",
-              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Persistence\\ApplicationDbContext.cs",
-              "RelativeToolTip": "..\\TechMeter.Infrastructure\\Persistence\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAcwBMAAAAAAAAAAAAAAA==",
+              "Title": "APIServiceCollectionExtensions.cs",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs",
+              "RelativeDocumentMoniker": "Extensions\\APIServiceCollectionExtensions.cs",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs",
+              "RelativeToolTip": "Extensions\\APIServiceCollectionExtensions.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAABkAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T17:30:22.275Z",
+              "WhenOpened": "2026-01-12T20:09:03.714Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-12T20:07:08.878Z",
               "EditorCaption": ""
             }
           ]

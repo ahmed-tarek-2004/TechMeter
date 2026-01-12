@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Domain.Models
 {
-    public class Order
+    public class Wishlist
     {
-
     }
 }
