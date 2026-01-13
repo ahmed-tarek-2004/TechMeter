@@ -8,6 +8,7 @@ namespace TechMeter.Domain.Enums
 {
     public enum Gender
     {
+        none,
         male,
         female
     }
