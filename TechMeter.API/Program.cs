@@ -14,6 +14,7 @@ using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Extensions;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
+using TechMeter.Infrastructure.Adapters.JwtSettings;
 using TechMeter.Infrastructure.Extensions;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Seeder;
@@ -43,10 +44,13 @@ namespace TechMeter
             builder.Services.AddEmailServices(builder.Configuration);
             builder.Services.AddDistributedCache(builder.Configuration);
             builder.Services.AddScoped<ResponseHandler>();
-            builder.Services.AddInfrastructureIdentity();
+            builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
             builder.Services.ApplicationService();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddFluentValidation();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
+
 
 
             builder.Services.AddDataProtection()
