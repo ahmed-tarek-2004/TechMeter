@@ -1,1 +1,171 @@
-[]
+[
+  {
+    "ContainingType": "TechMeter.API.Controllers.AccountController",
+    "Method": "LoginAsync",
+    "RelativePath": "api/Account/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TechMeter.Application.DTO.Auth.Login.LoginRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TechMeter.Domain.Shared.Bases.Response\u00601[[TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto, TechMeter.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TechMeter.API.Controllers.AccountController",
+    "Method": "LogoutAsync",
+    "RelativePath": "api/Account/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TechMeter.API.Controllers.AccountController",
+    "Method": "ResendOtpAsync",
+    "RelativePath": "api/Account/resend-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TechMeter.Application.DTO.Otp.ResendOtp",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TechMeter.API.Controllers.AccountController",
+    "Method": "RegisterAsStudent",
+    "RelativePath": "api/Account/student/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PassworfConfirmed",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Country",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ProfilePhoto",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "Gender",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "BirthDate",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "EducationLevel",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TechMeter.Domain.Shared.Bases.Response\u00601[[TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto, TechMeter.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TechMeter.API.Controllers.AccountController",
+    "Method": "VertifyOtpAsync",
+    "RelativePath": "api/Account/verify-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TechMeter.Application.DTO.Otp.VerifyOtp",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TechMeter.Domain.Shared.Bases.Response\u00601[[TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto, TechMeter.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  }
+]

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Infrastructure.EntitiesConfigurations;
+using TechMeter.Domain.Models.Auth.UserTokens;
 
 namespace TechMeter.Infrastructure.Persistence
 {
@@ -21,6 +22,7 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<Course> Course { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartItem> CartItem { get; set; }
+        public DbSet<UserRefreshToken>UserRefreshTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

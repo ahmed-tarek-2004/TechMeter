@@ -250,6 +250,32 @@ namespace TechMeter.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExpiryDateUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRefreshTokens");
+                });
+
             modelBuilder.Entity("TechMeter.Domain.Models.Auth.Users.Provider", b =>
                 {
                     b.Property<string>("Id")
@@ -459,6 +485,17 @@ namespace TechMeter.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken", b =>
+                {
+                    b.HasOne("TechMeter.Domain.Models.Auth.Identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Auth.Users.Provider", b =>

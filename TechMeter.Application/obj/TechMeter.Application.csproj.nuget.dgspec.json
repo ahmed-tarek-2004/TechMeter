@@ -62,9 +62,17 @@
               "target": "Package",
               "version": "[8.0.0, )"
             },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[7.0.3, )"
+            },
             "StackExchange.Redis": {
               "target": "Package",
               "version": "[2.8.58, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[7.0.3, )"
             }
           },
           "imports": [

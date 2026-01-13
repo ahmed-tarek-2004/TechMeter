@@ -9,9 +9,9 @@ namespace TechMeter.Domain.Shared.Bases
 {
     public class ResponseHandler
     {
-        public Response<string> Deleted(string message=null)
+        public Response<T> Deleted<T>(string message=null)
         {
-            return new Response<string>()
+            return new Response<T>()
             {
                 StatusCode = HttpStatusCode.OK,
                 Succeeded = true,
@@ -38,45 +38,45 @@ namespace TechMeter.Domain.Shared.Bases
                 Message = message,
             };
         }
-        public Response<string> UnAuthorized(string message=null)
+        public Response<T> UnAuthorized<T>(string message=null)
         {
-            return new Response<string>()
+            return new Response<T>()
             {
                 StatusCode = HttpStatusCode.Unauthorized,
                 Succeeded = false,
                 Message = message
             };
         }
-        public Response<string> NotFound(string message = null)
+        public Response<T> NotFound<T>(string message = null)
         {
-            return new Response<string>()
+            return new Response<T>()
             {
                 StatusCode = System.Net.HttpStatusCode.NotFound,
                 Succeeded = false,
                 Message = message
             };
         }
-        public Response<string>Forbidden(string message=null)
+        public Response<T>Forbidden<T>(string message=null)
         {
-            return new Response<string>()
+            return new Response<T>()
             {
                 StatusCode = HttpStatusCode.Forbidden,
                 Succeeded = false,
                 Message = message
             };
         }
-        public Response<string> BadRequest(string Message = null)
+        public Response<T> BadRequest<T>(string Message = null)
         {
-            return new Response<string>()
+            return new Response<T>()
             {
                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Succeeded = false,
                 Message = Message
             };
         }
-        public Response<string> InternalServerError(string message = null)
+        public Response<T> InternalServerError<T>(string message = null)
         {
-            return new Response<string>()
+            return new Response<T>()
             {
                 StatusCode = System.Net.HttpStatusCode.InternalServerError,
                 Succeeded = false,

@@ -10,7 +10,9 @@
         "dependencies": {
           "Microsoft.AspNetCore.Http.Features": "5.0.17",
           "Microsoft.Extensions.Caching.StackExchangeRedis": "8.0.0",
+          "Microsoft.IdentityModel.Tokens": "7.0.3",
           "StackExchange.Redis": "2.8.58",
+          "System.IdentityModel.Tokens.Jwt": "7.0.3",
           "TechMeter.Domain": "1.0.0"
         },
         "runtime": {
@@ -235,6 +237,47 @@
           }
         }
       },
+      "Microsoft.IdentityModel.Abstractions/7.0.3": {
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.Abstractions.dll": {
+            "assemblyVersion": "7.0.3.0",
+            "fileVersion": "7.0.3.41017"
+          }
+        }
+      },
+      "Microsoft.IdentityModel.JsonWebTokens/7.0.3": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Tokens": "7.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll": {
+            "assemblyVersion": "7.0.3.0",
+            "fileVersion": "7.0.3.41017"
+          }
+        }
+      },
+      "Microsoft.IdentityModel.Logging/7.0.3": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Abstractions": "7.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.Logging.dll": {
+            "assemblyVersion": "7.0.3.0",
+            "fileVersion": "7.0.3.41017"
+          }
+        }
+      },
+      "Microsoft.IdentityModel.Tokens/7.0.3": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Logging": "7.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.Tokens.dll": {
+            "assemblyVersion": "7.0.3.0",
+            "fileVersion": "7.0.3.41017"
+          }
+        }
+      },
       "Pipelines.Sockets.Unofficial/2.2.8": {
         "dependencies": {
           "System.IO.Pipelines": "5.0.2"
@@ -255,6 +298,18 @@
           "lib/net8.0/StackExchange.Redis.dll": {
             "assemblyVersion": "2.0.0.0",
             "fileVersion": "2.8.58.19568"
+          }
+        }
+      },
+      "System.IdentityModel.Tokens.Jwt/7.0.3": {
+        "dependencies": {
+          "Microsoft.IdentityModel.JsonWebTokens": "7.0.3",
+          "Microsoft.IdentityModel.Tokens": "7.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/System.IdentityModel.Tokens.Jwt.dll": {
+            "assemblyVersion": "7.0.3.0",
+            "fileVersion": "7.0.3.41017"
           }
         }
       },
@@ -418,6 +473,34 @@
       "path": "microsoft.extensions.primitives/8.0.0",
       "hashPath": "microsoft.extensions.primitives.8.0.0.nupkg.sha512"
     },
+    "Microsoft.IdentityModel.Abstractions/7.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cfPUWdjigLIRIJSKz3uaZxShgf86RVDXHC1VEEchj1gnY25akwPYpbrfSoIGDCqA9UmOMdlctq411+2pAViFow==",
+      "path": "microsoft.identitymodel.abstractions/7.0.3",
+      "hashPath": "microsoft.identitymodel.abstractions.7.0.3.nupkg.sha512"
+    },
+    "Microsoft.IdentityModel.JsonWebTokens/7.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vxjHVZbMKD3rVdbvKhzAW+7UiFrYToUVm3AGmYfKSOAwyhdLl/ELX1KZr+FaLyyS5VReIzWRWJfbOuHM9i6ywg==",
+      "path": "microsoft.identitymodel.jsonwebtokens/7.0.3",
+      "hashPath": "microsoft.identitymodel.jsonwebtokens.7.0.3.nupkg.sha512"
+    },
+    "Microsoft.IdentityModel.Logging/7.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-b6GbGO+2LOTBEccHhqoJsOsmemG4A/MY+8H0wK/ewRhiG+DCYwEnucog1cSArPIY55zcn+XdZl0YEiUHkpDISQ==",
+      "path": "microsoft.identitymodel.logging/7.0.3",
+      "hashPath": "microsoft.identitymodel.logging.7.0.3.nupkg.sha512"
+    },
+    "Microsoft.IdentityModel.Tokens/7.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wB+LlbDjhnJ98DULjmFepqf9eEMh/sDs6S6hFh68iNRHmwollwhxk+nbSSfpA5+j+FbRyNskoaY4JsY1iCOKCg==",
+      "path": "microsoft.identitymodel.tokens/7.0.3",
+      "hashPath": "microsoft.identitymodel.tokens.7.0.3.nupkg.sha512"
+    },
     "Pipelines.Sockets.Unofficial/2.2.8": {
       "type": "package",
       "serviceable": true,
@@ -431,6 +514,13 @@
       "sha512": "sha512-0XGRE2UoF/n2/qhCpcyBBZovpGhHu4hRtkdsx4fZFu1H5Q/Z8Q+U/z/nWwnosWDRJnEasntNatd9Mf+Isc8plg==",
       "path": "stackexchange.redis/2.8.58",
       "hashPath": "stackexchange.redis.2.8.58.nupkg.sha512"
+    },
+    "System.IdentityModel.Tokens.Jwt/7.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-caEe+OpQNYNiyZb+DJpUVROXoVySWBahko2ooNfUcllxa9ZQUM8CgM/mDjP6AoFn6cQU9xMmG+jivXWub8cbGg==",
+      "path": "system.identitymodel.tokens.jwt/7.0.3",
+      "hashPath": "system.identitymodel.tokens.jwt.7.0.3.nupkg.sha512"
     },
     "System.IO.Pipelines/5.0.2": {
       "type": "package",

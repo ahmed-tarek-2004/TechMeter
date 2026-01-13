@@ -5,10 +5,13 @@ using StackExchange.Redis;
 using System.Net;
 using System.Net.Mail;
 using TechMeter.Application.Interfaces;
-using TechMeter.Application.Service;
+using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Application.Interfaces.TokenService;
+using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Services.AuthService;
 
 namespace TechMeter.Infrastructure.Extensions
 {
@@ -38,6 +41,8 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IImageUploading, CloudinaryImageService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAuthService, AuthService>();
             return services;
         }
     }

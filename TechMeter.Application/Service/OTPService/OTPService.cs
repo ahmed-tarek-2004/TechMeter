@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Application.Service
+namespace TechMeter.Application.Service.OTPService
 {
     public class OTPService
     {
