@@ -2,3 +2,15 @@
 /TechMeter.API/.vs
 /TechMeter.API/bin
 /TechMeter.API/Logs
+
+/TechMeter.Application/obj
+/TechMeter.Application/.vs
+/TechMeter.Application/bin
+
+/TechMeter.Domain/obj
+/TechMeter.Domain/.vs
+/TechMeter.Domain/bin
+
+/TechMeter.Infrastructure/obj
+/TechMeter.Infrastructure/.vs
+/TechMeter.Infrastructure/bin
