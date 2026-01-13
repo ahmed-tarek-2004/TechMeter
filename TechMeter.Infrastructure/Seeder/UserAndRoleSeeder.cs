@@ -26,7 +26,7 @@ namespace TechMeter.Infrastructure.Seeder
                 }
                 if (!await _roleManager.Roles.AnyAsync())
                 {
-                    string[] roles = { "user", "admin", "provider" };
+                    string[] roles = { "student", "admin", "provider" };
 
                     foreach (var role in roles)
                     {
@@ -47,6 +47,7 @@ namespace TechMeter.Infrastructure.Seeder
                         PhoneNumber = "01030187018",
                         Email = "ahmedzaher75802004@gmail.com",
                         Country = "Egypt",
+                        EmailConfirmed = true,
                         Gender = Domain.Enums.Gender.male
                     };
                     await _userManager.CreateAsync(user, "Passw@rd123");

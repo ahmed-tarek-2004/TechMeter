@@ -1,17 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Threading.RateLimiting;
+using TechMeter.API.Validators;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
+using TechMeter.Infrastructure.Adapters.JwtSettings;
 using TechMeter.Infrastructure.Persistence;
 
 
@@ -35,6 +41,50 @@ namespace TechMeter.Extensions
                               .Enrich.WithMachineName()
                               .Enrich.WithThreadId();
             });
+        }
+        public static IServiceCollection AddAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddIdentity<User, Domain.Models.Auth.Identity.Role>(opt =>
+            {
+                opt.Password.RequireLowercase = true;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireNonAlphanumeric = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddRoleManager<RoleManager<Domain.Models.Auth.Identity.Role>>()
+            .AddUserManager<UserManager<User>>()
+            .AddDefaultTokenProviders();
+
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                var jwtSettings = configuration.GetSection("JWT").Get<JwtSettings>();
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = !string.IsNullOrEmpty(jwtSettings.Issuer),
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateAudience = !string.IsNullOrEmpty(jwtSettings.Audience),
+                    ValidAudience = jwtSettings.Audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey)),
+                    ValidateLifetime=true,
+                    RequireSignedTokens=true,
+                    ClockSkew = TimeSpan.Zero,
+                };
+
+            });
+
+            return services;
         }
         public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
         {
@@ -66,24 +116,6 @@ namespace TechMeter.Extensions
                     }
                 });
             });
-            return services;
-        }
-
-        public static IServiceCollection AddInfrastructureIdentity(this IServiceCollection services)
-        {
-            services.AddIdentity<User, Domain.Models.Auth.Identity.Role>(opt =>
-            {
-                opt.Password.RequireLowercase = true;
-                opt.Password.RequireUppercase = true;
-                opt.Password.RequiredLength = 8;
-                opt.Password.RequireDigit = true;
-                opt.Password.RequireNonAlphanumeric = true;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddRoleManager<RoleManager<Domain.Models.Auth.Identity.Role>>()
-            .AddUserManager<UserManager<User>>()
-            .AddDefaultTokenProviders();
-
             return services;
         }
 
@@ -120,15 +152,19 @@ namespace TechMeter.Extensions
             });
             return services;
         }
-
         private static string GetClientIp(HttpContext context)
         {
             if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
             {
                 return forwardedFor.ToString().Split(',')[0];
             }
-
             return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        }
+
+        public static IServiceCollection AddFluentValidation(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssemblyContaining<StudentRegisterRequestValidator>();
+            return services;
         }
     }
 }
