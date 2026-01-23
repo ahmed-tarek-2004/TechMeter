@@ -14,3 +14,7 @@
 /TechMeter.Infrastructure/obj
 /TechMeter.Infrastructure/.vs
 /TechMeter.Infrastructure/bin
+
+ /TechMeter.Tests/obj
+ /TechMeter.Tests/.vs
+ /TechMeter.Tests/bin
