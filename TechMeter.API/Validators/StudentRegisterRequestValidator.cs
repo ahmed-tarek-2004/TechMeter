@@ -20,17 +20,19 @@ namespace TechMeter.API.Validators
 
             RuleFor(b => b)
                 .Must(b => !string.IsNullOrEmpty(b.UserName))
-                .WithMessage("User Name is required");
+                .WithMessage("UserName is required");
 
             RuleFor(b => b)
                 .Must(b => !string.IsNullOrEmpty(b.PhoneNumber))
-                .WithMessage("PhoneNumber Name is required");
+                .WithMessage("PhoneNumber is required");
 
             RuleFor(b => b)
                 .Must(b => !string.IsNullOrEmpty(b.EducationLevel))
-                .WithMessage("Education Level Name is required");
+                .WithMessage("Education Level  is required");
 
             RuleFor(b => b.PassworfConfirmed)
+                .NotEmpty()
+                .WithMessage("PasswordConfirmed is reuired")
                 .Equal(b => b.Password)
                 .WithMessage("Passwords do not match.");
 

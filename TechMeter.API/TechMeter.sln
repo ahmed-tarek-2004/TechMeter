@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Application", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Domain", "..\TechMeter.Domain\TechMeter.Domain.csproj", "{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMeter.Tests", "..\TechMeter.Tests\TechMeter.Tests.csproj", "{FBD2EA52-E649-4FDA-A4CE-01A772428C9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD10A992-0D03-A9D1-6A4E-A04917BDBEEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBD2EA52-E649-4FDA-A4CE-01A772428C9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBD2EA52-E649-4FDA-A4CE-01A772428C9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBD2EA52-E649-4FDA-A4CE-01A772428C9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBD2EA52-E649-4FDA-A4CE-01A772428C9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -58,7 +58,7 @@ namespace TechMeter.Application.Interfaces.TokenService
 
         }
 
-        public async Task<string> GenerateRefreshokenAsync()
+        public async Task<string> GenerateRefreshTokenAsync()
         {
             var number = new byte[64];
             using (var random = RandomNumberGenerator.Create())
@@ -72,7 +72,8 @@ namespace TechMeter.Application.Interfaces.TokenService
         public async Task<(string AccessToken, string RefreshToken)> GenerateTokensAsync(User user, string userId)
         {
             var AccessToken = await GenerateAccessTokenAsync(user);
-            var RefreshTokoen = await GenerateRefreshokenAsync();
+            var RefreshTokoen = await GenerateRefreshTokenAsync();
+            await SaveRefreshTokenAsync(RefreshTokoen, userId);
             return (AccessToken, RefreshTokoen);
         }
 
@@ -80,7 +81,7 @@ namespace TechMeter.Application.Interfaces.TokenService
         {
              await _context.UserRefreshTokens.AddAsync(new()
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 UserId = userId,
                 Token = token,
                 ExpiryDateUtc = DateTime.UtcNow.AddDays(7),
@@ -92,8 +93,8 @@ namespace TechMeter.Application.Interfaces.TokenService
 
         public async Task InValidateOldTokenAsync(string UserId)
         {
-            var token =await _context.UserRefreshTokens.Where(u => u.UserId == UserId).ToListAsync();
-            _context.UserRefreshTokens.RemoveRange(token);
+            var tokens = await _context.UserRefreshTokens.Where(u => u.UserId == UserId).ToListAsync();
+            _context.UserRefreshTokens.RemoveRange(tokens);
             await _context.SaveChangesAsync();
         }
 

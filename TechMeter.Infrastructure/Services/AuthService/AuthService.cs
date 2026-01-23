@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Auth;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
+using TechMeter.Application.DTO.Auth.ResetPassword;
 using TechMeter.Application.DTO.Otp;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.AuthService;
@@ -254,5 +256,92 @@ namespace TechMeter.Infrastructure.Services.AuthService
             _logger.LogInformation("Email With {Otp} has ben Sent to {Email}", otp, user.Email);
             return _responseHandler.Success<string>(null, "Email Has been Sent successfully");
         }
+
+        public async Task<Response<ForgetPasswordResponse>> ForgetPassword(ForgetPasswordRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return _responseHandler.BadRequest<ForgetPasswordResponse>($"User With Email {request.Email} Is not Found");
+            }
+            try
+            {
+                var otp = await _otpService.GenerateAndSetOTP(user.Id);
+                await _emailService.SendOtpEmailAsync(user, otp);
+                _logger.LogInformation("Email for forget Password is Sent");
+                var response = new ForgetPasswordResponse()
+                {
+                    UserId = user.Id,
+                };
+
+                return _responseHandler.Success(response, "Check Email For Otp");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return _responseHandler.InternalServerError<ForgetPasswordResponse>("Error Happend When Creating OTP Or Send Email");
+            }
+        }
+
+        public async Task<Response<ResetPasswordResponse>> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId);
+            if (user == null)
+            {
+                return _responseHandler.BadRequest<ResetPasswordResponse>($"User With Id {request.UserId} Is not Found");
+            }
+            var IsValid = await _otpService.ValidateOtp(request.OTP, user.Id);
+            if (!IsValid)
+            {
+                _responseHandler.BadRequest<ResetPasswordResponse>("Otp IS Wrong");
+            }
+            var PasswordToken = await _userManager.GenerateChangeEmailTokenAsync(user, user.Email!);
+            var changePassword = await _userManager.ResetPasswordAsync(user, PasswordToken, request.Password);
+            if (!changePassword.Succeeded)
+            {
+                var Errors = string.Join(",", changePassword.Errors.Select(e => e.Description).ToList());
+                _responseHandler.BadRequest<ResetPasswordResponse>(Errors);
+            }
+            await _tokenService.InValidateOldTokenAsync(user.Id);
+            var roles = await _userManager.GetRolesAsync(user);
+            var respnse = new ResetPasswordResponse()
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Role = roles.FirstOrDefault()
+            };
+            return _responseHandler.Success(respnse, "Password Has been Reset Successfully");
+            //throw new NotImplementedException();
+        }
+
+        public async Task<Response<string>> ChangePassword(string UserId, ChangePassword request)
+        {
+            var user = await _userManager.FindByIdAsync(UserId);
+            if (user == null)
+            {
+                return _responseHandler.BadRequest<string>($"User With {UserId} is not found ");
+            }
+
+            var checkPassword = await _userManager.CheckPasswordAsync(user,request.CurrentPassword);
+            if(!checkPassword)
+            {
+                return _responseHandler.BadRequest<string>("Current password is incorrect");
+            }
+
+            var changePassword = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+            if (!changePassword.Succeeded)
+            {
+                var Errors = string.Join(",", changePassword.Errors.Select(e => e.Description).ToList());
+                return _responseHandler.BadRequest<string>(Errors);
+            }
+            await _tokenService.InValidateOldTokenAsync(UserId);
+
+            return _responseHandler.Success<string>(null, "Password changed successfully. Please login again.");
+
+
+        }
+
+       
     }
 }
