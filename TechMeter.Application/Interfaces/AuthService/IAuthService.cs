@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Auth;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
+using TechMeter.Application.DTO.Auth.ResetPassword;
 using TechMeter.Application.DTO.Otp;
 using TechMeter.Domain.Shared.Bases;
 
@@ -16,8 +17,13 @@ namespace TechMeter.Application.Interfaces.AuthService
     {
         public Task<Response<LoginResponseDto>> LoginAsync(LoginRequestDto request);
         public Task<Response<StudentRegisterResponseDto>> RegisterAsStudentAsync(StudentRegisterRequestDto request);
-        public Task<Response<StudentRegisterResponseDto>> LogoutAsync(ClaimsPrincipal userclaims);
         public Task<Response<string>> VerifyOtp(VerifyOtp request);
+        //public Task<string>
         public Task<Response<string>> ResponseOtp(ResendOtp request);
+        public Task<Response<StudentRegisterResponseDto>> LogoutAsync(ClaimsPrincipal userclaims);
+        public Task<Response<ForgetPasswordResponse>> ForgetPassword(ForgetPasswordRequest request);
+        public Task<Response<ResetPasswordResponse>> ResetPasswordAsync(ResetPasswordRequest request);
+        public Task<Response<string>> ChangePassword(string UserId,ChangePassword request);
+        //public Task<Response<string>> Logoutasync(string userId);
     }
 }

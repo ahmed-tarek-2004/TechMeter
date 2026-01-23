@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
+using System.Security.Claims;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
+using TechMeter.Application.DTO.Auth.ResetPassword;
 using TechMeter.Application.DTO.Otp;
 using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.API.Controllers
@@ -19,16 +22,23 @@ namespace TechMeter.API.Controllers
         private readonly IAuthService _authService;
         private readonly IValidator<StudentRegisterRequestDto> _studentRegisterValidator;
         private readonly IValidator<LoginRequestDto> _loginRequestValidator;
+        private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
+        private readonly IValidator<ForgetPasswordRequest> _forgetPasswordValidator;
+        private readonly IValidator<ChangePassword> _changePasswordValidator;
         private readonly ResponseHandler _responseHandler;
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
             IValidator<StudentRegisterRequestDto> studentRegisterValidator, ResponseHandler responseHandler
-            , IValidator<LoginRequestDto> loginRequestValidator)
+            , IValidator<LoginRequestDto> loginRequestValidator ,IValidator<ChangePassword> changePasswordValidator,
+            IValidator<ResetPasswordRequest> resetPasswordValidator, IValidator<ForgetPasswordRequest> forgetPasswordValidator)
         {
             _logger = logger;
             _authService = authService;
             _studentRegisterValidator = studentRegisterValidator;
             _responseHandler = responseHandler;
             _loginRequestValidator = loginRequestValidator;
+            _changePasswordValidator = changePasswordValidator;
+            _forgetPasswordValidator = forgetPasswordValidator;
+            _resetPasswordValidator= resetPasswordValidator;
         }
         [HttpPost("student/register")]
         public async Task<ActionResult<Response<StudentRegisterResponseDto>>> RegisterAsStudent([FromForm] StudentRegisterRequestDto request)
@@ -56,6 +66,48 @@ namespace TechMeter.API.Controllers
             var response = await _authService.LoginAsync(request);
             return StatusCode((int)response.StatusCode, response);
         }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<Response<ResetPasswordResponse>>>ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var validation = await _resetPasswordValidator.ValidateAsync(request);
+            if (!validation.IsValid)
+            {
+                var Errors = string.Join(',',validation.Errors.Select(e => e.ErrorMessage).ToList());
+                return _responseHandler.BadRequest<ResetPasswordResponse>(Errors);
+            }
+            var response = await _authService.ResetPasswordAsync(request);
+            return StatusCode((int)response.StatusCode,response);
+        }
+
+        [HttpPost("forget-password")]
+        public async Task<ActionResult<Response<ForgetPasswordResponse>>>ForgetPasswordAsync(ForgetPasswordRequest request)
+        {
+            var validation = await _forgetPasswordValidator.ValidateAsync(request);
+            if (!validation.IsValid)
+            {
+                var Errors = string.Join(',',validation.Errors.Select(e => e.ErrorMessage).ToList());
+                return _responseHandler.BadRequest<ForgetPasswordResponse>(Errors);
+            }
+            var response = await _authService.ForgetPassword(request);
+            return StatusCode((int)response.StatusCode,response);
+        }
+
+        [HttpPost("change-password")]
+        public async Task<ActionResult<Response<ForgetPasswordResponse>>>ChangePasswordAsync(ChangePassword request)
+        {
+            var validation = await _changePasswordValidator.ValidateAsync(request);
+            if (!validation.IsValid)
+            {
+                var Errors = string.Join(',',validation.Errors.Select(e => e.ErrorMessage).ToList());
+                return _responseHandler.BadRequest<ForgetPasswordResponse>(Errors);
+            }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _authService.ChangePassword(userId,request);
+            return StatusCode((int)response.StatusCode,response);
+        }
+
+
 
         [HttpPost("verify-otp")]
         public async Task<ActionResult<Response<StudentRegisterResponseDto>>> VertifyOtpAsync([FromBody] VerifyOtp request)

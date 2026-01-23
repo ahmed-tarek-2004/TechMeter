@@ -13,5 +13,6 @@ namespace TechMeter.Domain.Models
         public string CertificateUrl {  get; set; }
         public string ProviderId {  get; set; }
         public Provider Provider { get; set; }
+
     }
 }

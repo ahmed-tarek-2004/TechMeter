@@ -9,7 +9,7 @@ using TechMeter.Domain.Models.Auth.Users;
 
 namespace TechMeter.Domain.Models.Auth.Identity
 {
-    public class User:IdentityUser
+    public class User:IdentityUser<string>
     {
         public string Country {  get; set; }
         public string? ProfileUrl { get; set; }
