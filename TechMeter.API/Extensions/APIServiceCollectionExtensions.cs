@@ -27,7 +27,7 @@ namespace TechMeter.Extensions
     {
         public static IHostBuilder UseSerilogLogging(this IHostBuilder hostBuilder)
         {
-            return hostBuilder.UseSerilog((context, services,configuration) =>
+            return hostBuilder.UseSerilog((context, services, configuration) =>
             {
                 Log.Logger = new LoggerConfiguration()
                    .WriteTo.Console()
@@ -35,8 +35,8 @@ namespace TechMeter.Extensions
 
                 Log.Information("Starting up...");
 
-                configuration.ReadFrom.Configuration(context.Configuration) 
-                              .ReadFrom.Services(services) 
+                configuration.ReadFrom.Configuration(context.Configuration)
+                              .ReadFrom.Services(services)
                               .Enrich.FromLogContext()
                               .Enrich.WithMachineName()
                               .Enrich.WithThreadId();
@@ -77,8 +77,8 @@ namespace TechMeter.Extensions
                     ValidAudience = jwtSettings.Audience,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey)),
-                    ValidateLifetime=true,
-                    RequireSignedTokens=true,
+                    ValidateLifetime = true,
+                    RequireSignedTokens = true,
                     ClockSkew = TimeSpan.Zero,
                 };
 

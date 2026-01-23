@@ -3,16 +3,16 @@ using TechMeter.Application.DTO.Auth.Login;
 
 namespace TechMeter.API.Validators
 {
-    public class LoginRequestValidator:AbstractValidator<LoginRequestDto>
+    public class LoginRequestValidator : AbstractValidator<LoginRequestDto>
     {
-        public LoginRequestValidator() 
+        public LoginRequestValidator()
         {
             RuleFor(x => x)
               .Must(x => !string.IsNullOrEmpty(x.email))
               .WithMessage("Email is required.");
 
-            RuleFor(x=>x.email).EmailAddress()
-                .When(b=>!string.IsNullOrEmpty(b.email))
+            RuleFor(x => x.email).EmailAddress()
+                .When(b => !string.IsNullOrEmpty(b.email))
                 .WithMessage("Email must be valid (e.g., user@example.com).");
 
             RuleFor(x => x.otp)

@@ -77,18 +77,18 @@ namespace TechMeter
             builder.Services.AddTransient<StopwatchRequestMiddleware>();
             var app = builder.Build();
 
-            using (var scope=app.Services.CreateScope())
+            using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Domain.Models.Auth.Identity.Role>>();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<UserAndRoleSeeder>>();
-                await UserAndRoleSeeder.Seed(context,roleManager,userManager,logger);
+                await UserAndRoleSeeder.Seed(context, roleManager, userManager, logger);
             }
 
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment()||app.Environment.IsProduction())
+            if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
                 //app.MapOpenApi();
                 app.UseSwagger();
@@ -106,6 +106,6 @@ namespace TechMeter
             app.MapControllers();
 
             app.Run();
-        }   
+        }
     }
 }

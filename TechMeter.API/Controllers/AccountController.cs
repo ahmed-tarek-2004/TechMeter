@@ -20,15 +20,15 @@ namespace TechMeter.API.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
-        private readonly IValidator<StudentRegisterRequestDto> _studentRegisterValidator;
+        private readonly IValidator<StudentRegisterRequest> _studentRegisterValidator;
         private readonly IValidator<LoginRequestDto> _loginRequestValidator;
         private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
         private readonly IValidator<ForgetPasswordRequest> _forgetPasswordValidator;
         private readonly IValidator<ChangePassword> _changePasswordValidator;
         private readonly ResponseHandler _responseHandler;
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
-            IValidator<StudentRegisterRequestDto> studentRegisterValidator, ResponseHandler responseHandler
-            , IValidator<LoginRequestDto> loginRequestValidator ,IValidator<ChangePassword> changePasswordValidator,
+            IValidator<StudentRegisterRequest> studentRegisterValidator, ResponseHandler responseHandler
+            , IValidator<LoginRequestDto> loginRequestValidator, IValidator<ChangePassword> changePasswordValidator,
             IValidator<ResetPasswordRequest> resetPasswordValidator, IValidator<ForgetPasswordRequest> forgetPasswordValidator)
         {
             _logger = logger;
@@ -38,10 +38,43 @@ namespace TechMeter.API.Controllers
             _loginRequestValidator = loginRequestValidator;
             _changePasswordValidator = changePasswordValidator;
             _forgetPasswordValidator = forgetPasswordValidator;
-            _resetPasswordValidator= resetPasswordValidator;
+            _resetPasswordValidator = resetPasswordValidator;
         }
+
+
+        //[HttpGet("Assmebly")]
+        //public async Task<IActionResult>TestAssembly()
+        //{
+        //    var type = _authService.GetType();
+        //    _logger.LogInformation("type is :{type}", type);
+        //    _logger.LogInformation("FullName is :{type}", type.FullName);
+        //    _logger.LogInformation("Name is :{type}", type.Name);
+        //    _logger.LogInformation("isPublic is :{type}", type.IsPublic);
+        //    _logger.LogInformation("isInterface is :{type}", type.IsInterface);
+        //    _logger.LogInformation("namespace is :{type}", type.Namespace);
+        //    _logger.LogInformation("BaseType is :{type}", type.BaseType);
+        //    _logger.LogInformation("interface is :{type}", type.GetInterfaces());
+        //    //var obj = Activator.CreateInstance(typeof(Program).Assembly.GetName().Name,Input);
+
+        //    return Ok();
+        //}
+
         [HttpPost("student/register")]
-        public async Task<ActionResult<Response<StudentRegisterResponseDto>>> RegisterAsStudent([FromForm] StudentRegisterRequestDto request)
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsStudent([FromForm] StudentRegisterRequest request)
+        {
+            var validator = await _studentRegisterValidator.ValidateAsync(request);
+            if (!validator.IsValid)
+            {
+                var error = string.Join(",", validator.Errors.Select(e => e.ErrorMessage).ToList());
+                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(error));
+            }
+
+            var response = await _authService.RegisterAsStudentAsync(request);
+            return StatusCode((int)response.StatusCode, response);
+        }
+
+        [HttpPost("provider/register")]
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsProvider([FromForm] StudentRegisterRequest request)
         {
             var validator = await _studentRegisterValidator.ValidateAsync(request);
             if (!validator.IsValid)
@@ -54,7 +87,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("login")]
-        public async Task<ActionResult<Response<StudentRegisterResponseDto>>> LoginAsync([FromBody] LoginRequestDto request)
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> LoginAsync([FromBody] LoginRequestDto request)
         {
             var validator = await _loginRequestValidator.ValidateAsync(request);
             if (!validator.IsValid)
@@ -68,49 +101,49 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("reset-password")]
-        public async Task<ActionResult<Response<ResetPasswordResponse>>>ResetPasswordAsync(ResetPasswordRequest request)
+        public async Task<ActionResult<Response<ResetPasswordResponse>>> ResetPasswordAsync(ResetPasswordRequest request)
         {
             var validation = await _resetPasswordValidator.ValidateAsync(request);
             if (!validation.IsValid)
             {
-                var Errors = string.Join(',',validation.Errors.Select(e => e.ErrorMessage).ToList());
-                return _responseHandler.BadRequest<ResetPasswordResponse>(Errors);
+                var Errors = string.Join(',', validation.Errors.Select(e => e.ErrorMessage).ToList());
+                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Errors));
             }
             var response = await _authService.ResetPasswordAsync(request);
-            return StatusCode((int)response.StatusCode,response);
+            return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("forget-password")]
-        public async Task<ActionResult<Response<ForgetPasswordResponse>>>ForgetPasswordAsync(ForgetPasswordRequest request)
+        public async Task<ActionResult<Response<ForgetPasswordResponse>>> ForgetPasswordAsync(ForgetPasswordRequest request)
         {
             var validation = await _forgetPasswordValidator.ValidateAsync(request);
             if (!validation.IsValid)
             {
-                var Errors = string.Join(',',validation.Errors.Select(e => e.ErrorMessage).ToList());
-                return _responseHandler.BadRequest<ForgetPasswordResponse>(Errors);
+                var Errors = string.Join(',', validation.Errors.Select(e => e.ErrorMessage).ToList());
+                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Errors));
             }
             var response = await _authService.ForgetPassword(request);
-            return StatusCode((int)response.StatusCode,response);
+            return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("change-password")]
-        public async Task<ActionResult<Response<ForgetPasswordResponse>>>ChangePasswordAsync(ChangePassword request)
+        public async Task<ActionResult<Response<string>>> ChangePasswordAsync(ChangePassword request)
         {
             var validation = await _changePasswordValidator.ValidateAsync(request);
             if (!validation.IsValid)
             {
-                var Errors = string.Join(',',validation.Errors.Select(e => e.ErrorMessage).ToList());
-                return _responseHandler.BadRequest<ForgetPasswordResponse>(Errors);
+                var Errors = string.Join(',', validation.Errors.Select(e => e.ErrorMessage).ToList());
+                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Errors));
             }
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _authService.ChangePassword(userId,request);
-            return StatusCode((int)response.StatusCode,response);
+            var response = await _authService.ChangePassword(userId, request);
+            return StatusCode((int)response.StatusCode, response);
         }
 
 
 
         [HttpPost("verify-otp")]
-        public async Task<ActionResult<Response<StudentRegisterResponseDto>>> VertifyOtpAsync([FromBody] VerifyOtp request)
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyOtpAsync([FromBody] VerifyOtp request)
         {
             if (!ModelState.IsValid)
                 return StatusCode((int)_responseHandler.BadRequest<object>("Invalid input data.").StatusCode,
@@ -124,7 +157,7 @@ namespace TechMeter.API.Controllers
         [EnableRateLimiting("SendOtpPolicy")]
         public async Task<ActionResult<string>> ResendOtpAsync(ResendOtp request)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return StatusCode((int)_responseHandler.BadRequest<object>("Invalid input data.").StatusCode,
                    _responseHandler.BadRequest<object>("Invalid input data."));
