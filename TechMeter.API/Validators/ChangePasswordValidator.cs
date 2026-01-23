@@ -3,7 +3,7 @@ using TechMeter.Application.DTO.Auth.ResetPassword;
 
 namespace TechMeter.API.Validators
 {
-    public class ChangePasswordValidator:AbstractValidator<ChangePassword>
+    public class ChangePasswordValidator : AbstractValidator<ChangePassword>
     {
         public ChangePasswordValidator()
         {

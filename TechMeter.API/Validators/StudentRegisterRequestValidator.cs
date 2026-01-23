@@ -5,7 +5,7 @@ using TechMeter.Domain.Enums;
 
 namespace TechMeter.API.Validators
 {
-    public class StudentRegisterRequestValidator : AbstractValidator<StudentRegisterRequestDto>
+    public class StudentRegisterRequestValidator : AbstractValidator<StudentRegisterRequest>
     {
         private readonly List<string> Extensions = [".png", ".jpg", ".jpeg"];
         public StudentRegisterRequestValidator()
@@ -46,7 +46,7 @@ namespace TechMeter.API.Validators
 
 
             RuleFor(x => x.Gender)
-                .Must(x=> x!=Gender.none)
+                .Must(x => x != Gender.none)
                 .WithMessage("Gender is required");
 
             RuleFor(b => b.ProfilePhoto)

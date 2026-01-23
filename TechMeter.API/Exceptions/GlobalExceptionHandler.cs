@@ -18,7 +18,7 @@ namespace TechMeter.API.Infrastructure
             var problemDeatils = new ProblemDetails()
             {
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-                Status=(int)HttpStatusCode.InternalServerError,
+                Status = (int)HttpStatusCode.InternalServerError,
                 Title = "An unexpected error has occurred, check Logger files ",
                 Detail = exception.Message,
                 Instance = httpContext.Request.Path

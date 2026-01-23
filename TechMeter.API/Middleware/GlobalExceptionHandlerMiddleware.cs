@@ -37,7 +37,7 @@ namespace TechMeter.API.Middleware
                     Instance = context.Request.Path,
                 };
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await context.Response.WriteAsJsonAsync(problemDeatils,cancellationToken:default);
+                await context.Response.WriteAsJsonAsync(problemDeatils, cancellationToken: default);
             }
             //catch (ValidationException ex)
             //{

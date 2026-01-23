@@ -12,7 +12,7 @@ namespace TechMeter.API.Validators
                 .EmailAddress()
                 .WithMessage("Email is required and not as email formar");
 
-           
+
 
         }
     }
