@@ -1,19 +1,9 @@
-/TechMeter.API/obj
-/TechMeter.API/.vs
-/TechMeter.API/bin
-/TechMeter.API/Logs
 
-/TechMeter.Application/obj
-/TechMeter.Application/.vs
-/TechMeter.Application/bin
+**/bin/
+**/obj/
 
-/TechMeter.Domain/obj
-/TechMeter.Domain/.vs
-/TechMeter.Domain/bin
+**/.vs/
 
-/TechMeter.Infrastructure/obj
-/TechMeter.Infrastructure/.vs
-/TechMeter.Infrastructure/bin
+/TechMeter.Tests/
 
- /TechMeter.Tests
-
+**/Logs/
