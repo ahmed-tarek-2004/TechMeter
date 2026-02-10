@@ -12,10 +12,10 @@ namespace TechMeter.Application.Interfaces.TokenService
     {
         public Task<string> GenerateAccessTokenAsync(User user);
         public Task<string> GenerateRefreshTokenAsync();
-        public Task<(string AccessToken, string RefreshToken)> GenerateTokensAsync(User user,string userId);
+        public Task<(string AccessToken, string RefreshToken)> GenerateTokensAsync(User user, string userId);
         public Task<bool> ValidateRefreshTokenAsync(string refreshToken);
         public Task SaveRefreshTokenAsync(string token, string userID);
         public Task InValidateOldTokenAsync(string Id);
-        
+
     }
 }

@@ -58,7 +58,7 @@ namespace TechMeter.Infrastructure.Seeder
                 _logger.LogError("Something Went Wrong While Applying Migrations");
                 throw;
             }
-            
+
         }
     }
 }

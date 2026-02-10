@@ -11,9 +11,9 @@ namespace TechMeter.Domain.Models.Auth.Users
     {
         public string Id { get; set; }
         public DateTime? BirthDate { get; set; }
-        public string EducationLevel {  get; set; }
+        public string EducationLevel { get; set; }
         public User User { get; set; }
-        public Cart Cart { get; set; }          
+        public Cart Cart { get; set; }
         //public Wishlist Wishlist { get; set; }  
         //public List<Order> Orders { get; set; } = new List<Order>(); // One-to-Many
     }

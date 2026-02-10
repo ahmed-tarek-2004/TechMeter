@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Application.DTO.Auth.ResetPassword
+namespace TechMeter.Tests.model
 {
-    public class ForgetPasswordRequest
+    public class Person
     {
-        public string Email { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
     }
+
 }

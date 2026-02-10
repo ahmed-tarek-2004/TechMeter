@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.Service.OTPService
 {
-    public class OTPService
+    public class OTPService:IOTPService
     {
         private readonly StackExchange.Redis.IDatabase _redis;
         private readonly ILogger<OTPService> _logger;

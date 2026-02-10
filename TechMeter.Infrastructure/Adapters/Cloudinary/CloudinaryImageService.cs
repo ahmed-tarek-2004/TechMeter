@@ -12,16 +12,16 @@ using TechMeter.Application.Interfaces;
 
 namespace TechMeter.Infrastructure.Adapters.Cloudinary
 {
-    public class CloudinaryImageService :IImageUploading
+    public class CloudinaryImageService : IImageUploading
     {
         private readonly ILogger<CloudinaryImageService> logger;
         private readonly CloudinarySettings _cloudinarySettings;
-        private readonly CloudinaryDotNet.Cloudinary _cloudinary; 
-        public CloudinaryImageService(IOptions<CloudinarySettings>options,ILogger<CloudinaryImageService> logger)
+        private readonly CloudinaryDotNet.Cloudinary _cloudinary;
+        public CloudinaryImageService(IOptions<CloudinarySettings> options, ILogger<CloudinaryImageService> logger)
         {
             this.logger = logger;
-            _cloudinarySettings = options.Value?? throw new ArgumentNullException(nameof(options));
-            var account = new Account(_cloudinarySettings.CloudName,_cloudinarySettings.ApiKey,_cloudinarySettings.ApiSecret);
+            _cloudinarySettings = options.Value ?? throw new ArgumentNullException(nameof(options));
+            var account = new Account(_cloudinarySettings.CloudName, _cloudinarySettings.ApiKey, _cloudinarySettings.ApiSecret);
             _cloudinary = new CloudinaryDotNet.Cloudinary(account)
             {
                 Api = { Secure = true }

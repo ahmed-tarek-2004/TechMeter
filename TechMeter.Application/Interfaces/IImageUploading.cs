@@ -9,6 +9,6 @@ namespace TechMeter.Application.Interfaces
 {
     public interface IImageUploading
     {
-        public Task<string>UploadAsync(IFormFile file);
+        public Task<string> UploadAsync(IFormFile file);
     }
 }

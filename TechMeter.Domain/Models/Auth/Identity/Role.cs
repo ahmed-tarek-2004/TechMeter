@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Domain.Models.Auth.Identity
 {
-    public class Role:IdentityRole
+    public class Role : IdentityRole
     {
 
     }

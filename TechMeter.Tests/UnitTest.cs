@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using Moq;
+using TechMeter.Tests.model;
 namespace TechMeter.Tests
 {
     public class UnitTest
@@ -9,8 +11,6 @@ namespace TechMeter.Tests
             //Arrange
             int x = 2;
             int y = 3;
-
-
             //Act
 
             int z = x + y;
@@ -40,6 +40,25 @@ namespace TechMeter.Tests
             Assert.Throws<ArgumentNullException>(() => func(x));
         }
         [Fact]
+        public void test_string_end_with_come_word()
+        {
+            string name = "Welcome";
+            Assert.EndsWith("come", name);
+        }
+        [Fact]
+        public void test_string_with_length_equal_5()
+        {
+            string name = "ahmed";
+            Assert.True(name.Length == 5);
+        }
+        [Fact]
+        public void test_should_be_not_null_or_not_have_spaces()
+        {
+            string name = " ";
+            Assert.NotEmpty(name);
+        }
+
+        [Fact]
         public void test_two_sums_using_fluent_assertion()
         {
             int x = 5;
@@ -67,22 +86,10 @@ namespace TechMeter.Tests
             name.Should().StartWith("A");
         }
         [Fact]
-        public void test_string_end_with_come_word()
-        {
-            string name = "Welcome";
-            Assert.EndsWith("come", name);
-        }
-        [Fact]
         public void test_string_end_with_come_word_with_fluent_assertion()
         {
             string name = "Welcome";
             name.Should().EndWith("come");
-        }
-        [Fact]
-        public void test_string_with_length_equal_5()
-        {
-            string name = "ahmed";
-            Assert.True(name.Length == 5);
         }
         [Fact]
         public void test_string_with_length_equal_5_with_fluent_assertion()
@@ -101,12 +108,6 @@ namespace TechMeter.Tests
         {
             string name = "ahmedtarek";
             name.Should().NotBeNullOrWhiteSpace();
-        }
-        [Fact]
-        public void test_should_be_not_null_or_not_have_spaces()
-        {
-            string name = " ";
-            Assert.NotEmpty(name);
         }
 
         [Fact]
@@ -132,6 +133,27 @@ namespace TechMeter.Tests
             num.Should().BePositive();
 
         }
-        
+        public class CarServiceTests
+        {
+            [Fact]
+            public void AddCar_Should_Call_Add_When_Not_Exists()
+            {
+                // Arrange
+                var repoMock = new Mock<ICarRepository>();
+                repoMock.Setup(r => r.Exists(It.IsAny<int>()))
+                        .Returns(false);
+
+                var service = new CarService(repoMock.Object);
+                var car = new Car { Id = 1, Name = "BMW" };
+
+                // Act
+                var result = service.AddCar(car);
+
+                // Assert
+                result.Should().BeTrue();
+            }
+        }
+
+
     }
 }

@@ -8,7 +8,7 @@ namespace TechMeter.Domain.Models.Auth.UserTokens
 {
     public class UserRefreshTokenResponse
     {
-        public string AccessToken { get; set;}
-        public string RefreshToken { get; set;}
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

@@ -14,6 +14,6 @@ namespace TechMeter.Domain.Models.Auth.Users
         public string? Brief { get; set; }
         public int ExperienceYears { get; set; }
         public User User { get; set; }
-        public ICollection<CertificatesUrl>certificatesUrls { get; set; }
+        public ICollection<CertificatesUrl> certificatesUrls { get; set; }
     }
 }

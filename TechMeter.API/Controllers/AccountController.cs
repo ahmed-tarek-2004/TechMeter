@@ -2,15 +2,20 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using StackExchange.Redis;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
 using TechMeter.Application.DTO.Auth.ResetPassword;
 using TechMeter.Application.DTO.Otp;
 using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Application.Service.OTPService;
+using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
+using TechMeter.Infrastructure.Services.AuthService;
 
 namespace TechMeter.API.Controllers
 {
@@ -42,22 +47,28 @@ namespace TechMeter.API.Controllers
         }
 
 
-        //[HttpGet("Assmebly")]
-        //public async Task<IActionResult>TestAssembly()
-        //{
-        //    var type = _authService.GetType();
-        //    _logger.LogInformation("type is :{type}", type);
-        //    _logger.LogInformation("FullName is :{type}", type.FullName);
-        //    _logger.LogInformation("Name is :{type}", type.Name);
-        //    _logger.LogInformation("isPublic is :{type}", type.IsPublic);
-        //    _logger.LogInformation("isInterface is :{type}", type.IsInterface);
-        //    _logger.LogInformation("namespace is :{type}", type.Namespace);
-        //    _logger.LogInformation("BaseType is :{type}", type.BaseType);
-        //    _logger.LogInformation("interface is :{type}", type.GetInterfaces());
-        //    //var obj = Activator.CreateInstance(typeof(Program).Assembly.GetName().Name,Input);
+        [HttpGet("Assmebly")]
+        public async Task<IActionResult> TestAssembly()
+        {
+            Type t1 = typeof(ResendOtp);
+            var type = _authService.GetType();
+            _logger.LogInformation("type is :{type}", type);
+            _logger.LogInformation("t1 is :{type}", t1);
+            //_logger.LogInformation("FullName is :{type}", type.FullName);
+            _logger.LogInformation("FullName is :{type}", type.FullName);
+            _logger.LogInformation("Name is :{type}", type.Name);
+            _logger.LogInformation("isPublic is :{type}", type.IsPublic);
+            _logger.LogInformation("isInterface is :{type}", type.IsInterface);
+            _logger.LogInformation("namespace is :{type}", type.Namespace);
+            _logger.LogInformation("BaseType is :{type}", type.BaseType);
+            _logger.LogInformation("interface is :{type}", type.GetInterfaces());
+            _logger.LogInformation("T1 interface is :{t1.GetInterfaces()}", t1.GetInterfaces());
+            _logger.LogInformation("is Value Type :{t1.IsValueType}", t1.IsValueType);
 
-        //    return Ok();
-        //}
+            
+           
+            return Ok();
+        }
 
         [HttpPost("student/register")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsStudent([FromForm] StudentRegisterRequest request)

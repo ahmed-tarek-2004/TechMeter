@@ -16,14 +16,14 @@ namespace TechMeter.Application.Interfaces.AuthService
     public interface IAuthService
     {
         public Task<Response<LoginResponseDto>> LoginAsync(LoginRequestDto request);
-        public Task<Response<StudentRegisterResponseDto>> RegisterAsStudentAsync(StudentRegisterRequestDto request);
+        public Task<Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterRequest request);
         public Task<Response<string>> VerifyOtp(VerifyOtp request);
         //public Task<string>
         public Task<Response<string>> ResponseOtp(ResendOtp request);
-        public Task<Response<StudentRegisterResponseDto>> LogoutAsync(ClaimsPrincipal userclaims);
+        public Task<Response<StudentRegisterResponse>> LogoutAsync(ClaimsPrincipal userclaims);
         public Task<Response<ForgetPasswordResponse>> ForgetPassword(ForgetPasswordRequest request);
         public Task<Response<ResetPasswordResponse>> ResetPasswordAsync(ResetPasswordRequest request);
-        public Task<Response<string>> ChangePassword(string UserId,ChangePassword request);
+        public Task<Response<string>> ChangePassword(string UserId, ChangePassword request);
         //public Task<Response<string>> Logoutasync(string userId);
     }
 }
