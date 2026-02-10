@@ -16,13 +16,13 @@ namespace TechMeter.Infrastructure.Persistence
 
         }
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
-        public DbSet<Student> Student {  get; set; }
-        public DbSet<Provider> Provider {  get; set; }
+        public DbSet<Student> Student { get; set; }
+        public DbSet<Provider> Provider { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<Course> Course { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartItem> CartItem { get; set; }
-        public DbSet<UserRefreshToken>UserRefreshTokens { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

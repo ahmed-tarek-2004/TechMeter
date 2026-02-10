@@ -17,7 +17,7 @@ namespace TechMeter.Infrastructure.Extensions
 {
     public static class InfrustructureServiceCollectionExtensions
     {
-        public static IServiceCollection AddDatabase(this IServiceCollection service,IConfiguration configuration)
+        public static IServiceCollection AddDatabase(this IServiceCollection service, IConfiguration configuration)
         {
             service.AddDbContext<ApplicationDbContext>(opt =>
             {
@@ -38,7 +38,7 @@ namespace TechMeter.Infrastructure.Extensions
 
         public static IServiceCollection ApplicationService(this IServiceCollection services)
         {
-            services.AddScoped<OTPService>();
+            services.AddScoped<IOTPService,OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IImageUploading, CloudinaryImageService>();
             services.AddScoped<ITokenService, TokenService>();

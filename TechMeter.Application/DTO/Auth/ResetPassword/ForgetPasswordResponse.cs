@@ -8,6 +8,6 @@ namespace TechMeter.Application.DTO.Auth.ResetPassword
 {
     public class ForgetPasswordResponse
     {
-        public string UserId {  get; set; }
+        public string UserId { get; set; }
     }
 }

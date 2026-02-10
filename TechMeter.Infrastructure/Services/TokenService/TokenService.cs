@@ -23,7 +23,7 @@ namespace TechMeter.Application.Interfaces.TokenService
         private readonly UserManager<User> _userManager;
         private readonly SymmetricSecurityKey _symmetricSecurityKey;
         private readonly ApplicationDbContext _context;
-        public TokenService(IOptions<JwtSettings> options, UserManager<User> userManager,ApplicationDbContext context)
+        public TokenService(IOptions<JwtSettings> options, UserManager<User> userManager, ApplicationDbContext context)
         {
             _JwtSettings = options.Value;
             _userManager = userManager;
@@ -79,7 +79,7 @@ namespace TechMeter.Application.Interfaces.TokenService
 
         public async Task SaveRefreshTokenAsync(string token, string userId)
         {
-             await _context.UserRefreshTokens.AddAsync(new()
+            await _context.UserRefreshTokens.AddAsync(new()
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
@@ -101,7 +101,7 @@ namespace TechMeter.Application.Interfaces.TokenService
 
         public async Task<bool> ValidateRefreshTokenAsync(string refreshToken)
         {
-            var userRefreshToken =await _context.UserRefreshTokens.FirstOrDefaultAsync(t=>t.Token==refreshToken);
+            var userRefreshToken = await _context.UserRefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
             if (userRefreshToken == null) return false;
             return userRefreshToken.Token == refreshToken;
         }

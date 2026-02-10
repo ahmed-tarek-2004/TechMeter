@@ -9,9 +9,9 @@ namespace TechMeter.Domain.Models
 {
     public class CertificatesUrl
     {
-        public string Id {  get; set; }
-        public string CertificateUrl {  get; set; }
-        public string ProviderId {  get; set; }
+        public string Id { get; set; }
+        public string CertificateUrl { get; set; }
+        public string ProviderId { get; set; }
         public Provider Provider { get; set; }
 
     }

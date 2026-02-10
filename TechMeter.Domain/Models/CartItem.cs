@@ -18,7 +18,7 @@ namespace TechMeter.Domain.Models
         public string CourseId { get; set; }
         public Course Course { get; set; }
         public DateTime CreatedAt { get; set; }
-        public decimal UnitPrice { get; set; }= 0;
+        public decimal UnitPrice { get; set; } = 0;
 
         //public string? OrderItemId { get; set; }
         //public OrderItem Item { get; set; }

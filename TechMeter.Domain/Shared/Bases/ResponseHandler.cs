@@ -9,7 +9,7 @@ namespace TechMeter.Domain.Shared.Bases
 {
     public class ResponseHandler
     {
-        public Response<T> Deleted<T>(string message=null)
+        public Response<T> Deleted<T>(string message = null)
         {
             return new Response<T>()
             {
@@ -28,17 +28,17 @@ namespace TechMeter.Domain.Shared.Bases
                 Message = message
             };
         }
-        public Response<T> Success<T>(T entity,string message)
+        public Response<T> Success<T>(T entity, string message)
         {
             return new Response<T>()
             {
-                Data= entity,
+                Data = entity,
                 StatusCode = HttpStatusCode.OK,
                 Succeeded = true,
                 Message = message,
             };
         }
-        public Response<T> UnAuthorized<T>(string message=null)
+        public Response<T> UnAuthorized<T>(string message = null)
         {
             return new Response<T>()
             {
@@ -56,7 +56,7 @@ namespace TechMeter.Domain.Shared.Bases
                 Message = message
             };
         }
-        public Response<T>Forbidden<T>(string message=null)
+        public Response<T> Forbidden<T>(string message = null)
         {
             return new Response<T>()
             {

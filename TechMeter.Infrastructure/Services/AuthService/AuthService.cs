@@ -35,11 +35,11 @@ namespace TechMeter.Infrastructure.Services.AuthService
         private readonly IImageUploading _imageUploading;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
-        private readonly OTPService _otpService;
+        private readonly IOTPService _otpService;
         private readonly ResponseHandler _responseHandler;
         public AuthService(ITokenService tokenService, ILogger<AuthService> logger,
             ApplicationDbContext context, UserManager<User> userManager, IImageUploading imageUploading,
-            ResponseHandler responseHandler, OTPService otpService, IEmailService emailService)
+            ResponseHandler responseHandler, IOTPService otpService, IEmailService emailService)
         {
             _tokenService = tokenService;
             _logger = logger;
@@ -111,13 +111,13 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 return _responseHandler.InternalServerError<LoginResponseDto>("Internal Server Error");
             }
         }
-        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponseDto>> RegisterAsStudentAsync(StudentRegisterRequestDto request)
+        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterRequest request)
         {
             var checkifEmailorPhone = await CheckEmailOrPhoneNumberAsync(request.Email, request.PhoneNumber);
             if (checkifEmailorPhone != null)
             {
                 _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
-                return _responseHandler.BadRequest<StudentRegisterResponseDto>(checkifEmailorPhone);
+                return _responseHandler.BadRequest<StudentRegisterResponse>(checkifEmailorPhone);
             }
             var transaction = _context.Database.BeginTransaction();
             try
@@ -137,7 +137,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 {
                     var error = result.Errors.Select(e => e.Description).ToList();
                     _logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.Email, string.Join(",", error));
-                    return _responseHandler.BadRequest<StudentRegisterResponseDto>(string.Join(",", error));
+                    return _responseHandler.BadRequest<StudentRegisterResponse>(string.Join(",", error));
                 }
                 await _userManager.AddToRoleAsync(user, "student");
 
@@ -159,7 +159,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 _logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.Email);
-                var response = new StudentRegisterResponseDto()
+                var response = new StudentRegisterResponse()
                 {
                     Id = user.Id,
                     Role = "Student",
@@ -176,32 +176,32 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     refreshToken = Tokens.RefreshToken,
                 };
 
-                return _responseHandler.Success<StudentRegisterResponseDto>(response, "Student Created Successfully");
+                return _responseHandler.Success<StudentRegisterResponse>(response, "Student Created Successfully");
 
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
                 _logger.LogError(ex, "Error occurred during ClientRegisterUserAsync for Email: {Email}", request.Email);
-                return _responseHandler.BadRequest<StudentRegisterResponseDto>("An error occurred during registration.");
+                return _responseHandler.BadRequest<StudentRegisterResponse>("An error occurred during registration.");
             }
 
         }
-        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponseDto>> LogoutAsync(ClaimsPrincipal userclaims)
+        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> LogoutAsync(ClaimsPrincipal userclaims)
         {
             try
             {
                 var userId = userclaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(userId))
                 {
-                    return _responseHandler.UnAuthorized<StudentRegisterResponseDto>("User Not Authenticated");
+                    return _responseHandler.UnAuthorized<StudentRegisterResponse>("User Not Authenticated");
                 }
                 await _tokenService.InValidateOldTokenAsync(userId);
-                return _responseHandler.Success<StudentRegisterResponseDto>(null, "User Logout Successfully");
+                return _responseHandler.Success<StudentRegisterResponse>(null, "User Logout Successfully");
             }
             catch (Exception ex)
             {
-                return _responseHandler.InternalServerError<StudentRegisterResponseDto>($"An error occurred during logout: {ex.Message}");
+                return _responseHandler.InternalServerError<StudentRegisterResponse>($"An error occurred during logout: {ex.Message}");
             }
 
         }
@@ -323,8 +323,8 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 return _responseHandler.BadRequest<string>($"User With {UserId} is not found ");
             }
 
-            var checkPassword = await _userManager.CheckPasswordAsync(user,request.CurrentPassword);
-            if(!checkPassword)
+            var checkPassword = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
+            if (!checkPassword)
             {
                 return _responseHandler.BadRequest<string>("Current password is incorrect");
             }
@@ -339,9 +339,8 @@ namespace TechMeter.Infrastructure.Services.AuthService
 
             return _responseHandler.Success<string>(null, "Password changed successfully. Please login again.");
 
-
         }
 
-       
+
     }
 }

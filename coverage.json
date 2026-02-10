@@ -1,0 +1,5635 @@
+{
+  "TechMeter.API.dll": {
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Program.cs": {
+      "TechMeter.Program/<>c": {
+        "System.Void TechMeter.Program/<>c::<Main>b__0_0(Microsoft.AspNetCore.Mvc.ApiBehaviorOptions)": {
+          "Lines": {
+            "35": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Program/<>c::<Main>b__0_1(Microsoft.AspNetCore.Mvc.JsonOptions)": {
+          "Lines": {
+            "37": 0,
+            "38": 0,
+            "39": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Program/<>c::<Main>b__0_2(Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions)": {
+          "Lines": {
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "68": 0,
+            "69": 0,
+            "70": 0,
+            "71": 0,
+            "72": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Program/<Main>d__0": {
+        "System.Void TechMeter.Program/<Main>d__0::MoveNext()": {
+          "Lines": {
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "33": 0,
+            "34": 0,
+            "36": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "62": 0,
+            "74": 0,
+            "75": 0,
+            "77": 0,
+            "78": 0,
+            "80": 0,
+            "81": 0,
+            "82": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0,
+            "91": 0,
+            "92": 0,
+            "94": 0,
+            "95": 0,
+            "96": 0,
+            "98": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "108": 0,
+            "109": 0
+          },
+          "Branches": [
+            {
+              "Line": 91,
+              "Offset": 899,
+              "EndOffset": 901,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 91,
+              "Offset": 899,
+              "EndOffset": 919,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 91,
+              "Offset": 922,
+              "EndOffset": 924,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 91,
+              "Offset": 922,
+              "EndOffset": 952,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Extensions\\APIServiceCollectionExtensions.cs": {
+      "TechMeter.Extensions.APIServiceCollectionExtensions": {
+        "Microsoft.Extensions.Hosting.IHostBuilder TechMeter.Extensions.APIServiceCollectionExtensions::UseSerilogLogging(Microsoft.Extensions.Hosting.IHostBuilder)": {
+          "Lines": {
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Extensions.APIServiceCollectionExtensions::AddAuthenticationAndAuthorization(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)": {
+          "Lines": {
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "60": 0,
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "68": 0,
+            "69": 0,
+            "70": 0,
+            "71": 0,
+            "72": 0,
+            "73": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "81": 0,
+            "82": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0,
+            "87": 0,
+            "88": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Extensions.APIServiceCollectionExtensions::AddSwaggerConfiguration(Microsoft.Extensions.DependencyInjection.IServiceCollection)": {
+          "Lines": {
+            "90": 0,
+            "91": 0,
+            "92": 0,
+            "93": 0,
+            "94": 0,
+            "95": 0,
+            "96": 0,
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "103": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "107": 0,
+            "108": 0,
+            "109": 0,
+            "110": 0,
+            "111": 0,
+            "112": 0,
+            "113": 0,
+            "114": 0,
+            "115": 0,
+            "116": 0,
+            "117": 0,
+            "118": 0,
+            "119": 0,
+            "120": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Extensions.APIServiceCollectionExtensions::AddEmailServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)": {
+          "Lines": {
+            "123": 0,
+            "124": 0,
+            "126": 0,
+            "127": 0,
+            "128": 0,
+            "129": 0,
+            "130": 0,
+            "131": 0,
+            "132": 0,
+            "133": 0,
+            "135": 0,
+            "136": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Extensions.APIServiceCollectionExtensions::AddResendOtpRateLimiter(Microsoft.Extensions.DependencyInjection.IServiceCollection)": {
+          "Lines": {
+            "139": 0,
+            "140": 0,
+            "141": 0,
+            "142": 0,
+            "143": 0,
+            "144": 0,
+            "145": 0,
+            "146": 0,
+            "147": 0,
+            "148": 0,
+            "149": 0,
+            "150": 0,
+            "151": 0,
+            "152": 0,
+            "153": 0,
+            "154": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Extensions.APIServiceCollectionExtensions::GetClientIp(Microsoft.AspNetCore.Http.HttpContext)": {
+          "Lines": {
+            "156": 0,
+            "157": 0,
+            "158": 0,
+            "159": 0,
+            "161": 0,
+            "162": 0
+          },
+          "Branches": [
+            {
+              "Line": 157,
+              "Offset": 26,
+              "EndOffset": 28,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 157,
+              "Offset": 26,
+              "EndOffset": 55,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 161,
+              "Offset": 67,
+              "EndOffset": 69,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 161,
+              "Offset": 67,
+              "EndOffset": 73,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 161,
+              "Offset": 79,
+              "EndOffset": 81,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 161,
+              "Offset": 79,
+              "EndOffset": 87,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            }
+          ]
+        },
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Extensions.APIServiceCollectionExtensions::AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection)": {
+          "Lines": {
+            "165": 0,
+            "166": 0,
+            "167": 0,
+            "168": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Validators\\ChangePasswordValidator.cs": {
+      "TechMeter.API.Validators.ChangePasswordValidator": {
+        "System.Void TechMeter.API.Validators.ChangePasswordValidator::.ctor()": {
+          "Lines": {
+            "8": 0,
+            "9": 0,
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Validators\\ForgetPasswordRequestValidator.cs": {
+      "TechMeter.API.Validators.ForgetPasswordRequestValidator": {
+        "System.Void TechMeter.API.Validators.ForgetPasswordRequestValidator::.ctor()": {
+          "Lines": {
+            "8": 0,
+            "9": 0,
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "17": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Validators\\LoginRequestValidator.cs": {
+      "TechMeter.API.Validators.LoginRequestValidator": {
+        "System.Void TechMeter.API.Validators.LoginRequestValidator::.ctor()": {
+          "Lines": {
+            "8": 0,
+            "9": 0,
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Validators\\ResetPasswordRequestValidator.cs": {
+      "TechMeter.API.Validators.ResetPasswordRequestValidator": {
+        "System.Void TechMeter.API.Validators.ResetPasswordRequestValidator::.ctor()": {
+          "Lines": {
+            "8": 0,
+            "9": 0,
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "27": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Validators\\StudentRegisterRequestValidator.cs": {
+      "TechMeter.API.Validators.StudentRegisterRequestValidator": {
+        "System.Boolean TechMeter.API.Validators.StudentRegisterRequestValidator::<.ctor>b__1_18(Microsoft.AspNetCore.Http.IFormFile)": {
+          "Lines": {
+            "53": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.API.Validators.StudentRegisterRequestValidator::.ctor()": {
+          "Lines": {
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "52": 0,
+            "54": 0,
+            "56": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Middleware\\GlobalExceptionHandlerMiddleware.cs": {
+      "TechMeter.API.Middleware.GlobalExceptionHandlerMiddleware": {
+        "System.Void TechMeter.API.Middleware.GlobalExceptionHandlerMiddleware::.ctor(Microsoft.Extensions.Logging.ILogger`1<TechMeter.API.Middleware.GlobalExceptionHandlerMiddleware>,Microsoft.Extensions.Hosting.IHostEnvironment)": {
+          "Lines": {
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.API.Middleware.GlobalExceptionHandlerMiddleware/<InvokeAsync>d__3": {
+        "System.Void TechMeter.API.Middleware.GlobalExceptionHandlerMiddleware/<InvokeAsync>d__3::MoveNext()": {
+          "Lines": {
+            "23": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "66": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Middleware\\StopwatchRequestMiddleware.cs": {
+      "TechMeter.API.Middleware.StopwatchRequestMiddleware": {
+        "System.Void TechMeter.API.Middleware.StopwatchRequestMiddleware::.ctor(Microsoft.Extensions.Logging.ILogger`1<TechMeter.API.Middleware.StopwatchRequestMiddleware>)": {
+          "Lines": {
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "13": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.API.Middleware.StopwatchRequestMiddleware/<InvokeAsync>d__2": {
+        "System.Void TechMeter.API.Middleware.StopwatchRequestMiddleware/<InvokeAsync>d__2::MoveNext()": {
+          "Lines": {
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Exceptions\\GlobalExceptionHandler.cs": {
+      "TechMeter.API.Infrastructure.GlobalExceptionHandler": {
+        "System.Void TechMeter.API.Infrastructure.GlobalExceptionHandler::.ctor(Microsoft.Extensions.Logging.ILogger`1<TechMeter.API.Infrastructure.GlobalExceptionHandler>)": {
+          "Lines": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.API.Infrastructure.GlobalExceptionHandler/<TryHandleAsync>d__2": {
+        "System.Void TechMeter.API.Infrastructure.GlobalExceptionHandler/<TryHandleAsync>d__2::MoveNext()": {
+          "Lines": {
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.API\\Controllers\\AccountController.cs": {
+      "TechMeter.API.Controllers.AccountController": {
+        "System.Void TechMeter.API.Controllers.AccountController::.ctor(Microsoft.Extensions.Logging.ILogger`1<TechMeter.API.Controllers.AccountController>,TechMeter.Application.Interfaces.AuthService.IAuthService,FluentValidation.IValidator`1<TechMeter.Application.DTO.Auth.Register.StudentRegisterRequestDto>,TechMeter.Domain.Shared.Bases.ResponseHandler,FluentValidation.IValidator`1<TechMeter.Application.DTO.Auth.Login.LoginRequestDto>,FluentValidation.IValidator`1<TechMeter.Application.DTO.Auth.ResetPassword.ChangePassword>,FluentValidation.IValidator`1<TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordRequest>,FluentValidation.IValidator`1<TechMeter.Application.DTO.Auth.ResetPassword.ForgetPasswordRequest>)": {
+          "Lines": {
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<>c": {
+        "System.String TechMeter.API.Controllers.AccountController/<>c::<RegisterAsStudent>b__10_0(FluentValidation.Results.ValidationFailure)": {
+          "Lines": {
+            "68": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.API.Controllers.AccountController/<>c::<LoginAsync>b__11_0(FluentValidation.Results.ValidationFailure)": {
+          "Lines": {
+            "81": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.API.Controllers.AccountController/<>c::<ResetPasswordAsync>b__12_0(FluentValidation.Results.ValidationFailure)": {
+          "Lines": {
+            "95": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.API.Controllers.AccountController/<>c::<ForgetPasswordAsync>b__13_0(FluentValidation.Results.ValidationFailure)": {
+          "Lines": {
+            "108": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.API.Controllers.AccountController/<>c::<ChangePasswordAsync>b__14_0(FluentValidation.Results.ValidationFailure)": {
+          "Lines": {
+            "121": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<ChangePasswordAsync>d__14": {
+        "System.Void TechMeter.API.Controllers.AccountController/<ChangePasswordAsync>d__14::MoveNext()": {
+          "Lines": {
+            "117": 0,
+            "118": 0,
+            "119": 0,
+            "120": 0,
+            "122": 0,
+            "124": 0,
+            "125": 0,
+            "126": 0,
+            "127": 0
+          },
+          "Branches": [
+            {
+              "Line": 119,
+              "Offset": 190,
+              "EndOffset": 192,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 119,
+              "Offset": 190,
+              "EndOffset": 307,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 124,
+              "Offset": 330,
+              "EndOffset": 332,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 124,
+              "Offset": 330,
+              "EndOffset": 336,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<ForgetPasswordAsync>d__13": {
+        "System.Void TechMeter.API.Controllers.AccountController/<ForgetPasswordAsync>d__13::MoveNext()": {
+          "Lines": {
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "107": 0,
+            "109": 0,
+            "111": 0,
+            "112": 0,
+            "113": 0
+          },
+          "Branches": [
+            {
+              "Line": 106,
+              "Offset": 190,
+              "EndOffset": 192,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 106,
+              "Offset": 190,
+              "EndOffset": 307,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<LoginAsync>d__11": {
+        "System.Void TechMeter.API.Controllers.AccountController/<LoginAsync>d__11::MoveNext()": {
+          "Lines": {
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "82": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0
+          },
+          "Branches": [
+            {
+              "Line": 79,
+              "Offset": 190,
+              "EndOffset": 192,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 79,
+              "Offset": 190,
+              "EndOffset": 310,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<LogoutAsync>d__17": {
+        "System.Void TechMeter.API.Controllers.AccountController/<LogoutAsync>d__17::MoveNext()": {
+          "Lines": {
+            "156": 0,
+            "157": 0,
+            "158": 0,
+            "159": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<RegisterAsStudent>d__10": {
+        "System.Void TechMeter.API.Controllers.AccountController/<RegisterAsStudent>d__10::MoveNext()": {
+          "Lines": {
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "69": 0,
+            "72": 0,
+            "73": 0,
+            "74": 0
+          },
+          "Branches": [
+            {
+              "Line": 66,
+              "Offset": 190,
+              "EndOffset": 192,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 66,
+              "Offset": 190,
+              "EndOffset": 310,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<ResendOtpAsync>d__16": {
+        "System.Void TechMeter.API.Controllers.AccountController/<ResendOtpAsync>d__16::MoveNext()": {
+          "Lines": {
+            "145": 0,
+            "146": 0,
+            "147": 0,
+            "148": 0,
+            "149": 0,
+            "151": 0,
+            "152": 0,
+            "153": 0
+          },
+          "Branches": [
+            {
+              "Line": 146,
+              "Offset": 39,
+              "EndOffset": 41,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 146,
+              "Offset": 39,
+              "EndOffset": 111,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<ResetPasswordAsync>d__12": {
+        "System.Void TechMeter.API.Controllers.AccountController/<ResetPasswordAsync>d__12::MoveNext()": {
+          "Lines": {
+            "91": 0,
+            "92": 0,
+            "93": 0,
+            "94": 0,
+            "96": 0,
+            "98": 0,
+            "99": 0,
+            "100": 0
+          },
+          "Branches": [
+            {
+              "Line": 93,
+              "Offset": 190,
+              "EndOffset": 192,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 93,
+              "Offset": 190,
+              "EndOffset": 307,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<TestAssembly>d__9": {
+        "System.Void TechMeter.API.Controllers.AccountController/<TestAssembly>d__9::MoveNext()": {
+          "Lines": {
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "56": 0,
+            "59": 0,
+            "60": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.API.Controllers.AccountController/<VertifyOtpAsync>d__15": {
+        "System.Void TechMeter.API.Controllers.AccountController/<VertifyOtpAsync>d__15::MoveNext()": {
+          "Lines": {
+            "133": 0,
+            "134": 0,
+            "135": 0,
+            "136": 0,
+            "138": 0,
+            "139": 0,
+            "140": 0
+          },
+          "Branches": [
+            {
+              "Line": 134,
+              "Offset": 39,
+              "EndOffset": 41,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 134,
+              "Offset": 39,
+              "EndOffset": 110,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "TechMeter.Application.dll": {
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\Service\\OTPService\\OTPService.cs": {
+      "TechMeter.Application.Service.OTPService.OTPService": {
+        "System.String TechMeter.Application.Service.OTPService.OTPService::GenerateOtp()": {
+          "Lines": {
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "68": 0,
+            "69": 0,
+            "70": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Application.Service.OTPService.OTPService::.ctor(StackExchange.Redis.IConnectionMultiplexer,Microsoft.Extensions.Logging.ILogger`1<TechMeter.Application.Service.OTPService.OTPService>)": {
+          "Lines": {
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Service.OTPService.OTPService/<GenerateAndSetOTP>d__3": {
+        "System.Void TechMeter.Application.Service.OTPService.OTPService/<GenerateAndSetOTP>d__3::MoveNext()": {
+          "Lines": {
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0
+          },
+          "Branches": [
+            {
+              "Line": 28,
+              "Offset": 232,
+              "EndOffset": 234,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 28,
+              "Offset": 232,
+              "EndOffset": 273,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Application.Service.OTPService.OTPService/<ValidateOtp>d__4": {
+        "System.Void TechMeter.Application.Service.OTPService.OTPService/<ValidateOtp>d__4::MoveNext()": {
+          "Lines": {
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "58": 0,
+            "59": 0,
+            "61": 0
+          },
+          "Branches": [
+            {
+              "Line": 37,
+              "Offset": 188,
+              "EndOffset": 190,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 37,
+              "Offset": 188,
+              "EndOffset": 225,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 42,
+              "Offset": 251,
+              "EndOffset": 256,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 47,
+              "Offset": 432,
+              "EndOffset": 434,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 47,
+              "Offset": 432,
+              "EndOffset": 466,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 42,
+              "Offset": 251,
+              "EndOffset": 498,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Otp\\ResendOtp.cs": {
+      "TechMeter.Application.DTO.Otp.ResendOtp": {
+        "System.String TechMeter.Application.DTO.Otp.ResendOtp::get_Id()": {
+          "Lines": {
+            "10": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Otp\\VerifyOtp.cs": {
+      "TechMeter.Application.DTO.Otp.VerifyOtp": {
+        "System.String TechMeter.Application.DTO.Otp.VerifyOtp::get_userId()": {
+          "Lines": {
+            "10": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\Login\\LoginResponseDto.cs": {
+      "TechMeter.Application.DTO.Auth.LoginResponseDto": {
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_Id()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_Email()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_PhoneNumber()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_UserName()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_PhotoUrl()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_Role()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "System.Boolean TechMeter.Application.DTO.Auth.LoginResponseDto::get_IsEmailConfirmed()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_AccessToken()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.LoginResponseDto::get_RefreshToken()": {
+          "Lines": {
+            "19": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\ResetPassword\\ChangePassword.cs": {
+      "TechMeter.Application.DTO.Auth.ResetPassword.ChangePassword": {
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ChangePassword::get_CurrentPassword()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ChangePassword::get_NewPassword()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ChangePassword::get_ConfirmNewPassword()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\ResetPassword\\ForgetPasswordRequest.cs": {
+      "TechMeter.Application.DTO.Auth.ResetPassword.ForgetPasswordRequest": {
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ForgetPasswordRequest::get_Email()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\ResetPassword\\ForgetPasswordResponse.cs": {
+      "TechMeter.Application.DTO.Auth.ResetPassword.ForgetPasswordResponse": {
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ForgetPasswordResponse::get_UserId()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\ResetPassword\\ResetPasswordRequest.cs": {
+      "TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordRequest": {
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordRequest::get_UserId()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordRequest::get_OTP()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordRequest::get_Password()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordRequest::get_ConfirmPassword()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\ResetPassword\\ResetPasswordResponse.cs": {
+      "TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordResponse": {
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordResponse::get_UserId()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordResponse::get_PhoneNumber()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordResponse::get_Email()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.ResetPassword.ResetPasswordResponse::get_Role()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\Register\\StudentRegisterRequestDto.cs": {
+      "TechMeter.Application.DTO.Auth.Register.StudentRegisterRequestDto": {
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterRequestDto::get_UserName()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterRequestDto::get_Password()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Enums.Gender TechMeter.Application.DTO.Auth.Register.StudentRegisterRequestDto::get_Gender()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\Register\\StudentRegisterResponseDto.cs": {
+      "TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto": {
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_Id()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_UserName()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_PhoneNumber()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_Role()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_Country()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_ProfileUrl()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Enums.Gender TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_Gender()": {
+          "Lines": {
+            "19": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_EmailAddress()": {
+          "Lines": {
+            "20": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_EducationLeveL()": {
+          "Lines": {
+            "21": 0
+          },
+          "Branches": []
+        },
+        "System.Nullable`1<System.Int32> TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_Age()": {
+          "Lines": {
+            "22": 0
+          },
+          "Branches": []
+        },
+        "System.Boolean TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_isEmailConfirmed()": {
+          "Lines": {
+            "23": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_accessToken()": {
+          "Lines": {
+            "24": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Application.DTO.Auth.Register.StudentRegisterResponseDto::get_refreshToken()": {
+          "Lines": {
+            "25": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Application\\DTO\\Auth\\Login\\LoginRequestDto.cs": {
+      "TechMeter.Application.DTO.Auth.Login.LoginRequestDto": {
+        "System.String TechMeter.Application.DTO.Auth.Login.LoginRequestDto::get_email()": {
+          "Lines": {
+            "9": 0
+          },
+          "Branches": []
+        }
+      }
+    }
+  },
+  "TechMeter.Domain.dll": {
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Shared\\Bases\\Response.cs": {
+      "TechMeter.Domain.Shared.Bases.Response`1": {
+        "System.Net.HttpStatusCode TechMeter.Domain.Shared.Bases.Response`1::get_StatusCode()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Shared.Bases.Response`1::get_Message()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.Boolean TechMeter.Domain.Shared.Bases.Response`1::get_Succeeded()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.List`1<System.String> TechMeter.Domain.Shared.Bases.Response`1::get_Errors()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "T TechMeter.Domain.Shared.Bases.Response`1::get_Data()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Shared\\Bases\\ResponseHandler.cs": {
+      "TechMeter.Domain.Shared.Bases.ResponseHandler": {
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::Deleted(System.String)": {
+          "Lines": {
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::Created(T,System.String)": {
+          "Lines": {
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::Success(T,System.String)": {
+          "Lines": {
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::UnAuthorized(System.String)": {
+          "Lines": {
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::NotFound(System.String)": {
+          "Lines": {
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::Forbidden(System.String)": {
+          "Lines": {
+            "60": 0,
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::BadRequest(System.String)": {
+          "Lines": {
+            "69": 0,
+            "70": 0,
+            "71": 0,
+            "72": 0,
+            "73": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Shared.Bases.Response`1<T> TechMeter.Domain.Shared.Bases.ResponseHandler::InternalServerError(System.String)": {
+          "Lines": {
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "81": 0,
+            "82": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\AuditLog.cs": {
+      "TechMeter.Domain.Models.AuditLog": {
+        "System.Int32 TechMeter.Domain.Models.AuditLog::get_Id()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.AuditLog::get_UserId()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.AuditLog::get_UserName()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Enums.UserAction TechMeter.Domain.Models.AuditLog::get_Action()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.AuditLog::get_TableName()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.AuditLog::get_RecordId()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        },
+        "System.DateTime TechMeter.Domain.Models.AuditLog::get_Timestamp()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Cart.cs": {
+      "TechMeter.Domain.Models.Cart": {
+        "System.String TechMeter.Domain.Models.Cart::get_Id()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Cart::get_StudentId()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Auth.Users.Student TechMeter.Domain.Models.Cart::get_Student()": {
+          "Lines": {
+            "20": 0
+          },
+          "Branches": []
+        },
+        "System.DateTime TechMeter.Domain.Models.Cart::get_CreatedAt()": {
+          "Lines": {
+            "22": 0
+          },
+          "Branches": []
+        },
+        "System.Nullable`1<System.DateTime> TechMeter.Domain.Models.Cart::get_UpdatedAt()": {
+          "Lines": {
+            "24": 0
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.ICollection`1<TechMeter.Domain.Models.CartItem> TechMeter.Domain.Models.Cart::get_CartItems()": {
+          "Lines": {
+            "26": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\CartItem.cs": {
+      "TechMeter.Domain.Models.CartItem": {
+        "System.String TechMeter.Domain.Models.CartItem::get_Id()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.CartItem::get_CartId()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Cart TechMeter.Domain.Models.CartItem::get_Cart()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.CartItem::get_CourseId()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Course TechMeter.Domain.Models.CartItem::get_Course()": {
+          "Lines": {
+            "19": 0
+          },
+          "Branches": []
+        },
+        "System.DateTime TechMeter.Domain.Models.CartItem::get_CreatedAt()": {
+          "Lines": {
+            "20": 0
+          },
+          "Branches": []
+        },
+        "System.Decimal TechMeter.Domain.Models.CartItem::get_UnitPrice()": {
+          "Lines": {
+            "21": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Category.cs": {
+      "TechMeter.Domain.Models.Category": {
+        "System.String TechMeter.Domain.Models.Category::get_Id()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Category::get_Name()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Category::get_Description()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.ICollection`1<TechMeter.Domain.Models.Course> TechMeter.Domain.Models.Category::get_Courses()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\CertificatesUrl.cs": {
+      "TechMeter.Domain.Models.CertificatesUrl": {
+        "System.String TechMeter.Domain.Models.CertificatesUrl::get_Id()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.CertificatesUrl::get_CertificateUrl()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.CertificatesUrl::get_ProviderId()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Auth.Users.Provider TechMeter.Domain.Models.CertificatesUrl::get_Provider()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Course.cs": {
+      "TechMeter.Domain.Models.Course": {
+        "System.String TechMeter.Domain.Models.Course::get_Id()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Course::get_Title()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Course::get_Description()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Course::get_CourseProfileImageUrl()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Course::get_CategoryId()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Category TechMeter.Domain.Models.Course::get_Category()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\OrderItem.cs": {
+      "TechMeter.Domain.Models.OrderItem": {
+        "System.String TechMeter.Domain.Models.OrderItem::get_Id()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.OrderItem::get_OrderId()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Order TechMeter.Domain.Models.OrderItem::get_Order()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.OrderItem::get_CourseId()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Course TechMeter.Domain.Models.OrderItem::get_Course()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 TechMeter.Domain.Models.OrderItem::get_Quantity()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        },
+        "System.Decimal TechMeter.Domain.Models.OrderItem::get_UnitPrice()": {
+          "Lines": {
+            "19": 0
+          },
+          "Branches": []
+        },
+        "System.Decimal TechMeter.Domain.Models.OrderItem::get_Subtotal()": {
+          "Lines": {
+            "20": 0
+          },
+          "Branches": []
+        },
+        "System.DateTime TechMeter.Domain.Models.OrderItem::get_CreatedAt()": {
+          "Lines": {
+            "21": 0
+          },
+          "Branches": []
+        },
+        "System.Nullable`1<System.DateTime> TechMeter.Domain.Models.OrderItem::get_UpdatedAt()": {
+          "Lines": {
+            "22": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Auth\\UserTokens\\UserRefreshToken.cs": {
+      "TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken": {
+        "System.Guid TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken::get_Id()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken::get_UserId()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken::get_Token()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "System.Boolean TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken::get_IsUsed()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        },
+        "System.DateTime TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken::get_ExpiryDateUtc()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Auth.Identity.User TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken::get_User()": {
+          "Lines": {
+            "19": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Auth\\UserTokens\\UserRefreshTokenResponse.cs": {
+      "TechMeter.Domain.Models.Auth.UserTokens.UserRefreshTokenResponse": {
+        "System.String TechMeter.Domain.Models.Auth.UserTokens.UserRefreshTokenResponse::get_AccessToken()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Auth.UserTokens.UserRefreshTokenResponse::get_RefreshToken()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Auth\\Users\\Provider.cs": {
+      "TechMeter.Domain.Models.Auth.Users.Provider": {
+        "System.String TechMeter.Domain.Models.Auth.Users.Provider::get_Id()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Auth.Users.Provider::get_BankAccount()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Auth.Users.Provider::get_Brief()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 TechMeter.Domain.Models.Auth.Users.Provider::get_ExperienceYears()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Auth.Identity.User TechMeter.Domain.Models.Auth.Users.Provider::get_User()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.ICollection`1<TechMeter.Domain.Models.CertificatesUrl> TechMeter.Domain.Models.Auth.Users.Provider::get_certificatesUrls()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Auth\\Users\\Student.cs": {
+      "TechMeter.Domain.Models.Auth.Users.Student": {
+        "System.String TechMeter.Domain.Models.Auth.Users.Student::get_Id()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.Nullable`1<System.DateTime> TechMeter.Domain.Models.Auth.Users.Student::get_BirthDate()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Auth.Users.Student::get_EducationLevel()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Auth.Identity.User TechMeter.Domain.Models.Auth.Users.Student::get_User()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Cart TechMeter.Domain.Models.Auth.Users.Student::get_Cart()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Domain\\Models\\Auth\\Identity\\User.cs": {
+      "TechMeter.Domain.Models.Auth.Identity.User": {
+        "System.String TechMeter.Domain.Models.Auth.Identity.User::get_Country()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Domain.Models.Auth.Identity.User::get_ProfileUrl()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Enums.Gender TechMeter.Domain.Models.Auth.Identity.User::get_Gender()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Auth.Users.Student TechMeter.Domain.Models.Auth.Identity.User::get_Student()": {
+          "Lines": {
+            "17": 0
+          },
+          "Branches": []
+        },
+        "TechMeter.Domain.Models.Auth.Users.Provider TechMeter.Domain.Models.Auth.Identity.User::get_Provider()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        }
+      }
+    }
+  },
+  "TechMeter.Infrastructure.dll": {
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Services\\TokenService\\TokenService.cs": {
+      "TechMeter.Application.Interfaces.TokenService.TokenService": {
+        "System.Void TechMeter.Application.Interfaces.TokenService.TokenService::.ctor(Microsoft.Extensions.Options.IOptions`1<TechMeter.Infrastructure.Adapters.JwtSettings.JwtSettings>,Microsoft.AspNetCore.Identity.UserManager`1<TechMeter.Domain.Models.Auth.Identity.User>,TechMeter.Infrastructure.Persistence.ApplicationDbContext)": {
+          "Lines": {
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Interfaces.TokenService.TokenService/<>c": {
+        "System.Security.Claims.Claim TechMeter.Application.Interfaces.TokenService.TokenService/<>c::<GenerateAccessTokenAsync>b__5_0(System.String)": {
+          "Lines": {
+            "44": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Interfaces.TokenService.TokenService/<GenerateAccessTokenAsync>d__5": {
+        "System.Void TechMeter.Application.Interfaces.TokenService.TokenService/<GenerateAccessTokenAsync>d__5::MoveNext()": {
+          "Lines": {
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "57": 0,
+            "59": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Interfaces.TokenService.TokenService/<GenerateRefreshTokenAsync>d__6": {
+        "System.Void TechMeter.Application.Interfaces.TokenService.TokenService/<GenerateRefreshTokenAsync>d__6::MoveNext()": {
+          "Lines": {
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "69": 0,
+            "70": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Interfaces.TokenService.TokenService/<GenerateTokensAsync>d__7": {
+        "System.Void TechMeter.Application.Interfaces.TokenService.TokenService/<GenerateTokensAsync>d__7::MoveNext()": {
+          "Lines": {
+            "73": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Interfaces.TokenService.TokenService/<InValidateOldTokenAsync>d__9": {
+        "System.Void TechMeter.Application.Interfaces.TokenService.TokenService/<InValidateOldTokenAsync>d__9::MoveNext()": {
+          "Lines": {
+            "95": 0,
+            "96": 0,
+            "97": 0,
+            "98": 0,
+            "99": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Interfaces.TokenService.TokenService/<SaveRefreshTokenAsync>d__8": {
+        "System.Void TechMeter.Application.Interfaces.TokenService.TokenService/<SaveRefreshTokenAsync>d__8::MoveNext()": {
+          "Lines": {
+            "81": 0,
+            "82": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0,
+            "88": 0,
+            "89": 0,
+            "91": 0,
+            "92": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Application.Interfaces.TokenService.TokenService/<ValidateRefreshTokenAsync>d__10": {
+        "System.Void TechMeter.Application.Interfaces.TokenService.TokenService/<ValidateRefreshTokenAsync>d__10::MoveNext()": {
+          "Lines": {
+            "103": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "107": 0
+          },
+          "Branches": [
+            {
+              "Line": 105,
+              "Offset": 303,
+              "EndOffset": 305,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 105,
+              "Offset": 303,
+              "EndOffset": 309,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Services\\AuthService\\AuthService.cs": {
+      "TechMeter.Infrastructure.Services.AuthService.AuthService": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService::.ctor(TechMeter.Application.Interfaces.TokenService.ITokenService,Microsoft.Extensions.Logging.ILogger`1<TechMeter.Infrastructure.Services.AuthService.AuthService>,TechMeter.Infrastructure.Persistence.ApplicationDbContext,Microsoft.AspNetCore.Identity.UserManager`1<TechMeter.Domain.Models.Auth.Identity.User>,TechMeter.Application.Interfaces.IImageUploading,TechMeter.Domain.Shared.Bases.ResponseHandler,TechMeter.Application.Service.OTPService.OTPService,TechMeter.Infrastructure.Adapters.EmailSender.IEmailService)": {
+          "Lines": {
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<>c": {
+        "System.String TechMeter.Infrastructure.Services.AuthService.AuthService/<>c::<RegisterAsStudentAsync>b__10_0(Microsoft.AspNetCore.Identity.IdentityError)": {
+          "Lines": {
+            "138": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Services.AuthService.AuthService/<>c::<ResetPasswordAsync>b__16_0(Microsoft.AspNetCore.Identity.IdentityError)": {
+          "Lines": {
+            "302": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Services.AuthService.AuthService/<>c::<ChangePassword>b__17_0(Microsoft.AspNetCore.Identity.IdentityError)": {
+          "Lines": {
+            "335": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<ChangePassword>d__17": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<ChangePassword>d__17::MoveNext()": {
+          "Lines": {
+            "319": 0,
+            "320": 0,
+            "321": 0,
+            "322": 0,
+            "323": 0,
+            "326": 0,
+            "327": 0,
+            "328": 0,
+            "329": 0,
+            "332": 0,
+            "333": 0,
+            "334": 0,
+            "336": 0,
+            "338": 0,
+            "340": 0,
+            "342": 0
+          },
+          "Branches": [
+            {
+              "Line": 321,
+              "Offset": 198,
+              "EndOffset": 200,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 321,
+              "Offset": 198,
+              "EndOffset": 244,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 327,
+              "Offset": 400,
+              "EndOffset": 402,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 327,
+              "Offset": 400,
+              "EndOffset": 430,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 333,
+              "Offset": 609,
+              "EndOffset": 611,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 333,
+              "Offset": 609,
+              "EndOffset": 708,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<CheckEmailOrPhoneNumberAsync>d__12": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<CheckEmailOrPhoneNumberAsync>d__12::MoveNext()": {
+          "Lines": {
+            "209": 0,
+            "210": 0,
+            "211": 0,
+            "212": 0
+          },
+          "Branches": [
+            {
+              "Line": 211,
+              "Offset": 261,
+              "EndOffset": 263,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 211,
+              "Offset": 261,
+              "EndOffset": 266,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<ForgetPassword>d__15": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<ForgetPassword>d__15::MoveNext()": {
+          "Lines": {
+            "261": 0,
+            "262": 0,
+            "263": 0,
+            "264": 0,
+            "265": 0,
+            "268": 0,
+            "269": 0,
+            "270": 0,
+            "271": 0,
+            "272": 0,
+            "273": 0,
+            "274": 0,
+            "275": 0,
+            "277": 0,
+            "279": 0,
+            "280": 0,
+            "281": 0,
+            "282": 0,
+            "284": 0
+          },
+          "Branches": [
+            {
+              "Line": 261,
+              "Offset": 16,
+              "EndOffset": 27,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 263,
+              "Offset": 182,
+              "EndOffset": 184,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 261,
+              "Offset": 16,
+              "EndOffset": 233,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 263,
+              "Offset": 182,
+              "EndOffset": 233,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<LoginAsync>d__9": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<LoginAsync>d__9::MoveNext()": {
+          "Lines": {
+            "55": 0,
+            "57": 0,
+            "58": 0,
+            "59": 0,
+            "60": 0,
+            "61": 0,
+            "62": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "68": 0,
+            "70": 0,
+            "71": 0,
+            "72": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "81": 0,
+            "84": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0,
+            "88": 0,
+            "90": 0,
+            "91": 0,
+            "92": 0,
+            "93": 0,
+            "94": 0,
+            "95": 0,
+            "96": 0,
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "103": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "108": 0,
+            "109": 0,
+            "110": 0,
+            "111": 0,
+            "113": 0
+          },
+          "Branches": [
+            {
+              "Line": 59,
+              "Offset": 240,
+              "EndOffset": 242,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 59,
+              "Offset": 240,
+              "EndOffset": 333,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 65,
+              "Offset": 489,
+              "EndOffset": 491,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 65,
+              "Offset": 489,
+              "EndOffset": 546,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 70,
+              "Offset": 564,
+              "EndOffset": 566,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 70,
+              "Offset": 564,
+              "EndOffset": 594,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 75,
+              "Offset": 626,
+              "EndOffset": 631,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 0
+            },
+            {
+              "Line": 75,
+              "Offset": 626,
+              "EndOffset": 963,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 0
+            },
+            {
+              "Line": 86,
+              "Offset": 1125,
+              "EndOffset": 1127,
+              "Path": 0,
+              "Ordinal": 8,
+              "Hits": 0
+            },
+            {
+              "Line": 86,
+              "Offset": 1125,
+              "EndOffset": 1155,
+              "Path": 1,
+              "Ordinal": 9,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<LogoutAsync>d__11": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<LogoutAsync>d__11::MoveNext()": {
+          "Lines": {
+            "191": 0,
+            "193": 0,
+            "194": 0,
+            "195": 0,
+            "196": 0,
+            "197": 0,
+            "199": 0,
+            "200": 0,
+            "202": 0,
+            "203": 0,
+            "204": 0,
+            "207": 0
+          },
+          "Branches": [
+            {
+              "Line": 194,
+              "Offset": 45,
+              "EndOffset": 47,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 194,
+              "Offset": 45,
+              "EndOffset": 51,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 195,
+              "Offset": 74,
+              "EndOffset": 76,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 195,
+              "Offset": 74,
+              "EndOffset": 104,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<RegisterAsStudentAsync>d__10": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<RegisterAsStudentAsync>d__10::MoveNext()": {
+          "Lines": {
+            "115": 0,
+            "116": 0,
+            "117": 0,
+            "118": 0,
+            "119": 0,
+            "120": 0,
+            "122": 0,
+            "124": 0,
+            "125": 0,
+            "126": 0,
+            "127": 0,
+            "128": 0,
+            "129": 0,
+            "130": 0,
+            "131": 0,
+            "132": 0,
+            "133": 0,
+            "134": 0,
+            "135": 0,
+            "136": 0,
+            "137": 0,
+            "139": 0,
+            "140": 0,
+            "142": 0,
+            "144": 0,
+            "145": 0,
+            "146": 0,
+            "147": 0,
+            "148": 0,
+            "149": 0,
+            "151": 0,
+            "153": 0,
+            "155": 0,
+            "156": 0,
+            "157": 0,
+            "159": 0,
+            "160": 0,
+            "161": 0,
+            "162": 0,
+            "163": 0,
+            "164": 0,
+            "165": 0,
+            "166": 0,
+            "167": 0,
+            "168": 0,
+            "169": 0,
+            "170": 0,
+            "171": 0,
+            "172": 0,
+            "173": 0,
+            "174": 0,
+            "175": 0,
+            "176": 0,
+            "177": 0,
+            "179": 0,
+            "182": 0,
+            "183": 0,
+            "184": 0,
+            "185": 0,
+            "186": 0,
+            "189": 0
+          },
+          "Branches": [
+            {
+              "Line": 115,
+              "Offset": 16,
+              "EndOffset": 27,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 117,
+              "Offset": 188,
+              "EndOffset": 190,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 117,
+              "Offset": 188,
+              "EndOffset": 256,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 115,
+              "Offset": 16,
+              "EndOffset": 283,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 125,
+              "Offset": 557,
+              "EndOffset": 562,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 125,
+              "Offset": 557,
+              "EndOffset": 708,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 136,
+              "Offset": 938,
+              "EndOffset": 943,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 0
+            },
+            {
+              "Line": 136,
+              "Offset": 938,
+              "EndOffset": 1101,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<ResetPasswordAsync>d__16": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<ResetPasswordAsync>d__16::MoveNext()": {
+          "Lines": {
+            "287": 0,
+            "288": 0,
+            "289": 0,
+            "290": 0,
+            "291": 0,
+            "293": 0,
+            "294": 0,
+            "295": 0,
+            "296": 0,
+            "297": 0,
+            "298": 0,
+            "299": 0,
+            "300": 0,
+            "301": 0,
+            "303": 0,
+            "304": 0,
+            "305": 0,
+            "306": 0,
+            "307": 0,
+            "308": 0,
+            "309": 0,
+            "310": 0,
+            "311": 0,
+            "312": 0,
+            "313": 0,
+            "314": 0,
+            "316": 0
+          },
+          "Branches": [
+            {
+              "Line": 289,
+              "Offset": 221,
+              "EndOffset": 223,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 289,
+              "Offset": 221,
+              "EndOffset": 272,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 294,
+              "Offset": 433,
+              "EndOffset": 435,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 294,
+              "Offset": 433,
+              "EndOffset": 459,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 300,
+              "Offset": 783,
+              "EndOffset": 785,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 300,
+              "Offset": 783,
+              "EndOffset": 885,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<ResponseOtp>d__14": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<ResponseOtp>d__14::MoveNext()": {
+          "Lines": {
+            "244": 0,
+            "245": 0,
+            "246": 0,
+            "247": 0,
+            "248": 0,
+            "250": 0,
+            "251": 0,
+            "252": 0,
+            "254": 0,
+            "255": 0,
+            "256": 0,
+            "257": 0,
+            "258": 0
+          },
+          "Branches": [
+            {
+              "Line": 246,
+              "Offset": 194,
+              "EndOffset": 196,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 246,
+              "Offset": 194,
+              "EndOffset": 224,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 250,
+              "Offset": 239,
+              "EndOffset": 241,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 250,
+              "Offset": 239,
+              "EndOffset": 270,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Services.AuthService.AuthService/<VerifyOtp>d__13": {
+        "System.Void TechMeter.Infrastructure.Services.AuthService.AuthService/<VerifyOtp>d__13::MoveNext()": {
+          "Lines": {
+            "214": 0,
+            "215": 0,
+            "217": 0,
+            "218": 0,
+            "219": 0,
+            "220": 0,
+            "221": 0,
+            "224": 0,
+            "225": 0,
+            "226": 0,
+            "227": 0,
+            "228": 0,
+            "229": 0,
+            "231": 0,
+            "232": 0,
+            "233": 0,
+            "234": 0,
+            "236": 0,
+            "237": 0,
+            "238": 0,
+            "239": 0,
+            "241": 0
+          },
+          "Branches": [
+            {
+              "Line": 219,
+              "Offset": 258,
+              "EndOffset": 260,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 219,
+              "Offset": 258,
+              "EndOffset": 288,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 224,
+              "Offset": 303,
+              "EndOffset": 305,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 224,
+              "Offset": 303,
+              "EndOffset": 333,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 227,
+              "Offset": 494,
+              "EndOffset": 496,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 227,
+              "Offset": 494,
+              "EndOffset": 524,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Seeder\\UserAndRoleSeeder.cs": {
+      "TechMeter.Infrastructure.Seeder.UserAndRoleSeeder/<Seed>d__0": {
+        "System.Void TechMeter.Infrastructure.Seeder.UserAndRoleSeeder/<Seed>d__0::MoveNext()": {
+          "Lines": {
+            "19": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "59": 0,
+            "62": 0
+          },
+          "Branches": [
+            {
+              "Line": 23,
+              "Offset": 225,
+              "EndOffset": 227,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 23,
+              "Offset": 225,
+              "EndOffset": 246,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 27,
+              "Offset": 382,
+              "EndOffset": 387,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 31,
+              "Offset": 672,
+              "EndOffset": 449,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 31,
+              "Offset": 672,
+              "EndOffset": 677,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 27,
+              "Offset": 382,
+              "EndOffset": 692,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 41,
+              "Offset": 828,
+              "EndOffset": 833,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 0
+            },
+            {
+              "Line": 41,
+              "Offset": 828,
+              "EndOffset": 1059,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Persistence\\ApplicationDbContext.cs": {
+      "TechMeter.Infrastructure.Persistence.ApplicationDbContext": {
+        "Microsoft.EntityFrameworkCore.DbSet`1<Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_DataProtectionKeys()": {
+          "Lines": {
+            "18": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<TechMeter.Domain.Models.Auth.Users.Student> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_Student()": {
+          "Lines": {
+            "19": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<TechMeter.Domain.Models.Auth.Users.Provider> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_Provider()": {
+          "Lines": {
+            "20": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<TechMeter.Domain.Models.Category> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_Category()": {
+          "Lines": {
+            "21": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<TechMeter.Domain.Models.Course> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_Course()": {
+          "Lines": {
+            "22": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<TechMeter.Domain.Models.Cart> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_Cart()": {
+          "Lines": {
+            "23": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<TechMeter.Domain.Models.CartItem> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_CartItem()": {
+          "Lines": {
+            "24": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<TechMeter.Domain.Models.Auth.UserTokens.UserRefreshToken> TechMeter.Infrastructure.Persistence.ApplicationDbContext::get_UserRefreshTokens()": {
+          "Lines": {
+            "25": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Infrastructure.Persistence.ApplicationDbContext::OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)": {
+          "Lines": {
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Infrastructure.Persistence.ApplicationDbContext::ConfigureConventions(Microsoft.EntityFrameworkCore.ModelConfigurationBuilder)": {
+          "Lines": {
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Infrastructure.Persistence.ApplicationDbContext::.ctor(Microsoft.EntityFrameworkCore.DbContextOptions`1<TechMeter.Infrastructure.Persistence.ApplicationDbContext>)": {
+          "Lines": {
+            "14": 0,
+            "15": 0,
+            "17": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Migrations\\20260112200641_Adding Initial Entities.cs": {
+      "TechMeter.Infrastructure.Migrations.AddingInitialEntities": {
+        "System.Void TechMeter.Infrastructure.Migrations.AddingInitialEntities::Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)": {
+          "Lines": {
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "59": 0,
+            "60": 0,
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "69": 0,
+            "70": 0,
+            "71": 0,
+            "72": 0,
+            "73": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "81": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0,
+            "88": 0,
+            "89": 0,
+            "90": 0,
+            "91": 0,
+            "92": 0,
+            "93": 0,
+            "94": 0,
+            "95": 0,
+            "96": 0,
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "107": 0,
+            "108": 0,
+            "109": 0,
+            "110": 0,
+            "111": 0,
+            "112": 0,
+            "113": 0,
+            "114": 0,
+            "115": 0,
+            "116": 0,
+            "117": 0,
+            "118": 0,
+            "119": 0,
+            "120": 0,
+            "121": 0,
+            "122": 0,
+            "123": 0,
+            "125": 0,
+            "126": 0,
+            "127": 0,
+            "128": 0,
+            "129": 0,
+            "130": 0,
+            "131": 0,
+            "132": 0,
+            "133": 0,
+            "134": 0,
+            "135": 0,
+            "136": 0,
+            "137": 0,
+            "138": 0,
+            "139": 0,
+            "140": 0,
+            "141": 0,
+            "142": 0,
+            "143": 0,
+            "145": 0,
+            "146": 0,
+            "147": 0,
+            "148": 0,
+            "149": 0,
+            "150": 0,
+            "151": 0,
+            "152": 0,
+            "153": 0,
+            "154": 0,
+            "155": 0,
+            "156": 0,
+            "157": 0,
+            "158": 0,
+            "159": 0,
+            "160": 0,
+            "161": 0,
+            "162": 0,
+            "163": 0,
+            "164": 0,
+            "165": 0,
+            "166": 0,
+            "167": 0,
+            "169": 0,
+            "170": 0,
+            "171": 0,
+            "172": 0,
+            "173": 0,
+            "174": 0,
+            "175": 0,
+            "176": 0,
+            "177": 0,
+            "178": 0,
+            "179": 0,
+            "180": 0,
+            "181": 0,
+            "182": 0,
+            "183": 0,
+            "184": 0,
+            "185": 0,
+            "186": 0,
+            "187": 0,
+            "189": 0,
+            "190": 0,
+            "191": 0,
+            "192": 0,
+            "193": 0,
+            "194": 0,
+            "195": 0,
+            "196": 0,
+            "197": 0,
+            "198": 0,
+            "199": 0,
+            "200": 0,
+            "201": 0,
+            "202": 0,
+            "203": 0,
+            "204": 0,
+            "205": 0,
+            "206": 0,
+            "207": 0,
+            "209": 0,
+            "210": 0,
+            "211": 0,
+            "212": 0,
+            "213": 0,
+            "214": 0,
+            "215": 0,
+            "216": 0,
+            "217": 0,
+            "218": 0,
+            "219": 0,
+            "220": 0,
+            "221": 0,
+            "222": 0,
+            "223": 0,
+            "224": 0,
+            "225": 0,
+            "226": 0,
+            "228": 0,
+            "229": 0,
+            "230": 0,
+            "231": 0,
+            "232": 0,
+            "233": 0,
+            "234": 0,
+            "235": 0,
+            "236": 0,
+            "237": 0,
+            "238": 0,
+            "239": 0,
+            "240": 0,
+            "241": 0,
+            "242": 0,
+            "243": 0,
+            "244": 0,
+            "245": 0,
+            "246": 0,
+            "247": 0,
+            "249": 0,
+            "250": 0,
+            "251": 0,
+            "252": 0,
+            "253": 0,
+            "254": 0,
+            "255": 0,
+            "256": 0,
+            "257": 0,
+            "258": 0,
+            "259": 0,
+            "260": 0,
+            "261": 0,
+            "262": 0,
+            "263": 0,
+            "264": 0,
+            "265": 0,
+            "266": 0,
+            "268": 0,
+            "269": 0,
+            "270": 0,
+            "271": 0,
+            "272": 0,
+            "273": 0,
+            "274": 0,
+            "275": 0,
+            "276": 0,
+            "277": 0,
+            "278": 0,
+            "279": 0,
+            "280": 0,
+            "281": 0,
+            "282": 0,
+            "283": 0,
+            "284": 0,
+            "285": 0,
+            "286": 0,
+            "288": 0,
+            "289": 0,
+            "290": 0,
+            "291": 0,
+            "292": 0,
+            "293": 0,
+            "294": 0,
+            "295": 0,
+            "296": 0,
+            "297": 0,
+            "298": 0,
+            "299": 0,
+            "300": 0,
+            "301": 0,
+            "302": 0,
+            "303": 0,
+            "304": 0,
+            "305": 0,
+            "306": 0,
+            "307": 0,
+            "308": 0,
+            "309": 0,
+            "310": 0,
+            "311": 0,
+            "312": 0,
+            "313": 0,
+            "315": 0,
+            "316": 0,
+            "317": 0,
+            "318": 0,
+            "320": 0,
+            "321": 0,
+            "322": 0,
+            "323": 0,
+            "324": 0,
+            "325": 0,
+            "327": 0,
+            "328": 0,
+            "329": 0,
+            "330": 0,
+            "332": 0,
+            "333": 0,
+            "334": 0,
+            "335": 0,
+            "337": 0,
+            "338": 0,
+            "339": 0,
+            "340": 0,
+            "342": 0,
+            "343": 0,
+            "344": 0,
+            "345": 0,
+            "347": 0,
+            "348": 0,
+            "349": 0,
+            "350": 0,
+            "351": 0,
+            "352": 0,
+            "354": 0,
+            "355": 0,
+            "356": 0,
+            "357": 0,
+            "358": 0,
+            "360": 0,
+            "361": 0,
+            "362": 0,
+            "363": 0,
+            "365": 0,
+            "366": 0,
+            "367": 0,
+            "368": 0,
+            "370": 0,
+            "371": 0,
+            "372": 0,
+            "373": 0,
+            "375": 0,
+            "376": 0,
+            "377": 0,
+            "378": 0,
+            "379": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Infrastructure.Migrations.AddingInitialEntities::Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)": {
+          "Lines": {
+            "383": 0,
+            "384": 0,
+            "385": 0,
+            "387": 0,
+            "388": 0,
+            "390": 0,
+            "391": 0,
+            "393": 0,
+            "394": 0,
+            "396": 0,
+            "397": 0,
+            "399": 0,
+            "400": 0,
+            "402": 0,
+            "403": 0,
+            "405": 0,
+            "406": 0,
+            "408": 0,
+            "409": 0,
+            "411": 0,
+            "412": 0,
+            "414": 0,
+            "415": 0,
+            "417": 0,
+            "418": 0,
+            "420": 0,
+            "421": 0,
+            "423": 0,
+            "424": 0,
+            "426": 0,
+            "427": 0,
+            "428": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Migrations\\20260112200641_Adding Initial Entities.Designer.cs": {
+      "TechMeter.Infrastructure.Migrations.AddingInitialEntities": {
+        "System.Void TechMeter.Infrastructure.Migrations.AddingInitialEntities::BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)": {
+          "Lines": {
+            "20": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "26": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "59": 0,
+            "60": 0,
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "68": 0,
+            "69": 0,
+            "70": 0,
+            "72": 0,
+            "73": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "81": 0,
+            "82": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0,
+            "88": 0,
+            "89": 0,
+            "90": 0,
+            "91": 0,
+            "92": 0,
+            "93": 0,
+            "94": 0,
+            "95": 0,
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "103": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "107": 0,
+            "108": 0,
+            "109": 0,
+            "110": 0,
+            "111": 0,
+            "112": 0,
+            "113": 0,
+            "114": 0,
+            "115": 0,
+            "116": 0,
+            "117": 0,
+            "119": 0,
+            "120": 0,
+            "121": 0,
+            "122": 0,
+            "123": 0,
+            "124": 0,
+            "125": 0,
+            "126": 0,
+            "127": 0,
+            "128": 0,
+            "129": 0,
+            "130": 0,
+            "131": 0,
+            "132": 0,
+            "134": 0,
+            "135": 0,
+            "136": 0,
+            "137": 0,
+            "138": 0,
+            "139": 0,
+            "140": 0,
+            "141": 0,
+            "142": 0,
+            "143": 0,
+            "144": 0,
+            "145": 0,
+            "146": 0,
+            "147": 0,
+            "148": 0,
+            "149": 0,
+            "150": 0,
+            "151": 0,
+            "153": 0,
+            "154": 0,
+            "155": 0,
+            "156": 0,
+            "157": 0,
+            "158": 0,
+            "159": 0,
+            "160": 0,
+            "161": 0,
+            "162": 0,
+            "163": 0,
+            "164": 0,
+            "165": 0,
+            "166": 0,
+            "167": 0,
+            "168": 0,
+            "169": 0,
+            "170": 0,
+            "171": 0,
+            "172": 0,
+            "173": 0,
+            "174": 0,
+            "175": 0,
+            "176": 0,
+            "177": 0,
+            "178": 0,
+            "180": 0,
+            "181": 0,
+            "182": 0,
+            "183": 0,
+            "184": 0,
+            "185": 0,
+            "186": 0,
+            "187": 0,
+            "188": 0,
+            "189": 0,
+            "190": 0,
+            "191": 0,
+            "192": 0,
+            "193": 0,
+            "194": 0,
+            "195": 0,
+            "196": 0,
+            "197": 0,
+            "198": 0,
+            "199": 0,
+            "200": 0,
+            "201": 0,
+            "202": 0,
+            "203": 0,
+            "204": 0,
+            "205": 0,
+            "206": 0,
+            "207": 0,
+            "208": 0,
+            "209": 0,
+            "210": 0,
+            "211": 0,
+            "212": 0,
+            "213": 0,
+            "214": 0,
+            "215": 0,
+            "216": 0,
+            "217": 0,
+            "218": 0,
+            "219": 0,
+            "220": 0,
+            "221": 0,
+            "222": 0,
+            "223": 0,
+            "224": 0,
+            "225": 0,
+            "226": 0,
+            "227": 0,
+            "228": 0,
+            "229": 0,
+            "230": 0,
+            "231": 0,
+            "232": 0,
+            "233": 0,
+            "234": 0,
+            "235": 0,
+            "236": 0,
+            "237": 0,
+            "238": 0,
+            "239": 0,
+            "240": 0,
+            "241": 0,
+            "242": 0,
+            "243": 0,
+            "244": 0,
+            "245": 0,
+            "246": 0,
+            "247": 0,
+            "248": 0,
+            "249": 0,
+            "250": 0,
+            "251": 0,
+            "252": 0,
+            "253": 0,
+            "254": 0,
+            "256": 0,
+            "257": 0,
+            "258": 0,
+            "259": 0,
+            "260": 0,
+            "261": 0,
+            "262": 0,
+            "263": 0,
+            "264": 0,
+            "265": 0,
+            "266": 0,
+            "267": 0,
+            "268": 0,
+            "269": 0,
+            "270": 0,
+            "271": 0,
+            "272": 0,
+            "273": 0,
+            "274": 0,
+            "275": 0,
+            "276": 0,
+            "278": 0,
+            "279": 0,
+            "280": 0,
+            "281": 0,
+            "282": 0,
+            "283": 0,
+            "284": 0,
+            "285": 0,
+            "286": 0,
+            "287": 0,
+            "288": 0,
+            "289": 0,
+            "290": 0,
+            "291": 0,
+            "292": 0,
+            "293": 0,
+            "294": 0,
+            "295": 0,
+            "297": 0,
+            "298": 0,
+            "299": 0,
+            "300": 0,
+            "301": 0,
+            "302": 0,
+            "303": 0,
+            "304": 0,
+            "305": 0,
+            "306": 0,
+            "307": 0,
+            "308": 0,
+            "309": 0,
+            "310": 0,
+            "311": 0,
+            "312": 0,
+            "313": 0,
+            "314": 0,
+            "315": 0,
+            "316": 0,
+            "317": 0,
+            "318": 0,
+            "320": 0,
+            "321": 0,
+            "322": 0,
+            "323": 0,
+            "324": 0,
+            "325": 0,
+            "326": 0,
+            "327": 0,
+            "328": 0,
+            "329": 0,
+            "330": 0,
+            "331": 0,
+            "332": 0,
+            "333": 0,
+            "334": 0,
+            "335": 0,
+            "336": 0,
+            "337": 0,
+            "338": 0,
+            "339": 0,
+            "340": 0,
+            "341": 0,
+            "342": 0,
+            "343": 0,
+            "344": 0,
+            "345": 0,
+            "346": 0,
+            "348": 0,
+            "349": 0,
+            "350": 0,
+            "351": 0,
+            "352": 0,
+            "353": 0,
+            "354": 0,
+            "355": 0,
+            "356": 0,
+            "357": 0,
+            "358": 0,
+            "359": 0,
+            "360": 0,
+            "361": 0,
+            "362": 0,
+            "363": 0,
+            "364": 0,
+            "366": 0,
+            "367": 0,
+            "368": 0,
+            "369": 0,
+            "370": 0,
+            "371": 0,
+            "372": 0,
+            "373": 0,
+            "374": 0,
+            "375": 0,
+            "376": 0,
+            "377": 0,
+            "378": 0,
+            "379": 0,
+            "380": 0,
+            "381": 0,
+            "382": 0,
+            "383": 0,
+            "384": 0,
+            "386": 0,
+            "387": 0,
+            "388": 0,
+            "389": 0,
+            "390": 0,
+            "391": 0,
+            "392": 0,
+            "393": 0,
+            "394": 0,
+            "395": 0,
+            "396": 0,
+            "397": 0,
+            "398": 0,
+            "399": 0,
+            "400": 0,
+            "401": 0,
+            "402": 0,
+            "403": 0,
+            "404": 0,
+            "405": 0,
+            "406": 0,
+            "407": 0,
+            "408": 0,
+            "409": 0,
+            "410": 0,
+            "411": 0,
+            "412": 0,
+            "413": 0,
+            "414": 0,
+            "416": 0,
+            "417": 0,
+            "418": 0,
+            "419": 0,
+            "420": 0,
+            "421": 0,
+            "422": 0,
+            "423": 0,
+            "425": 0,
+            "426": 0,
+            "427": 0,
+            "428": 0,
+            "429": 0,
+            "430": 0,
+            "431": 0,
+            "432": 0,
+            "434": 0,
+            "435": 0,
+            "436": 0,
+            "437": 0,
+            "438": 0,
+            "439": 0,
+            "440": 0,
+            "441": 0,
+            "443": 0,
+            "444": 0,
+            "445": 0,
+            "446": 0,
+            "447": 0,
+            "448": 0,
+            "449": 0,
+            "450": 0,
+            "451": 0,
+            "452": 0,
+            "453": 0,
+            "454": 0,
+            "455": 0,
+            "456": 0,
+            "458": 0,
+            "459": 0,
+            "460": 0,
+            "461": 0,
+            "462": 0,
+            "463": 0,
+            "464": 0,
+            "465": 0,
+            "467": 0,
+            "468": 0,
+            "469": 0,
+            "470": 0,
+            "471": 0,
+            "472": 0,
+            "473": 0,
+            "474": 0,
+            "475": 0,
+            "476": 0,
+            "478": 0,
+            "479": 0,
+            "480": 0,
+            "481": 0,
+            "482": 0,
+            "483": 0,
+            "484": 0,
+            "485": 0,
+            "486": 0,
+            "487": 0,
+            "489": 0,
+            "490": 0,
+            "491": 0,
+            "492": 0,
+            "493": 0,
+            "494": 0,
+            "495": 0,
+            "496": 0,
+            "497": 0,
+            "498": 0,
+            "500": 0,
+            "501": 0,
+            "502": 0,
+            "503": 0,
+            "504": 0,
+            "505": 0,
+            "506": 0,
+            "507": 0,
+            "508": 0,
+            "509": 0,
+            "510": 0,
+            "511": 0,
+            "512": 0,
+            "513": 0,
+            "514": 0,
+            "515": 0,
+            "516": 0,
+            "517": 0,
+            "519": 0,
+            "520": 0,
+            "521": 0,
+            "522": 0,
+            "523": 0,
+            "524": 0,
+            "525": 0,
+            "526": 0,
+            "527": 0,
+            "528": 0,
+            "530": 0,
+            "531": 0,
+            "532": 0,
+            "533": 0,
+            "534": 0,
+            "535": 0,
+            "536": 0,
+            "537": 0,
+            "538": 0,
+            "539": 0,
+            "541": 0,
+            "542": 0,
+            "543": 0,
+            "544": 0,
+            "545": 0,
+            "546": 0,
+            "547": 0,
+            "548": 0,
+            "550": 0,
+            "551": 0,
+            "552": 0,
+            "553": 0,
+            "555": 0,
+            "556": 0,
+            "557": 0,
+            "558": 0,
+            "559": 0,
+            "561": 0,
+            "562": 0,
+            "563": 0,
+            "564": 0,
+            "566": 0,
+            "567": 0,
+            "568": 0,
+            "569": 0,
+            "571": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Migrations\\20260113120840_Adding Authentication Module .cs": {
+      "TechMeter.Infrastructure.Migrations.AddingAuthenticationModule": {
+        "System.Void TechMeter.Infrastructure.Migrations.AddingAuthenticationModule::Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)": {
+          "Lines": {
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0
+          },
+          "Branches": []
+        },
+        "System.Void TechMeter.Infrastructure.Migrations.AddingAuthenticationModule::Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)": {
+          "Lines": {
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Migrations\\20260113120840_Adding Authentication Module .Designer.cs": {
+      "TechMeter.Infrastructure.Migrations.AddingAuthenticationModule": {
+        "System.Void TechMeter.Infrastructure.Migrations.AddingAuthenticationModule::BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)": {
+          "Lines": {
+            "20": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "26": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "59": 0,
+            "60": 0,
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "68": 0,
+            "69": 0,
+            "70": 0,
+            "72": 0,
+            "73": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "81": 0,
+            "82": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0,
+            "88": 0,
+            "89": 0,
+            "90": 0,
+            "91": 0,
+            "92": 0,
+            "93": 0,
+            "94": 0,
+            "95": 0,
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "103": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "107": 0,
+            "108": 0,
+            "109": 0,
+            "110": 0,
+            "111": 0,
+            "112": 0,
+            "113": 0,
+            "114": 0,
+            "115": 0,
+            "116": 0,
+            "117": 0,
+            "119": 0,
+            "120": 0,
+            "121": 0,
+            "122": 0,
+            "123": 0,
+            "124": 0,
+            "125": 0,
+            "126": 0,
+            "127": 0,
+            "128": 0,
+            "129": 0,
+            "130": 0,
+            "131": 0,
+            "132": 0,
+            "134": 0,
+            "135": 0,
+            "136": 0,
+            "137": 0,
+            "138": 0,
+            "139": 0,
+            "140": 0,
+            "141": 0,
+            "142": 0,
+            "143": 0,
+            "144": 0,
+            "145": 0,
+            "146": 0,
+            "147": 0,
+            "148": 0,
+            "149": 0,
+            "150": 0,
+            "151": 0,
+            "153": 0,
+            "154": 0,
+            "155": 0,
+            "156": 0,
+            "157": 0,
+            "158": 0,
+            "159": 0,
+            "160": 0,
+            "161": 0,
+            "162": 0,
+            "163": 0,
+            "164": 0,
+            "165": 0,
+            "166": 0,
+            "167": 0,
+            "168": 0,
+            "169": 0,
+            "170": 0,
+            "171": 0,
+            "172": 0,
+            "173": 0,
+            "174": 0,
+            "175": 0,
+            "176": 0,
+            "177": 0,
+            "178": 0,
+            "180": 0,
+            "181": 0,
+            "182": 0,
+            "183": 0,
+            "184": 0,
+            "185": 0,
+            "186": 0,
+            "187": 0,
+            "188": 0,
+            "189": 0,
+            "190": 0,
+            "191": 0,
+            "192": 0,
+            "193": 0,
+            "194": 0,
+            "195": 0,
+            "196": 0,
+            "197": 0,
+            "198": 0,
+            "199": 0,
+            "200": 0,
+            "201": 0,
+            "202": 0,
+            "203": 0,
+            "204": 0,
+            "205": 0,
+            "206": 0,
+            "207": 0,
+            "208": 0,
+            "209": 0,
+            "210": 0,
+            "211": 0,
+            "212": 0,
+            "213": 0,
+            "214": 0,
+            "215": 0,
+            "216": 0,
+            "217": 0,
+            "218": 0,
+            "219": 0,
+            "220": 0,
+            "221": 0,
+            "222": 0,
+            "223": 0,
+            "224": 0,
+            "225": 0,
+            "226": 0,
+            "227": 0,
+            "228": 0,
+            "229": 0,
+            "230": 0,
+            "231": 0,
+            "232": 0,
+            "233": 0,
+            "234": 0,
+            "235": 0,
+            "236": 0,
+            "237": 0,
+            "238": 0,
+            "239": 0,
+            "240": 0,
+            "241": 0,
+            "242": 0,
+            "243": 0,
+            "244": 0,
+            "245": 0,
+            "246": 0,
+            "247": 0,
+            "248": 0,
+            "249": 0,
+            "250": 0,
+            "251": 0,
+            "252": 0,
+            "253": 0,
+            "254": 0,
+            "256": 0,
+            "257": 0,
+            "258": 0,
+            "259": 0,
+            "260": 0,
+            "261": 0,
+            "262": 0,
+            "263": 0,
+            "264": 0,
+            "265": 0,
+            "266": 0,
+            "267": 0,
+            "268": 0,
+            "269": 0,
+            "270": 0,
+            "271": 0,
+            "272": 0,
+            "273": 0,
+            "274": 0,
+            "275": 0,
+            "276": 0,
+            "277": 0,
+            "278": 0,
+            "279": 0,
+            "280": 0,
+            "282": 0,
+            "283": 0,
+            "284": 0,
+            "285": 0,
+            "286": 0,
+            "287": 0,
+            "288": 0,
+            "289": 0,
+            "290": 0,
+            "291": 0,
+            "292": 0,
+            "293": 0,
+            "294": 0,
+            "295": 0,
+            "296": 0,
+            "297": 0,
+            "298": 0,
+            "299": 0,
+            "300": 0,
+            "301": 0,
+            "302": 0,
+            "304": 0,
+            "305": 0,
+            "306": 0,
+            "307": 0,
+            "308": 0,
+            "309": 0,
+            "310": 0,
+            "311": 0,
+            "312": 0,
+            "313": 0,
+            "314": 0,
+            "315": 0,
+            "316": 0,
+            "317": 0,
+            "318": 0,
+            "319": 0,
+            "320": 0,
+            "321": 0,
+            "323": 0,
+            "324": 0,
+            "325": 0,
+            "326": 0,
+            "327": 0,
+            "328": 0,
+            "329": 0,
+            "330": 0,
+            "331": 0,
+            "332": 0,
+            "333": 0,
+            "334": 0,
+            "335": 0,
+            "336": 0,
+            "337": 0,
+            "338": 0,
+            "339": 0,
+            "340": 0,
+            "341": 0,
+            "342": 0,
+            "343": 0,
+            "344": 0,
+            "346": 0,
+            "347": 0,
+            "348": 0,
+            "349": 0,
+            "350": 0,
+            "351": 0,
+            "352": 0,
+            "353": 0,
+            "354": 0,
+            "355": 0,
+            "356": 0,
+            "357": 0,
+            "358": 0,
+            "359": 0,
+            "360": 0,
+            "361": 0,
+            "362": 0,
+            "363": 0,
+            "364": 0,
+            "365": 0,
+            "366": 0,
+            "367": 0,
+            "368": 0,
+            "369": 0,
+            "370": 0,
+            "371": 0,
+            "372": 0,
+            "374": 0,
+            "375": 0,
+            "376": 0,
+            "377": 0,
+            "378": 0,
+            "379": 0,
+            "380": 0,
+            "381": 0,
+            "382": 0,
+            "383": 0,
+            "384": 0,
+            "385": 0,
+            "386": 0,
+            "387": 0,
+            "388": 0,
+            "389": 0,
+            "390": 0,
+            "392": 0,
+            "393": 0,
+            "394": 0,
+            "395": 0,
+            "396": 0,
+            "397": 0,
+            "398": 0,
+            "399": 0,
+            "400": 0,
+            "401": 0,
+            "402": 0,
+            "403": 0,
+            "404": 0,
+            "405": 0,
+            "406": 0,
+            "407": 0,
+            "408": 0,
+            "409": 0,
+            "410": 0,
+            "412": 0,
+            "413": 0,
+            "414": 0,
+            "415": 0,
+            "416": 0,
+            "417": 0,
+            "418": 0,
+            "419": 0,
+            "420": 0,
+            "421": 0,
+            "422": 0,
+            "423": 0,
+            "424": 0,
+            "425": 0,
+            "426": 0,
+            "427": 0,
+            "428": 0,
+            "429": 0,
+            "430": 0,
+            "431": 0,
+            "432": 0,
+            "433": 0,
+            "434": 0,
+            "435": 0,
+            "436": 0,
+            "437": 0,
+            "438": 0,
+            "439": 0,
+            "440": 0,
+            "442": 0,
+            "443": 0,
+            "444": 0,
+            "445": 0,
+            "446": 0,
+            "447": 0,
+            "448": 0,
+            "449": 0,
+            "451": 0,
+            "452": 0,
+            "453": 0,
+            "454": 0,
+            "455": 0,
+            "456": 0,
+            "457": 0,
+            "458": 0,
+            "460": 0,
+            "461": 0,
+            "462": 0,
+            "463": 0,
+            "464": 0,
+            "465": 0,
+            "466": 0,
+            "467": 0,
+            "469": 0,
+            "470": 0,
+            "471": 0,
+            "472": 0,
+            "473": 0,
+            "474": 0,
+            "475": 0,
+            "476": 0,
+            "477": 0,
+            "478": 0,
+            "479": 0,
+            "480": 0,
+            "481": 0,
+            "482": 0,
+            "484": 0,
+            "485": 0,
+            "486": 0,
+            "487": 0,
+            "488": 0,
+            "489": 0,
+            "490": 0,
+            "491": 0,
+            "493": 0,
+            "494": 0,
+            "495": 0,
+            "496": 0,
+            "497": 0,
+            "498": 0,
+            "499": 0,
+            "500": 0,
+            "501": 0,
+            "502": 0,
+            "504": 0,
+            "505": 0,
+            "506": 0,
+            "507": 0,
+            "508": 0,
+            "509": 0,
+            "510": 0,
+            "511": 0,
+            "512": 0,
+            "513": 0,
+            "515": 0,
+            "516": 0,
+            "517": 0,
+            "518": 0,
+            "519": 0,
+            "520": 0,
+            "521": 0,
+            "522": 0,
+            "523": 0,
+            "524": 0,
+            "526": 0,
+            "527": 0,
+            "528": 0,
+            "529": 0,
+            "530": 0,
+            "531": 0,
+            "532": 0,
+            "533": 0,
+            "534": 0,
+            "535": 0,
+            "537": 0,
+            "538": 0,
+            "539": 0,
+            "540": 0,
+            "541": 0,
+            "542": 0,
+            "543": 0,
+            "544": 0,
+            "545": 0,
+            "546": 0,
+            "547": 0,
+            "548": 0,
+            "549": 0,
+            "550": 0,
+            "551": 0,
+            "552": 0,
+            "553": 0,
+            "554": 0,
+            "556": 0,
+            "557": 0,
+            "558": 0,
+            "559": 0,
+            "560": 0,
+            "561": 0,
+            "562": 0,
+            "563": 0,
+            "564": 0,
+            "565": 0,
+            "567": 0,
+            "568": 0,
+            "569": 0,
+            "570": 0,
+            "571": 0,
+            "572": 0,
+            "573": 0,
+            "574": 0,
+            "575": 0,
+            "576": 0,
+            "578": 0,
+            "579": 0,
+            "580": 0,
+            "581": 0,
+            "582": 0,
+            "583": 0,
+            "584": 0,
+            "585": 0,
+            "587": 0,
+            "588": 0,
+            "589": 0,
+            "590": 0,
+            "592": 0,
+            "593": 0,
+            "594": 0,
+            "595": 0,
+            "596": 0,
+            "598": 0,
+            "599": 0,
+            "600": 0,
+            "601": 0,
+            "603": 0,
+            "604": 0,
+            "605": 0,
+            "606": 0,
+            "608": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Migrations\\ApplicationDbContextModelSnapshot.cs": {
+      "TechMeter.Infrastructure.Migrations.ApplicationDbContextModelSnapshot": {
+        "System.Void TechMeter.Infrastructure.Migrations.ApplicationDbContextModelSnapshot::BuildModel(Microsoft.EntityFrameworkCore.ModelBuilder)": {
+          "Lines": {
+            "17": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "23": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "38": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "54": 0,
+            "55": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "59": 0,
+            "60": 0,
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "69": 0,
+            "70": 0,
+            "71": 0,
+            "72": 0,
+            "73": 0,
+            "74": 0,
+            "75": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "81": 0,
+            "82": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0,
+            "86": 0,
+            "87": 0,
+            "88": 0,
+            "89": 0,
+            "90": 0,
+            "91": 0,
+            "92": 0,
+            "94": 0,
+            "95": 0,
+            "96": 0,
+            "97": 0,
+            "98": 0,
+            "99": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "103": 0,
+            "104": 0,
+            "105": 0,
+            "106": 0,
+            "107": 0,
+            "108": 0,
+            "109": 0,
+            "110": 0,
+            "111": 0,
+            "112": 0,
+            "113": 0,
+            "114": 0,
+            "116": 0,
+            "117": 0,
+            "118": 0,
+            "119": 0,
+            "120": 0,
+            "121": 0,
+            "122": 0,
+            "123": 0,
+            "124": 0,
+            "125": 0,
+            "126": 0,
+            "127": 0,
+            "128": 0,
+            "129": 0,
+            "131": 0,
+            "132": 0,
+            "133": 0,
+            "134": 0,
+            "135": 0,
+            "136": 0,
+            "137": 0,
+            "138": 0,
+            "139": 0,
+            "140": 0,
+            "141": 0,
+            "142": 0,
+            "143": 0,
+            "144": 0,
+            "145": 0,
+            "146": 0,
+            "147": 0,
+            "148": 0,
+            "150": 0,
+            "151": 0,
+            "152": 0,
+            "153": 0,
+            "154": 0,
+            "155": 0,
+            "156": 0,
+            "157": 0,
+            "158": 0,
+            "159": 0,
+            "160": 0,
+            "161": 0,
+            "162": 0,
+            "163": 0,
+            "164": 0,
+            "165": 0,
+            "166": 0,
+            "167": 0,
+            "168": 0,
+            "169": 0,
+            "170": 0,
+            "171": 0,
+            "172": 0,
+            "173": 0,
+            "174": 0,
+            "175": 0,
+            "177": 0,
+            "178": 0,
+            "179": 0,
+            "180": 0,
+            "181": 0,
+            "182": 0,
+            "183": 0,
+            "184": 0,
+            "185": 0,
+            "186": 0,
+            "187": 0,
+            "188": 0,
+            "189": 0,
+            "190": 0,
+            "191": 0,
+            "192": 0,
+            "193": 0,
+            "194": 0,
+            "195": 0,
+            "196": 0,
+            "197": 0,
+            "198": 0,
+            "199": 0,
+            "200": 0,
+            "201": 0,
+            "202": 0,
+            "203": 0,
+            "204": 0,
+            "205": 0,
+            "206": 0,
+            "207": 0,
+            "208": 0,
+            "209": 0,
+            "210": 0,
+            "211": 0,
+            "212": 0,
+            "213": 0,
+            "214": 0,
+            "215": 0,
+            "216": 0,
+            "217": 0,
+            "218": 0,
+            "219": 0,
+            "220": 0,
+            "221": 0,
+            "222": 0,
+            "223": 0,
+            "224": 0,
+            "225": 0,
+            "226": 0,
+            "227": 0,
+            "228": 0,
+            "229": 0,
+            "230": 0,
+            "231": 0,
+            "232": 0,
+            "233": 0,
+            "234": 0,
+            "235": 0,
+            "236": 0,
+            "237": 0,
+            "238": 0,
+            "239": 0,
+            "240": 0,
+            "241": 0,
+            "242": 0,
+            "243": 0,
+            "244": 0,
+            "245": 0,
+            "246": 0,
+            "247": 0,
+            "248": 0,
+            "249": 0,
+            "250": 0,
+            "251": 0,
+            "253": 0,
+            "254": 0,
+            "255": 0,
+            "256": 0,
+            "257": 0,
+            "258": 0,
+            "259": 0,
+            "260": 0,
+            "261": 0,
+            "262": 0,
+            "263": 0,
+            "264": 0,
+            "265": 0,
+            "266": 0,
+            "267": 0,
+            "268": 0,
+            "269": 0,
+            "270": 0,
+            "271": 0,
+            "272": 0,
+            "273": 0,
+            "274": 0,
+            "275": 0,
+            "276": 0,
+            "277": 0,
+            "279": 0,
+            "280": 0,
+            "281": 0,
+            "282": 0,
+            "283": 0,
+            "284": 0,
+            "285": 0,
+            "286": 0,
+            "287": 0,
+            "288": 0,
+            "289": 0,
+            "290": 0,
+            "291": 0,
+            "292": 0,
+            "293": 0,
+            "294": 0,
+            "295": 0,
+            "296": 0,
+            "297": 0,
+            "298": 0,
+            "299": 0,
+            "301": 0,
+            "302": 0,
+            "303": 0,
+            "304": 0,
+            "305": 0,
+            "306": 0,
+            "307": 0,
+            "308": 0,
+            "309": 0,
+            "310": 0,
+            "311": 0,
+            "312": 0,
+            "313": 0,
+            "314": 0,
+            "315": 0,
+            "316": 0,
+            "317": 0,
+            "318": 0,
+            "320": 0,
+            "321": 0,
+            "322": 0,
+            "323": 0,
+            "324": 0,
+            "325": 0,
+            "326": 0,
+            "327": 0,
+            "328": 0,
+            "329": 0,
+            "330": 0,
+            "331": 0,
+            "332": 0,
+            "333": 0,
+            "334": 0,
+            "335": 0,
+            "336": 0,
+            "337": 0,
+            "338": 0,
+            "339": 0,
+            "340": 0,
+            "341": 0,
+            "343": 0,
+            "344": 0,
+            "345": 0,
+            "346": 0,
+            "347": 0,
+            "348": 0,
+            "349": 0,
+            "350": 0,
+            "351": 0,
+            "352": 0,
+            "353": 0,
+            "354": 0,
+            "355": 0,
+            "356": 0,
+            "357": 0,
+            "358": 0,
+            "359": 0,
+            "360": 0,
+            "361": 0,
+            "362": 0,
+            "363": 0,
+            "364": 0,
+            "365": 0,
+            "366": 0,
+            "367": 0,
+            "368": 0,
+            "369": 0,
+            "371": 0,
+            "372": 0,
+            "373": 0,
+            "374": 0,
+            "375": 0,
+            "376": 0,
+            "377": 0,
+            "378": 0,
+            "379": 0,
+            "380": 0,
+            "381": 0,
+            "382": 0,
+            "383": 0,
+            "384": 0,
+            "385": 0,
+            "386": 0,
+            "387": 0,
+            "389": 0,
+            "390": 0,
+            "391": 0,
+            "392": 0,
+            "393": 0,
+            "394": 0,
+            "395": 0,
+            "396": 0,
+            "397": 0,
+            "398": 0,
+            "399": 0,
+            "400": 0,
+            "401": 0,
+            "402": 0,
+            "403": 0,
+            "404": 0,
+            "405": 0,
+            "406": 0,
+            "407": 0,
+            "409": 0,
+            "410": 0,
+            "411": 0,
+            "412": 0,
+            "413": 0,
+            "414": 0,
+            "415": 0,
+            "416": 0,
+            "417": 0,
+            "418": 0,
+            "419": 0,
+            "420": 0,
+            "421": 0,
+            "422": 0,
+            "423": 0,
+            "424": 0,
+            "425": 0,
+            "426": 0,
+            "427": 0,
+            "428": 0,
+            "429": 0,
+            "430": 0,
+            "431": 0,
+            "432": 0,
+            "433": 0,
+            "434": 0,
+            "435": 0,
+            "436": 0,
+            "437": 0,
+            "439": 0,
+            "440": 0,
+            "441": 0,
+            "442": 0,
+            "443": 0,
+            "444": 0,
+            "445": 0,
+            "446": 0,
+            "448": 0,
+            "449": 0,
+            "450": 0,
+            "451": 0,
+            "452": 0,
+            "453": 0,
+            "454": 0,
+            "455": 0,
+            "457": 0,
+            "458": 0,
+            "459": 0,
+            "460": 0,
+            "461": 0,
+            "462": 0,
+            "463": 0,
+            "464": 0,
+            "466": 0,
+            "467": 0,
+            "468": 0,
+            "469": 0,
+            "470": 0,
+            "471": 0,
+            "472": 0,
+            "473": 0,
+            "474": 0,
+            "475": 0,
+            "476": 0,
+            "477": 0,
+            "478": 0,
+            "479": 0,
+            "481": 0,
+            "482": 0,
+            "483": 0,
+            "484": 0,
+            "485": 0,
+            "486": 0,
+            "487": 0,
+            "488": 0,
+            "490": 0,
+            "491": 0,
+            "492": 0,
+            "493": 0,
+            "494": 0,
+            "495": 0,
+            "496": 0,
+            "497": 0,
+            "498": 0,
+            "499": 0,
+            "501": 0,
+            "502": 0,
+            "503": 0,
+            "504": 0,
+            "505": 0,
+            "506": 0,
+            "507": 0,
+            "508": 0,
+            "509": 0,
+            "510": 0,
+            "512": 0,
+            "513": 0,
+            "514": 0,
+            "515": 0,
+            "516": 0,
+            "517": 0,
+            "518": 0,
+            "519": 0,
+            "520": 0,
+            "521": 0,
+            "523": 0,
+            "524": 0,
+            "525": 0,
+            "526": 0,
+            "527": 0,
+            "528": 0,
+            "529": 0,
+            "530": 0,
+            "531": 0,
+            "532": 0,
+            "534": 0,
+            "535": 0,
+            "536": 0,
+            "537": 0,
+            "538": 0,
+            "539": 0,
+            "540": 0,
+            "541": 0,
+            "542": 0,
+            "543": 0,
+            "544": 0,
+            "545": 0,
+            "546": 0,
+            "547": 0,
+            "548": 0,
+            "549": 0,
+            "550": 0,
+            "551": 0,
+            "553": 0,
+            "554": 0,
+            "555": 0,
+            "556": 0,
+            "557": 0,
+            "558": 0,
+            "559": 0,
+            "560": 0,
+            "561": 0,
+            "562": 0,
+            "564": 0,
+            "565": 0,
+            "566": 0,
+            "567": 0,
+            "568": 0,
+            "569": 0,
+            "570": 0,
+            "571": 0,
+            "572": 0,
+            "573": 0,
+            "575": 0,
+            "576": 0,
+            "577": 0,
+            "578": 0,
+            "579": 0,
+            "580": 0,
+            "581": 0,
+            "582": 0,
+            "584": 0,
+            "585": 0,
+            "586": 0,
+            "587": 0,
+            "589": 0,
+            "590": 0,
+            "591": 0,
+            "592": 0,
+            "593": 0,
+            "595": 0,
+            "596": 0,
+            "597": 0,
+            "598": 0,
+            "600": 0,
+            "601": 0,
+            "602": 0,
+            "603": 0,
+            "605": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Extensions\\InfrustructureServiceCollectionExtensions.cs": {
+      "TechMeter.Infrastructure.Extensions.InfrustructureServiceCollectionExtensions": {
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Infrastructure.Extensions.InfrustructureServiceCollectionExtensions::AddDatabase(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)": {
+          "Lines": {
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Infrastructure.Extensions.InfrustructureServiceCollectionExtensions::AddDistributedCache(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)": {
+          "Lines": {
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0
+          },
+          "Branches": []
+        },
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection TechMeter.Infrastructure.Extensions.InfrustructureServiceCollectionExtensions::ApplicationService(Microsoft.Extensions.DependencyInjection.IServiceCollection)": {
+          "Lines": {
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\CartConfiguration.cs": {
+      "TechMeter.Infrastructure.EntitiesConfigurations.CartConfiguration": {
+        "System.Void TechMeter.Infrastructure.EntitiesConfigurations.CartConfiguration::Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1<TechMeter.Domain.Models.Cart>)": {
+          "Lines": {
+            "16": 0,
+            "17": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\CartItemConfiguration.cs": {
+      "TechMeter.Infrastructure.EntitiesConfigurations.CartItemConfiguration": {
+        "System.Void TechMeter.Infrastructure.EntitiesConfigurations.CartItemConfiguration::Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1<TechMeter.Domain.Models.CartItem>)": {
+          "Lines": {
+            "15": 0,
+            "16": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\CategoryConfiguration.cs": {
+      "TechMeter.Infrastructure.EntitiesConfigurations.CategoryConfiguration": {
+        "System.Void TechMeter.Infrastructure.EntitiesConfigurations.CategoryConfiguration::Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1<TechMeter.Domain.Models.Category>)": {
+          "Lines": {
+            "16": 0,
+            "17": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\CourseConfiguration.cs": {
+      "TechMeter.Infrastructure.EntitiesConfigurations.CourseConfiguration": {
+        "System.Void TechMeter.Infrastructure.EntitiesConfigurations.CourseConfiguration::Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1<TechMeter.Domain.Models.Course>)": {
+          "Lines": {
+            "15": 0,
+            "16": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\ProviderConfiguration.cs": {
+      "TechMeter.Infrastructure.EntitiesConfigurations.ProviderConfiguration": {
+        "System.Void TechMeter.Infrastructure.EntitiesConfigurations.ProviderConfiguration::Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1<TechMeter.Domain.Models.Auth.Users.Provider>)": {
+          "Lines": {
+            "15": 0,
+            "16": 0,
+            "19": 0,
+            "20": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0,
+            "33": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "37": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\EntitiesConfigurations\\StudentConfiguration.cs": {
+      "TechMeter.Infrastructure.EntitiesConfigurations.StudentConfiguration": {
+        "System.Void TechMeter.Infrastructure.EntitiesConfigurations.StudentConfiguration::Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1<TechMeter.Domain.Models.Auth.Users.Student>)": {
+          "Lines": {
+            "16": 0,
+            "17": 0,
+            "20": 0,
+            "21": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "29": 0,
+            "30": 0,
+            "31": 0,
+            "32": 0,
+            "34": 0,
+            "35": 0,
+            "36": 0,
+            "38": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\JwtSettings\\JwtSettings.cs": {
+      "TechMeter.Infrastructure.Adapters.JwtSettings.JwtSettings": {
+        "System.String TechMeter.Infrastructure.Adapters.JwtSettings.JwtSettings::get_SigningKey()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Adapters.JwtSettings.JwtSettings::get_Issuer()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Adapters.JwtSettings.JwtSettings::get_Audience()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailService.cs": {
+      "TechMeter.Infrastructure.Adapters.EmailSender.EmailService": {
+        "System.Void TechMeter.Infrastructure.Adapters.EmailSender.EmailService::.ctor(FluentEmail.Core.IFluentEmail,Microsoft.AspNetCore.Identity.UserManager`1<TechMeter.Domain.Models.Auth.Identity.User>,Microsoft.Extensions.Logging.ILogger`1<TechMeter.Infrastructure.Adapters.EmailSender.EmailService>)": {
+          "Lines": {
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0
+          },
+          "Branches": []
+        }
+      },
+      "TechMeter.Infrastructure.Adapters.EmailSender.EmailService/<SendOtpEmailAsync>d__4": {
+        "System.Void TechMeter.Infrastructure.Adapters.EmailSender.EmailService/<SendOtpEmailAsync>d__4::MoveNext()": {
+          "Lines": {
+            "25": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "37": 0,
+            "39": 0,
+            "40": 0,
+            "41": 0,
+            "42": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "47": 0,
+            "48": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "53": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "59": 0,
+            "60": 0,
+            "61": 0,
+            "63": 0
+          },
+          "Branches": [
+            {
+              "Line": 31,
+              "Offset": 98,
+              "EndOffset": 100,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 31,
+              "Offset": 98,
+              "EndOffset": 156,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 39,
+              "Offset": 364,
+              "EndOffset": 366,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 39,
+              "Offset": 379,
+              "EndOffset": 381,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 39,
+              "Offset": 364,
+              "EndOffset": 387,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 39,
+              "Offset": 379,
+              "EndOffset": 387,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 50,
+              "Offset": 597,
+              "EndOffset": 599,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 0
+            },
+            {
+              "Line": 50,
+              "Offset": 597,
+              "EndOffset": 680,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\EmailSender\\EmailSettings.cs": {
+      "TechMeter.Infrastructure.Adapters.EmailSender.EmailSettings": {
+        "System.String TechMeter.Infrastructure.Adapters.EmailSender.EmailSettings::get_FromEmail()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Adapters.EmailSender.EmailSettings::get_SmtpServer()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 TechMeter.Infrastructure.Adapters.EmailSender.EmailSettings::get_SmtpPort()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Adapters.EmailSender.EmailSettings::get_Username()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Adapters.EmailSender.EmailSettings::get_Password()": {
+          "Lines": {
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.Boolean TechMeter.Infrastructure.Adapters.EmailSender.EmailSettings::get_EnableSsl()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinaryImageService.cs": {
+      "TechMeter.Infrastructure.Adapters.Cloudinary.CloudinaryImageService": {
+        "System.Void TechMeter.Infrastructure.Adapters.Cloudinary.CloudinaryImageService::.ctor(Microsoft.Extensions.Options.IOptions`1<TechMeter.Infrastructure.Adapters.Cloudinary.CloudinarySettings>,Microsoft.Extensions.Logging.ILogger`1<TechMeter.Infrastructure.Adapters.Cloudinary.CloudinaryImageService>)": {
+          "Lines": {
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0
+          },
+          "Branches": [
+            {
+              "Line": 23,
+              "Offset": 23,
+              "EndOffset": 25,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 23,
+              "Offset": 23,
+              "EndOffset": 37,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "TechMeter.Infrastructure.Adapters.Cloudinary.CloudinaryImageService/<UploadAsync>d__4": {
+        "System.Void TechMeter.Infrastructure.Adapters.Cloudinary.CloudinaryImageService/<UploadAsync>d__4::MoveNext()": {
+          "Lines": {
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "36": 0,
+            "38": 0,
+            "39": 0,
+            "41": 0,
+            "42": 0,
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "48": 0,
+            "50": 0,
+            "51": 0,
+            "53": 0,
+            "54": 0,
+            "56": 0,
+            "57": 0
+          },
+          "Branches": [
+            {
+              "Line": 33,
+              "Offset": 33,
+              "EndOffset": 35,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 33,
+              "Offset": 33,
+              "EndOffset": 52,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 33,
+              "Offset": 55,
+              "EndOffset": 57,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 33,
+              "Offset": 55,
+              "EndOffset": 68,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 50,
+              "Offset": 473,
+              "EndOffset": 475,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 50,
+              "Offset": 473,
+              "EndOffset": 486,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 53,
+              "Offset": 504,
+              "EndOffset": 506,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 0
+            },
+            {
+              "Line": 53,
+              "Offset": 504,
+              "EndOffset": 538,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 0
+            },
+            {
+              "Line": 56,
+              "Offset": 551,
+              "EndOffset": 553,
+              "Path": 0,
+              "Ordinal": 8,
+              "Hits": 0
+            },
+            {
+              "Line": 56,
+              "Offset": 551,
+              "EndOffset": 557,
+              "Path": 1,
+              "Ordinal": 9,
+              "Hits": 0
+            },
+            {
+              "Line": 56,
+              "Offset": 563,
+              "EndOffset": 565,
+              "Path": 0,
+              "Ordinal": 10,
+              "Hits": 0
+            },
+            {
+              "Line": 56,
+              "Offset": 563,
+              "EndOffset": 577,
+              "Path": 1,
+              "Ordinal": 11,
+              "Hits": 0
+            },
+            {
+              "Line": 56,
+              "Offset": 611,
+              "EndOffset": 613,
+              "Path": 0,
+              "Ordinal": 12,
+              "Hits": 0
+            },
+            {
+              "Line": 56,
+              "Offset": 611,
+              "EndOffset": 722,
+              "Path": 1,
+              "Ordinal": 13,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "E:\\Visual Studio Codes\\TechMeter\\TechMeter.Infrastructure\\Adapters\\Cloudinary\\CloudinarySettings.cs": {
+      "TechMeter.Infrastructure.Adapters.Cloudinary.CloudinarySettings": {
+        "System.String TechMeter.Infrastructure.Adapters.Cloudinary.CloudinarySettings::get_CloudName()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Adapters.Cloudinary.CloudinarySettings::get_ApiKey()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.String TechMeter.Infrastructure.Adapters.Cloudinary.CloudinarySettings::get_ApiSecret()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        }
+      }
+    }
+  }
+}

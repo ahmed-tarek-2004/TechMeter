@@ -31,7 +31,7 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
 
 
             builder.HasOne(s => s.User)
-                 .WithOne(u=>u.Provider)
+                 .WithOne(u => u.Provider)
                  .HasForeignKey<Provider>(b => b.Id)
                  .OnDelete(DeleteBehavior.Cascade);
         }
