@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Application.Service.OTPService
+namespace TechMeter.Application.Interfaces.OTPService
 {
     public interface IOTPService
     {

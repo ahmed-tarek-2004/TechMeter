@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Mail;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Application.Interfaces.OTPService;
 using TechMeter.Application.Interfaces.TokenService;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
