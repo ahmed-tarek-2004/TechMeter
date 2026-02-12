@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Application.Interfaces.OTPService;
 
 namespace TechMeter.Application.Service.OTPService
 {
