@@ -28,7 +28,8 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
             builder.HasMany(b => b.Courses)
                 .WithOne(c => c.Category)
                 .HasForeignKey(b => b.CategoryId)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.NoAction);
+               
         }
     }
 }

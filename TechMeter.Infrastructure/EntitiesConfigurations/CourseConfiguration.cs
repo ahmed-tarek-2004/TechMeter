@@ -24,6 +24,10 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
                 .HasMaxLength(500)
                 .IsRequired();
 
+            builder.HasOne(b => b.Provider)
+                .WithMany(b => b.Courses)
+                .HasForeignKey(b => b.ProviderId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(b => b.CourseProfileImageUrl)
                 .IsRequired();
