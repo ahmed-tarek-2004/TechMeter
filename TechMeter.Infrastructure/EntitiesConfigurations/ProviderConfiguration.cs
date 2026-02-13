@@ -29,6 +29,7 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
                 .WithOne(c => c.Provider)
                 .HasForeignKey(p => p.ProviderId);
 
+           
 
             builder.HasOne(s => s.User)
                  .WithOne(u => u.Provider)
