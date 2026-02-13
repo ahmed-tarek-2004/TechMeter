@@ -150,7 +150,6 @@ namespace TechMeter.Infrastructure.Services.Category
 
                 var response = new UpdateCategoryResponse()
                 {
-                    Id = category.Id,
                     Description = category.Description,
                     Name = category.Name,
 
