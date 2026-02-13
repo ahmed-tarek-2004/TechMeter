@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -163,6 +164,7 @@ namespace TechMeter.Extensions
 
         public static IServiceCollection AddFluentValidation(this IServiceCollection services)
         {
+            //services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<StudentRegisterRequestValidator>();
             return services;
         }
