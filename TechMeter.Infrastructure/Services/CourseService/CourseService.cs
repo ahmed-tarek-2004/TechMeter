@@ -10,6 +10,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
 {
     public class CourseService : ICourseService
     {
+        
         public Task<AddCourseResponse> AddCourseAsync(AddCourseRequest request)
         {
             throw new NotImplementedException();
