@@ -8,8 +8,8 @@ namespace TechMeter.API.Validators
         public EditCourseRequestValidator() 
         {
             RuleFor(b => b)
-                .Must(b=>!string.IsNullOrEmpty(b.Id) && !string.IsNullOrEmpty(b.CategoryId))
-                .WithMessage("CourseId and CategoryId are Requires");
+                .Must(b=>!string.IsNullOrEmpty(b.CategoryId))
+                .WithMessage("CategoryId is Requires");
         }
 
     }
