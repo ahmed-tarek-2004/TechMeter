@@ -120,7 +120,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
                 return _responseHandler.BadRequest<StudentRegisterResponse>(checkifEmailorPhone);
             }
-            var transaction = _context.Database.BeginTransaction();
+           await using var transaction = _context.Database.BeginTransaction();
             try
             {
                 var user = new User()
@@ -302,7 +302,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
         }
         public async Task<Response<string>> VerifyOtp(VerifyOtp verifyOtp)
         {
-            var transaction = _context.Database.BeginTransaction();
+            await using var transaction = _context.Database.BeginTransaction();
             try
             {
                 var user = await _userManager.FindByIdAsync(verifyOtp.userId);

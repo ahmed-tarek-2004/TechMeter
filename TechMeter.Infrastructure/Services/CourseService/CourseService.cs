@@ -28,6 +28,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
         private readonly UserManager<User> _userManager;
         public CourseService(ApplicationDbContext context, ResponseHandler responseHandler,
             ILogger<CourseService> logger, IImageUploading imageUploading, UserManager<User> userManager)
+
         {
             _context = context;
             _responseHandler = responseHandler;
