@@ -26,21 +26,21 @@ namespace TechMeter.API.Controllers
             _updateCategoryValidator = updateCategoryValidator;
         }
 
-        [HttpGet]
+        [HttpGet("getAll")]
         public async Task<ActionResult<Response<IEnumerable<GetCategoryDto>>>> GetAll()
         {
             var response = await _categoryService.GetCategoriesAsync();
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Response<GetCategoryDto>>> GetById(string id)
+        [HttpGet("get/{Id}")]
+        public async Task<ActionResult<Response<GetCategoryDto>>> GetById(string Id)
         {
-            var response = await _categoryService.GetCategoryByIdAsync(id);
+            var response = await _categoryService.GetCategoryByIdAsync(Id);
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost]
+        [HttpPost("update")]
         public async Task<ActionResult<Response<AddCategoryResponse>>> Create([FromBody] AddCategoryRequest request)
         {
             var validationResult = await _createCategoryValidator.ValidateAsync(request);
@@ -54,8 +54,8 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Response<object>>> Update(string id, [FromBody] UpdateCategoryRequest request)
+        [HttpPut("{Id}")]
+        public async Task<ActionResult<Response<object>>> Update(string Id, [FromBody] UpdateCategoryRequest request)
         {
             var validationResult = await _updateCategoryValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -64,14 +64,14 @@ namespace TechMeter.API.Controllers
                 return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
                     _responseHandler.BadRequest<object>(errors));
             }
-            var response = await _categoryService.UpdateCategoryAsync(id, request);
+            var response = await _categoryService.UpdateCategoryAsync(Id, request);
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Response<string>>> Delete(string id)
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult<Response<string>>> Delete(string Id)
         {
-            var response = await _categoryService.DeleteCategoryByIdAsync(id);
+            var response = await _categoryService.DeleteCategoryByIdAsync(Id);
             return StatusCode((int)response.StatusCode, response);
         }
     }

@@ -56,8 +56,8 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Response<object>>> Update(string id, [FromBody] EditCourseRequest request)
+        [HttpPut("edit/{Id}")]
+        public async Task<ActionResult<Response<object>>> Update(string Id, [FromBody] EditCourseRequest request)
         {
             var validationResult = await _editCourseValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -66,7 +66,7 @@ namespace TechMeter.API.Controllers
                 return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
                     _responseHandler.BadRequest<object>(errors));
             }
-            var response = await _courseService.EditCourseAsync(id, request);
+            var response = await _courseService.EditCourseAsync(Id, request);
             return StatusCode((int)response.StatusCode, response);
         }
 
