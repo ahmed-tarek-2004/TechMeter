@@ -66,7 +66,9 @@ namespace TechMeter.API.Controllers
                 return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
                     _responseHandler.BadRequest<object>(errors));
             }
-            var response = await _courseService.EditCourseAsync(Id, request);
+
+            var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _courseService.EditCourseAsync(providerId!,Id, request);
             return StatusCode((int)response.StatusCode, response);
         }
 

@@ -13,7 +13,7 @@ namespace TechMeter.Application.Interfaces.CourseService
         Task<Response<GetCourseResponse>> GetCourseByIdAsync(string Id);
         Task<Response<List<GetCourseResponse>>> GetCoursesAsync();
         Task<Response<AddCourseResponse>> AddCourseAsync(string providerId,AddCourseRequest request);
-        Task<Response<GetCourseResponse>> EditCourseAsync(string providerId,EditCourseRequest request);
+        Task<Response<GetCourseResponse>> EditCourseAsync(string providerId, string courseId, EditCourseRequest request);
         Task<Response<string>> DeleteCourseByIdAsync(string responsiableId,string courseId);
 
 
