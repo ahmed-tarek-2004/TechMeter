@@ -18,12 +18,13 @@ using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.OTPService;
 using TechMeter.Application.Interfaces.TokenService;
+using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Persistence;
-
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFib1RhcmVrIiwibmFtZWlkIjoiMzdjODZiOWYtMzE5Ni00ZGMzLTljMjUtZTkzNjBmN2NkODcxIiwiZW1haWwiOiJhaG1lZHRhcmVrNzU4MEBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IjAxMTU4OTA1NTg5Iiwicm9sZSI6InN0dWRlbnQiLCJuYmYiOjE3NzExNzM2NjUsImV4cCI6MTc3MTc3ODQ2NSwiaWF0IjoxNzcxMTczNjY1fQ.oR7d2tqTgYnBJMD8CEGL3OydwpFiPE0KltlvI0347gQ
 
 namespace TechMeter.Infrastructure.Services.AuthService
 {
@@ -184,6 +185,95 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 transaction.Rollback();
                 _logger.LogError(ex, "Error occurred during ClientRegisterUserAsync for Email: {Email}", request.Email);
                 return _responseHandler.BadRequest<StudentRegisterResponse>("An error occurred during registration.");
+            }
+
+        }
+        public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request)
+        {
+            var checkifEmailorPhone = await CheckEmailOrPhoneNumberAsync(request.Email, request.PhoneNumber);
+            if (checkifEmailorPhone != null)
+            {
+                _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
+                return _responseHandler.BadRequest<ProviderRegisterResponse>(checkifEmailorPhone);
+            }
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var user = new User()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = request.UserName,
+                    Email = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    Country = request.Country,
+                    Gender = request.Gender,
+                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : "",
+                };
+                var result = await _userManager.CreateAsync(user, request.Password);
+                if (!result.Succeeded)
+                {
+                    var error = result.Errors.Select(e => e.Description).ToList();
+                    _logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.Email, string.Join(",", error));
+                    return _responseHandler.BadRequest<ProviderRegisterResponse>(string.Join(",", error));
+                }
+                await _userManager.AddToRoleAsync(user, "student");
+
+                //var certificationsUrl = new CertificatesUrl()
+                //{
+                //    Id = Guid.NewGuid().ToString(),
+                //    ProviderId = user.Id,
+                //    CertificateUrl = _imageUploading.UploadAsync(request.ProfilePhoto)
+
+                //};
+
+                var provider = new Provider()
+                {
+                    User = user,
+                    BankAccount = request.BankAccount,
+                    Brief = request.Brief,
+                    ExperienceYears = request.ExperienceYears,
+                    certificatesUrls = null,
+
+                };
+
+                await _context.Provider.AddAsync(provider);
+
+                _logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
+
+                var Tokens = await _tokenService.GenerateTokensAsync(user, user.Id);
+                var otp = await _otpService.GenerateAndSetOTP(user.Id);
+                await _emailService.SendOtpEmailAsync(user, otp);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                _logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.Email);
+                var response = new ProviderRegisterResponse()
+                {
+                    Id = user.Id,
+                    Role = "Provider",
+                    PhoneNumber = request.PhoneNumber,
+                    UserName = request.UserName,
+                    Country = request.Country,
+                    Gender = request.Gender,
+                    ProfilePhoto = user.ProfileUrl,
+                    BankAccount = request.BankAccount,
+                    Brief = request.Brief,
+                    Email = request.Email,
+                    ExperienceYears = request.ExperienceYears,
+                    BirthDate = request.BirthDate,
+                    IsEmailConfirmed = false,
+                    AccessToken = Tokens.AccessToken,
+                    RefreshToken = Tokens.RefreshToken,
+                };
+
+                return _responseHandler.Success(response, "Provider Created Successfully");
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(ex, "Error occurred during RegisterAsProviderAsync for Email: {Email}", request.Email);
+                return _responseHandler.BadRequest<ProviderRegisterResponse>("An error occurred during registration.");
             }
 
         }
