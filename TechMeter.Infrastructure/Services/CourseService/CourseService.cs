@@ -131,17 +131,22 @@ namespace TechMeter.Infrastructure.Services.CourseService
         }
 
 
-        public async Task<Response<GetCourseResponse>> EditCourseAsync(string providerId, EditCourseRequest request)
+        public async Task<Response<GetCourseResponse>> EditCourseAsync(string providerId,string courseId, EditCourseRequest request)
         {
             var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
             if (provider == null)
             {
                 return _responseHandler.BadRequest<GetCourseResponse>("Provider Is Not Found");
             }
-            var course = await _context.Course.FindAsync(request.Id);
+            var course = await _context.Course.FindAsync(courseId);
             if (course == null)
             {
                 return _responseHandler.NotFound<GetCourseResponse>("Course is not Found");
+            }
+            var category = await _context.Category.FindAsync(request.CategoryId);
+            if (category == null)
+            {
+                return _responseHandler.NotFound<GetCourseResponse>("category is not Found");
             }
             if (request.CourseProfileImageUrl != null)
             {
@@ -201,7 +206,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
 
 
                 await transaction.CommitAsync();
-                return _responseHandler.Success("", "course Updated Successfully");
+                return _responseHandler.Success("", "course Deleted Successfully");
             }
             catch (Exception ex)
             {
