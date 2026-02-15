@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TechMeter.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e9d196209453ce6b8413eea8e13b545d32ad7b93")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a9de9f06e42c26033ab3d6e2c64d30b43d63debd")]
 [assembly: System.Reflection.AssemblyProductAttribute("TechMeter.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TechMeter.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -50,7 +50,7 @@ namespace TechMeter.API.Controllers
                 return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(error));
             }
 
-            var response = await _authService.RegisterAsStudentAsync(request);
+            var response = await _authService.(request);
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("login")]

@@ -187,7 +187,89 @@ namespace TechMeter.Infrastructure.Services.AuthService
             }
 
         }
+<<<<<<< Updated upstream
         public async Task<Domain.Shared.Bases.Response<StudentRegisterResponseDto>> LogoutAsync(ClaimsPrincipal userclaims)
+=======
+        public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request)
+        {
+            var checkifEmailorPhone = await CheckEmailOrPhoneNumberAsync(request.Email, request.PhoneNumber);
+            if (checkifEmailorPhone != null)
+            {
+                _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
+                return _responseHandler.BadRequest<ProviderRegisterResponse>(checkifEmailorPhone);
+            }
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var user = new User()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = request.UserName,
+                    Email = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    Country = request.Country,
+                    Gender = request.Gender,
+                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : "",
+                };
+                var result = await _userManager.CreateAsync(user, request.Password);
+                if (!result.Succeeded)
+                {
+                    var error = result.Errors.Select(e => e.Description).ToList();
+                    _logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.Email, string.Join(",", error));
+                    return _responseHandler.BadRequest<ProviderRegisterResponse>(string.Join(",", error));
+                }
+                await _userManager.AddToRoleAsync(user, "student");
+
+                var provider = new Provider()
+                {
+                    User = user,
+                    BankAccount = request.BankAccount,
+                    Brief = request.Brief,
+                    ExperienceYears = request.ExperienceYears,
+
+                };
+
+                await _context.Provider.AddAsync(provider);
+
+                _logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
+
+                var Tokens = await _tokenService.GenerateTokensAsync(user, user.Id);
+                var otp = await _otpService.GenerateAndSetOTP(user.Id);
+                await _emailService.SendOtpEmailAsync(user, otp);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                _logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.Email);
+                var response = new StudentRegisterResponse()
+                {
+                    Id = user.Id,
+                    Role = "Student",
+                    PhoneNumber = request.PhoneNumber,
+                    UserName = request.UserName,
+                    Country = request.Country,
+                    Gender = request.Gender,
+                    ProfileUrl = user.ProfileUrl,
+                    Age = request.BirthDate != null ? (DateTime.UtcNow.Year - request.BirthDate.Year) : null,
+                    EducationLeveL = request.EducationLevel,
+                    EmailAddress = request.Email,
+                    isEmailConfirmed = false,
+                    accessToken = Tokens.AccessToken,
+                    refreshToken = Tokens.RefreshToken,
+                };
+
+                return _responseHandler.Success(response, "Student Created Successfully");
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(ex, "Error occurred during ClientRegisterUserAsync for Email: {Email}", request.Email);
+                return _responseHandler.BadRequest<ProviderRegisterResponse>("An error occurred during registration.");
+            }
+
+        }
+        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> LogoutAsync(ClaimsPrincipal userclaims)
+>>>>>>> Stashed changes
         {
             try
             {
