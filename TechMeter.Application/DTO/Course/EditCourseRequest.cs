@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Course
 {
-    public class AddCourseRequest
+    public class EditCourseRequest
     {
+        public string Id {  get; set; }
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public IFormFile? CourseProfileImageUrl { get; set; }
-        public string CategoryId { get; set; }
-
+        public string CategoryId {  get; set; }
     }
 }

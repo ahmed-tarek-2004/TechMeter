@@ -7,6 +7,7 @@ using System.Net.Mail;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.Category;
+using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Application.Interfaces.OTPService;
 using TechMeter.Application.Interfaces.TokenService;
 using TechMeter.Application.Service.OTPService;
@@ -15,6 +16,7 @@ using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services.AuthService;
 using TechMeter.Infrastructure.Services.Category;
+using TechMeter.Infrastructure.Services.CourseService;
 
 namespace TechMeter.Infrastructure.Extensions
 {
@@ -47,6 +49,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ICourseService, CourseService>();
             return services;
         }
     }
