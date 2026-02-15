@@ -26,6 +26,7 @@ namespace TechMeter.API.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
         private readonly IValidator<StudentRegisterRequest> _studentRegisterValidator;
+        private readonly IValidator<ProviderRegisterRequest> _providerRegisterValidator;
         private readonly IValidator<LoginRequestDto> _loginRequestValidator;
         private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
         private readonly IValidator<ForgetPasswordRequest> _forgetPasswordValidator;
@@ -34,7 +35,8 @@ namespace TechMeter.API.Controllers
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
             IValidator<StudentRegisterRequest> studentRegisterValidator, ResponseHandler responseHandler
             , IValidator<LoginRequestDto> loginRequestValidator, IValidator<ChangePassword> changePasswordValidator,
-            IValidator<ResetPasswordRequest> resetPasswordValidator, IValidator<ForgetPasswordRequest> forgetPasswordValidator)
+            IValidator<ResetPasswordRequest> resetPasswordValidator, IValidator<ForgetPasswordRequest> forgetPasswordValidator,
+            IValidator<ProviderRegisterRequest> providerRegisterValidator)
         {
             _logger = logger;
             _authService = authService;
@@ -44,6 +46,7 @@ namespace TechMeter.API.Controllers
             _changePasswordValidator = changePasswordValidator;
             _forgetPasswordValidator = forgetPasswordValidator;
             _resetPasswordValidator = resetPasswordValidator;
+            _providerRegisterValidator = providerRegisterValidator;
         }
 
 
@@ -85,16 +88,16 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("provider/register")]
-        public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsProvider([FromForm] StudentRegisterRequest request)
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsProvider([FromForm] ProviderRegisterRequest request)
         {
-            var validator = await _studentRegisterValidator.ValidateAsync(request);
+            var validator = await _providerRegisterValidator.ValidateAsync(request);
             if (!validator.IsValid)
             {
                 var error = string.Join(",", validator.Errors.Select(e => e.ErrorMessage).ToList());
                 return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(error));
             }
 
-            var response = await _authService.RegisterAsStudentAsync(request);
+            var response = await _authService.RegisterAsProviderAsync(request);
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("login")]
