@@ -20,6 +20,7 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<Provider> Provider { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<Course> Course { get; set; }
+        public DbSet<Sections> Section { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartItem> CartItem { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
@@ -32,6 +33,7 @@ namespace TechMeter.Infrastructure.Persistence
             modelBuilder.ApplyConfiguration(new StudentConfiguration());
             modelBuilder.ApplyConfiguration(new CourseConfiguration());
             modelBuilder.ApplyConfiguration(new CartConfiguration());
+            modelBuilder.ApplyConfiguration(new SectionConfiguration());
         }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
