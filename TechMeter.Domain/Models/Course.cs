@@ -17,5 +17,6 @@ namespace TechMeter.Domain.Models
         public string CategoryId { get; set; }
         public Category Category { get; set; } = null!;
         public Provider Provider { get; set; }
+        public ICollection<Sections> Sections { get; set; }=new List<Sections>();
     }
 }
