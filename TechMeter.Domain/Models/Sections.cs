@@ -12,5 +12,6 @@ namespace TechMeter.Domain.Models
         public string Name { get; set; }
         public string CourseId {  get; set; }
         public Course Course { get; set; }
+        public List<Lessons> Lessons { get; set; }
     }
 }

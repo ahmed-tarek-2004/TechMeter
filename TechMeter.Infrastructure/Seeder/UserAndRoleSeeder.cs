@@ -19,10 +19,27 @@ namespace TechMeter.Infrastructure.Seeder
         {
             try
             {
-                var PendingMigrations = await _context.Database.GetPendingMigrationsAsync();
-                if (PendingMigrations.Count() > 0)
+                try
                 {
-                    _context.Database.Migrate();
+                    if (!await _context.Database.CanConnectAsync())
+                    {
+                        Console.WriteLine("Database not Accessed");
+                    }
+                    else
+                    {
+                        var pending = await _context.Database.GetPendingMigrationsAsync();
+                        _logger.LogInformation("Begin Updateing");
+                        if (pending.Any())
+                        {
+                            _logger.LogInformation($"Applying migrations: {string.Join(", ", pending)}");
+                            await _context.Database.MigrateAsync();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Migration failed!");
+                    throw;
                 }
                 if (!await _roleManager.Roles.AnyAsync())
                 {
