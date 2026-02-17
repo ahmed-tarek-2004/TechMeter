@@ -34,6 +34,7 @@ namespace TechMeter.Infrastructure.Persistence
             modelBuilder.ApplyConfiguration(new CourseConfiguration());
             modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new SectionConfiguration());
+            modelBuilder.ApplyConfiguration(new LessonConfiguration());
         }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {

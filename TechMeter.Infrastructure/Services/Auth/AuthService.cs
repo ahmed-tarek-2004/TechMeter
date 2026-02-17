@@ -79,7 +79,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     await _emailService.SendOtpEmailAsync(user, otp);
                     _logger.LogInformation($"Otp Sent is : {otp}");
 
-                    return _responseHandler.Success<LoginResponseDto>(null, "Oto Has sent via Email Plz Confirm");
+                    return _responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id=user.Id}, "Oto Has sent via Email Plz Confirm");
                 }
                 else
                 {
