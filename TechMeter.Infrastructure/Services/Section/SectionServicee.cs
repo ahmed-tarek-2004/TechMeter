@@ -16,11 +16,12 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace TechMeter.Infrastructure.Services.SectionService
 {
-    public class SectionSerive : ISectionService
+    public class SectionServicee : ISectionService
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
-        public SectionSerive(ApplicationDbContext context, ResponseHandler responseHandler)
+        
+        public SectionServicee(ApplicationDbContext context, ResponseHandler responseHandler)
         {
             _context = context;
             _responseHandler = responseHandler;
