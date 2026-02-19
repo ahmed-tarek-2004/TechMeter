@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Section
 {
-    public class EditSectionRequest
+    public class GetSectionRequest
     {
-        public string Id {  get; set; }
-        public string Name { get; set; }
+        public string ProviderId {  get; set; }
         public string CourseId {  get; set; }
+        public string Id {  get; set; }
+
     }
 }
