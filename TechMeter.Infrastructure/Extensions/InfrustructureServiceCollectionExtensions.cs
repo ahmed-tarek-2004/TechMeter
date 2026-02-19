@@ -9,6 +9,7 @@ using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Application.Interfaces.OTPService;
+using TechMeter.Application.Interfaces.SectionService;
 using TechMeter.Application.Interfaces.TokenService;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
@@ -17,6 +18,7 @@ using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services.AuthService;
 using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
+using TechMeter.Infrastructure.Services.SectionService;
 
 namespace TechMeter.Infrastructure.Extensions
 {
@@ -50,6 +52,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ISectionService, SectionService>();
             return services;
         }
     }
