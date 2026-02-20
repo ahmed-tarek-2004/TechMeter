@@ -7,11 +7,10 @@ namespace TechMeter.API.Validators
     {
         public EditSectionRequestValidator()
         {
-            RuleFor(b => b.Id)
-                .Must(b => !string.IsNullOrEmpty(b))
-                .WithMessage("Id Is required");
+
             RuleFor(b => b)
-                .Must(b => !string.IsNullOrEmpty(b.CourseId) && !string.IsNullOrEmpty(b.Name));
+                .Must(b => !string.IsNullOrEmpty(b.CourseId) && !string.IsNullOrEmpty(b.Name))
+                .WithMessage("CourseId and Name are required");
         }
     }
 }
