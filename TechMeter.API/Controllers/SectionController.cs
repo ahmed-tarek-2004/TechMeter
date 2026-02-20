@@ -26,7 +26,7 @@ namespace TechMeter.API.Controllers
             _editSectionRequestValidator = editSectionRequestValidator;
         }
         [HttpGet("course/{courseId}/get-section/{Id}")]
-        [Authorize(Roles = "provider")]
+        [Authorize(Roles = "provider,admin,student")]
         public async Task<ActionResult<Response<GetSectionResponse>>> GetSectionById([FromRoute] string courseId, [FromRoute] string Id)
         {
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -34,14 +34,16 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpGet("course/{courseId}/get-all/sections")]
+        [Authorize]
         public async Task<ActionResult<Response<List<GetSectionResponse>>>> GetAllSectionAsync([FromRoute] string courseId)
         {
-            var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _sectionService.GetAllCourseSectionsAsync(providerId!, courseId);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _sectionService.GetAllCourseSectionsAsync(userId!, courseId);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("add-section")]
+        [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<AddSectionResponse>>> AddSectionToCourseByIdAsync([FromBody] AddSectionRequest request)
         {
 
@@ -59,6 +61,8 @@ namespace TechMeter.API.Controllers
 
         }
         [HttpPut("edit/section/{Id}")]
+        [Authorize(Roles = "provider")]
+
         public async Task<ActionResult<Response<GetSectionResponse>>> EditSectionAsync([FromRoute]string Id,[FromBody] EditSectionRequest request)
         {
             var validationResult = await _editSectionRequestValidator.ValidateAsync(request);
@@ -74,6 +78,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, request);
         }
         [HttpDelete("course/{courseId}/section/{Id}")]
+        [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> Delete([FromRoute] string courseId, string Id)
         {
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
