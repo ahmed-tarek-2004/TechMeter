@@ -21,6 +21,7 @@ namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFobWVkWmFoZXIiLCJuYW1laWQiOiIwOTM0ZDk0My00OGNhLTQ3OTEtOGY4My0wNTI1MzFjOWJiODIiLCJlbWFpbCI6ImFobWVkdGFyZWs3NTgwQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDExNTg5MDU1ODkiLCJyb2xlIjoicHJvdmlkZXIiLCJuYmYiOjE3NzE1OTA2ODEsImV4cCI6MTc3MjE5NTQ4MSwiaWF0IjoxNzcxNTkwNjgxfQ.E_MqSiNFcEicNkjzXxa5FV2UNu1H0ZSiDQaEBl8fvTI
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;

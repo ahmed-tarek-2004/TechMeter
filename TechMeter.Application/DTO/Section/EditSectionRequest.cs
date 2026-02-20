@@ -8,7 +8,6 @@ namespace TechMeter.Application.DTO.Section
 {
     public class EditSectionRequest
     {
-        public string Id {  get; set; }
         public string Name { get; set; }
         public string CourseId {  get; set; }
     }

@@ -13,7 +13,7 @@ namespace TechMeter.Application.Interfaces.SectionService
         Task<Response<List<GetSectionResponse>>> GetAllCourseSectionsAsync(string providerId, string courseId);
         Task<Response<GetSectionResponse>> GetSectionByIdAsync(string responsiable, string courseId, string sectionId);
         Task<Response<AddSectionResponse>> AddSectionAsync(string providerId,AddSectionRequest request);
-        Task<Response<GetSectionResponse>> EditSectionAsync(string providerId, EditSectionRequest request);
+        Task<Response<GetSectionResponse>> EditSectionAsync(string providerId,string Id, EditSectionRequest request);
         Task<Response<string>>DeleteSectionByIdAsync(string providerId,string courseId,string sectionId);
 
     }

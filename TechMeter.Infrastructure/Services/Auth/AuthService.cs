@@ -207,7 +207,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     PhoneNumber = request.PhoneNumber,
                     Country = request.Country,
                     Gender = request.Gender,
-                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : "",
+                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : null,
                 };
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (!result.Succeeded)
@@ -216,7 +216,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     _logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.Email, string.Join(",", error));
                     return _responseHandler.BadRequest<ProviderRegisterResponse>(string.Join(",", error));
                 }
-                await _userManager.AddToRoleAsync(user, "student");
+                await _userManager.AddToRoleAsync(user, "provider");
 
                 //var certificationsUrl = new CertificatesUrl()
                 //{

@@ -63,7 +63,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 };
 
                 await transaction.CommitAsync();
-                return _responseHandler.Success(response, "Section is Created Successfully");
+                return _responseHandler.Created(response, "Section is Created Successfully");
 
             }
             catch (Exception ex)
@@ -109,7 +109,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
             }
         }
 
-        public async Task<Response<GetSectionResponse>> EditSectionAsync(string providerId, EditSectionRequest request)
+        public async Task<Response<GetSectionResponse>> EditSectionAsync(string providerId, string Id,EditSectionRequest request)
         {
             var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
             if (provider == null)
@@ -122,7 +122,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
             {
                 return _responseHandler.NotFound<GetSectionResponse>("NewCourse Is Not Found");
             }
-            var section = await _context.Section.FirstOrDefaultAsync(b => b.Id == request.Id && b.Course.ProviderId == providerId);
+            var section = await _context.Section.FirstOrDefaultAsync(b => b.Id == Id && b.Course.ProviderId == providerId);
             if (section == null)
             {
                 return _responseHandler.NotFound<GetSectionResponse>("Section is not found");
