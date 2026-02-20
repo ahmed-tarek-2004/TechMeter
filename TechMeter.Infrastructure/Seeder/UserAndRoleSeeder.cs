@@ -20,9 +20,9 @@ namespace TechMeter.Infrastructure.Seeder
             try
             {
                 var PendingMigrations = await _context.Database.GetPendingMigrationsAsync();
-                if (PendingMigrations.Count() > 0)
+                if (!PendingMigrations.Any())
                 {
-                    _context.Database.Migrate();
+                    await _context.Database.MigrateAsync();
                 }
                 if (!await _roleManager.Roles.AnyAsync())
                 {
@@ -55,7 +55,7 @@ namespace TechMeter.Infrastructure.Seeder
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something Went Wrong While Applying Migrations");
+                _logger.LogError(ex,"Something Went Wrong While Applying Migrations");
                 throw;
             }
 

@@ -77,7 +77,7 @@ namespace TechMeter
             builder.Services.AddTransient<StopwatchRequestMiddleware>();
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
+            await using (var scope = app.Services.CreateAsyncScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();

@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Interfaces.CourseService;
+using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.API.Controllers
@@ -42,7 +44,9 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromBody] AddCourseRequest request)
+        [Authorize(Roles= "provider")]
+        //[Consumes("multipart/form-data")]
+        public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromForm] AddCourseRequest request)
         {
             var validationResult = await _addCourseValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -52,7 +56,7 @@ namespace TechMeter.API.Controllers
                     _responseHandler.BadRequest<object>(errors));
             }
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _courseService.AddCourseAsync(providerId!,request);
+            var response = await _courseService.AddCourseAsync(providerId!, request);
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -74,7 +78,7 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<string>>> Delete(string CourseId)
         {
             var responsiableId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _courseService.DeleteCourseByIdAsync(responsiableId!,CourseId);
+            var response = await _courseService.DeleteCourseByIdAsync(responsiableId!, CourseId);
             return StatusCode((int)response.StatusCode, response);
         }
 
