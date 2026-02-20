@@ -130,7 +130,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     PhoneNumber = request.PhoneNumber,
                     Country = request.Country,
                     Gender = request.Gender,
-                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : "",
+                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : null,
                 };
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (!result.Succeeded)
