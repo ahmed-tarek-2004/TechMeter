@@ -26,7 +26,7 @@ namespace TechMeter.API.Controllers
             _editSectionRequestValidator = editSectionRequestValidator;
         }
         [HttpGet("course/{courseId}/get-section/{Id}")]
-        [Authorize(Roles = "provider")]
+        [Authorize]
         public async Task<ActionResult<Response<GetSectionResponse>>> GetSectionById([FromRoute] string courseId, [FromRoute] string Id)
         {
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -36,8 +36,8 @@ namespace TechMeter.API.Controllers
         [HttpGet("course/{courseId}/get-all/sections")]
         public async Task<ActionResult<Response<List<GetSectionResponse>>>> GetAllSectionAsync([FromRoute] string courseId)
         {
-            var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _sectionService.GetAllCourseSectionsAsync(providerId!, courseId);
+            var user = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _sectionService.GetAllCourseSectionsAsync(user!, courseId);
             return StatusCode((int)response.StatusCode, response);
         }
 
