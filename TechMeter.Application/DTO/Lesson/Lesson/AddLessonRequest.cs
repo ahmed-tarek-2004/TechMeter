@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
 
-namespace TechMeter.Domain.Models
+namespace TechMeter.Application.DTO.Lesson.Lesson
 {
-    public class Lessons
+    public class AddLessonRequest
     {
-        public string Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public string LessonUrl { get; set; }
-        public string SectionId {  get; set; }
-        public Sections section { get; set; }
+        public string SectionId { get; set; }
     }
 }
