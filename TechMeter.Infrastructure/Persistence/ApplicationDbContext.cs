@@ -23,18 +23,12 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<Sections> Section { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartItem> CartItem { get; set; }
+        public DbSet<Lessons> Lessons { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfiguration(new ProviderConfiguration());
-            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-            modelBuilder.ApplyConfiguration(new CartItemConfiguration());
-            modelBuilder.ApplyConfiguration(new StudentConfiguration());
-            modelBuilder.ApplyConfiguration(new CourseConfiguration());
-            modelBuilder.ApplyConfiguration(new CartConfiguration());
-            modelBuilder.ApplyConfiguration(new SectionConfiguration());
-            modelBuilder.ApplyConfiguration(new LessonConfiguration());
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
