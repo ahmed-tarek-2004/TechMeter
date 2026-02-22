@@ -12,6 +12,7 @@ using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Application.Interfaces.OTPService;
 using TechMeter.Application.Interfaces.SectionService;
 using TechMeter.Application.Interfaces.TokenService;
+using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
@@ -21,6 +22,7 @@ using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Lesson;
 using TechMeter.Infrastructure.Services.SectionService;
+using TechMeter.Infrastructure.Services.WishList;
 
 namespace TechMeter.Infrastructure.Extensions
 {
@@ -56,6 +58,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ILessonService, LessonService>();
+            services.AddScoped<IWishListService, WishListService>();
 
             return services;
         }

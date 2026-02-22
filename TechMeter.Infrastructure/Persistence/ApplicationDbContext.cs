@@ -24,6 +24,8 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartItem> CartItem { get; set; }
         public DbSet<Lessons> Lessons { get; set; }
+        public DbSet<Wishlist> Wishlist { get; set; }
+        public DbSet<WishlistItem> WishlistItem { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
