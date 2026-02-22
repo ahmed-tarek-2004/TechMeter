@@ -164,8 +164,8 @@ namespace TechMeter.Extensions
 
         public static IServiceCollection AddFluentValidation(this IServiceCollection services)
         {
-            //services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<StudentRegisterRequestValidator>();
+            services.AddFluentValidationAutoValidation();
             return services;
         }
     }
