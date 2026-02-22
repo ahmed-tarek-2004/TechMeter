@@ -134,24 +134,20 @@ namespace TechMeter.Infrastructure.Services.CourseService
             var provider = await _context.Provider.FindAsync(providerId);
             if (provider == null)
             {
-               return _responseHandler.NotFound<List<GetCourseResponse>>("Provider is not found");
+                return _responseHandler.NotFound<List<GetCourseResponse>>("Provider is not found");
             }
             var coursesResponse = await _context.Course.Where(b => b.ProviderId == providerId).Select(b => new GetCourseResponse()
             {
-                Id  = b.Id,
+                Id = b.Id,
                 CategoryId = b.CategoryId,
                 ProviderId = b.ProviderId,
                 Description = b.Description,
-                Title= b.Title,
+                Title = b.Title,
             }).ToListAsync();
             return _responseHandler.Success(coursesResponse, "Courses returned successfully");
         }
 
-<<<<<<< Updated upstream:TechMeter.Infrastructure/Services/CourseService/CourseService.cs
-        public async Task<Response<GetCourseResponse>> EditCourseAsync(string providerId, EditCourseRequest request)
-=======
         public async Task<Response<GetCourseResponse>> EditCourseAsync(string providerId, string courseId, EditCourseRequest request)
->>>>>>> Stashed changes:TechMeter.Infrastructure/Services/Course/CourseService.cs
         {
             var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
             if (provider == null)
