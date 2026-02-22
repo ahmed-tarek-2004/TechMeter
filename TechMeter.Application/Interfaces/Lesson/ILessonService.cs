@@ -10,9 +10,11 @@ namespace TechMeter.Application.Interfaces.Lesson
 {
     public interface ILessonService
     {
-        Task<Response<AddLessonResponse>>AddLessonAsync(AddLessonRequest addLessonRequest);
-        Task<Response<GetLessonResponse>>EditLessonAsync(string Id,EditLessonRequest editLessonRequest);
-        Task<Response<List<GetLessonResponse>>>GetALLessonAsync(string Id);
-        Task<Response<GetLessonResponse>>GetALessonByIdAsync();
+        Task<Response<GetLessonResponse>> AddLessonAsync(string sectionId, AddLessonRequest addLessonRequest);
+        Task<Response<GetLessonResponse>> EditLessonAsync(string Id, EditLessonRequest editLessonRequest);
+        Task<Response<List<GetLessonResponse>>> GetALLessonAsync();
+        Task<Response<GetLessonResponse>> GetLessonByIdAsync(string Id);
+        Task<Response<List<GetLessonResponse>>> GetSectionLessonResponse(string sectionId);
+        Task<Response<string>> DeleteLessonAsync(string Id);
     }
 }
