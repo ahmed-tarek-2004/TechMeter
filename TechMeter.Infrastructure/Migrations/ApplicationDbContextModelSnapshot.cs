@@ -38,7 +38,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProtectionKeys");
+                    b.ToTable("DataProtectionKeys", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -273,7 +273,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRefreshTokens");
+                    b.ToTable("UserRefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Auth.Users.Provider", b =>
@@ -295,7 +295,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Provider");
+                    b.ToTable("Provider", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Auth.Users.Student", b =>
@@ -314,7 +314,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Student");
+                    b.ToTable("Student", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Cart", b =>
@@ -337,7 +337,7 @@ namespace TechMeter.Infrastructure.Migrations
                     b.HasIndex("StudentId")
                         .IsUnique();
 
-                    b.ToTable("Cart");
+                    b.ToTable("Cart", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.CartItem", b =>
@@ -365,7 +365,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("CartItem");
+                    b.ToTable("CartItem", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Category", b =>
@@ -383,7 +383,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.CertificatesUrl", b =>
@@ -403,7 +403,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("CertificatesUrl");
+                    b.ToTable("CertificatesUrl", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Course", b =>
@@ -439,7 +439,7 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("Course");
+                    b.ToTable("Course", (string)null);
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Lessons", b =>

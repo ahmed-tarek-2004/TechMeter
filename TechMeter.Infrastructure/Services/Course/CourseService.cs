@@ -116,7 +116,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
             return _responseHandler.Success(response, "Course Returned Successfully");
         }
 
-        public async Task<Response<List<GetCourseResponse>>> GetCoursesAsync()
+        public async Task<Response<List<GetCourseResponse>>> GetAllCoursesAsync()
         {
             var response = await _context.Course.Select(b => new GetCourseResponse
             {
@@ -130,8 +130,25 @@ namespace TechMeter.Infrastructure.Services.CourseService
             return _responseHandler.Success(response, "All Courses Returned Successfully");
         }
 
+        public async Task<Response<List<GetCourseResponse>>> GetProviderCoursesAsync(string providerId)
+        {
+            var provider = await _context.Provider.FindAsync(providerId);
+            if (provider == null)
+            {
+                return _responseHandler.NotFound<List<GetCourseResponse>>("Provider is not found");
+            }
+            var coursesResponse = await _context.Course.Where(b => b.ProviderId == providerId).Select(b => new GetCourseResponse()
+            {
+                Id = b.Id,
+                CategoryId = b.CategoryId,
+                ProviderId = b.ProviderId,
+                Description = b.Description,
+                Title = b.Title,
+            }).ToListAsync();
+            return _responseHandler.Success(coursesResponse, "Courses returned successfully");
+        }
 
-        public async Task<Response<GetCourseResponse>> EditCourseAsync(string providerId,string courseId, EditCourseRequest request)
+        public async Task<Response<GetCourseResponse>> EditCourseAsync(string providerId, string courseId, EditCourseRequest request)
         {
             var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
             if (provider == null)
