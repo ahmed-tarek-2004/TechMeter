@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.Interfaces;
+using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -15,7 +16,7 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.Lesson
 {
-    public class LessonService
+    public class LessonService: ILessonService
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
@@ -68,11 +69,17 @@ namespace TechMeter.Infrastructure.Services.Lesson
             {
                 return _responseHandler.NotFound<GetLessonResponse>("Lesson Not Found");
             }
+            var section = await _context.Section.FindAsync(editLessonRequest.SectionId);
+            if (section == null)
+            {
+                return _responseHandler.NotFound<GetLessonResponse>("Section Not Found");
+            }
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 Lesson.Description = editLessonRequest.Description;
                 Lesson.Name = editLessonRequest.Name;
+                Lesson.SectionId = editLessonRequest.SectionId;
                 await _context.SaveChangesAsync();
 
                 var response = new GetLessonResponse()
@@ -114,6 +121,27 @@ namespace TechMeter.Infrastructure.Services.Lesson
             var response = CreateALessonResponse(lesson!);
             return _responseHandler.Success(response, "Lesson returned successfully");
         }
+
+        public async Task<Response<List<GetLessonResponse>>> GetSectionLessonResponse(string sectionId)
+        {
+            if (!await _context.Section.AnyAsync(s => s.Id == sectionId))
+                return _responseHandler.NotFound<List<GetLessonResponse>>("Section is not found");
+
+            var lessons = await _context.Lessons
+                .AsNoTracking()
+                .Where(l => l.SectionId == sectionId)
+                .Select(l => new GetLessonResponse
+                {
+                    SectionId = l.SectionId,
+                    Id = l.Id,
+                    Description = l.Description,
+                    LessonUrl = l.LessonUrl,
+                    Name = l.Name
+                })
+                .ToListAsync();
+
+            return _responseHandler.Success(lessons, "Section lessons returned successfully");
+        }
         public async Task<Response<string>> DeleteLessonAsync(string Id)
         {
             var Lesson = await _context.Lessons.FindAsync(Id);
@@ -127,7 +155,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 _context.Remove(Lesson);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return _responseHandler.Success("", $"Lesson {Lesson.Name} Deleted Successfully");
+                return _responseHandler.Deleted<string>( $"Lesson {Lesson.Name} Deleted Successfully");
             }
             catch (Exception ex)
             {
