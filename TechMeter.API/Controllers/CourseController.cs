@@ -32,14 +32,21 @@ namespace TechMeter.API.Controllers
         [HttpGet]
         public async Task<ActionResult<Response<IEnumerable<GetCourseResponse>>>> GetAll()
         {
-            var response = await _courseService.GetCoursesAsync();
+            var response = await _courseService.GetAllCoursesAsync();
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("{Id}")]
-        public async Task<ActionResult<Response<GetCourseResponse>>> GetById(string Id)
+        [HttpGet("course/by/{Id}")]
+        public async Task<ActionResult<Response<GetCourseResponse>>> GetCourseByIdAsync(string Id)
         {
             var response = await _courseService.GetCourseByIdAsync(Id);
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpGet("provider/courses")]
+        public async Task<ActionResult<Response<GetCourseResponse>>> GetProviderCoursesAsync()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _courseService.GetProviderCoursesAsync(userId!);
             return StatusCode((int)response.StatusCode, response);
         }
 
