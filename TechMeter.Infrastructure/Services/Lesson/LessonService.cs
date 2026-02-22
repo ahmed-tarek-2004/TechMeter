@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Lesson;
-using TechMeter.Application.DTO.Lesson.Lesson;
 using TechMeter.Application.Interfaces;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -30,8 +29,13 @@ namespace TechMeter.Infrastructure.Services.Lesson
             _logger = logger;
 
         }
-        public async Task<Response<GetLessonResponse>> AddLessonAsync(AddLessonRequest request)
+        public async Task<Response<GetLessonResponse>> AddLessonAsync(string sectionId,AddLessonRequest request)
         {
+            var section = await _context.Section.FindAsync(sectionId);
+            if (section == null)
+            {
+                return _responseHandler.NotFound<GetLessonResponse>("Section is not found");
+            }
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -40,7 +44,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                     Id = Guid.NewGuid().ToString(),
                     Name = request.Name,
                     Description = request.Description,
-                    SectionId = request.SectionId,
+                    SectionId = sectionId,
                     LessonUrl = request.LessonUrl
                 };
                 await _context.AddAsync(Lesson);
