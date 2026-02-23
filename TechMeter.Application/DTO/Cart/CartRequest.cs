@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Cart
 {
-    internal class CartRequest
+    public class CartRequest
     {
+        public string CourseId { get; set; }
+        public decimal UnitPrice { get; set; } = 0;
+        public DateTime AddedAt { get; set; } = DateTime.UtcNow;
     }
 }
