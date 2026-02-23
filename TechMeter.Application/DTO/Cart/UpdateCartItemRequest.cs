@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Cart
 {
-    internal class UpdateCartItemRequest
+    public class UpdateCartItemRequest
     {
+        public string CartItemId { get; set; }
     }
 }
