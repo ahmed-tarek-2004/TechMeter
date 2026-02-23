@@ -6,13 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Cart;
+using TechMeter.Application.Interfaces.Cart;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.Cart
 {
-    public class CartService
+    public class CartService:ICartService
     {
         private ApplicationDbContext _context;
         private readonly ILogger<CartService> _logger;
