@@ -10,7 +10,6 @@ namespace TechMeter.Application.DTO.Cart
     {
         public string Id { get; set; }
         public string CourseId { get; set; }
-        public int quantity { get; set; }
         public decimal UnitPrice { get; set; } = 0;
         public string CourseName { get; set; }
         public string CourseImageUrl { get; set; }

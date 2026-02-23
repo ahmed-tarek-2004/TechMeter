@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Mail;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Application.Interfaces.Cart;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Application.Interfaces.Lesson;
@@ -18,6 +19,7 @@ using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services.AuthService;
+using TechMeter.Infrastructure.Services.Cart;
 using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Lesson;
@@ -59,6 +61,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IWishListService, WishListService>();
+            services.AddScoped<ICartService, CartService>();
 
             return services;
         }
