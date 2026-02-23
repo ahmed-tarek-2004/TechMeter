@@ -40,6 +40,14 @@ namespace TechMeter.Infrastructure.Seeder
                 {
                     _logger.LogError(ex, "Migration failed!");
                     throw;
+
+                }
+
+                var PendingMigrations = await _context.Database.GetPendingMigrationsAsync();
+                if (!PendingMigrations.Any())
+                {
+                    await _context.Database.MigrateAsync();
+
                 }
                 if (!await _roleManager.Roles.AnyAsync())
                 {
