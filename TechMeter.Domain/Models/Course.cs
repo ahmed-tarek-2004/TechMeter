@@ -19,5 +19,6 @@ namespace TechMeter.Domain.Models
         public Provider Provider { get; set; }
         public ICollection<Sections> Sections { get; set; }=new List<Sections>();
         public ICollection<WishlistItem>? WishlistItems { get; set; } = new List<WishlistItem>();
+        public ICollection<OrderItem>OrderItems { get; set; } = new List<OrderItem>();
     }
 }

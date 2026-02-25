@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Infrastructure.EntitiesConfigurations
+namespace TechMeter.Domain.Enums
 {
-    internal class OrderConffiguration
+    public enum  OrderStatus
     {
+        NoThing,
+        PendingPayment,
+        Paid,
+        Failed
     }
 }
