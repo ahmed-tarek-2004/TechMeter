@@ -32,16 +32,16 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        //[HttpGet("seller/order-details/{OrderId}")]
-        //public async Task<ActionResult<Response<List<OrderResponse>>>> GetSellerOrderDetailsAsync([FromRoute] string OrderId)
+        //[HttpGet("provider/order-details/{OrderId}")]
+        //public async Task<ActionResult<Response<List<OrderResponse>>>> GetproviderOrderDetailsAsync([FromRoute] string OrderId)
         //{
-        //    var sellerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //    var response = await _orderService.GetSellOrderDetails(sellerId!, OrderId);
+        //    var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    var response = await _orderService.GetSellOrderDetails(providerId!, OrderId);
         //    return StatusCode((int)response.StatusCode, response);
         //}
 
-        [HttpGet("client/orders/{ClientId}")]
-        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetClientOrdersAsync([FromRoute] string ClientId, [FromQuery] GetOrders getOrders)
+        [HttpGet("student/orders/{studentId}")]
+        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetStudentOrdersAsync([FromRoute] string StudentId, [FromQuery] GetOrders getOrders)
         {
 
             var ValidationResult = await _getOrderValidation.ValidateAsync(getOrders);
@@ -52,11 +52,11 @@ namespace TechMeter.API.Controllers
                 return StatusCode((int)badRequestResponse.StatusCode, badRequestResponse);
             }
 
-            var response = await _orderService.GetClientOrders(ClientId, getOrders);
+            var response = await _orderService.GetStudentOrders(StudentId, getOrders);
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpGet("seller/orders/{sellerId}")]
-        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetSellerOrdersAsync([FromRoute] string sellerId, [FromQuery] GetOrders getOrders)
+        [HttpGet("provider/orders/{providerId}")]
+        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetProviderOrdersAsync([FromRoute] string ProviderId, [FromQuery] GetOrders getOrders)
         {
 
             var ValidationResult = await _getOrderValidation.ValidateAsync(getOrders);
@@ -67,7 +67,7 @@ namespace TechMeter.API.Controllers
                 return StatusCode((int)badRequestResponse.StatusCode, badRequestResponse);
             }
 
-            var response = await _orderService.GetSellerOrders(sellerId, getOrders);
+            var response = await _orderService.GetProviderOrders(ProviderId, getOrders);
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -91,13 +91,13 @@ namespace TechMeter.API.Controllers
         {
 
 
-            var ClientId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _orderService.CreateClientOrder(ClientId!);
+            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _orderService.CreateStudentOrder(StudentId!);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPut("cancel/{orderId}")]
-        public async Task<ActionResult<Response<OrderResponse>>> ClientCancelOrder([FromRoute] string orderId)
+        public async Task<ActionResult<Response<OrderResponse>>> StudentCancelOrder([FromRoute] string orderId)
         {
 
             var response = await _orderService.CancelOrderStatus(orderId);
