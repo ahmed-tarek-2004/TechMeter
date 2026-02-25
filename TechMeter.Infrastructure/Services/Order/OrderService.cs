@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Order;
+using TechMeter.Application.Interfaces.Order;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
@@ -13,7 +14,7 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.Order
 {
-    public class OrderService
+    public class OrderService:IOrderService
     {
         private readonly ILogger<OrderService> _logger;
         private readonly ApplicationDbContext _context;

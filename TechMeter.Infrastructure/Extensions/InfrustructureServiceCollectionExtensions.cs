@@ -10,6 +10,7 @@ using TechMeter.Application.Interfaces.Cart;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Application.Interfaces.Lesson;
+using TechMeter.Application.Interfaces.Order;
 using TechMeter.Application.Interfaces.OTPService;
 using TechMeter.Application.Interfaces.SectionService;
 using TechMeter.Application.Interfaces.TokenService;
@@ -23,6 +24,7 @@ using TechMeter.Infrastructure.Services.Cart;
 using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Lesson;
+using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.WishList;
 
@@ -62,7 +64,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<ICartService, CartService>();
-
+            services.AddScoped<IOrderService, OrderService>();
             return services;
         }
     }
