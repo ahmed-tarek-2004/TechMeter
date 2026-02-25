@@ -11,6 +11,7 @@ namespace TechMeter.Domain.Enums
         NoThing,
         PendingPayment,
         Paid,
+        Canceled,
         Failed
     }
 }

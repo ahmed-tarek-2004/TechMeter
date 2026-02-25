@@ -13,6 +13,7 @@ namespace TechMeter.Domain.Models
         public string Id { get; set; }
        
         public decimal Commission { get; set; }
+        public decimal TotalPrice {  get; set; }
         public OrderStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -24,7 +25,7 @@ namespace TechMeter.Domain.Models
         public string StudentId { get; set; }
         public string OrderItemId { get; set; }
         public Student Student { get; set; }
-        public OrderItem Item { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();       
         //public Transaction Transaction { get; set; }
     }
 }
