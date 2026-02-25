@@ -17,8 +17,8 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
 
 
             builder.HasOne(oi => oi.Order)
-                .WithOne(o => o.Item)
-                .HasForeignKey<Order>(o => o.OrderItemId)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(o => o.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(oi => oi.Course)

@@ -32,11 +32,7 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
                 .HasForeignKey(o => o.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(o => o.Item)
-                .WithOne()
-                .HasForeignKey<Order>(o => o.OrderItemId)
-                .OnDelete(DeleteBehavior.Cascade);
-
+           
             //builder.HasOne(o => o.Transaction)
             //   .WithOne(t => t.Order)
             //   .HasForeignKey<Transaction>(t => t.OrderId)
