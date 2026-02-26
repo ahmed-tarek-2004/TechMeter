@@ -15,5 +15,6 @@ namespace TechMeter.Application.Interfaces.Cart
         Task<Response<CartResponse>> AddToCartAsync(string CartId, CartRequest request);
         Task<Response<CartResponse>> RemoveFromCartAsync(string StudentId, string cartItemId);
         Task<Response<CartResponse>> UpdateCartAsync(string StudentId, UpdateCartItemRequest request);
+        Task<Response<CartResponse>> ClearStudentCartAsync(string StudentId);
     }
 }
