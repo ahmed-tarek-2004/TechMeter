@@ -50,6 +50,7 @@ namespace TechMeter
             builder.Services.AddFluentValidation();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
+            builder.Services.AddingStripePayment(builder.Configuration);
 
 
 
