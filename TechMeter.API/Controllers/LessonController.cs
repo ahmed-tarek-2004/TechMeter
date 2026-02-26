@@ -26,7 +26,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("add/lesson/to-section/{sectionId}")]
-        public async Task<ActionResult<GetLessonResponse>> AddLessonToSectionAsync(string sectionId, [FromBody] AddLessonRequest request)
+        public async Task<ActionResult<GetLessonResponse>> AddLessonToSectionAsync([FromRoute]string sectionId, [FromForm] AddLessonRequest request)
         {
             var validation = await _addLessonRequest.ValidateAsync(request);
             if (!validation.IsValid)
