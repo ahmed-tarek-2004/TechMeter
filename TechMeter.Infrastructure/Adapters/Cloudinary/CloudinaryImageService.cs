@@ -55,5 +55,26 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
 
             return result.Url?.ToString() ?? throw new Exception("Cloudinary returned empty URL.");
         }
+        public async Task<string> UploadVideoAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                throw new ArgumentException("File is empty or null");
+
+            await using var stream = file.OpenReadStream();
+            var uploadParams = new VideoUploadParams
+            {
+                File = new FileDescription(file.FileName, stream)
+            };
+
+            var result = await _cloudinary.UploadAsync(uploadParams);
+
+            if (result == null)
+                throw new Exception("Upload result was null from Cloudinary.");
+
+            if (result.Error != null)
+                throw new Exception($"Cloudinary error occurred: {result.Error.Message}");
+
+            return result.SecureUrl.AbsoluteUri ?? throw new Exception("Cloudinary returned empty URL.");
+        }
     }
 }
