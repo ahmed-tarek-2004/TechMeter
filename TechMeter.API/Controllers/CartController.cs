@@ -90,5 +90,14 @@ namespace TechMeter.API.Controllers
             var response = await _cartService.RemoveFromCartAsync(StudentId ?? "", CartItemId.ToString());
             return StatusCode((int)response.StatusCode, response);
         }
+
+        [Authorize(Roles = "student")]
+        [HttpDelete("clear/Student/cart")]
+        public async Task<ActionResult<Response<CartResponse>>> ClearStudentCartAsync()
+        {
+            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _cartService.ClearStudentCartAsync(StudentId ?? "");
+            return StatusCode((int)response.StatusCode, response);
+        }
     }
 }

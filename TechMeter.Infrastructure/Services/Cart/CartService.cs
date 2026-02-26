@@ -13,7 +13,7 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.Cart
 {
-    public class CartService:ICartService
+    public class CartService : ICartService
     {
         private ApplicationDbContext _context;
         private readonly ILogger<CartService> _logger;
@@ -164,7 +164,7 @@ namespace TechMeter.Infrastructure.Services.Cart
         }
         public async Task<Response<CartResponse>> RemoveFromCartAsync(string StudentId, string cartItemId)
         {
-            var transaction = await _context.Database.BeginTransactionAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             var user = await _context.Student.FirstOrDefaultAsync(b => b.Id == StudentId);
             if (user == null)
             {
@@ -195,6 +195,53 @@ namespace TechMeter.Infrastructure.Services.Cart
 
                 await transaction.CommitAsync();
                 var response = CreateCartResponse(cart);
+                _logger.LogInformation("Cart item removed successfully for StudentId: {StudentId}", StudentId);
+                return _responseHandler.Deleted<CartResponse>("Cart item removed successfully.");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error occurred while removing cart item for StudentId: {StudentId}", StudentId);
+                return _responseHandler.InternalServerError<CartResponse>("An error occurred while removing cart item.");
+            }
+        }
+        public async Task<Response<CartResponse>>ClearStudentCartAsync(string StudentId)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            var user = await _context.Student.FirstOrDefaultAsync(b => b.Id == StudentId);
+            if (user == null)
+            {
+                _logger.LogWarning("Student not found for StudentId: {StudentId}", StudentId);
+                return _responseHandler.NotFound<CartResponse>("Student not found.");
+            }
+            try
+            {
+                var cart = await _context.Cart
+               .Include(x => x.CartItems)
+               .FirstOrDefaultAsync(b => b.StudentId == StudentId);
+                if (cart == null)
+                {
+                    _logger.LogWarning("Cart not found for StudentId: {StudentId}", StudentId);
+                    return _responseHandler.NotFound<CartResponse>("Cart not found.");
+                }
+                var cartItem = cart.CartItems.FirstOrDefault();
+                if (cartItem == null)
+                {
+                    _logger.LogWarning("CartItem not found. Cart: {CartId}", cart.Id);
+                    return _responseHandler.NotFound<CartResponse>($"no CartItem found. Cart: {cart.Id}");
+                }
+                if (cart.CartItems == null || !cart.CartItems.Any())
+                    return _responseHandler.BadRequest<CartResponse>("Cart is already empty.");
+
+
+                _context.CartItem.RemoveRange(cart.CartItems);
+                cart.CartItems.Clear();
+                cart.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+               
                 _logger.LogInformation("Cart item removed successfully for StudentId: {StudentId}", StudentId);
                 return _responseHandler.Deleted<CartResponse>("Cart item removed successfully.");
             }
