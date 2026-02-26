@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using Stripe;
 using System.Net;
 using System.Net.Mail;
 using TechMeter.Application.Interfaces;
@@ -18,6 +19,7 @@ using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
+using TechMeter.Infrastructure.Adapters.Payment;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services.AuthService;
 using TechMeter.Infrastructure.Services.Cart;
@@ -27,6 +29,7 @@ using TechMeter.Infrastructure.Services.Lesson;
 using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.WishList;
+using TokenService = TechMeter.Application.Interfaces.TokenService.TokenService;
 
 namespace TechMeter.Infrastructure.Extensions
 {
@@ -65,6 +68,15 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrderService, OrderService>();
+            return services;
+        }
+        public static IServiceCollection AddingStripePayment(this IServiceCollection services,IConfiguration configuration)
+        {
+
+            services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
+            var stripeSettings = configuration.GetSection("Stripe").Get<StripeSettings>();
+            StripeConfiguration.ApiKey = stripeSettings!.SecretKey;
+
             return services;
         }
     }
