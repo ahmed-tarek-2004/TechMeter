@@ -16,5 +16,7 @@ namespace TechMeter.Domain.Models.Auth.Users
         public User User { get; set; }
         public ICollection<CertificatesUrl> certificatesUrls { get; set; }
         public ICollection<Course> Courses { get; set; }
+        public ICollection<PaymentTransaction> Transactions { get; set; } = new List<PaymentTransaction>();
+
     }
 }

@@ -28,8 +28,8 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<WishlistItem> WishlistItem { get; set; }
         public DbSet<Order>Order { get; set; }
         //public DbSet<UserCourses> UserCourses { get; set; }
-        public DbSet<OrderItem>OrderItem { get; set; }
-
+        public DbSet<OrderItem> OrderItem { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }  
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

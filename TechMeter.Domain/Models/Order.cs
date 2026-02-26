@@ -25,7 +25,9 @@ namespace TechMeter.Domain.Models
         public string StudentId { get; set; }
         public string OrderItemId { get; set; }
         public Student Student { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();       
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();   
+        public ICollection<PaymentTransaction> Transactions { get; set; } = new List<PaymentTransaction>();
+        
         //public Transaction Transaction { get; set; }
     }
 }
