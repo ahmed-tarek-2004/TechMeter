@@ -13,6 +13,7 @@ using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Application.Interfaces.Order;
 using TechMeter.Application.Interfaces.OTPService;
+using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Application.Interfaces.SectionService;
 using TechMeter.Application.Interfaces.TokenService;
 using TechMeter.Application.Interfaces.WishList;
@@ -27,6 +28,7 @@ using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Lesson;
 using TechMeter.Infrastructure.Services.Order;
+using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.WishList;
 using TokenService = TechMeter.Application.Interfaces.TokenService.TokenService;
@@ -68,6 +70,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             return services;
         }
         public static IServiceCollection AddingStripePayment(this IServiceCollection services,IConfiguration configuration)
