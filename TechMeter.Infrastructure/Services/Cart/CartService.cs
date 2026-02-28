@@ -98,7 +98,7 @@ namespace TechMeter.Infrastructure.Services.Cart
         }
         public async Task<Response<CartResponse>> AddToCartAsync(string StudentId, CartRequest request)
         {
-            var transaction = await _context.Database.BeginTransactionAsync();
+           await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var Course = _context.Course.FirstOrDefault(p => p.Id == request.CourseId);
@@ -110,7 +110,7 @@ namespace TechMeter.Infrastructure.Services.Cart
 
                 var cart = await _context.Cart
                     .Include(b => b.CartItems)
-                    .ThenInclude(b => b.Course)
+                    //.ThenInclude(b => b.Course)
                     .FirstOrDefaultAsync(c => c.StudentId == StudentId);
 
                 if (cart == null)
@@ -128,8 +128,8 @@ namespace TechMeter.Infrastructure.Services.Cart
                 {
                     cart.CartItems = new List<CartItem>();
                 }
-                var existingCartItem = cart.CartItems.FirstOrDefault(b => b.CourseId == request.CourseId);
-                if (existingCartItem == null)
+                var existingCartItem = cart.CartItems.Any(b => b.CourseId == request.CourseId && cart.Id == b.CartId);
+                if (existingCartItem == false)
                 {
                     var CartItem = new CartItem()
                     {
@@ -137,15 +137,14 @@ namespace TechMeter.Infrastructure.Services.Cart
                         CourseId = request.CourseId,
                         UnitPrice = request.UnitPrice,
                         CreatedAt = DateTime.Now,
-                        Cart = cart,
+                        CartId = cart.Id,
                     };
                     cart.CartItems.Add(CartItem);
                     await _context.AddAsync(CartItem);
                 }
                 else
                 {
-
-                    _context.Update(existingCartItem);
+                    return _responseHandler.BadRequest<CartResponse>($"course {request.CourseId} already in the cart for this student");
                 }
 
                 await _context.SaveChangesAsync();
@@ -205,7 +204,7 @@ namespace TechMeter.Infrastructure.Services.Cart
                 return _responseHandler.InternalServerError<CartResponse>("An error occurred while removing cart item.");
             }
         }
-        public async Task<Response<CartResponse>>ClearStudentCartAsync(string StudentId)
+        public async Task<Response<CartResponse>> ClearStudentCartAsync(string StudentId)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             var user = await _context.Student.FirstOrDefaultAsync(b => b.Id == StudentId);
@@ -241,7 +240,7 @@ namespace TechMeter.Infrastructure.Services.Cart
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-               
+
                 _logger.LogInformation("Cart item removed successfully for StudentId: {StudentId}", StudentId);
                 return _responseHandler.Deleted<CartResponse>("Cart item removed successfully.");
             }
@@ -252,59 +251,54 @@ namespace TechMeter.Infrastructure.Services.Cart
                 return _responseHandler.InternalServerError<CartResponse>("An error occurred while removing cart item.");
             }
         }
-        public async Task<Response<CartResponse>> UpdateCartAsync(string StudentId, UpdateCartItemRequest request)
-        {
-            var transaction = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                var cart = await _context.Cart
-                    .Include(b => b.CartItems)
-                    .ThenInclude(b => b.Course)
-                    .FirstOrDefaultAsync(b => b.StudentId == StudentId);
-                if (cart == null)
-                {
-                    _logger.LogWarning("Cart not found for StudentId: {StudentId}", StudentId);
-                    return _responseHandler.NotFound<CartResponse>("Cart not found.");
-                }
-                var cartItem = cart.CartItems.FirstOrDefault(b => b.Id == request.CartItemId);
-                if (cartItem == null)
-                {
-                    _logger.LogWarning("CartItem not found. CartItemId: {CartItemId}", request.CartItemId);
-                    return _responseHandler.NotFound<CartResponse>("Cart item not found.");
-                }
+        //public async Task<Response<CartResponse>> UpdateCartAsync(string StudentId, UpdateCartItemRequest request)
+        //{
+        //    var transaction = await _context.Database.BeginTransactionAsync();
+        //    try
+        //    {
+        //        var cart = await _context.Cart
+        //            .Include(b => b.CartItems)
+        //            .ThenInclude(b => b.Course)
+        //            .FirstOrDefaultAsync(b => b.StudentId == StudentId);
+        //        if (cart == null)
+        //        {
+        //            _logger.LogWarning("Cart not found for StudentId: {StudentId}", StudentId);
+        //            return _responseHandler.NotFound<CartResponse>("Cart not found.");
+        //        }
+        //        var cartItem = cart.CartItems.FirstOrDefault(b => b.Id == request.CartItemId);
+        //        if (cartItem == null)
+        //        {
+        //            _logger.LogWarning("CartItem not found. CartItemId: {CartItemId}", request.CartItemId);
+        //            return _responseHandler.NotFound<CartResponse>("Cart item not found.");
+        //        }
 
-                cart.UpdatedAt = DateTime.UtcNow;
+        //        cart.UpdatedAt = DateTime.UtcNow;
 
-                await _context.SaveChangesAsync();
+        //        await _context.SaveChangesAsync();
 
-                await transaction.CommitAsync();
-                var response = CreateCartResponse(cart);
-                _logger.LogInformation("Cart item quantity updated successfully for StudentId: {StudentId}", StudentId);
-                return _responseHandler.Success(response, "Cart item quantity updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, "Error occurred while updating cart item quantity for StudentId: {StudentId}", StudentId);
-                return _responseHandler.InternalServerError<CartResponse>("An error occurred while updating cart item quantity.");
-            }
+        //        await transaction.CommitAsync();
+        //        var response = CreateCartResponse(cart);
+        //        _logger.LogInformation("Cart item quantity updated successfully for StudentId: {StudentId}", StudentId);
+        //        return _responseHandler.Success(response, "Cart item quantity updated successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await transaction.RollbackAsync();
+        //        _logger.LogError(ex, "Error occurred while updating cart item quantity for StudentId: {StudentId}", StudentId);
+        //        return _responseHandler.InternalServerError<CartResponse>("An error occurred while updating cart item quantity.");
+        //    }
 
-        }
+        //}
         private CartResponse CreateCartResponse(TechMeter.Domain.Models.Cart cart)
         {
             var cartItemResponse = cart.CartItems
                      .Select(c => new CartItemResponse
                      {
                          Id = c.Id,
-                         //CartId = c.CartId,
                          CourseName = c.Course.Title,
                          CourseId = c.CourseId,
-                         //CourseImageUrl = c.Course.CourseImage.FirstOrDefault(b => b.isPrimary == true)?.ImageUrl
-                         //                      ?? c.Course.CourseImages.FirstOrDefault()?.ImageUrl
-                         //                      ?? string.Empty,
                          UnitPrice = c.UnitPrice,
                      });
-
 
             var cartResponse = new CartResponse()
             {

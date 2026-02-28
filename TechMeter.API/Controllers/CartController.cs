@@ -52,7 +52,7 @@ namespace TechMeter.API.Controllers
         }
 
         [Authorize(Roles = "student")]
-        [HttpPost("Student/add/to/cart")]
+        [HttpPost("student/add/to/cart")]
         public async Task<ActionResult<Response<CartResponse>>> AddToCartAsync([FromBody] CartRequest cartRequest)
         {
             var Validation = await _cartRequestValidator.ValidateAsync(cartRequest);
@@ -66,21 +66,21 @@ namespace TechMeter.API.Controllers
             var response = await _cartService.AddToCartAsync(userId ?? "", cartRequest);
             return StatusCode((int)response.StatusCode, response);
         }
-        [Authorize(Roles = "student")]
-        [HttpPut("Student/update/cartItem")]
-        public async Task<ActionResult<Response<CartResponse>>> UpdateCartItemAsync([FromBody] UpdateCartItemRequest request)
-        {
-            var Validation = await _updateCartItemRequestValidator.ValidateAsync(request);
-            if (!Validation.IsValid)
-            {
-                var error = string.Join(",", Validation.Errors.Select(b => b.ErrorMessage));
-                return StatusCode((int)_responseHandler.BadRequest<CartResponse>(error).StatusCode,
-                    _responseHandler.BadRequest<CartResponse>(error));
-            }
-            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _cartService.UpdateCartAsync(StudentId ?? "", request);
-            return StatusCode((int)response.StatusCode, response);
-        }
+        //[Authorize(Roles = "student")]
+        //[HttpPut("Student/update/cartItem")]
+        //public async Task<ActionResult<Response<CartResponse>>> UpdateCartItemAsync([FromBody] UpdateCartItemRequest request)
+        //{
+        //    var Validation = await _updateCartItemRequestValidator.ValidateAsync(request);
+        //    if (!Validation.IsValid)
+        //    {
+        //        var error = string.Join(",", Validation.Errors.Select(b => b.ErrorMessage));
+        //        return StatusCode((int)_responseHandler.BadRequest<CartResponse>(error).StatusCode,
+        //            _responseHandler.BadRequest<CartResponse>(error));
+        //    }
+        //    var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    var response = await _cartService.UpdateCartAsync(StudentId ?? "", request);
+        //    return StatusCode((int)response.StatusCode, response);
+        //}
 
         [Authorize(Roles = "student")]
         [HttpDelete("delete/Student/cart/{CartItemId}")]
