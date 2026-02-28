@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
@@ -27,38 +28,48 @@ namespace TechMeter.Infrastructure.Services.Payment
         public async Task<Response<PaymentResponse>> CreateACheckOut(string studentId, PaymentRequest request)
         {
             var user = await _context.Users.FindAsync(studentId);
-            //if (user == null)
-            //{
-            //    return _responseHandler.BadRequest<PaymentResponse>("User is not found");
-            //}
-            var options = new SessionCreateOptions
+            if (user == null)
             {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
+                return _responseHandler.BadRequest<PaymentResponse>("User is not found");
+            }
+            var order = await _context.Order
+                .Include(b => b.OrderItems)
+                .ThenInclude(b => b.Course)
+                .FirstOrDefaultAsync(b => b.Id == request.OrderId);
+            if (order == null)
             {
-                new SessionLineItemOptions
+                return _responseHandler.NotFound<PaymentResponse>("User is not found");
+            }
+            var lineItems = new List<SessionLineItemOptions>();
+            foreach (var item in order.OrderItems)
+            {
+                lineItems.Add(new SessionLineItemOptions
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
                         Currency = request.Currency,
-                        UnitAmountDecimal=request.Price,
+                        UnitAmountDecimal = item.UnitPrice,
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
-                            Name = request.CourseName,
+                            Name = item.Course.Title,
                         },
                     },
-                    Quantity=1
-                },
-            },
+                    Quantity = 1
+                });
+            }
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = lineItems,
                 Mode = "payment",
                 SuccessUrl = "https://amars-marvelous-site-305200.webflow.io/",
                 CancelUrl = "https://amars-fantabulous-site-16cb2e.webflow.io/",
-                //CustomerEmail = user.Email,
-                //   Metadata = new Dictionary<string, string>
-                //{
-                //   { "orderId", request.OrderId },
-                //   { "clientId", user.Id }
-                //}
+                CustomerEmail = user.Email,
+                Metadata = new Dictionary<string, string>
+                {
+                   { "orderId", request.OrderId },
+                   { "clientId", user.Id }
+                }
             };
 
             var service = new SessionService();
