@@ -305,7 +305,7 @@ namespace TechMeter.Infrastructure.Services.Order
             });
 
 
-            var response = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageSize, getOrders.PageNumber);
+            var response = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageNumber, getOrders.PageSize);
             return _responseHandler.Success(response, "Order Returned Successfully for Admin");
 
 
