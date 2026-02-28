@@ -20,14 +20,16 @@ namespace TechMeter.Infrastructure.Services.Lesson
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
+        private readonly IImageUploading _imageUploading;
         private readonly ILogger<LessonService> _logger;
         public LessonService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<LessonService> logger)
+            ILogger<LessonService> logger,IImageUploading imageUploading)
 
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
+            _imageUploading= imageUploading;
 
         }
         public async Task<Response<GetLessonResponse>> AddLessonAsync(string sectionId,AddLessonRequest request)
@@ -36,6 +38,15 @@ namespace TechMeter.Infrastructure.Services.Lesson
             if (section == null)
             {
                 return _responseHandler.NotFound<GetLessonResponse>("Section is not found");
+            }
+            string LessonUrl = string.Empty;
+            try
+            {
+                 LessonUrl = await _imageUploading.UploadVideoAsync(request.LessonStream);
+            }
+            catch(Exception ex)
+            {
+                return _responseHandler.BadRequest<GetLessonResponse>(ex.Message);
             }
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -46,7 +57,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                     Name = request.Name,
                     Description = request.Description,
                     SectionId = sectionId,
-                    LessonUrl = request.LessonUrl
+                    LessonUrl = LessonUrl
                 };
                 await _context.AddAsync(Lesson);
                 await _context.SaveChangesAsync();

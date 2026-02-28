@@ -8,8 +8,8 @@ namespace TechMeter.API.Validators
         public AddLessonRequestValidator()
         {
             RuleFor(b => b)
-                .Must(b => !string.IsNullOrEmpty(b.Name) && !string.IsNullOrEmpty(b.LessonUrl))
-                .WithMessage("Lesson Name And LessonUrl Is Required");
+                .Must(b => !string.IsNullOrEmpty(b.Name) && b.LessonStream != null)
+                .WithMessage("Lesson Name And LessonStream Is Required");
         }
     }
 }

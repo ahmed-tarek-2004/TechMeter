@@ -89,10 +89,8 @@ namespace TechMeter.API.Controllers
         [HttpPost("create")] 
         public async Task<ActionResult<Response<OrderResponse>>> CreateOrderFromCart([FromBody] CreateOrderRequest request)
         {
-
-
-            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _orderService.CreateStudentOrder(StudentId!);
+           // var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _orderService.CreateStudentOrder(request.StuentId);
             return StatusCode((int)response.StatusCode, response);
         }
 

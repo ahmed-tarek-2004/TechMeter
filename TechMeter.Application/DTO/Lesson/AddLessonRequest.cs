@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,6 @@ namespace TechMeter.Application.DTO.Lesson
     {
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string LessonUrl { get; set; }
+        public IFormFile LessonStream { get; set; }
     }
 }
