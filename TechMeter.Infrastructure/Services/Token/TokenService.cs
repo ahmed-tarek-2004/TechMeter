@@ -49,7 +49,7 @@ namespace TechMeter.Application.Interfaces.TokenService
                 SigningCredentials = cred,
                 Issuer = _JwtSettings.Issuer,
                 Audience = _JwtSettings.Audience,
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddDays(35),
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(TokenDescriptor);
