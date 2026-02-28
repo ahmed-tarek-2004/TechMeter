@@ -33,6 +33,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 return _responseHandler.BadRequest<PaymentResponse>("User is not found");
             }
             var order = await _context.Order
+                .AsNoTracking()
                 .Include(b => b.OrderItems)
                 .ThenInclude(b => b.Course)
                 .FirstOrDefaultAsync(b => b.Id == request.OrderId);
@@ -40,23 +41,22 @@ namespace TechMeter.Infrastructure.Services.Payment
             {
                 return _responseHandler.NotFound<PaymentResponse>("User is not found");
             }
-            var lineItems = new List<SessionLineItemOptions>();
-            foreach (var item in order.OrderItems)
-            {
-                lineItems.Add(new SessionLineItemOptions
-                {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        Currency = request.Currency,
-                        UnitAmountDecimal = item.UnitPrice,
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = item.Course.Title,
-                        },
-                    },
-                    Quantity = 1
-                });
-            }
+            var lineItems = order.OrderItems
+                         .Select(item => new SessionLineItemOptions
+                         {
+                             PriceData = new SessionLineItemPriceDataOptions
+                             {
+                                 Currency = request.Currency,
+                                 UnitAmountDecimal = item.UnitPrice * 100,
+                                 ProductData = new SessionLineItemPriceDataProductDataOptions
+                                 {
+                                     Name = item.Course.Title,
+                                     Description = item.Course.Description
+                                 }
+                             },
+                             Quantity = 1
+                         }).ToList();
+
             var options = new SessionCreateOptions
             {
                 PaymentMethodTypes = new List<string> { "card" },
@@ -73,7 +73,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             };
 
             var service = new SessionService();
-            var session = service.Create(options);
+            var session = await service.CreateAsync(options);
 
             var response = new PaymentResponse()
             {
