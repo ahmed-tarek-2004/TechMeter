@@ -41,7 +41,7 @@ namespace TechMeter.API.Controllers
         //}
 
         [HttpGet("student/orders/{studentId}")]
-        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetStudentOrdersAsync([FromRoute] string StudentId, [FromQuery] GetOrders getOrders)
+        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetStudentOrdersAsync([FromRoute] string studentId, [FromQuery] GetOrders getOrders)
         {
 
             var ValidationResult = await _getOrderValidation.ValidateAsync(getOrders);
@@ -52,7 +52,7 @@ namespace TechMeter.API.Controllers
                 return StatusCode((int)badRequestResponse.StatusCode, badRequestResponse);
             }
 
-            var response = await _orderService.GetStudentOrders(StudentId, getOrders);
+            var response = await _orderService.GetStudentOrders(studentId, getOrders);
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpGet("provider/orders/{providerId}")]
@@ -89,10 +89,8 @@ namespace TechMeter.API.Controllers
         [HttpPost("create")] 
         public async Task<ActionResult<Response<OrderResponse>>> CreateOrderFromCart([FromBody] CreateOrderRequest request)
         {
-
-
-            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _orderService.CreateStudentOrder(StudentId!);
+           // var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _orderService.CreateStudentOrder(request.StuentId);
             return StatusCode((int)response.StatusCode, response);
         }
 
