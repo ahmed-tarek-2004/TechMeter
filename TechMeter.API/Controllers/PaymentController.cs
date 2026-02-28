@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Payment;
@@ -20,10 +21,11 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("check-out")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<PaymentResponse>> CheckoutAsync([FromBody] PaymentRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _paymentService.CreateACheckOut(userId,request);
+            var response = await _paymentService.CreateACheckOut(userId, request);
 
             return StatusCode((int)response.StatusCode, response);
         }
