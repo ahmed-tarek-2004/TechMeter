@@ -14,7 +14,7 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.Order
 {
-    public class OrderService:IOrderService
+    public class OrderService : IOrderService
     {
         private readonly ILogger<OrderService> _logger;
         private readonly ApplicationDbContext _context;
@@ -36,10 +36,13 @@ namespace TechMeter.Infrastructure.Services.Order
                 _logger.LogWarning("User is not found ");
                 return _responseHandler.NotFound<OrderResponse>("User Not Found , Login/Register To Continue");
             }
-            var transaction = await _context.Database.BeginTransactionAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var cart = await _context.Cart.Include(c => c.CartItems).ThenInclude(b => b.Course).FirstOrDefaultAsync(b => b.StudentId == Student.Id);
+                var cart = await _context.Cart
+                    .Include(c => c.CartItems)
+                    .ThenInclude(b => b.Course)
+                    .FirstOrDefaultAsync(b => b.StudentId == Student.Id);
                 if (cart == null || !cart.CartItems.Any() || cart.CartItems == null)
                 {
                     _logger.LogWarning("There is no Courses in Your Cart");
@@ -58,7 +61,7 @@ namespace TechMeter.Infrastructure.Services.Order
                 };
                 foreach (var item in cart.CartItems)
                 {
-                    var Course = item.Course;
+                    //var Course = item.Course;
 
                     var orderItem = new OrderItem()
                     {
@@ -144,7 +147,7 @@ namespace TechMeter.Infrastructure.Services.Order
                 _logger.LogWarning("User is not found ");
                 return _responseHandler.NotFound<OrderResponse>("User Not Found , Login/Register To Continue");
             }
-            var transaction = await _context.Database.BeginTransactionAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
 
             var order = await _context.Order
                 .Include(c => c.OrderItems)
@@ -190,8 +193,9 @@ namespace TechMeter.Infrastructure.Services.Order
                 _logger.LogWarning("User is not found ");
                 return _responseHandler.NotFound<PaginatedList<OrderSummaryResponse>>("User Not Found , Login/Register To Continue");
             }
-            var name = _context.Users.Where(b => b.Id == StudentId).Select(b => b.UserName).ToString();
-
+            //
+            //var name = await _context.Users.FirstOrDefaultAsync(b => b.Id == StudentId);
+            var name = await _context.Users.Where(b => b.Id == StudentId).Select(b => b.UserName).FirstOrDefaultAsync();
             var orders = _context.Order
                    .Where(o => o.StudentId == Student.Id)
                    .Select(o => new OrderSummaryResponse
@@ -201,10 +205,11 @@ namespace TechMeter.Infrastructure.Services.Order
                        CreatedAt = o.CreatedAt,
                        Status = o.Status,
                        StudentName = name,
+                       //StudentName = name.UserName,
                        Total = o.TotalPrice
                    });
 
-            var paginaredList = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageSize, getOrders.PageNumber);
+            var paginaredList = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageNumber, getOrders.PageSize);
 
 
             return _responseHandler.Success(paginaredList, "Order returned Successfully");
@@ -300,7 +305,7 @@ namespace TechMeter.Infrastructure.Services.Order
             });
 
 
-            var response = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageSize, getOrders.PageNumber);
+            var response = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageNumber, getOrders.PageSize);
             return _responseHandler.Success(response, "Order Returned Successfully for Admin");
 
 
@@ -320,7 +325,7 @@ namespace TechMeter.Infrastructure.Services.Order
                 Status = o.Status,
                 Total = o.TotalPrice
             });
-            var response = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageSize, getOrders.PageNumber);
+            var response = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, getOrders.PageNumber, getOrders.PageSize);
             return _responseHandler.Success(response, "Order Returned Successfully for Admin");
         }
         #endregion

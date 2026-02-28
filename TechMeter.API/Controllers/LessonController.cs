@@ -26,7 +26,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("add/lesson/to-section/{sectionId}")]
-        public async Task<ActionResult<GetLessonResponse>> AddLessonToSectionAsync(string sectionId, [FromBody] AddLessonRequest request)
+        public async Task<ActionResult<GetLessonResponse>> AddLessonToSectionAsync([FromRoute]string sectionId, [FromForm] AddLessonRequest request)
         {
             var validation = await _addLessonRequest.ValidateAsync(request);
             if (!validation.IsValid)
@@ -38,7 +38,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPut("edit/lesson/detail/by/{Id}")]
-        public async Task<ActionResult<GetLessonResponse>> EditLEssonByIdAsync(string Id, [FromBody] EditLessonRequest request)
+        public async Task<ActionResult<GetLessonResponse>> EditLEssonByIdAsync([FromRoute]string Id, [FromForm] EditLessonRequest request)
         {
             var validation = await _editLessonRequest.ValidateAsync(request);
             if (!validation.IsValid)
