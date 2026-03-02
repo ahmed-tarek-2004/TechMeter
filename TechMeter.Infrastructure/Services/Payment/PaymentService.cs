@@ -30,12 +30,12 @@ namespace TechMeter.Infrastructure.Services.Payment
         private readonly StripeSettings stripe;
 
         public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<PaymentService>logger,IOptions<StripeSettings>option)
+            ILogger<PaymentService> logger, IOptions<StripeSettings> option)
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
-            stripe=option.Value;
+            stripe = option.Value;
         }
         public async Task<Response<PaymentResponse>> CreateACheckOut(string studentId, PaymentRequest request)
         {
@@ -138,11 +138,96 @@ namespace TechMeter.Infrastructure.Services.Payment
 
 
         #region WeebHook
-        public async Task<Response<object>> HandleWebhookAsync(string json, string stripeSignature)
+        public async Task<Response<object>> HandleWebHookAsync(string json, string stripeSignature)
         {
+            _logger.LogInformation("Received webhook event. Signature: {Signature}", stripeSignature);
+
             try
             {
-                return _responseHandler.Success(new object(), "");
+                Event stripeEvent;
+                try
+                {
+                    stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, stripe.WebhookSecret);
+                }
+                catch (StripeException ex)
+                {
+                    _logger.LogError(ex, "Stripe Webhook validation failed");
+                    return _responseHandler.BadRequest<object>(ex.Message);
+                }
+
+                _logger.LogInformation("Stripe Event received: {EventType}", stripeEvent.Type);
+
+                if (stripeEvent.Type == "checkout.session.completed")
+                {
+                    var session = stripeEvent.Data.Object as Session;
+                    if (session == null)
+                        return _responseHandler.BadRequest<object>("Event data object is not a session.");
+
+                    var orderId = session.Metadata.ContainsKey("orderId") ? session.Metadata["orderId"] : null;
+                    if (orderId == null)
+                        return _responseHandler.BadRequest<object>("Missing orderId in metadata.");
+
+                    var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
+                    if (order == null)
+                        return _responseHandler.BadRequest<object>("Order not found.");
+
+                    order.Status = OrderStatus.Paid;
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation($" Checkout session completed for Order {order.Id}");
+                }
+                else if (stripeEvent.Type == "payment_intent.succeeded")
+                {
+                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                    if (paymentIntent == null)
+                        return _responseHandler.BadRequest<object>("Event data object is not a PaymentIntent.");
+
+                    _logger.LogInformation($"PaymentIntent succeeded for: {paymentIntent.Id}");
+
+                    var orderId = paymentIntent.Metadata.ContainsKey("orderId") ? paymentIntent.Metadata["orderId"] : null;
+                    if (orderId == null)
+                        return _responseHandler.BadRequest<object>("Missing orderId in metadata.");
+
+                    var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
+                    if (order == null)
+                        return _responseHandler.BadRequest<object>("Order not found.");
+
+                    order.Status = OrderStatus.Paid;
+                    await _context.SaveChangesAsync();
+                }
+                else if (stripeEvent.Type == "payment_intent.payment_failed")
+                {
+                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                    if (paymentIntent != null)
+                    {
+                        _logger.LogWarning($"PaymentIntent failed for: {paymentIntent.Id}");
+
+                        var orderId = paymentIntent.Metadata.ContainsKey("orderId") ? paymentIntent.Metadata["orderId"] : null;
+                        if (orderId == null)
+                            return _responseHandler.BadRequest<object>("Missing orderId in metadata.");
+
+                        var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
+                        if (order == null)
+                            return _responseHandler.BadRequest<object>("Order not found.");
+
+                        order.Status = OrderStatus.Canceled;
+                        await _context.SaveChangesAsync();
+
+                        if (order != null)
+                        {
+                            order.Status = OrderStatus.Canceled;
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+                else
+                {
+                    _logger.LogInformation($"Unhandled event type: {stripeEvent.Type}");
+                }
+
+
+
+                return _responseHandler.Success<object>("", "Webhook handled successfully.");
             }
             catch (Exception ex)
             {
@@ -150,6 +235,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 return _responseHandler.InternalServerError<object>("Webhook handling failed.");
             }
         }
+
         #endregion
     }
 }
