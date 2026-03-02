@@ -53,13 +53,16 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
 
         }
-        [HttpPost("webhook")]
-        public async Task<ActionResult<object>> StripeWebhook()
+        [HttpPost("HandleWebHook")]
+        [AllowAnonymous]
+        public async Task<ActionResult<PaymentResponse>> HandleWebHookAsync()
         {
-            string stripeSignature = Request?.Headers["Stripe-Signature"]!;
-            using var reader = new StreamReader(Request.Body);
+            var signature = Request.Headers["Stripe-Signature"];
+
+            using var reader = new StreamReader(HttpContext.Request.Body);
             var json = await reader.ReadToEndAsync();
-            return Ok();
+            var response = await _paymentService.HandleWebHookAsync(json, signature);
+            return StatusCode((int)response.StatusCode, response);
         }
     }
 }
