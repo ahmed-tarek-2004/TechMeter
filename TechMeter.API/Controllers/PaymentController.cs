@@ -29,5 +29,13 @@ namespace TechMeter.API.Controllers
 
             return StatusCode((int)response.StatusCode, response);
         }
+        [HttpPost("webhook")]
+        public async Task<ActionResult<object>> StripeWebhook()
+        {
+            string stripeSignature = Request?.Headers["Stripe-Signature"]!;
+            using var reader = new StreamReader(Request.Body);
+            var json = await reader.ReadToEndAsync();
+            return Ok();
+        }
     }
 }
