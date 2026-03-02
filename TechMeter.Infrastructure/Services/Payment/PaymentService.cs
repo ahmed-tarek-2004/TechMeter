@@ -1,5 +1,9 @@
 ﻿using Azure.Core;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Stripe;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
@@ -8,10 +12,13 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Payment;
 using TechMeter.Application.Interfaces.Payment;
+using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
+using TechMeter.Infrastructure.Adapters.Payment;
 using TechMeter.Infrastructure.Persistence;
 using static System.Net.WebRequestMethods;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TechMeter.Infrastructure.Services.Payment
 {
@@ -19,11 +26,16 @@ namespace TechMeter.Infrastructure.Services.Payment
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
+        private readonly ILogger<PaymentService> _logger;
+        private readonly StripeSettings stripe;
 
-        public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler)
+        public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
+            ILogger<PaymentService>logger,IOptions<StripeSettings>option)
         {
             _context = context;
             _responseHandler = responseHandler;
+            _logger = logger;
+            stripe=option.Value;
         }
         public async Task<Response<PaymentResponse>> CreateACheckOut(string studentId, PaymentRequest request)
         {
@@ -82,5 +94,21 @@ namespace TechMeter.Infrastructure.Services.Payment
             };
             return _responseHandler.Success(response, "Continue to pay");
         }
+
+        #region WeebHook
+        public async Task<Response<object>> HandleWebhookAsync(string json, string stripeSignature)
+        {
+            try
+            {
+                return _responseHandler.Success(new object(), "");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling webhook");
+                return _responseHandler.InternalServerError<object>("Webhook handling failed.");
+            }
+        }
+
+        #endregion
     }
 }
