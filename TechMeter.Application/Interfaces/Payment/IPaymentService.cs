@@ -8,5 +8,7 @@ namespace TechMeter.Application.Interfaces.Payment
     {
         Task<Response<PaymentResponse>> CreateACheckOut(string UserId,PaymentRequest paymentRequest);
         Task<Response<object>> HandleWebhookAsync(string json , string stripeSignature);
+        Task<Response<PaymentIntentResponse>> PaymentIntentService(string studentId, PaymentRequest request);
+
     }
 }

@@ -95,6 +95,48 @@ namespace TechMeter.Infrastructure.Services.Payment
             return _responseHandler.Success(response, "Continue to pay");
         }
 
+        public async Task<Response<PaymentIntentResponse>> PaymentIntentService(string StudentId, PaymentRequest request)
+        {
+            var user = await _context.Users.FindAsync(StudentId);
+            if (user == null)
+            {
+                return _responseHandler.BadRequest<PaymentIntentResponse>("User is not found");
+            }
+            var order = await _context.Order
+                .AsNoTracking()
+                .Include(b => b.OrderItems)
+                .ThenInclude(b => b.Course)
+                .FirstOrDefaultAsync(b => b.Id == request.OrderId && b.StudentId == StudentId && b.Status == OrderStatus.PendingPayment);
+            if (order == null)
+            {
+                return _responseHandler.NotFound<PaymentIntentResponse>("Order is not found");
+            }
+            var options = new PaymentIntentCreateOptions
+            {
+                Amount = (long)(order.OrderItems.Sum(b => b.UnitPrice) * 100),
+                Currency = request.Currency ?? "usd",
+                PaymentMethodTypes = new List<string> { "card" },
+                //AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                //{
+                //    Enabled = true
+                //},
+                Metadata = new Dictionary<string, string>
+                {
+                   { "orderId", request.OrderId },
+                   { "clientId", user.Id }
+                }
+            };
+
+            var service = new PaymentIntentService();
+            var intent = await service.CreateAsync(options);
+            var response = new PaymentIntentResponse()
+            {
+                ClientSecret = intent.ClientSecret,
+            };
+            return _responseHandler.Success(response, "ClientSecret Returned Successfully");
+        }
+
+
         #region WeebHook
         public async Task<Response<object>> HandleWebhookAsync(string json, string stripeSignature)
         {
@@ -108,7 +150,6 @@ namespace TechMeter.Infrastructure.Services.Payment
                 return _responseHandler.InternalServerError<object>("Webhook handling failed.");
             }
         }
-
         #endregion
     }
 }
