@@ -235,7 +235,6 @@ namespace TechMeter.Infrastructure.Services.Payment
                 return _responseHandler.InternalServerError<object>("Webhook handling failed.");
             }
         }
-
         #endregion
     }
 }
