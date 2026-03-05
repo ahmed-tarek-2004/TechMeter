@@ -51,8 +51,8 @@ namespace TechMeter.Infrastructure.Services.Payment
             var order = await _context.Order
                 .AsNoTracking()
                 .Include(b => b.OrderItems)
-                .ThenInclude(b => b.Course)
-                .FirstOrDefaultAsync(b => b.Id == request.OrderId);
+                .ThenInclude(b=>b.Course)
+                .FirstOrDefaultAsync(b => b.Id == request.OrderId && b.StudentId == user.Id);
             if (order == null)
             {
                 return _responseHandler.NotFound<PaymentResponse>("User is not found");
@@ -85,7 +85,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                 {
                    { "orderId", request.OrderId },
                    { "clientId", user.Id }
-                }
+                },
+
             };
 
             var service = new SessionService();
@@ -109,7 +110,6 @@ namespace TechMeter.Infrastructure.Services.Payment
             var order = await _context.Order
                 .AsNoTracking()
                 .Include(b => b.OrderItems)
-                .ThenInclude(b => b.Course)
                 .FirstOrDefaultAsync(b => b.Id == request.OrderId && b.StudentId == StudentId && b.Status == OrderStatus.PendingPayment);
             if (order == null)
             {
@@ -175,8 +175,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                     if (order == null)
                         return _responseHandler.BadRequest<object>("Order not found.");
 
-                    order.Status = OrderStatus.Paid;
-                    await _context.SaveChangesAsync();
+                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid);
 
                     _logger.LogInformation($" Checkout session completed for Order {order.Id}");
                 }
@@ -214,21 +213,12 @@ namespace TechMeter.Infrastructure.Services.Payment
                             return _responseHandler.BadRequest<object>("Order not found.");
 
                         await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Canceled, OrderStatus.Canceled);
-
-
-                        if (order != null)
-                        {
-                            order.Status = OrderStatus.Canceled;
-                            await _context.SaveChangesAsync();
-                        }
                     }
                 }
                 else
                 {
                     _logger.LogInformation($"Unhandled event type: {stripeEvent.Type}");
                 }
-
-
 
                 return _responseHandler.Success<object>("", "Webhook handled successfully.");
             }
@@ -307,7 +297,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             var response = await PaginatedList<TransactionResponse>.CreatePaginatedList(Transaction, pageNumber, pageSize);
             return _responseHandler.Success(response, "Transaction Returned Successfully");
         }
-        public async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus)
+        private async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus)
         {
             var providerId = await _context.OrderItem.Where(b => b.OrderId == order.Id).Select(b => b.Course.ProviderId).FirstOrDefaultAsync();
             var Transaction = new PaymentTransaction()
