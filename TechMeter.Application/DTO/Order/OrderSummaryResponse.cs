@@ -11,7 +11,7 @@ namespace TechMeter.Application.DTO.Order
     {
         public string Id { get; set; }
         public OrderStatus Status { get; set; }
-        public string StudentName { get; set; }
+        //public string StudentName { get; set; }
         public string StudentId { get; set; }
         public DateTime CreatedAt { get; set; }
         public decimal Total { get; set; }
