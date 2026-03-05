@@ -11,11 +11,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
+using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.Payment;
 using TechMeter.Infrastructure.Persistence;
@@ -193,9 +195,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                     var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
                     if (order == null)
                         return _responseHandler.BadRequest<object>("Order not found.");
+                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid);
 
-                    order.Status = OrderStatus.Paid;
-                    await _context.SaveChangesAsync();
                 }
                 else if (stripeEvent.Type == "payment_intent.payment_failed")
                 {
@@ -212,8 +213,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                         if (order == null)
                             return _responseHandler.BadRequest<object>("Order not found.");
 
-                        order.Status = OrderStatus.Canceled;
-                        await _context.SaveChangesAsync();
+                        await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Canceled, OrderStatus.Canceled);
+
 
                         if (order != null)
                         {
@@ -237,7 +238,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 return _responseHandler.InternalServerError<object>("Webhook handling failed.");
             }
         }
-
+        #endregion
         public async Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.PaymentTransactions
@@ -306,6 +307,22 @@ namespace TechMeter.Infrastructure.Services.Payment
             var response = await PaginatedList<TransactionResponse>.CreatePaginatedList(Transaction, pageNumber, pageSize);
             return _responseHandler.Success(response, "Transaction Returned Successfully");
         }
-        #endregion
+        public async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus)
+        {
+            var providerId = await _context.OrderItem.Where(b => b.OrderId == order.Id).Select(b => b.Course.ProviderId).FirstOrDefaultAsync();
+            var Transaction = new PaymentTransaction()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Date = DateTime.Now,
+                OrderId = order.Id,
+                ProviderId = providerId!,
+                Status = transactionStatus,
+                StudentId = order.StudentId,
+                TotalPrice = order.TotalPrice,
+            };
+            await _context.AddAsync(Transaction);
+            order.Status = orderStatus;
+            await _context.SaveChangesAsync();
+        }
     }
 }
