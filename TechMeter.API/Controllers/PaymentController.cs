@@ -19,14 +19,16 @@ namespace TechMeter.API.Controllers
     {
         private readonly IPaymentService _paymentService;
         public readonly ResponseHandler _responseHandler;
+        private readonly ILogger<PaymentController> _logger;
         private readonly IValidator<PaymentRequest> _paymentRequestValidator;
 
         public PaymentController(IPaymentService paymentService, IValidator<PaymentRequest> paymentRequestValidator,
-            ResponseHandler responseHandler)
+            ResponseHandler responseHandler, ILogger<PaymentController> logger)
         {
             _paymentService = paymentService;
             _paymentRequestValidator = paymentRequestValidator;
             _responseHandler = responseHandler;
+            _logger = logger;
         }
 
         [HttpPost("check-out")]
@@ -59,7 +61,12 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<PaymentResponse>> HandleWebHookAsync()
         {
             var signature = Request.Headers["Stripe-Signature"];
-
+            _logger.LogInformation("Starting the WebHook ...");
+            if (string.IsNullOrEmpty(signature))
+            {
+                _logger.LogWarning("Missing Stripe-Signature header");
+                return BadRequest("Missing Stripe-Signature header");
+            }
             using var reader = new StreamReader(HttpContext.Request.Body);
             var json = await reader.ReadToEndAsync();
             var response = await _paymentService.HandleWebHookAsync(json, signature);
@@ -72,6 +79,7 @@ namespace TechMeter.API.Controllers
             var response = await _paymentService.GetAllAdminTransaction(from,to,pageNumber,pageSiaze);
             return StatusCode((int)response.StatusCode, response);
         }
+        
         [HttpGet("provider/all/transaction")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<PaymentResponse>> GetProviderAllTransactionAsync([FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
