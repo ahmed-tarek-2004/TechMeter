@@ -204,7 +204,7 @@ namespace TechMeter.Infrastructure.Services.Order
                        StudentId = StudentId,
                        CreatedAt = o.CreatedAt,
                        Status = o.Status,
-                       StudentName = name,
+                       //StudentName = name,
                        //StudentName = name.UserName,
                        Total = o.TotalPrice
                    });
