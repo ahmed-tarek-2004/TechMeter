@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using System.Net;
 using System.Security.Claims;
 using TechMeter.API.Validators.Payment;
@@ -64,5 +65,21 @@ namespace TechMeter.API.Controllers
             var response = await _paymentService.HandleWebHookAsync(json, signature);
             return StatusCode((int)response.StatusCode, response);
         }
+        [HttpGet("admin/all/transaction")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<PaymentResponse>> GetAdminAllTransactionAsync([FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
+        {
+            var response = await _paymentService.GetAllAdminTransaction(from,to,pageNumber,pageSiaze);
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpGet("provider/all/transaction")]
+        [Authorize(Roles = "provider")]
+        public async Task<ActionResult<PaymentResponse>> GetProviderAllTransactionAsync([FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
+        {
+            var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _paymentService.GetAllProviderTransaction(providerId!,from,to,pageNumber,pageSiaze);
+            return StatusCode((int)response.StatusCode, response);
+        }
+
     }
 }

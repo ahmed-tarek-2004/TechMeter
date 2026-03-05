@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -270,6 +271,12 @@ namespace TechMeter.Infrastructure.Services.Payment
 
         public async Task<Response<PaginatedList<TransactionResponse>>> GetAllProviderTransaction(string providerId, DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
         {
+            var provider = await _context.Provider.FindAsync(providerId);
+            if (provider == null)
+            {
+                return _responseHandler.BadRequest<PaginatedList<TransactionResponse>>("Provider does not exists");
+            }
+
             var query = _context.PaymentTransactions
                .AsNoTracking()
                .Where(b => b.ProviderId == providerId)
