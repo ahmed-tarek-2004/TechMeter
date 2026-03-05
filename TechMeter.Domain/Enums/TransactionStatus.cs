@@ -8,8 +8,9 @@ namespace TechMeter.Domain.Enums
 {
     public enum TransactionStatus
     {
+        Pending,
         Paid,
         Refunded,
-        Pending
+        Canceled
     }
 }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Payment;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Enums;
+using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.Payment;
@@ -234,6 +235,69 @@ namespace TechMeter.Infrastructure.Services.Payment
                 _logger.LogError(ex, "Error handling webhook");
                 return _responseHandler.InternalServerError<object>("Webhook handling failed.");
             }
+        }
+
+        public async Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
+        {
+            var query = _context.PaymentTransactions
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (from.HasValue)
+            {
+                query = query.Where(b => b.Date >= from);
+            }
+            if (to.HasValue)
+            {
+                query = query.Where(b => b.Date <= to);
+            }
+
+            query = query.OrderByDescending(b => b.Date);
+
+            var Transaction = query.Select(b => new TransactionResponse
+            {
+                Id = b.Id,
+                Date = b.Date,
+                OrderId = b.OrderId,
+                ProviderId = b.ProviderId,
+                Status = b.Status,
+                StudentId = b.StudentId,
+                TotalPrice = b.TotalPrice
+            });
+            var response = await PaginatedList<TransactionResponse>.CreatePaginatedList(Transaction, pageNumber, pageSize);
+            return _responseHandler.Success(response, "Transaction Returned Successfully");
+        }
+
+        public async Task<Response<PaginatedList<TransactionResponse>>> GetAllProviderTransaction(string providerId, DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
+        {
+            var query = _context.PaymentTransactions
+               .AsNoTracking()
+               .Where(b => b.ProviderId == providerId)
+               .AsQueryable();
+
+            if (from.HasValue)
+            {
+                query = query.Where(b => b.Date >= from);
+            }
+            if (to.HasValue)
+            {
+                query = query.Where(b => b.Date <= to);
+            }
+
+            query = query.OrderByDescending(b => b.Date);
+
+            var Transaction = query.Select(b => new TransactionResponse
+            {
+                Id = b.Id,
+                Date = b.Date,
+                OrderId = b.OrderId,
+                ProviderId = b.ProviderId,
+                Status = b.Status,
+                StudentId = b.StudentId,
+                TotalPrice = b.TotalPrice
+            });
+            var response = await PaginatedList<TransactionResponse>.CreatePaginatedList(Transaction, pageNumber, pageSize);
+            return _responseHandler.Success(response, "Transaction Returned Successfully");
         }
         #endregion
     }
