@@ -65,7 +65,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
                 throw;
             }
         }
-        public async Task InvoiceEmailAsync(User user, PaymentTransaction transaction)
+        public async Task InvoiceEmailAsync(User user, PaymentTransaction transaction, List<GetCourseResponse> courseResponses)
         {
             try
             {
@@ -77,6 +77,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
                     _logger.LogError($"Invoice Email Template not found at path: {templatePath}");
                     throw new FileNotFoundException("Invoice Email Template not found.", templatePath);
                 }
+
 
                 var emailTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
 
@@ -92,9 +93,12 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
                               .Replace("{{Currency}}", "EGP")
                               .Replace("{{Subtotal}}", transaction.TotalPrice.ToString("C"))
                               .Replace("{{Discount}}", "")
+                              .Replace("{{TotalAmount}}", courseResponses.Sum(b => b.Price).ToString())
                               .Replace("{{PaymentMethod}}", "card")
-                              .Replace("{{VerificationHash}}", GenerateReceiptHash(transaction, user, ReceiptNumber));
-                              //.Replace("{{ItemRows}}", BuildCourseRows(enrolledCourses));
+                              .Replace("{{VerificationHash}}", GenerateReceiptHash(transaction, user, ReceiptNumber))
+                              .Replace("{{ItemRows}}", BuildCourseRows(courseResponses))
+                              .Replace("{{CompanyPhone}}", "+201158905589")
+                              .Replace("{{CompanyEmail}}", "TechMeter@gmail.com");
 
                 var sendResult = await _fluentEmail
                     .To(user.Email)
@@ -129,15 +133,14 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
         private static string BuildCourseRows(List<GetCourseResponse> courses)
         {
             var sb = new StringBuilder();
-            for (int c = 1; c <= courses.Count(); c++)
+            for (int c = 0; c <= courses.Count(); c++)
             {
                 sb.AppendLine($"""
                 <tr>
-                  <td style="color:var(--text-muted); font-family:'Space Mono',monospace">{c:D2}</td>
+                  <td style="color:var(--text-muted); font-family:'Space Mono',monospace">{c + 1:D2}</td>
                   <td>
                     <span class="course-badge">{courses[c].CourseProfileImageUrl}</span>
                     <span class="course-name">{courses[c].Title}</span>
-                    <span class="course-instructor">by {courses[c].ProviderId}</span>
                   </td>
                   <td class="price-cell">{FormatMoney(courses[c].Price, courses[c].Currency)}</td>
                 </tr>
