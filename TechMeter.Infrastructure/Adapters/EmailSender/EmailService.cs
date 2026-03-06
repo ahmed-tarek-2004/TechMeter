@@ -96,7 +96,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
                               .Replace("{{TotalAmount}}", courseResponses.Sum(b => b.Price).ToString())
                               .Replace("{{PaymentMethod}}", "card")
                               .Replace("{{VerificationHash}}", GenerateReceiptHash(transaction, user, ReceiptNumber))
-                              //.Replace("{{ItemRows}}", BuildCourseRows(courseResponses))
+                              .Replace("{{ItemRows}}", BuildCourseRows(courseResponses))
                               .Replace("{{CompanyPhone}}", "+201158905589")
                               .Replace("{{CompanyEmail}}", "TechMeter@gmail.com");
 
@@ -133,7 +133,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
         private static string BuildCourseRows(List<GetCourseResponse> courses)
         {
             var sb = new StringBuilder();
-            for (int c = 0; c <= courses.Count(); c++)
+            for (int c = 0; c < courses.Count(); c++)
             {
                 sb.AppendLine($"""
                 <tr>
