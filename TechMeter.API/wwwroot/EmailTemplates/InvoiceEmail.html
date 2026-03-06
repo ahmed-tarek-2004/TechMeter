@@ -5,69 +5,70 @@
     <title>Payment Receipt</title>
 </head>
 
-<body style="margin:0;padding:0;background:#f5f7fb;font-family:Arial,Helvetica,sans-serif;">
+<body style="margin:0;padding:0;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif;">
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f7fb;padding:30px 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f2f4f7;padding:40px 0;">
         <tr>
             <td align="center">
 
-                <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;">
+                <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:6px;border:1px solid #d1d5db;overflow:hidden;">
 
+                    <!-- Header -->
                     <tr>
-                        <td style="background:#111827;color:white;padding:20px 30px;font-size:20px;font-weight:bold;">
+                        <td style="background:#1f2937;color:white;padding:25px 30px;font-size:22px;font-weight:bold;text-align:center;">
                             TechMeter
                         </td>
                     </tr>
 
+                    <!-- Body -->
                     <tr>
                         <td style="padding:30px">
 
-                            <h2 style="margin:0 0 10px 0;">Payment Receipt</h2>
-                            <p style="margin:0 0 20px 0;color:#6b7280;">Receipt #: <b>{{ReceiptNumber}}</b></p>
+                            <h2 style="margin:0 0 10px 0;color:#111827;">Payment Receipt</h2>
+                            <p style="margin:0 0 20px 0;color:#6b7280;font-size:14px;">Receipt #: <strong>{{ReceiptNumber}}</strong></p>
 
-                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+                            <!-- Transaction Details -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:25px;">
                                 <tr>
-                                    <td style="padding:8px 0;color:#6b7280;">Order ID</td>
-                                    <td align="right"><b>{{OrderID}}</b></td>
+                                    <td style="padding:8px 0;color:#6b7280;font-size:14px;">Order ID</td>
+                                    <td align="right" style="font-size:14px;color:#111827;"><strong>{{OrderID}}</strong></td>
                                 </tr>
 
                                 <tr>
-                                    <td style="padding:8px 0;color:#6b7280;">Transaction ID</td>
-                                    <td align="right"><b>{{TransactionID}}</b></td>
+                                    <td style="padding:8px 0;color:#6b7280;font-size:14px;">Transaction ID</td>
+                                    <td align="right" style="font-size:14px;color:#111827;"><strong>{{TransactionID}}</strong></td>
                                 </tr>
 
                                 <tr>
-                                    <td style="padding:8px 0;color:#6b7280;">Payment Date</td>
-                                    <td align="right"><b>{{PaymentDate}}</b></td>
-                                </tr>
-                            </table>
-
-                            <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
-
-                            <h3 style="margin-bottom:10px;">Student</h3>
-
-                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-                                <tr>
-                                    <td style="padding:6px 0;color:#6b7280;">Name</td>
-                                    <td align="right"><b>{{ClientName}}</b></td>
-                                </tr>
-
-                                <tr>
-                                    <td style="padding:6px 0;color:#6b7280;">Phone</td>
-                                    <td align="right"><b>{{ClientPhone}}</b></td>
-                                </tr>
-
-                                <tr>
-                                    <td style="padding:6px 0;color:#6b7280;">Address</td>
-                                    <td align="right"><b>{{ClientAddress}}</b></td>
+                                    <td style="padding:8px 0;color:#6b7280;font-size:14px;">Payment Date</td>
+                                    <td align="right" style="font-size:14px;color:#111827;"><strong>{{PaymentDate}}</strong></td>
                                 </tr>
                             </table>
 
-                            <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
+                            <hr style="border:none;border-top:1px solid #e5e7eb;margin:25px 0;">
 
-                            <h3 style="margin-bottom:10px;">Courses</h3>
+                            <!-- Client Details -->
+                            <h3 style="margin-bottom:10px;color:#1f2937;font-size:16px;">Student Information</h3>
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:25px;">
+                                <tr>
+                                    <td style="padding:6px 0;color:#6b7280;font-size:14px;">Name</td>
+                                    <td align="right" style="font-size:14px;color:#111827;"><strong>{{ClientName}}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:6px 0;color:#6b7280;font-size:14px;">Phone</td>
+                                    <td align="right" style="font-size:14px;color:#111827;"><strong>{{ClientPhone}}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:6px 0;color:#6b7280;font-size:14px;">Address</td>
+                                    <td align="right" style="font-size:14px;color:#111827;"><strong>{{ClientAddress}}</strong></td>
+                                </tr>
+                            </table>
 
-                            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                            <hr style="border:none;border-top:1px solid #e5e7eb;margin:25px 0;">
+
+                            <!-- Courses Table -->
+                            <h3 style="margin-bottom:10px;color:#1f2937;font-size:16px;">Courses Purchased</h3>
+                            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:14px;">
 
                                 <tr style="background:#f9fafb">
                                     <th align="left" style="padding:10px;border:1px solid #e5e7eb;">#</th>
@@ -79,28 +80,26 @@
 
                             </table>
 
-                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px">
-
+                            <!-- Totals -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:25px;font-size:14px;">
                                 <tr>
                                     <td style="padding:8px 0;color:#6b7280;">Subtotal</td>
-                                    <td align="right"><b>{{Subtotal}}</b></td>
+                                    <td align="right" style="color:#111827;"><strong>{{Subtotal}}</strong></td>
                                 </tr>
-
                                 <tr>
                                     <td style="padding:8px 0;color:#6b7280;">Discount</td>
-                                    <td align="right"><b>{{Discount}}</b></td>
+                                    <td align="right" style="color:#111827;"><strong>{{Discount}}</strong></td>
                                 </tr>
-
                                 <tr>
-                                    <td style="padding:12px 0;font-size:18px;"><b>Total Paid</b></td>
-                                    <td align="right" style="font-size:18px;color:#2563eb;"><b>{{TotalAmount}}</b></td>
+                                    <td style="padding:12px 0;font-size:16px;color:#111827;"><strong>Total Paid</strong></td>
+                                    <td align="right" style="font-size:16px;color:#1e40af;"><strong>{{TotalAmount}}</strong></td>
                                 </tr>
-
                             </table>
 
                         </td>
                     </tr>
 
+                    <!-- Footer -->
                     <tr>
                         <td style="background:#f9fafb;padding:20px;text-align:center;color:#6b7280;font-size:12px;">
                             {{CompanyPhone}} • {{CompanyEmail}}
