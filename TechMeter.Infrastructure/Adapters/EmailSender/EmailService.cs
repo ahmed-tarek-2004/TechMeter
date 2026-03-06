@@ -96,7 +96,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
                               .Replace("{{TotalAmount}}", courseResponses.Sum(b => b.Price).ToString())
                               .Replace("{{PaymentMethod}}", "card")
                               .Replace("{{VerificationHash}}", GenerateReceiptHash(transaction, user, ReceiptNumber))
-                              .Replace("{{ItemRows}}", BuildCourseRows(courseResponses))
+                              //.Replace("{{ItemRows}}", BuildCourseRows(courseResponses))
                               .Replace("{{CompanyPhone}}", "+201158905589")
                               .Replace("{{CompanyEmail}}", "TechMeter@gmail.com");
 
@@ -108,15 +108,15 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
 
                 if (!sendResult.Successful)
                 {
-                    _logger.LogError($"Failed to send OTP email to {user.Email}. Errors: {string.Join(", ", sendResult.ErrorMessages)}");
-                    throw new Exception("Failed to send OTP email.");
+                    _logger.LogError($"Failed to send Invoice email to {user.Email}. Errors: {string.Join(", ", sendResult.ErrorMessages)}");
+                    throw new Exception("Failed to send Invoice email.");
                 }
 
-                _logger.LogInformation($"OTP email successfully sent to {user.Email}");
+                _logger.LogInformation($"Invoice email successfully sent to {user.Email}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred while sending OTP email to {user.Email}");
+                _logger.LogError(ex, $"An error occurred while sending Invoice email to {user.Email}");
                 throw;
             }
         }
