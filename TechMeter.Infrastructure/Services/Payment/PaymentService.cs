@@ -180,9 +180,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                     if (order == null)
                         return _responseHandler.BadRequest<object>("Order not found.");
 
-<<<<<<< HEAD
-                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid);
-=======
+
                     var userId = session.Metadata.ContainsKey("clientId") ? session.Metadata["clientId"] : null;
                     if (userId == null)
                     {
@@ -191,7 +189,6 @@ namespace TechMeter.Infrastructure.Services.Payment
                     }
 
                     await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid, userId);
->>>>>>> feature/transaction/AddtransactionModule
 
                     _logger.LogInformation($" Checkout session completed for Order {order.Id}");
                 }
@@ -230,12 +227,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                         if (order == null)
                             return _responseHandler.BadRequest<object>("Order not found.");
 
-<<<<<<< HEAD
-                        await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Canceled, OrderStatus.Canceled);
-=======
                         var userId = paymentIntent.Metadata.ContainsKey("clientId") ? paymentIntent.Metadata["clientId"] : null;
                         await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Canceled, OrderStatus.Canceled, userId);
->>>>>>> feature/transaction/AddtransactionModule
                     }
                 }
                 else
@@ -320,11 +313,8 @@ namespace TechMeter.Infrastructure.Services.Payment
             var response = await PaginatedList<TransactionResponse>.CreatePaginatedList(Transaction, pageNumber, pageSize);
             return _responseHandler.Success(response, "Transaction Returned Successfully");
         }
-<<<<<<< HEAD
-        private async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus)
-=======
+
         public async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus, string userId)
->>>>>>> feature/transaction/AddtransactionModule
         {
 
             var user = await _context.Users.FirstOrDefaultAsync(b => b.Id == userId);
