@@ -74,6 +74,9 @@ namespace TechMeter.Infrastructure.Services.CourseService
                     Description = request.Description,
                     Title = request.Title,
                     ProviderId = providerId,
+                    Price = request.Price,
+                    Currency = request.Currency,
+
                 };
                 await _context.AddAsync(course);
                 await _context.SaveChangesAsync();
@@ -84,6 +87,8 @@ namespace TechMeter.Infrastructure.Services.CourseService
                     Description = course.Description,
                     Title = course.Title,
                     CategoryId = course.CategoryId,
+                    Currency = course.Currency,
+                    Price = course.Price,
                 };
                 await transaction.CommitAsync();
                 return _responseHandler.Success(response, "Course Created Successfully");
@@ -111,6 +116,8 @@ namespace TechMeter.Infrastructure.Services.CourseService
                 Description = course.Description,
                 ProviderId = course.ProviderId,
                 Title = course.Title,
+                Price = course.Price,
+                Currency = course.Currency,
             };
 
             return _responseHandler.Success(response, "Course Returned Successfully");
@@ -126,6 +133,8 @@ namespace TechMeter.Infrastructure.Services.CourseService
                 CourseProfileImageUrl = b.CourseProfileImageUrl,
                 Description = b.Description,
                 Title = b.Title,
+                Price = b.Price,
+                Currency = b.Currency
             }).ToListAsync();
             return _responseHandler.Success(response, "All Courses Returned Successfully");
         }
@@ -144,6 +153,8 @@ namespace TechMeter.Infrastructure.Services.CourseService
                 ProviderId = b.ProviderId,
                 Description = b.Description,
                 Title = b.Title,
+                Price = b.Price,
+                Currency = b.Currency
             }).ToListAsync();
             return _responseHandler.Success(coursesResponse, "Courses returned successfully");
         }
