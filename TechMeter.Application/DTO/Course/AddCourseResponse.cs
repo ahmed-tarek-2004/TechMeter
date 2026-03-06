@@ -14,10 +14,6 @@ namespace TechMeter.Application.DTO.Course
         public string Description { get; set; } = "";
         public string CourseProfileImageUrl { get; set; }
         public string CategoryId { get; set; }
-<<<<<<< HEAD
-=======
-        public string CategoryName { get; set; }
->>>>>>> feature/transaction/AddtransactionModule
         public string Currency { get; set; }
         public decimal Price { get; set; }
     }
