@@ -13,6 +13,8 @@ namespace TechMeter.Domain.Models
         public string Title { get; set; } = "";
         public string ProviderId {  get; set; }
         public string Description { get; set; } = "";
+        public string Currency { get; set; } = "usd";
+        public decimal Price { get; set; }
         public string CourseProfileImageUrl { get; set; }
         public string CategoryId { get; set; }
         public Category Category { get; set; } = null!;
