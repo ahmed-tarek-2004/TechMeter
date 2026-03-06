@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Application.DTO.Course;
 using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
 using TechMeter.Application.Interfaces.Payment;
@@ -19,6 +20,7 @@ using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
+using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Adapters.Payment;
 using TechMeter.Infrastructure.Persistence;
 using static System.Net.WebRequestMethods;
@@ -29,17 +31,20 @@ namespace TechMeter.Infrastructure.Services.Payment
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<PaymentService> _logger;
         private readonly StripeSettings stripe;
 
         public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<PaymentService> logger, IOptions<StripeSettings> option)
+            ILogger<PaymentService> logger, IOptions<StripeSettings> option,
+            IEmailService emailService)
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
             stripe = option.Value;
+            _emailService = emailService;
         }
         public async Task<Response<PaymentResponse>> CreateACheckOut(string studentId, PaymentRequest request)
         {
@@ -175,8 +180,14 @@ namespace TechMeter.Infrastructure.Services.Payment
                     if (order == null)
                         return _responseHandler.BadRequest<object>("Order not found.");
 
-                    order.Status = OrderStatus.Paid;
-                    await _context.SaveChangesAsync();
+                    var userId = session.Metadata.ContainsKey("clientId") ? session.Metadata["clientId"] : null;
+                    if (userId == null)
+                    {
+                        _logger.LogInformation("user Id is : {userId}", userId);
+                        return _responseHandler.BadRequest<object>("user not found.");
+                    }
+
+                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid, userId);
 
                     _logger.LogInformation($" Checkout session completed for Order {order.Id}");
                 }
@@ -195,7 +206,9 @@ namespace TechMeter.Infrastructure.Services.Payment
                     var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
                     if (order == null)
                         return _responseHandler.BadRequest<object>("Order not found.");
-                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid);
+
+                    var userId = paymentIntent.Metadata.ContainsKey("clientId") ? paymentIntent.Metadata["clientId"] : null;
+                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid, userId);
 
                 }
                 else if (stripeEvent.Type == "payment_intent.payment_failed")
@@ -213,14 +226,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                         if (order == null)
                             return _responseHandler.BadRequest<object>("Order not found.");
 
-                        await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Canceled, OrderStatus.Canceled);
-
-
-                        if (order != null)
-                        {
-                            order.Status = OrderStatus.Canceled;
-                            await _context.SaveChangesAsync();
-                        }
+                        var userId = paymentIntent.Metadata.ContainsKey("clientId") ? paymentIntent.Metadata["clientId"] : null;
+                        await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Canceled, OrderStatus.Canceled, userId);
                     }
                 }
                 else
@@ -307,22 +314,48 @@ namespace TechMeter.Infrastructure.Services.Payment
             var response = await PaginatedList<TransactionResponse>.CreatePaginatedList(Transaction, pageNumber, pageSize);
             return _responseHandler.Success(response, "Transaction Returned Successfully");
         }
-        public async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus)
+        public async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus, string userId)
         {
+
+            var user = await _context.Users.FirstOrDefaultAsync(b => b.Id == userId);
             var providerId = await _context.OrderItem.Where(b => b.OrderId == order.Id).Select(b => b.Course.ProviderId).FirstOrDefaultAsync();
-            var Transaction = new PaymentTransaction()
+            var courses = _context.Course.Include(b => b.Students).Where(b => b.Students.Any(c => c.Id == userId)).Select(b => new GetCourseResponse
             {
-                Id = Guid.NewGuid().ToString(),
-                Date = DateTime.Now,
-                OrderId = order.Id,
-                ProviderId = providerId!,
-                Status = transactionStatus,
-                StudentId = order.StudentId,
-                TotalPrice = order.TotalPrice,
-            };
-            await _context.AddAsync(Transaction);
-            order.Status = orderStatus;
-            await _context.SaveChangesAsync();
+                Id = b.Id,
+                CategoryId = b.CategoryId,
+                CourseProfileImageUrl = b.CourseProfileImageUrl,
+                Currency = b.Currency,
+                Description = b.Description,
+                ProviderId = b.ProviderId,
+                Price = b.Price,
+                Title = b.Title
+            });
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+
+                var Transaction = new PaymentTransaction()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Date = DateTime.Now,
+                    OrderId = order.Id,
+                    ProviderId = providerId!,
+                    Status = transactionStatus,
+                    StudentId = order.StudentId,
+                    TotalPrice = order.TotalPrice,
+                };
+                await _context.AddAsync(Transaction);
+                order.Status = orderStatus;
+                if (transactionStatus == TransactionStatus.Paid)
+                    await _emailService.InvoiceEmailAsync(user!, Transaction, await courses.ToListAsync());
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+            }
         }
     }
 }
