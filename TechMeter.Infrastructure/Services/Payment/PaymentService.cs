@@ -56,7 +56,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             var order = await _context.Order
                 .AsNoTracking()
                 .Include(b => b.OrderItems)
-                .ThenInclude(b=>b.Course)
+                .ThenInclude(b => b.Course)
                 .FirstOrDefaultAsync(b => b.Id == request.OrderId && b.StudentId == user.Id);
             if (order == null)
             {
@@ -245,12 +245,20 @@ namespace TechMeter.Infrastructure.Services.Payment
             }
         }
         #endregion
-        public async Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
+        public async Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(string? providerId, DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.PaymentTransactions
                 .AsNoTracking()
                 .AsQueryable();
+            if (!string.IsNullOrEmpty(providerId))
+            {
+                var providerExists = await _context.Provider.AnyAsync(p => p.Id == providerId);
 
+                if (!providerExists)
+                    return _responseHandler.BadRequest<PaginatedList<TransactionResponse>>("Provider is not found");
+
+                query = query.Where(b => b.ProviderId == providerId);
+            }
             if (from.HasValue)
             {
                 query = query.Where(b => b.Date >= from);
