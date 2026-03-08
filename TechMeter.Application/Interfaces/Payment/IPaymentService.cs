@@ -9,7 +9,7 @@ namespace TechMeter.Application.Interfaces.Payment
         Task<Response<PaymentResponse>> CreateACheckOut(string UserId, PaymentRequest paymentRequest);
         Task<Response<object>> HandleWebHookAsync(string json, string stripeSignature);
         Task<Response<PaymentIntentResponse>> PaymentIntentService(string studentId, PaymentRequest request);
-        Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10);
+        Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(string? providerId, DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10);
         Task<Response<PaginatedList<TransactionResponse>>> GetAllProviderTransaction(string providerId, DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10);
     }
 }

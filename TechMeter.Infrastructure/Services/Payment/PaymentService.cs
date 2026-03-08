@@ -57,7 +57,11 @@ namespace TechMeter.Infrastructure.Services.Payment
                 .AsNoTracking()
                 .Include(b => b.OrderItems)
                 .ThenInclude(b => b.Course)
+<<<<<<< Updated upstream
                 .FirstOrDefaultAsync(b => b.Id == request.OrderId);
+=======
+                .FirstOrDefaultAsync(b => b.Id == request.OrderId && b.StudentId == user.Id);
+>>>>>>> Stashed changes
             if (order == null)
             {
                 return _responseHandler.NotFound<PaymentResponse>("User is not found");
@@ -246,19 +250,29 @@ namespace TechMeter.Infrastructure.Services.Payment
             }
         }
         #endregion
-        public async Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
+        public async Task<Response<PaginatedList<TransactionResponse>>> GetAllAdminTransaction(string? providerId, DateTime? from, DateTime? to, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.PaymentTransactions
                 .AsNoTracking()
                 .AsQueryable();
 
+            if (!string.IsNullOrEmpty(providerId))
+            {
+                var providerExists = await _context.Provider.AnyAsync(p => p.Id == providerId);
+
+                if (!providerExists)
+                    return _responseHandler.BadRequest<PaginatedList<TransactionResponse>>("Provider is not found");
+
+                query = query.Where(b => b.ProviderId == providerId);
+            }
+
             if (from.HasValue)
             {
-                query = query.Where(b => b.Date >= from);
+                query = query.Where(b => b.Date >= from.Value);
             }
             if (to.HasValue)
             {
-                query = query.Where(b => b.Date <= to);
+                query = query.Where(b => b.Date <= to.Value);
             }
 
             query = query.OrderByDescending(b => b.Date);
@@ -344,10 +358,13 @@ namespace TechMeter.Infrastructure.Services.Payment
                     StudentId = order.StudentId,
                     TotalPrice = order.TotalPrice,
                 };
-                await _context.AddAsync(Transaction);
+
                 order.Status = orderStatus;
                 if (transactionStatus == TransactionStatus.Paid)
+                {
+                    //_context.Student.AddRange();
                     await _emailService.InvoiceEmailAsync(user!, Transaction, await courses.ToListAsync());
+                }
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
