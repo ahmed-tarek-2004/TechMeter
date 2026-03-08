@@ -74,18 +74,18 @@ namespace TechMeter.API.Controllers
         }
         [HttpGet("admin/all/transaction")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<PaymentResponse>> GetAdminAllTransactionAsync([FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
+        public async Task<ActionResult<PaymentResponse>> GetAdminAllTransactionAsync(string? providerId, [FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
         {
-            var response = await _paymentService.GetAllAdminTransaction(from,to,pageNumber,pageSiaze);
+            var response = await _paymentService.GetAllAdminTransaction(providerId, from, to, pageNumber, pageSiaze);
             return StatusCode((int)response.StatusCode, response);
         }
-        
+
         [HttpGet("provider/all/transaction")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<PaymentResponse>> GetProviderAllTransactionAsync([FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
         {
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _paymentService.GetAllProviderTransaction(providerId!,from,to,pageNumber,pageSiaze);
+            var response = await _paymentService.GetAllProviderTransaction(providerId!, from, to, pageNumber, pageSiaze);
             return StatusCode((int)response.StatusCode, response);
         }
 
