@@ -23,6 +23,8 @@ namespace TechMeter.Domain.Models
         public ICollection<WishlistItem>? WishlistItems { get; set; } = new List<WishlistItem>();
         public ICollection<OrderItem>?OrderItems { get; set; } = new List<OrderItem>();
         public ICollection<Student>?Students { get; set; } = new List<Student>();
+        public ICollection<UserCourseRating> UserCourseRating { get; set; } = new List<UserCourseRating>();
+
         //public ICollection<CourseStudent> UserCourses { get; set; } = new List<CourseStudent>();
 
     }
