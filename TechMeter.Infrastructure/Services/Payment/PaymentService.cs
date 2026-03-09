@@ -356,8 +356,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                 order.Status = orderStatus;
                 if (transactionStatus == TransactionStatus.Paid)
                     await _emailService.InvoiceEmailAsync(user!, Transaction, await courses.ToListAsync());
-
-                await _context.SaveChangesAsync();
+               
+                    await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
             catch (Exception ex)
