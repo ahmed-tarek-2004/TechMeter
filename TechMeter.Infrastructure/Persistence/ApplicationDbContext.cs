@@ -31,6 +31,7 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<OrderItem> OrderItem { get; set; }
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }  
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+        public DbSet<UserCourseRating>UserCourseRating {  get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
