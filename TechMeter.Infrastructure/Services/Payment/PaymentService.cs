@@ -327,37 +327,43 @@ namespace TechMeter.Infrastructure.Services.Payment
 
             var user = await _context.Users.FirstOrDefaultAsync(b => b.Id == userId);
             var providerId = await _context.OrderItem.Where(b => b.OrderId == order.Id).Select(b => b.Course.ProviderId).FirstOrDefaultAsync();
-            var courses = _context.Course.Where(b=>b.CourseStudent.Any(b=>b.StudentId==userId)).Select(b => new GetCourseResponse
+            var courses = await _context.OrderItem.Where(oi => oi.OrderId == order.Id).Select(oi => new GetCourseResponse
             {
-                Id = b.Id,
-                CategoryId = b.CategoryId,
-                CourseProfileImageUrl = b.CourseProfileImageUrl,
-                Currency = b.Currency,
-                Description = b.Description,
-                ProviderId = b.ProviderId,
-                Price = b.Price,
-                Title = b.Title
-            });
+                Id = oi.Course.Id,
+                CategoryId = oi.Course.CategoryId,
+                CourseProfileImageUrl = oi.Course.CourseProfileImageUrl,
+                Currency = oi.Course.Currency,
+                Description = oi.Course.Description,
+                ProviderId = oi.Course.ProviderId,
+                Price = oi.Course.Price,
+                Title = oi.Course.Title
+            }).AsNoTracking().ToListAsync();
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-
+                var studentCourses = new List<CourseStudent>();
+                foreach (var course in courses)
+                {
+                    studentCourses.Add(new CourseStudent { CourseId = course.Id, StudentId = userId, EnrolmentDate = DateTime.UtcNow, LastAccess = DateTime.UtcNow });
+                }
                 var Transaction = new PaymentTransaction()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Date = DateTime.Now,
+                    Date = DateTime.UtcNow,
                     OrderId = order.Id,
                     ProviderId = providerId!,
                     Status = transactionStatus,
                     StudentId = order.StudentId,
                     TotalPrice = order.TotalPrice,
                 };
-                await _context.AddAsync(Transaction);
+                await _context.PaymentTransactions.AddAsync(Transaction);
+                await _context.CourseStudent.AddRangeAsync(studentCourses);
                 order.Status = orderStatus;
                 if (transactionStatus == TransactionStatus.Paid)
-                    await _emailService.InvoiceEmailAsync(user!, Transaction, await courses.ToListAsync());
-               
-                    await _context.SaveChangesAsync();
+                    await _emailService.InvoiceEmailAsync(user!, Transaction, courses);
+
+                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
             catch (Exception ex)
