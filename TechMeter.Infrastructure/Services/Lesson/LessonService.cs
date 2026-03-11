@@ -179,6 +179,10 @@ namespace TechMeter.Infrastructure.Services.Lesson
             {
                 return _responseHandler.NotFound<string>("Lesson not found");
             }
+            var exists = await _context.StudentLessonWatched.AnyAsync(slw => slw.StudentId == studentId && slw.LessonId == LessonId);
+
+            if (exists)
+                return _responseHandler.Success("Lesson already marked as watched", "LessonAlreadyWatched");
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
