@@ -16,23 +16,23 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.Lesson
 {
-    public class LessonService: ILessonService
+    public class LessonService : ILessonService
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
         private readonly IImageUploading _imageUploading;
         private readonly ILogger<LessonService> _logger;
         public LessonService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<LessonService> logger,IImageUploading imageUploading)
+            ILogger<LessonService> logger, IImageUploading imageUploading)
 
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
-            _imageUploading= imageUploading;
+            _imageUploading = imageUploading;
 
         }
-        public async Task<Response<GetLessonResponse>> AddLessonAsync(string sectionId,AddLessonRequest request)
+        public async Task<Response<GetLessonResponse>> AddLessonAsync(string sectionId, AddLessonRequest request)
         {
             var section = await _context.Section.FindAsync(sectionId);
             if (section == null)
@@ -42,9 +42,9 @@ namespace TechMeter.Infrastructure.Services.Lesson
             string LessonUrl = string.Empty;
             try
             {
-                 LessonUrl = await _imageUploading.UploadVideoAsync(request.LessonStream);
+                LessonUrl = await _imageUploading.UploadVideoAsync(request.LessonStream);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return _responseHandler.BadRequest<GetLessonResponse>(ex.Message);
             }
@@ -145,7 +145,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 _context.Remove(Lesson);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return _responseHandler.Deleted<string>( $"Lesson {Lesson.Name} Deleted Successfully");
+                return _responseHandler.Deleted<string>($"Lesson {Lesson.Name} Deleted Successfully");
             }
             catch (Exception ex)
             {
@@ -165,6 +165,62 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 SectionId = lesson.SectionId,
             };
             return response;
+        }
+
+        public async Task<Response<string>> StudentLessonWatched(string studentId, string LessonId)
+        {
+            var student = await _context.Student.FindAsync(studentId);
+            if (student == null)
+            {
+                return _responseHandler.NotFound<string>("Student not found");
+            }
+            var lesson = await _context.Lessons.FindAsync(LessonId);
+            if (lesson == null)
+            {
+                return _responseHandler.NotFound<string>("Lesson not found");
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var studentLessonWatched = new StudentLessonWatched
+                {
+                    LessonId = LessonId,
+                    StudentId = student.Id,
+                    WatchedDate = DateTime.UtcNow
+                };
+
+                await _context.AddAsync(studentLessonWatched);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return _responseHandler.Success("Lesson Finished", "LessonFinished");
+
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return _responseHandler.InternalServerError<string>(ex.Message);
+            }
+
+        }
+
+        public async Task<Response<List<GetLessonResponse>>> GetStudentLessonWatched(string studentId)
+        {
+            var lessons = await _context.Lessons.AsNoTracking().Where(b => b.StudentLessonsWatched.Any(b => b.StudentId == studentId))
+                .Select(b => new GetLessonResponse
+                {
+                    Id = b.Id,
+                    Description = b.Description,
+                    LessonUrl = b.LessonUrl,
+                    Name = b.Name,
+                    SectionId = b.SectionId,
+
+                }).ToListAsync();
+
+            return _responseHandler.Success(lessons, "Lesson Watched Returned Successfully");
+
+
         }
     }
 }
