@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechMeter.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using TechMeter.Infrastructure.Persistence;
 namespace TechMeter.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260311133847_AddStudentLessonWatched")]
+    partial class AddStudentLessonWatched
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace TechMeter.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("LessonsStudent", b =>
+                {
+                    b.Property<string>("LessonsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("StudentsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LessonsId", "StudentsId");
+
+                    b.HasIndex("StudentsId");
+
+                    b.ToTable("LessonsStudent");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
                 {
@@ -622,24 +640,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.ToTable("Section");
                 });
 
-            modelBuilder.Entity("TechMeter.Domain.Models.StudentLessonWatched", b =>
-                {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("LessonId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("WatchedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("StudentId", "LessonId");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("StudentLessonWatched");
-                });
-
             modelBuilder.Entity("TechMeter.Domain.Models.UserCourseRating", b =>
                 {
                     b.Property<string>("CourseId")
@@ -716,6 +716,21 @@ namespace TechMeter.Infrastructure.Migrations
                     b.HasIndex("courseId");
 
                     b.ToTable("WishlistItem");
+                });
+
+            modelBuilder.Entity("LessonsStudent", b =>
+                {
+                    b.HasOne("TechMeter.Domain.Models.Lessons", null)
+                        .WithMany()
+                        .HasForeignKey("LessonsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TechMeter.Domain.Models.Auth.Users.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -960,25 +975,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("TechMeter.Domain.Models.StudentLessonWatched", b =>
-                {
-                    b.HasOne("TechMeter.Domain.Models.Lessons", "Lessons")
-                        .WithMany("StudentLessonsWatched")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TechMeter.Domain.Models.Auth.Users.Student", "Student")
-                        .WithMany("StudentLessonsWatched")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Lessons");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("TechMeter.Domain.Models.UserCourseRating", b =>
                 {
                     b.HasOne("TechMeter.Domain.Models.Course", "Course")
@@ -1055,8 +1051,6 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("StudentLessonsWatched");
-
                     b.Navigation("Transactions");
 
                     b.Navigation("UserCourseRating");
@@ -1085,11 +1079,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.Navigation("UserCourseRating");
 
                     b.Navigation("WishlistItems");
-                });
-
-            modelBuilder.Entity("TechMeter.Domain.Models.Lessons", b =>
-                {
-                    b.Navigation("StudentLessonsWatched");
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Order", b =>
