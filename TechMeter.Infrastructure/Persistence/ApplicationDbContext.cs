@@ -26,12 +26,13 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<Lessons> Lessons { get; set; }
         public DbSet<Wishlist> Wishlist { get; set; }
         public DbSet<WishlistItem> WishlistItem { get; set; }
-        public DbSet<Order>Order { get; set; }
+        public DbSet<Order> Order { get; set; }
         //public DbSet<UserCourses> UserCourses { get; set; }
         public DbSet<OrderItem> OrderItem { get; set; }
-        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }  
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
-        public DbSet<UserCourseRating>UserCourseRating {  get; set; }
+        public DbSet<UserCourseRating> UserCourseRating { get; set; }
+        public DbSet<CourseStudent> CourseStudent { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

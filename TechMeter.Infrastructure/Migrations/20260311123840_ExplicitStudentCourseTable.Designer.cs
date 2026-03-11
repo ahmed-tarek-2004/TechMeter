@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechMeter.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using TechMeter.Infrastructure.Persistence;
 namespace TechMeter.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260311123840_ExplicitStudentCourseTable")]
+    partial class ExplicitStudentCourseTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -419,17 +422,10 @@ namespace TechMeter.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ProviderId")
                         .IsRequired()
@@ -511,6 +507,10 @@ namespace TechMeter.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("OrderItemId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -564,44 +564,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.ToTable("OrderItem");
                 });
 
-            modelBuilder.Entity("TechMeter.Domain.Models.PaymentTransaction", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProviderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProviderId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("PaymentTransactions");
-                });
-
             modelBuilder.Entity("TechMeter.Domain.Models.Sections", b =>
                 {
                     b.Property<string>("Id")
@@ -620,33 +582,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("Section");
-                });
-
-            modelBuilder.Entity("TechMeter.Domain.Models.UserCourseRating", b =>
-                {
-                    b.Property<string>("CourseId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CourseId", "StudentId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("UserCourseRating");
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Wishlist", b =>
@@ -904,33 +839,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("TechMeter.Domain.Models.PaymentTransaction", b =>
-                {
-                    b.HasOne("TechMeter.Domain.Models.Order", "Order")
-                        .WithMany("Transactions")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TechMeter.Domain.Models.Auth.Users.Provider", "Provider")
-                        .WithMany("Transactions")
-                        .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TechMeter.Domain.Models.Auth.Users.Student", "Student")
-                        .WithMany("Transactions")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Provider");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("TechMeter.Domain.Models.Sections", b =>
                 {
                     b.HasOne("TechMeter.Domain.Models.Course", "Course")
@@ -940,25 +848,6 @@ namespace TechMeter.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("TechMeter.Domain.Models.UserCourseRating", b =>
-                {
-                    b.HasOne("TechMeter.Domain.Models.Course", "Course")
-                        .WithMany("UserCourseRating")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TechMeter.Domain.Models.Auth.Users.Student", "Student")
-                        .WithMany("UserCourseRating")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Wishlist", b =>
@@ -1004,8 +893,6 @@ namespace TechMeter.Infrastructure.Migrations
                 {
                     b.Navigation("Courses");
 
-                    b.Navigation("Transactions");
-
                     b.Navigation("certificatesUrls");
                 });
 
@@ -1017,10 +904,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.Navigation("CourseStudent");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Transactions");
-
-                    b.Navigation("UserCourseRating");
 
                     b.Navigation("Wishlist");
                 });
@@ -1043,16 +926,12 @@ namespace TechMeter.Infrastructure.Migrations
 
                     b.Navigation("Sections");
 
-                    b.Navigation("UserCourseRating");
-
                     b.Navigation("WishlistItems");
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.Sections", b =>

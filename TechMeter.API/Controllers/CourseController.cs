@@ -50,6 +50,14 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
+        [HttpGet("student/courses")]
+        public async Task<ActionResult<Response<GetCourseResponse>>> GetStudentCoursesAsync()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _courseService.GetStudentCoursesAsync(userId!);
+            return StatusCode((int)response.StatusCode, response);
+        }
+
         [HttpPost("add")]
         [Authorize(Roles= "provider")]
         public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromForm] AddCourseRequest request)
