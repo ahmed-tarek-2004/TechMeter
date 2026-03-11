@@ -241,5 +241,20 @@ namespace TechMeter.Infrastructure.Services.CourseService
                 return _responseHandler.InternalServerError<string>("Internal Server Error");
             }
         }
+
+        public async Task<Response<List<GetCourseResponse>>> GetStudentCoursesAsync(string StudentId)
+        {
+            var courses = await _context.Course.Where(b => b.CourseStudent.Any(b => b.StudentId == StudentId)).AsNoTracking().Select(b => new GetCourseResponse
+            {
+                Id = b.Id,
+                CategoryId = b.CategoryId,
+                CourseProfileImageUrl = b.CourseProfileImageUrl,
+                Description = b.Description,
+                ProviderId = b.ProviderId,
+                Title = b.Title
+            }).ToListAsync();
+
+            return _responseHandler.Success(courses, "Student Courses Returned Successfully");
+        }
     }
 }

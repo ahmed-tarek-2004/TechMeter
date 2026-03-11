@@ -16,8 +16,9 @@ namespace TechMeter.Domain.Models.Auth.Users
         public Cart Cart { get; set; }
         public Wishlist? Wishlist { get; set; }
         public ICollection<Order> Orders { get; set; } = new List<Order>(); 
-        public ICollection<Course> Courses { get; set; } = new List<Course>();
+        //public ICollection<Course> Courses { get; set; } = new List<Course>();
         public ICollection<PaymentTransaction> Transactions { get; set; } = new List<PaymentTransaction>();
         public ICollection<UserCourseRating> UserCourseRating { get; set; } = new List<UserCourseRating>(); 
+        public ICollection<CourseStudent> CourseStudent { get; set; } = new List<CourseStudent>();
     }
 }
