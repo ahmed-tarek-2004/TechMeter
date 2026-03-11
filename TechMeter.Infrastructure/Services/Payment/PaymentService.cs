@@ -327,7 +327,7 @@ namespace TechMeter.Infrastructure.Services.Payment
 
             var user = await _context.Users.FirstOrDefaultAsync(b => b.Id == userId);
             var providerId = await _context.OrderItem.Where(b => b.OrderId == order.Id).Select(b => b.Course.ProviderId).FirstOrDefaultAsync();
-            var courses = _context.Course.Include(b => b.Students).Select(b => new GetCourseResponse
+            var courses = _context.Course.Where(b=>b.CourseStudent.Any(b=>b.StudentId==userId)).Select(b => new GetCourseResponse
             {
                 Id = b.Id,
                 CategoryId = b.CategoryId,
