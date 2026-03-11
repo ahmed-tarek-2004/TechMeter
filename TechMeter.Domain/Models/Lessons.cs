@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Domain.Models.Auth.Users;
 //using Microsoft.AspNetCore.Http;
 
 namespace TechMeter.Domain.Models
@@ -15,5 +16,6 @@ namespace TechMeter.Domain.Models
         public string LessonUrl { get; set; }
         public string SectionId {  get; set; }
         public Sections section { get; set; }
+        public ICollection<StudentLessonWatched> StudentLessonsWatched { get; set; } = new List<StudentLessonWatched>();
     }
 }
