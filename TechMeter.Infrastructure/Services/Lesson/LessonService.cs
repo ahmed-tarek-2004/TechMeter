@@ -179,6 +179,10 @@ namespace TechMeter.Infrastructure.Services.Lesson
             {
                 return _responseHandler.NotFound<string>("Lesson not found");
             }
+            var exists = await _context.StudentLessonWatched.AnyAsync(slw => slw.StudentId == studentId && slw.LessonId == LessonId);
+
+            if (exists)
+                return _responseHandler.Success("Lesson already marked as watched", "LessonAlreadyWatched");
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -207,20 +211,16 @@ namespace TechMeter.Infrastructure.Services.Lesson
 
         public async Task<Response<List<GetLessonResponse>>> GetStudentLessonWatched(string studentId)
         {
-            var lessons = await _context.Lessons.AsNoTracking().Where(b => b.StudentLessonsWatched.Any(b => b.StudentId == studentId))
-                .Select(b => new GetLessonResponse
+            var lessons = await _context.StudentLessonWatched.Where(slw => slw.StudentId == studentId)
+                .Select(slw => new GetLessonResponse
                 {
-                    Id = b.Id,
-                    Description = b.Description,
-                    LessonUrl = b.LessonUrl,
-                    Name = b.Name,
-                    SectionId = b.SectionId,
-
-                }).ToListAsync();
-
+                    Id = slw.Lessons.Id,
+                    Description = slw.Lessons.Description,
+                    LessonUrl = slw.Lessons.LessonUrl,
+                    Name = slw.Lessons.Name,
+                    SectionId = slw.Lessons.SectionId,
+                }).AsNoTracking().ToListAsync();
             return _responseHandler.Success(lessons, "Lesson Watched Returned Successfully");
-
-
         }
     }
 }
