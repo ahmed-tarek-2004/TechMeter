@@ -16,6 +16,7 @@ namespace TechMeter.Application.Interfaces.Lesson
         Task<Response<GetLessonResponse>>EditLessonAsync(string Id,EditLessonRequest editLessonRequest);
         Task<Response<List<GetLessonResponse>>>GetALLessonAsync();
         Task<Response<GetLessonResponse>> GetLessonByIdAsync(string Id);
+        Task<Response<List<GetLessonResponse>>> GetSectionLessonResponse(string sectionId);
         Task<Response<string>> DeleteLessonAsync(string Id);
     }
 }

@@ -136,6 +136,27 @@ namespace TechMeter.Infrastructure.Services.Lesson
             var response = CreateALessonResponse(lesson!);
             return _responseHandler.Success(response, "Lesson returned successfully");
         }
+
+        public async Task<Response<List<GetLessonResponse>>> GetSectionLessonResponse(string sectionId)
+        {
+            if (!await _context.Section.AnyAsync(s => s.Id == sectionId))
+                return _responseHandler.NotFound<List<GetLessonResponse>>("Section is not found");
+
+            var lessons = await _context.Lessons
+                .AsNoTracking()
+                .Where(l => l.SectionId == sectionId)
+                .Select(l => new GetLessonResponse
+                {
+                    SectionId = l.SectionId,
+                    Id = l.Id,
+                    Description = l.Description,
+                    LessonUrl = l.LessonUrl,
+                    Name = l.Name
+                })
+                .ToListAsync();
+
+            return _responseHandler.Success(lessons, "Section lessons returned successfully");
+        }
         public async Task<Response<string>> DeleteLessonAsync(string Id)
         {
             var Lesson = await _context.Lessons.FindAsync(Id);
