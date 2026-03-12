@@ -77,6 +77,13 @@ namespace TechMeter.API.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await _lessonService.GetStudentLessonWatched(userId!);
             return StatusCode((int)response.StatusCode, response);
+
+        }
+        [HttpGet("section/lesson/{sectionId}")]
+        public async Task<ActionResult<List<GetLessonResponse>>> GetAllLessonsAsync([FromRoute]string sectionId)
+        {
+            var response = await _lessonService.GetSectionLessonResponse(sectionId);
+            return StatusCode((int)response.StatusCode, response);
         }
         [HttpDelete("delete/lesson/by/{Id}")]
         public async Task<ActionResult<List<GetLessonResponse>>> DeleteLwssonByIdAsync(string Id)
