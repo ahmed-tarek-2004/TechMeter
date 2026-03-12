@@ -59,7 +59,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("add")]
-        [Authorize(Roles= "provider")]
+        [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromForm] AddCourseRequest request)
         {
             var validationResult = await _addCourseValidator.ValidateAsync(request);
@@ -75,7 +75,8 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPut("edit/{Id}")]
-        public async Task<ActionResult<Response<object>>> Update(string Id, [FromBody] EditCourseRequest request)
+        [Authorize(Roles = "provider")]
+        public async Task<ActionResult<Response<object>>> Update(string Id, [FromForm] EditCourseRequest request)
         {
             var validationResult = await _editCourseValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
