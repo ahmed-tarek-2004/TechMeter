@@ -194,10 +194,11 @@ namespace TechMeter.Infrastructure.Services.Lesson
             {
                 return _responseHandler.NotFound<string>("Lesson not found");
             }
-            var exists = await _context.StudentLessonWatched.AnyAsync(slw => slw.StudentId == studentId && slw.LessonId == LessonId);
-
-            if (exists)
+            var StudentLessonWatchedCount = await _context.StudentLessonWatched.CountAsync(slw => slw.StudentId == studentId && slw.LessonId == LessonId);
+            if (StudentLessonWatchedCount > 0)
                 return _responseHandler.Success("Lesson already marked as watched", "LessonAlreadyWatched");
+
+            var course = await _context.Section.Where(b => b.Id == lesson.SectionId).Select(b => new { b.CourseId, b.Course.LessonCount }).FirstOrDefaultAsync();
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -211,6 +212,9 @@ namespace TechMeter.Infrastructure.Services.Lesson
 
                 await _context.AddAsync(studentLessonWatched);
                 await _context.SaveChangesAsync();
+
+                await _context.CourseStudent.Where(b => b.StudentId == studentId && b.CourseId == course.CourseId)
+                    .ExecuteUpdateAsync(b => b.SetProperty(c => c.Progrss, (int)(((StudentLessonWatchedCount + 1) / (double)course.LessonCount) * 100)));
                 await transaction.CommitAsync();
 
                 return _responseHandler.Success("Lesson Finished", "LessonFinished");
