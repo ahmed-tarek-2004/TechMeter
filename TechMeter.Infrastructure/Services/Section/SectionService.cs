@@ -159,9 +159,9 @@ namespace TechMeter.Infrastructure.Services.SectionService
 
         }
 
-        public async Task<Response<List<GetSectionResponse>>> GetAllCourseSectionsAsync(string userId, string courseId)
+        public async Task<Response<List<GetSectionResponse>>> GetAllCourseSectionsAsync(string courseId)
         {
-            var Sections = await _context.Section.AsNoTracking().Where(b => b.CourseId == courseId && b.Course.ProviderId == userId).Select(b => new GetSectionResponse
+            var Sections = await _context.Section.AsNoTracking().Where(b => b.CourseId == courseId).Select(b => new GetSectionResponse
             {
                 Id = b.Id,
                 Name = b.Name,
