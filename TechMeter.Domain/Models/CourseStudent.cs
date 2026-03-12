@@ -12,7 +12,8 @@ namespace TechMeter.Domain.Models
         public string StudentId { get; set; }
         public string CourseId { get; set; }
         public DateTime EnrolmentDate { get; set; }
-        public DateTime LastAccess { get; set; } 
+        public DateTime LastAccess { get; set; }
+        public decimal Progrss { get; set; } = 0;
         public Student Student { get; set; }
         public Course Course { get; set; }
     }

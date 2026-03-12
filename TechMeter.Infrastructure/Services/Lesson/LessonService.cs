@@ -48,6 +48,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
             {
                 return _responseHandler.BadRequest<GetLessonResponse>(ex.Message);
             }
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -59,6 +60,9 @@ namespace TechMeter.Infrastructure.Services.Lesson
                     SectionId = sectionId,
                     LessonUrl = LessonUrl
                 };
+                await _context.Course.Where(b => b.Id == section.CourseId)
+              .ExecuteUpdateAsync(b => b.SetProperty(c => c.LessonCount, lc => lc.LessonCount + 1));
+                section.LessonCount += 1;
                 await _context.AddAsync(Lesson);
                 await _context.SaveChangesAsync();
                 var response = CreateALessonResponse(Lesson);
@@ -139,9 +143,20 @@ namespace TechMeter.Infrastructure.Services.Lesson
             {
                 return _responseHandler.NotFound<string>("Lesson Not Found");
             }
+            var section = await _context.Section.Where(b => b.Id == Lesson.SectionId).Select(b => new
+            {
+                Id = b.Id,
+                CourseId = b.CourseId,
+            }).FirstOrDefaultAsync();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                await _context.Section.Where(b => b.Id == section.Id)
+                    .ExecuteUpdateAsync(b => b.SetProperty(s => s.LessonCount, s => s.LessonCount - 1));
+
+                await _context.Course.Where(b => b.Id == section.CourseId)
+                    .ExecuteUpdateAsync(b => b.SetProperty(s => s.LessonCount, s => s.LessonCount - 1));
+
                 _context.Remove(Lesson);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
