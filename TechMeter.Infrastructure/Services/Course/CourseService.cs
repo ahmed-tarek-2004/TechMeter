@@ -187,6 +187,8 @@ namespace TechMeter.Infrastructure.Services.CourseService
                 course.CategoryId = request.CategoryId;
                 course.Description = request.Description;
                 course.Title = request.Title;
+                course.Price = request.Price;
+                course.Currency = request.Currency;
 
                 await _context.SaveChangesAsync();
 
@@ -198,6 +200,8 @@ namespace TechMeter.Infrastructure.Services.CourseService
                     Description = course.Description,
                     ProviderId = course.ProviderId,
                     Title = course.Title,
+                    Currency = course.Currency,
+                    Price = course.Price,
                 };
 
                 await transaction.CommitAsync();
