@@ -20,7 +20,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
-        
+
         public SectionService(ApplicationDbContext context, ResponseHandler responseHandler)
         {
             _context = context;
@@ -34,7 +34,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 return _responseHandler.BadRequest<AddSectionResponse>("Provider Is Not Found");
             }
 
-            var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.courseId&&b.ProviderId==providerId);
+            var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.courseId && b.ProviderId == providerId);
             if (course == null)
             {
                 return _responseHandler.NotFound<AddSectionResponse>("Course Is Not Found");
@@ -53,6 +53,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                     Name = request.SectionName,
                     CourseId = request.courseId
                 };
+                course.SectionCount += 1;
                 await _context.AddAsync(Section);
                 await _context.SaveChangesAsync();
 
@@ -82,7 +83,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 return _responseHandler.BadRequest<string>("Provider Is Not Found");
             }
 
-            var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == courseId&&b.ProviderId==providerId);
+            var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == courseId && b.ProviderId == providerId);
             if (course == null)
             {
                 return _responseHandler.NotFound<string>("Course Is Not Found");
@@ -95,7 +96,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-
+                course.SectionCount -= 1;
                 _context.Remove(section);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -109,7 +110,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
             }
         }
 
-        public async Task<Response<GetSectionResponse>> EditSectionAsync(string providerId, string Id,EditSectionRequest request)
+        public async Task<Response<GetSectionResponse>> EditSectionAsync(string providerId, string Id, EditSectionRequest request)
         {
             var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
             if (provider == null)
@@ -117,7 +118,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 return _responseHandler.BadRequest<GetSectionResponse>("Provider Is Not Found");
             }
 
-            var Newcourse = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.CourseId&&b.ProviderId==providerId);
+            var Newcourse = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.CourseId && b.ProviderId == providerId);
             if (Newcourse == null)
             {
                 return _responseHandler.NotFound<GetSectionResponse>("NewCourse Is Not Found");
@@ -184,7 +185,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
             {
                 return _responseHandler.NotFound<GetSectionResponse>("Course Is Not Found");
             }
-            var section = await _context.Section.FirstOrDefaultAsync(b => b.Id == sectionId&&b.CourseId==courseId);
+            var section = await _context.Section.FirstOrDefaultAsync(b => b.Id == sectionId && b.CourseId == courseId);
             if (section == null)
             {
                 return _responseHandler.NotFound<GetSectionResponse>("Section is not found");
