@@ -159,9 +159,9 @@ namespace TechMeter.Infrastructure.Services.SectionService
 
         }
 
-        public async Task<Response<List<GetSectionResponse>>> GetAllCourseSectionsAsync(string userId, string courseId)
+        public async Task<Response<List<GetSectionResponse>>> GetAllCourseSectionsAsync(string courseId)
         {
-            var Sections = await _context.Section.AsNoTracking().Where(b => b.CourseId == courseId && b.Course.ProviderId == userId).Select(b => new GetSectionResponse
+            var Sections = await _context.Section.AsNoTracking().Where(b => b.CourseId == courseId).Select(b => new GetSectionResponse
             {
                 Id = b.Id,
                 Name = b.Name,
@@ -171,14 +171,9 @@ namespace TechMeter.Infrastructure.Services.SectionService
             return _responseHandler.Success(Sections, "Sections returned successfully");
         }
 
-        public async Task<Response<GetSectionResponse>> GetSectionByIdAsync(string responsiable, string courseId, string sectionId)
-        {
 
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == responsiable);
-            if (provider == null)
-            {
-                return _responseHandler.BadRequest<GetSectionResponse>("Provider Is Not Found");
-            }
+        public async Task<Response<GetSectionResponse>> GetSectionDetailedByIdAsync( string courseId, string sectionId)
+        {
 
             var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == courseId);
             if (course == null)
