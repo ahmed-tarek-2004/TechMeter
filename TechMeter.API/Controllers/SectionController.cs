@@ -34,7 +34,6 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpGet("course/{courseId}/get-all/sections")]
-        [Authorize]
         public async Task<ActionResult<Response<List<GetSectionResponse>>>> GetAllSectionAsync([FromRoute] string courseId)
         {
             //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
