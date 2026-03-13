@@ -11,10 +11,11 @@ namespace TechMeter.Application.Interfaces.SectionService
     public interface ISectionService
     {
         Task<Response<List<GetSectionResponse>>> GetAllCourseSectionsAsync(string courseId);
-        Task<Response<GetSectionResponse>> GetSectionByIdAsync(string responsiable, string courseId, string sectionId);
+        Task<Response<GetSectionResponse>> GetSectionDetailedByIdAsync(string courseId, string sectionId);
         Task<Response<AddSectionResponse>> AddSectionAsync(string providerId,AddSectionRequest request);
         Task<Response<GetSectionResponse>> EditSectionAsync(string providerId,string Id, EditSectionRequest request);
         Task<Response<string>>DeleteSectionByIdAsync(string providerId,string courseId,string sectionId);
+        //Task<Response<List<GetSectionResponse>>> GetCourseSectionsAsync(string courseId);
 
     }
 }

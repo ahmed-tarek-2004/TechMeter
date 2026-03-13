@@ -17,5 +17,6 @@ namespace TechMeter.Application.DTO.Course
         public int LessonCount {  get; set; }
         public int SectionCount {  get; set; }
         public decimal Progress {  get; set; }
+        public DateTime LastAccess {  get; set; }
     }
 }

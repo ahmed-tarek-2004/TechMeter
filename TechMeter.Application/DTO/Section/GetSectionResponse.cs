@@ -11,6 +11,6 @@ namespace TechMeter.Application.DTO.Section
         public string Id { get; set; }
         public string Name { get; set; }
         public string courseId {  get; set; }
-
+        public int LessonCount {  get; set; }
     }
 }

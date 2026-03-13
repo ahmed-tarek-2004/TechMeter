@@ -144,7 +144,8 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 {
                     Id = section.Id,
                     Name = request.Name,
-                    courseId = section.CourseId
+                    courseId = section.CourseId,
+                    //LessonCount = section.LessonCount
                 };
 
                 await transaction.CommitAsync();
@@ -166,19 +167,15 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 Id = b.Id,
                 Name = b.Name,
                 courseId = b.CourseId,
+                LessonCount = b.LessonCount
             }).ToListAsync();
 
             return _responseHandler.Success(Sections, "Sections returned successfully");
         }
 
-        public async Task<Response<GetSectionResponse>> GetSectionByIdAsync(string responsiable, string courseId, string sectionId)
-        {
 
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == responsiable);
-            if (provider == null)
-            {
-                return _responseHandler.BadRequest<GetSectionResponse>("Provider Is Not Found");
-            }
+        public async Task<Response<GetSectionResponse>> GetSectionDetailedByIdAsync( string courseId, string sectionId)
+        {
 
             var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == courseId);
             if (course == null)
@@ -196,6 +193,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 courseId = courseId,
                 Id = section.Id,
                 Name = section.Name,
+                LessonCount = section.LessonCount,
             };
             return _responseHandler.Success(response, "Sections retuned successfully");
         }

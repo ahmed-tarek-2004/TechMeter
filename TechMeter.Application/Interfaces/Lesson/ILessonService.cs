@@ -11,7 +11,7 @@ namespace TechMeter.Application.Interfaces.Lesson
     public interface ILessonService
     {
         Task<Response<GetLessonResponse>>AddLessonAsync(string sectionId,AddLessonRequest addLessonRequest);
-        Task<Response<string>> StudentLessonWatched(string studentId,string LessonId);
+        Task<Response<string>> StudentLessonWatchedAndUnWatched(string studentId,string LessonId);
         Task<Response<List<GetLessonResponse>>> GetStudentLessonWatched(string studentId);
         Task<Response<GetLessonResponse>>EditLessonAsync(string Id,EditLessonRequest editLessonRequest);
         Task<Response<List<GetLessonResponse>>>GetALLessonAsync();
