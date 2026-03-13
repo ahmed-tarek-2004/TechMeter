@@ -144,7 +144,8 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 {
                     Id = section.Id,
                     Name = request.Name,
-                    courseId = section.CourseId
+                    courseId = section.CourseId,
+                    //LessonCount = section.LessonCount
                 };
 
                 await transaction.CommitAsync();
@@ -166,6 +167,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 Id = b.Id,
                 Name = b.Name,
                 courseId = b.CourseId,
+                LessonCount = b.LessonCount
             }).ToListAsync();
 
             return _responseHandler.Success(Sections, "Sections returned successfully");
@@ -191,6 +193,7 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 courseId = courseId,
                 Id = section.Id,
                 Name = section.Name,
+                LessonCount = section.LessonCount,
             };
             return _responseHandler.Success(response, "Sections retuned successfully");
         }
