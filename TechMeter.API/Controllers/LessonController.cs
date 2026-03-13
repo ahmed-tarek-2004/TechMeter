@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -38,11 +39,12 @@ namespace TechMeter.API.Controllers
             var response = await _lessonService.AddLessonAsync(sectionId, request);
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPost("student/{lessonId}/finish/lesson")]
+        [HttpPost("student/{lessonId}/finish-unfinish/lesson")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<GetLessonResponse>> StudentLessonWatched([FromRoute] string lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _lessonService.StudentLessonWatched(userId!, lessonId);
+            var response = await _lessonService.StudentLessonWatchedAndUnWatched(userId!, lessonId);
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPut("edit/lesson/detail/by/{Id}")]
@@ -80,7 +82,7 @@ namespace TechMeter.API.Controllers
 
         }
         [HttpGet("section/lesson/{sectionId}")]
-        public async Task<ActionResult<List<GetLessonResponse>>> GetAllLessonsAsync([FromRoute]string sectionId)
+        public async Task<ActionResult<List<GetLessonResponse>>> GetAllLessonsAsync([FromRoute] string sectionId)
         {
             var response = await _lessonService.GetSectionLessonResponse(sectionId);
             return StatusCode((int)response.StatusCode, response);

@@ -246,18 +246,22 @@ namespace TechMeter.Infrastructure.Services.CourseService
             }
         }
 
-        public async Task<Response<List<GetCourseResponse>>> GetStudentCoursesAsync(string StudentId)
+        public async Task<Response<List<GetStudentCourseResponse>>> GetStudentCoursesAsync(string StudentId)
         {
             var courses = await _context.CourseStudent.Where(b => b.StudentId == StudentId)
                 .AsNoTracking()
-                .Select(b => new GetCourseResponse
+                .Select(b => new GetStudentCourseResponse
                 {
                     Id = b.Course.Id,
                     CategoryId = b.Course.CategoryId,
                     CourseProfileImageUrl = b.Course.CourseProfileImageUrl,
                     Description = b.Course.Description,
                     ProviderId = b.Course.ProviderId,
-                    Title = b.Course.Title
+                    Title = b.Course.Title,
+                    LessonCount = b.Course.LessonCount,
+                    LastAccess = b.LastAccess,
+                    Progress = b.Progrss,
+                    SectionCount = b.Course.SectionCount,
                 }).ToListAsync();
 
             return _responseHandler.Success(courses, "Student Courses Returned Successfully");
