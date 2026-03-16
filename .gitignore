@@ -5,5 +5,7 @@
 **/.vs/
 
 /TechMeter.Tests/
+/TechMeter.API/appsettings.json
+/TechMeter.API/appsettings.Development.json
 
 **/Logs/
