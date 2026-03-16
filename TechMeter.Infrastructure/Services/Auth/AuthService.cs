@@ -344,6 +344,10 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 {
                     return _responseHandler.BadRequest<VerifyResetPasswordResponse>("Otp is not Correct");
                 }
+                if (!user.EmailConfirmed)
+                {
+                    return _responseHandler.Forbidden<VerifyResetPasswordResponse>("Email not confirmed , you can't reset your password until confirm your email");
+                }
                 var Token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 await transaction.CommitAsync();
                 var response = new VerifyResetPasswordResponse
