@@ -18,7 +18,8 @@ namespace TechMeter.Application.Interfaces.AuthService
         public Task<Response<LoginResponseDto>> LoginAsync(LoginRequestDto request);
         public Task<Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterRequest request);
         public Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request);
-        public Task<Response<string>> VerifyOtp(VerifyOtp request);
+        public Task<Response<string>> VerifyConfirmEmailOtp(VerifyOtp request);
+        public Task<Response<VerifyResetPasswordResponse>> VerifyResetPasswordOtp(VerifyOtp request);
         public Task<Response<string>> ResponseOtp(ResendOtp request);
         public Task<Response<StudentRegisterResponse>> LogoutAsync(ClaimsPrincipal userclaims);
         public Task<Response<ForgetPasswordResponse>> ForgetPassword(ForgetPasswordRequest request);

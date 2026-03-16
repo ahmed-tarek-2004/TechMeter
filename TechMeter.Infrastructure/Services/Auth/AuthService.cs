@@ -79,7 +79,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     await _emailService.SendOtpEmailAsync(user, otp);
                     _logger.LogInformation($"Otp Sent is : {otp}");
 
-                    return _responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id=user.Id}, "Oto Has sent via Email Plz Confirm");
+                    return _responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
                 }
                 else
                 {
@@ -120,7 +120,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
                 return _responseHandler.BadRequest<StudentRegisterResponse>(checkifEmailorPhone);
             }
-           await using var transaction = _context.Database.BeginTransaction();
+            await using var transaction = _context.Database.BeginTransaction();
             try
             {
                 var user = new User()
@@ -300,7 +300,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             var user = _context.Users.FirstOrDefault(b => b.Email == EmailAddress || b.PhoneNumber == Phone);
             return user != null ? "Email or Phone Already Registerd" : null;
         }
-        public async Task<Response<string>> VerifyOtp(VerifyOtp verifyOtp)
+        public async Task<Response<string>> VerifyConfirmEmailOtp(VerifyOtp verifyOtp)
         {
             await using var transaction = _context.Database.BeginTransaction();
             try
@@ -327,6 +327,35 @@ namespace TechMeter.Infrastructure.Services.AuthService
             {
                 await transaction.RollbackAsync();
                 return _responseHandler.InternalServerError<string>("internal server Error");
+            }
+        }
+        public async Task<Response<VerifyResetPasswordResponse>> VerifyResetPasswordOtp(VerifyOtp verifyOtp)
+        {
+            await using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var user = await _userManager.FindByIdAsync(verifyOtp.userId);
+                if (user == null)
+                {
+                    return _responseHandler.BadRequest<VerifyResetPasswordResponse>("User is not found");
+                }
+                var isValid = await _otpService.ValidateOtp(verifyOtp.otp, verifyOtp.userId);
+                if (!isValid)
+                {
+                    return _responseHandler.BadRequest<VerifyResetPasswordResponse>("Otp is not Correct");
+                }
+                var Token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                await transaction.CommitAsync();
+                var response = new VerifyResetPasswordResponse
+                {
+                    token = Token,
+                };
+                return _responseHandler.Success<VerifyResetPasswordResponse>(response, "otp is verified");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return _responseHandler.InternalServerError<VerifyResetPasswordResponse>(ex.Message);
             }
         }
 

@@ -160,14 +160,24 @@ namespace TechMeter.API.Controllers
 
 
 
-        [HttpPost("verify-otp")]
-        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyOtpAsync([FromBody] VerifyOtp request)
+        [HttpPost("confirm-email")]
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyConfirmEmailAsync([FromBody] VerifyOtp request)
         {
             if (!ModelState.IsValid)
                 return StatusCode((int)_responseHandler.BadRequest<object>("Invalid input data.").StatusCode,
                     _responseHandler.BadRequest<object>("Invalid input data."));
 
-            var result = await _authService.VerifyOtp(request);
+            var result = await _authService.VerifyConfirmEmailOtp(request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+        [HttpPost("verify-reset-password")]
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyResetPasswordAsync([FromBody] VerifyOtp request)
+        {
+            if (!ModelState.IsValid)
+                return StatusCode((int)_responseHandler.BadRequest<object>("Invalid input data.").StatusCode,
+                    _responseHandler.BadRequest<object>("Invalid input data."));
+
+            var result = await _authService.VerifyResetPasswordOtp(request);
             return StatusCode((int)result.StatusCode, result);
         }
 
