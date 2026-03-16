@@ -380,17 +380,17 @@ namespace TechMeter.Infrastructure.Services.AuthService
             {
                 return _responseHandler.BadRequest<ResetPasswordResponse>($"User With Id {request.UserId} Is not Found");
             }
-            var IsValid = await _otpService.ValidateOtp(request.OTP, user.Id);
-            if (!IsValid)
-            {
-                _responseHandler.BadRequest<ResetPasswordResponse>("Otp IS Wrong");
-            }
-            var PasswordToken = await _userManager.GenerateChangeEmailTokenAsync(user, user.Email!);
-            var changePassword = await _userManager.ResetPasswordAsync(user, PasswordToken, request.Password);
+            //var IsValid = await _otpService.ValidateOtp(request.OTP, user.Id);
+            //if (!IsValid)
+            //{
+            //    _responseHandler.BadRequest<ResetPasswordResponse>("Otp IS Wrong");
+            //}
+            //var PasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var changePassword = await _userManager.ResetPasswordAsync(user, request.token, request.Password);
             if (!changePassword.Succeeded)
             {
                 var Errors = string.Join(",", changePassword.Errors.Select(e => e.Description).ToList());
-                _responseHandler.BadRequest<ResetPasswordResponse>(Errors);
+                _responseHandler.Forbidden<ResetPasswordResponse>(Errors);
             }
             await _tokenService.InValidateOldTokenAsync(user.Id);
             var roles = await _userManager.GetRolesAsync(user);

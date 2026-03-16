@@ -11,9 +11,9 @@ namespace TechMeter.API.Validators
                 .NotEmpty()
                 .WithMessage("Password is required");
 
-            RuleFor(b => b.OTP)
+            RuleFor(b => b.token)
                 .NotEmpty()
-                .WithMessage("Otp Is required");
+                .WithMessage("Token Is required");
 
             RuleFor(b => b.UserId)
                 .NotEmpty()
