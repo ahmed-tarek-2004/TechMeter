@@ -350,7 +350,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 {
                     token = Token,
                 };
-                return _responseHandler.Success<VerifyResetPasswordResponse>(response, "otp is verified");
+                return _responseHandler.Success(response, "otp is verified");
             }
             catch (Exception ex)
             {
