@@ -25,9 +25,9 @@ namespace TechMeter.Infrastructure.Services.CourseService
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<CourseService> _logger;
         private readonly IImageUploading _imageUploading;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Domain.Models.Auth.Identity.User> _userManager;
         public CourseService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<CourseService> logger, IImageUploading imageUploading, UserManager<User> userManager)
+            ILogger<CourseService> logger, IImageUploading imageUploading, UserManager<Domain.Models.Auth.Identity.User> userManager)
 
         {
             _context = context;
@@ -226,7 +226,6 @@ namespace TechMeter.Infrastructure.Services.CourseService
             {
                 return _responseHandler.NotFound<string>("Course is not Found");
             }
-            var role = await _userManager.GetRolesAsync(responisble);
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {

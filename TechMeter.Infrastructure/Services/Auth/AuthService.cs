@@ -35,11 +35,11 @@ namespace TechMeter.Infrastructure.Services.AuthService
         private readonly IEmailService _emailService;
         private readonly IImageUploading _imageUploading;
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Domain.Models.Auth.Identity.User> _userManager;
         private readonly IOTPService _otpService;
         private readonly ResponseHandler _responseHandler;
         public AuthService(ITokenService tokenService, ILogger<AuthService> logger,
-            ApplicationDbContext context, UserManager<User> userManager, IImageUploading imageUploading,
+            ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager, IImageUploading imageUploading,
             ResponseHandler responseHandler, IOTPService otpService, IEmailService emailService)
         {
             _tokenService = tokenService;
@@ -123,7 +123,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             await using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var user = new User()
+                var user = new Domain.Models.Auth.Identity.User()
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserName = request.UserName,
@@ -199,7 +199,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                var user = new User()
+                var user = new Domain.Models.Auth.Identity.User()
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserName = request.UserName,
