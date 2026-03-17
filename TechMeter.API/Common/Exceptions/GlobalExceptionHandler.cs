@@ -5,7 +5,7 @@ using TechMeter.Domain.Shared;
 
 namespace TechMeter.API.Common.Exceptions
 {
-    public class GlobalExceptionHandler : IExceptionHandler
+    public sealed class GlobalExceptionHandler : IExceptionHandler
     {
         private readonly ILogger<GlobalExceptionHandler> _logger;
         private readonly IProblemDetailsService _problemDetailsService;
