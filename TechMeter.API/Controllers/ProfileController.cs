@@ -15,7 +15,7 @@ namespace TechMeter.API.Controllers
 
         [Authorize(Roles = "provider")]
         [HttpGet("provider/profile")]
-        public async Task<ActionResult<Response<GetProviderInfoResponse>>> GetproviderProfile()
+        public async Task<ActionResult<Response<GetProviderProfileInfoResponse>>> GetproviderProfile()
         {
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await profileService.GetProviderInfoResponseAsync(providerId ?? "");

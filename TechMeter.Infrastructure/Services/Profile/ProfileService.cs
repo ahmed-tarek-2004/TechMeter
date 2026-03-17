@@ -148,9 +148,9 @@ namespace TechMeter.Infrastructure.Services.User
             }
         }
 
-        public async Task<Response<GetProviderInfoResponse>> GetProviderInfoResponseAsync(string Id)
+        public async Task<Response<GetProviderProfileInfoResponse>> GetProviderInfoResponseAsync(string Id)
         {
-            var response = await _context.Provider.Where(b => b.Id == Id).Select(b => new GetProviderInfoResponse
+            var response = await _context.Provider.Where(b => b.Id == Id).Select(b => new GetProviderProfileInfoResponse
             {
                 Id = Id,
                 Country = b.User.Country,
@@ -163,6 +163,23 @@ namespace TechMeter.Infrastructure.Services.User
                 ExperienceYears = b.ExperienceYears
             }).FirstOrDefaultAsync();
             return _responseHandler.Success(response!, "Provider info retrieved successfully");
+        }
+
+        public async Task<Response<GetStudentProfileInfoResponse>> GetStudentInfoResponseAsync(string Id)
+        {
+            var response = await _context.Student.Where(b => b.Id == Id).Select(b => new GetStudentProfileInfoResponse
+            {
+                Id = b.Id,
+                BirthDay = b.BirthDate,
+                Country = b.User.Country,
+                EducationLevel = b.EducationLevel,
+                Email = b.User.Email,
+                PhoneNumber = b.User.PhoneNumber,
+                profileImage = b.User.ProfileUrl,
+                StudentName = b.User.UserName,
+
+            }).FirstOrDefaultAsync();
+            return _responseHandler.Success(response, "Student info retrieved successfully");
         }
     }
 }

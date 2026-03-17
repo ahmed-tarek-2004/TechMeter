@@ -13,6 +13,7 @@ namespace TechMeter.Application.Interfaces.UserProfile
     {
         Task<Response<string>>EditProviderProfileAsync(string providerId , EditProviderProfileRequest request);
         Task<Response<string>>EditStudentProfileAsync(string studentId , EditStudentProfileRequest request);
-        Task<Response<GetProviderInfoResponse>> GetProviderInfoResponseAsync(string Id);
+        Task<Response<GetProviderProfileInfoResponse>> GetProviderInfoResponseAsync(string Id);
+        Task<Response<GetStudentProfileInfoResponse>> GetStudentInfoResponseAsync(string Id);
     }
 }

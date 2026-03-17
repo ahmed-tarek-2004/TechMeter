@@ -8,7 +8,7 @@ using TechMeter.Domain.Models.Auth.Users;
 
 namespace TechMeter.Application.DTO.User
 {
-    public class GetProviderInfoResponse
+    public class GetProviderProfileInfoResponse
     {
         public string Id { get; set; }
         public string ProviderName { get; set; }
