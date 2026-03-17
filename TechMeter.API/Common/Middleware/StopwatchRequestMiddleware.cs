@@ -2,7 +2,7 @@
 using Humanizer;
 using System.Diagnostics;
 
-namespace TechMeter.API.Middleware
+namespace TechMeter.API.Common.Middleware
 {
     public class StopwatchRequestMiddleware : IMiddleware
     {

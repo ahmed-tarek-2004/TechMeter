@@ -7,7 +7,7 @@ using System.Net;
 using System.Text.Json;
 using TechMeter.Domain.Shared;
 
-namespace TechMeter.API.Middleware
+namespace TechMeter.API.Common.Middleware
 {
     public class GlobalExceptionHandlerMiddleware : IMiddleware
     {

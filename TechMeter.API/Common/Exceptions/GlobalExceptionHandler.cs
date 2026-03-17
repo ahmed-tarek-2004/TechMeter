@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TechMeter.Domain.Shared;
 
-namespace TechMeter.API.Infrastructure
+namespace TechMeter.API.Common.Exceptions
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
