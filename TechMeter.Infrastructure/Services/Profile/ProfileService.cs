@@ -13,13 +13,13 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.User
 {
-    public class UserProfile : IUserProfile
+    public class ProfileService : IProfileService
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
         private readonly IImageUploading _imageUploading;
         private readonly UserManager<Domain.Models.Auth.Identity.User> _userManager;
-        public UserProfile(ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager,
+        public ProfileService(ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager,
             ResponseHandler responseHandler, IImageUploading imageUploading)
         {
             _context = context;

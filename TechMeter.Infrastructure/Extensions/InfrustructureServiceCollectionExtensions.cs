@@ -17,6 +17,7 @@ using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Application.Interfaces.Rating;
 using TechMeter.Application.Interfaces.SectionService;
 using TechMeter.Application.Interfaces.TokenService;
+using TechMeter.Application.Interfaces.UserProfile;
 using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
@@ -32,6 +33,7 @@ using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.Rating;
 using TechMeter.Infrastructure.Services.SectionService;
+using TechMeter.Infrastructure.Services.User;
 using TechMeter.Infrastructure.Services.WishList;
 using TokenService = TechMeter.Application.Interfaces.TokenService.TokenService;
 
@@ -60,7 +62,7 @@ namespace TechMeter.Infrastructure.Extensions
 
         public static IServiceCollection ApplicationService(this IServiceCollection services)
         {
-            services.AddScoped<IOTPService,OTPService>();
+            services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IImageUploading, CloudinaryImageService>();
             services.AddScoped<ITokenService, TokenService>();
@@ -74,9 +76,10 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<IProfileService, ProfileService>();
             return services;
         }
-        public static IServiceCollection AddingStripePayment(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddingStripePayment(this IServiceCollection services, IConfiguration configuration)
         {
 
             services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
