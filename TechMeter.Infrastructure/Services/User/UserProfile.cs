@@ -27,7 +27,7 @@ namespace TechMeter.Infrastructure.Services.User
             _imageUploading = imageUploading;
             _responseHandler = responseHandler;
         }
-        public async Task<Response<string>> EditSellerProfile(string providerId, EditProviderRequest request)
+        public async Task<Response<string>> EditProviderProfileAsync(string providerId, EditProviderRequest request)
         {
             var provider = await _context.Provider.Include(b => b.User).FirstOrDefaultAsync(p => p.Id == providerId);
             if (provider == null)
@@ -89,9 +89,21 @@ namespace TechMeter.Infrastructure.Services.User
             }
         }
 
-        public Task<Response<GetProviderInfoResponse>> GetProviderInfoResponse(string Id)
+        public async Task<Response<GetProviderInfoResponse>> GetProviderInfoResponseAsync(string Id)
         {
-            throw new NotImplementedException();
+            var response = await _context.Provider.Where(b => b.Id == Id).Select(b => new GetProviderInfoResponse
+            {
+                Id = Id,
+                Country = b.User.Country,
+                Email = b.User.Email,
+                PhoneNumber = b.User.PhoneNumber,
+                ProfileUrl = b.User.ProfileUrl,
+                ProviderName = b.User.UserName,
+                BankAccount = b.BankAccount,
+                Brief = b.Brief!,
+                ExperienceYears = b.ExperienceYears
+            }).FirstOrDefaultAsync();
+            return _responseHandler.Success(response!, "Provider info retrieved successfully");
         }
     }
 }

@@ -15,6 +15,9 @@ namespace TechMeter.Application.DTO.User
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Country { get; set; }
+        public string BankAccount { get; set; }
+        public string Brief { get; set; }
+        public int ExperienceYears { get; set; }
         public string? ProfileUrl { get; set; }
     }
 }

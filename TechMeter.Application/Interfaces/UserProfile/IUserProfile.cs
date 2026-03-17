@@ -10,7 +10,7 @@ namespace TechMeter.Application.Interfaces.UserProfile
 {
     public interface IUserProfile
     {
-        Task<Response<string>>EditSellerProfile(string providerId , EditProviderRequest request);
-        Task<Response<GetProviderInfoResponse>>GetProviderInfoResponse(string Id);
+        Task<Response<string>>EditProviderProfileAsync(string providerId , EditProviderRequest request);
+        Task<Response<GetProviderInfoResponse>> GetProviderInfoResponseAsync(string Id);
     }
 }
