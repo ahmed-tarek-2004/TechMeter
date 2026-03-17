@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Application.DTO.Profile;
 using TechMeter.Application.DTO.User;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.UserProfile;
+using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;
 
@@ -27,7 +29,7 @@ namespace TechMeter.Infrastructure.Services.User
             _imageUploading = imageUploading;
             _responseHandler = responseHandler;
         }
-        public async Task<Response<string>> EditProviderProfileAsync(string providerId, EditProviderRequest request)
+        public async Task<Response<string>> EditProviderProfileAsync(string providerId, EditProviderProfileRequest request)
         {
             var provider = await _context.Provider.Include(b => b.User).FirstOrDefaultAsync(p => p.Id == providerId);
             if (provider == null)
@@ -86,6 +88,63 @@ namespace TechMeter.Infrastructure.Services.User
                 await transaction.RollbackAsync();
                 return _responseHandler.InternalServerError<string>(ex.Message);
 
+            }
+        }
+
+        public async Task<Response<string>> EditStudentProfileAsync(string studentId, EditStudentProfileRequest request)
+        {
+            var student = await _context.Student.Include(b => b.User).FirstOrDefaultAsync(p => p.Id == studentId);
+            if (student == null)
+            {
+                return _responseHandler.NotFound<string>("student not found");
+            }
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                //Name
+                if (!string.IsNullOrEmpty(request.StudentName))
+                {
+                    student.User.UserName = request.StudentName;
+                }
+                //Email
+                if (!string.IsNullOrEmpty(request.Email))
+                {
+                    student.User.Email = request.Email;
+                }
+                //phone
+                if (!string.IsNullOrEmpty(request.PhoneNumber))
+                {
+                    student.User.PhoneNumber = request.PhoneNumber;
+                }
+                //counry
+                if (!string.IsNullOrEmpty(request.Country))
+                {
+                    student.User.Country = request.Country;
+                }
+                //EducationLevel
+                if (!string.IsNullOrEmpty(request.EducationLevel))
+                {
+                    student.EducationLevel = request.EducationLevel;
+                }
+                //birthday
+                if (request.BirthDay.HasValue)
+                {
+                    student.BirthDate = request.BirthDay.Value;
+                }
+                string profileUrl = string.Empty;
+                if (request.profileImage != null)
+                {
+                    profileUrl = await _imageUploading.UploadAsync(request.profileImage);
+                }
+                student.User.ProfileUrl = profileUrl;
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return _responseHandler.Success(string.Empty, "Profile updated successfully");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return _responseHandler.InternalServerError<string>(ex.Message);
             }
         }
 

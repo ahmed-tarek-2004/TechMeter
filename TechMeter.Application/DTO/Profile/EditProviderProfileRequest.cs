@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.User
 {
-    public class EditProviderRequest
+    public class EditProviderProfileRequest
     {
         public string? ProviderName { get; set; }
         public string? PhoneNumber { get; set; }

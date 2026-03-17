@@ -14,7 +14,7 @@ namespace TechMeter.API.Controllers
     {
 
         [Authorize(Roles = "provider")]
-        [HttpGet("get/provider/profile")]
+        [HttpGet("provider/profile")]
         public async Task<ActionResult<Response<GetProviderInfoResponse>>> GetproviderProfile()
         {
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -24,7 +24,7 @@ namespace TechMeter.API.Controllers
 
         [Authorize(Roles = "provider")]
         [HttpPut("provider/update/profile")]
-        public async Task<ActionResult<Response<EditProviderRequest>>> UpdateproviderProfile([FromForm] EditProviderRequest request)
+        public async Task<ActionResult<Response<EditProviderProfileRequest>>> UpdateproviderProfile([FromForm] EditProviderProfileRequest request)
         {
 
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
