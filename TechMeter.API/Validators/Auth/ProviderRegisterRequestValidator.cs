@@ -32,10 +32,6 @@ namespace TechMeter.API.Validators
                 .Equal(b => b.Password)
                 .WithMessage("Passwords do not match.");
 
-            RuleFor(x => x.BirthDate)
-                .NotNull()
-                .WithMessage("Birthday is required");
-
             RuleFor(x => x.Country)
                 .Must(b => !string.IsNullOrEmpty(b))
                 .WithMessage("Country is required");

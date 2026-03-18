@@ -114,50 +114,83 @@ namespace TechMeter.Infrastructure.Services.AuthService
         }
         public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterRequest request)
         {
-            var checkifEmailorPhone = await CheckEmailOrPhoneNumberAsync(request.Email, request.PhoneNumber);
-            if (checkifEmailorPhone != null)
+            var user = await _context.Users.Include(b => b.Student)
+                .FirstOrDefaultAsync(b => b.Email == request.Email && b.PhoneNumber == request.PhoneNumber);
+
+            if (user != null && user.EmailConfirmed)
             {
-                _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
-                return _responseHandler.BadRequest<StudentRegisterResponse>(checkifEmailorPhone);
+                _logger.LogInformation("{Email} is registered", user.Email);
+                return _responseHandler.BadRequest<StudentRegisterResponse>("Email is already registered");
             }
-            await using var transaction = _context.Database.BeginTransaction();
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var user = new Domain.Models.Auth.Identity.User()
+                if (user != null && !user.EmailConfirmed)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    UserName = request.UserName,
-                    Email = request.Email,
-                    PhoneNumber = request.PhoneNumber,
-                    Country = request.Country,
-                    Gender = request.Gender,
-                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : null,
-                };
-                var result = await _userManager.CreateAsync(user, request.Password);
-                if (!result.Succeeded)
-                {
-                    var error = result.Errors.Select(e => e.Description).ToList();
-                    _logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.Email, string.Join(",", error));
-                    return _responseHandler.BadRequest<StudentRegisterResponse>(string.Join(",", error));
+                    //await _userManager.DeleteAsync(user);
+                    //targetUser = user;
+
+                    user.UserName = request.UserName;
+                    user.PhoneNumber = request.PhoneNumber;
+                    user.Country = request.Country;
+                    user.Gender = request.Gender;
+                    if (request.ProfilePhoto != null)
+                    {
+                        user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
+                    }
+                    user.Student.BirthDate = request.BirthDate;
+                    user.Student.EducationLevel = request.EducationLevel;
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    await _userManager.ResetPasswordAsync(user, token, request.Password);
+                    await _tokenService.InValidateOldTokenAsync(user.Id);
+                    await _userManager.UpdateAsync(user);
+                    _logger.LogInformation("Existing user updated: {UserId}", user.Id);
                 }
-                await _userManager.AddToRoleAsync(user, "student");
-
-                var student = new Student()
+                else
                 {
-                    User = user,
-                    BirthDate = request.BirthDate,
-                    EducationLevel = request.EducationLevel
-                };
+                    user = new Domain.Models.Auth.Identity.User()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserName = request.UserName,
+                        Email = request.Email,
+                        PhoneNumber = request.PhoneNumber,
+                        Country = request.Country,
+                        Gender = request.Gender,
+                        ProfileUrl = request.ProfilePhoto != null
+                            ? await _imageUploading.UploadAsync(request.ProfilePhoto)
+                            : null,
+                    };
 
-                await _context.Student.AddAsync(student);
+                    var results = await _userManager.CreateAsync(user, request.Password);
 
+                    if (!results.Succeeded)
+                    {
+                        var errors = string.Join(",", results.Errors.Select(e => e.Description));
+                        _logger.LogWarning("Failed to create user: {Errors}", errors);
+                        return _responseHandler.BadRequest<StudentRegisterResponse>(errors);
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "student");
+
+                    _logger.LogInformation("New user created: {UserId}", user.Id);
+                    var student = new Student()
+                    {
+                        User = user,
+                        BirthDate = request.BirthDate,
+                        EducationLevel = request.EducationLevel
+                    };
+                    await _context.Student.AddAsync(student);
+                }
+
+                await _context.SaveChangesAsync();
                 _logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
 
                 var Tokens = await _tokenService.GenerateTokensAsync(user, user.Id);
                 var otp = await _otpService.GenerateAndSetOTP(user.Id);
                 await _emailService.SendOtpEmailAsync(user, otp);
 
-                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 _logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.Email);
                 var response = new StudentRegisterResponse()
@@ -182,7 +215,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 _logger.LogError(ex, "Error occurred during ClientRegisterUserAsync for Email: {Email}", request.Email);
                 return _responseHandler.BadRequest<StudentRegisterResponse>("An error occurred during registration.");
             }
@@ -190,55 +223,77 @@ namespace TechMeter.Infrastructure.Services.AuthService
         }
         public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request)
         {
-            var checkifEmailorPhone = await CheckEmailOrPhoneNumberAsync(request.Email, request.PhoneNumber);
-            if (checkifEmailorPhone != null)
+            var user = await _context.Users.Include(b => b.Provider)
+                .FirstOrDefaultAsync(b => b.Email == request.Email);
+            //if (checkifEmailorPhone != null)
+            //{
+            //    _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
+            //    return _responseHandler.BadRequest<StudentRegisterResponse>(checkifEmailorPhone);
+            //}
+            if (user != null && user.EmailConfirmed)
             {
-                _logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
-                return _responseHandler.BadRequest<ProviderRegisterResponse>(checkifEmailorPhone);
+                _logger.LogInformation("{Email} is registered", user.Email);
+                return _responseHandler.BadRequest<ProviderRegisterResponse>("Email is already registered");
             }
-            var transaction = _context.Database.BeginTransaction();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var user = new Domain.Models.Auth.Identity.User()
+                if (user != null && !user.EmailConfirmed)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    UserName = request.UserName,
-                    Email = request.Email,
-                    PhoneNumber = request.PhoneNumber,
-                    Country = request.Country,
-                    Gender = request.Gender,
-                    ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : null,
-                };
-                var result = await _userManager.CreateAsync(user, request.Password);
-                if (!result.Succeeded)
-                {
-                    var error = result.Errors.Select(e => e.Description).ToList();
-                    _logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.Email, string.Join(",", error));
-                    return _responseHandler.BadRequest<ProviderRegisterResponse>(string.Join(",", error));
+                    user.UserName = request.UserName;
+                    user.PhoneNumber = request.PhoneNumber;
+                    user.Country = request.Country;
+                    user.Gender = request.Gender;
+                    if (request.ProfilePhoto != null)
+                    {
+                        user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
+                    }
+                    user.Provider.Brief = request.Brief;
+                    user.Provider.BankAccount = request.BankAccount;
+                    user.Provider.ExperienceYears = request.ExperienceYears;
+                    //user.Provider.b
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    await _userManager.ResetPasswordAsync(user, token, request.Password);
+
+                    await _tokenService.InValidateOldTokenAsync(user.Id);
+                    _logger.LogInformation("Existing user updated: {UserId}", user.Id);
                 }
-                await _userManager.AddToRoleAsync(user, "provider");
-
-                //var certificationsUrl = new CertificatesUrl()
-                //{
-                //    Id = Guid.NewGuid().ToString(),
-                //    ProviderId = user.Id,
-                //    CertificateUrl = _imageUploading.UploadAsync(request.ProfilePhoto)
-
-                //};
-
-                var provider = new Provider()
+                else
                 {
-                    User = user,
-                    BankAccount = request.BankAccount,
-                    Brief = request.Brief,
-                    ExperienceYears = request.ExperienceYears,
-                    certificatesUrls = null,
+                    user = new Domain.Models.Auth.Identity.User()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserName = request.UserName,
+                        Email = request.Email,
+                        PhoneNumber = request.PhoneNumber,
+                        Country = request.Country,
+                        Gender = request.Gender,
+                        ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : null,
+                    };
+                    var result = await _userManager.CreateAsync(user, request.Password);
+                    if (!result.Succeeded)
+                    {
+                        var error = result.Errors.Select(e => e.Description).ToList();
+                        _logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.Email, string.Join(",", error));
+                        return _responseHandler.BadRequest<ProviderRegisterResponse>(string.Join(",", error));
+                    }
+                    await _userManager.AddToRoleAsync(user, "provider");
 
-                };
+                    var provider = new Provider()
+                    {
+                        User = user,
+                        BankAccount = request.BankAccount,
+                        Brief = request.Brief,
+                        ExperienceYears = request.ExperienceYears,
+                        certificatesUrls = null,
 
-                await _context.Provider.AddAsync(provider);
+                    };
 
-                _logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
+                    await _context.Provider.AddAsync(provider);
+
+                    _logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
+                }
 
                 var Tokens = await _tokenService.GenerateTokensAsync(user, user.Id);
                 var otp = await _otpService.GenerateAndSetOTP(user.Id);
@@ -260,7 +315,6 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     Brief = request.Brief,
                     Email = request.Email,
                     ExperienceYears = request.ExperienceYears,
-                    BirthDate = request.BirthDate,
                     IsEmailConfirmed = false,
                     AccessToken = Tokens.AccessToken,
                     RefreshToken = Tokens.RefreshToken,
@@ -295,11 +349,11 @@ namespace TechMeter.Infrastructure.Services.AuthService
             }
 
         }
-        private async Task<string> CheckEmailOrPhoneNumberAsync(string EmailAddress, string Phone)
-        {
-            var user = _context.Users.FirstOrDefault(b => b.Email == EmailAddress || b.PhoneNumber == Phone);
-            return user != null ? "Email or Phone Already Registerd" : null;
-        }
+        //private async Task<Domain.Models.Auth.Identity.User> CheckEmailOrPhoneNumberAsync(string EmailAddress, string Phone)
+        //{
+        //    var user = await _context.Users.FirstOrDefaultAsync(b => b.Email == EmailAddress || b.PhoneNumber == Phone);
+        //    return user;
+        //}
         public async Task<Response<string>> VerifyConfirmEmailOtp(VerifyOtp verifyOtp)
         {
             await using var transaction = _context.Database.BeginTransaction();

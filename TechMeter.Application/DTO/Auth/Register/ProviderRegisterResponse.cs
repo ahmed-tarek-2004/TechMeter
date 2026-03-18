@@ -18,7 +18,6 @@ namespace TechMeter.Application.DTO.Auth.Register
        public string? ProfilePhoto {  get; set; }
        public Gender Gender {  get; set; }
        public bool IsEmailConfirmed { get; set; }
-       public DateTime BirthDate {  get; set; }
        public string BankAccount {  get; set; }
        public string? Brief {  get; set; }
        public string Role {  get; set; }
