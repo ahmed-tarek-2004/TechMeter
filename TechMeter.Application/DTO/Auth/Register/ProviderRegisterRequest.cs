@@ -11,5 +11,5 @@ namespace TechMeter.Application.DTO.Auth.Register
 {
     public record ProviderRegisterRequest(string UserName, string Email, string PhoneNumber,
         string Password, string PassworfConfirmed, string Country, IFormFile? ProfilePhoto,
-        Gender Gender, DateTime BirthDate, string BankAccount, string? Brief, int ExperienceYears);
+        Gender Gender, string BankAccount, string? Brief, int ExperienceYears);
 }
