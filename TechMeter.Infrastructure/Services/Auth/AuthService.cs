@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
+using Stripe.Forwarding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,26 +129,8 @@ namespace TechMeter.Infrastructure.Services.AuthService
             {
                 if (user != null && !user.EmailConfirmed)
                 {
-                    //await _userManager.DeleteAsync(user);
-                    //targetUser = user;
 
-                    user.UserName = request.UserName;
-                    user.PhoneNumber = request.PhoneNumber;
-                    user.Country = request.Country;
-                    user.Gender = request.Gender;
-                    if (request.ProfilePhoto != null)
-                    {
-                        user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
-                    }
-                    user.Student.BirthDate = request.BirthDate;
-                    user.Student.EducationLevel = request.EducationLevel;
-
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    await _userManager.ResetPasswordAsync(user, token, request.Password);
-                    await _tokenService.InValidateOldTokenAsync(user.Id);
-                    await _userManager.UpdateAsync(user);
-                    _logger.LogInformation("Existing user updated: {UserId}", user.Id);
-                }
+                    await UpdateStudentReRegister(user, request);                }
                 else
                 {
                     user = new Domain.Models.Auth.Identity.User()
@@ -160,7 +143,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                         Gender = request.Gender,
                         ProfileUrl = request.ProfilePhoto != null
                             ? await _imageUploading.UploadAsync(request.ProfilePhoto)
-                            : null,
+                            : string.Empty,
                     };
 
                     var results = await _userManager.CreateAsync(user, request.Password);
@@ -221,6 +204,9 @@ namespace TechMeter.Infrastructure.Services.AuthService
             }
 
         }
+
+
+
         public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request)
         {
             var user = await _context.Users.Include(b => b.Provider)
@@ -240,24 +226,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             {
                 if (user != null && !user.EmailConfirmed)
                 {
-                    user.UserName = request.UserName;
-                    user.PhoneNumber = request.PhoneNumber;
-                    user.Country = request.Country;
-                    user.Gender = request.Gender;
-                    if (request.ProfilePhoto != null)
-                    {
-                        user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
-                    }
-                    user.Provider.Brief = request.Brief;
-                    user.Provider.BankAccount = request.BankAccount;
-                    user.Provider.ExperienceYears = request.ExperienceYears;
-                    //user.Provider.b
-
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    await _userManager.ResetPasswordAsync(user, token, request.Password);
-
-                    await _tokenService.InValidateOldTokenAsync(user.Id);
-                    _logger.LogInformation("Existing user updated: {UserId}", user.Id);
+                    await UpdateProviderReRegister(user, request);
                 }
                 else
                 {
@@ -269,7 +238,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                         PhoneNumber = request.PhoneNumber,
                         Country = request.Country,
                         Gender = request.Gender,
-                        ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : null,
+                        ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : string.Empty,
                     };
                     var result = await _userManager.CreateAsync(user, request.Password);
                     if (!result.Succeeded)
@@ -518,6 +487,45 @@ namespace TechMeter.Infrastructure.Services.AuthService
 
         }
 
+        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterRequest request)
+        {
+            user.UserName = request.UserName;
+            user.PhoneNumber = request.PhoneNumber;
+            user.Country = request.Country;
+            user.Gender = request.Gender;
+            if (request.ProfilePhoto != null)
+            {
+                user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
+            }
+            user.Student.BirthDate = request.BirthDate;
+            user.Student.EducationLevel = request.EducationLevel;
 
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _userManager.ResetPasswordAsync(user, token, request.Password);
+            await _tokenService.InValidateOldTokenAsync(user.Id);
+            await _userManager.UpdateAsync(user);
+            _logger.LogInformation("Existing user updated: {UserId}", user.Id);
+        }
+        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterRequest request)
+        {
+            user.UserName = request.UserName;
+            user.PhoneNumber = request.PhoneNumber;
+            user.Country = request.Country;
+            user.Gender = request.Gender;
+            if (request.ProfilePhoto != null)
+            {
+                user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
+            }
+            user.Provider.Brief = request.Brief;
+            user.Provider.BankAccount = request.BankAccount;
+            user.Provider.ExperienceYears = request.ExperienceYears;
+            //user.Provider.b
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _userManager.ResetPasswordAsync(user, token, request.Password);
+
+            await _tokenService.InValidateOldTokenAsync(user.Id);
+            _logger.LogInformation("Existing user updated: {UserId}", user.Id);
+        }
     }
 }
