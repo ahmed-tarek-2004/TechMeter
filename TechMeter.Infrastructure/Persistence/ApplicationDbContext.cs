@@ -6,10 +6,11 @@ using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Infrastructure.EntitiesConfigurations;
 using TechMeter.Domain.Models.Auth.UserTokens;
+using TechMeter.Application.Common;
 
 namespace TechMeter.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IDataProtectionKeyContext
+    public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IDataProtectionKeyContext,IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

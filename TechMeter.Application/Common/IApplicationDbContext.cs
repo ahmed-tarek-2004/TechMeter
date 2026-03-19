@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,8 @@ namespace TechMeter.Application.Common
         public DbSet<UserCourseRating> UserCourseRating { get; }
         public DbSet<CourseStudent> CourseStudent { get; }
         public DbSet<StudentLessonWatched> StudentLessonWatched { get; }
+        public DatabaseFacade Database { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

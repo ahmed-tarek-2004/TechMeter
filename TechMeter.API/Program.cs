@@ -55,7 +55,8 @@ namespace TechMeter
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
-           
+            builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
+
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()
