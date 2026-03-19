@@ -1,7 +1,9 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
@@ -10,6 +12,8 @@ using System.Threading.Tasks;
 using TechMeter;
 using TechMeter.API.Common.Exceptions;
 using TechMeter.API.Common.Middleware;
+using TechMeter.Application.Behaviors;
+using TechMeter.Application.Common;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Extensions;
@@ -47,12 +51,11 @@ namespace TechMeter
             builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
             builder.Services.ApplicationService();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddFluentValidation();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.AddingStripePayment(builder.Configuration);
-
-
+            builder.Services.ApplyingMediatoR_Requirements();
+           
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()
