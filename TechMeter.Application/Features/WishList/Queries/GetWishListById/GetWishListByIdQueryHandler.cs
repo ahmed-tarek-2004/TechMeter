@@ -30,13 +30,27 @@ namespace TechMeter.Application.Features.WishList.Queries.GetWishListById
         {
             try
             {
-                var wishlist = await _context.Wishlist
-                    .Include(w => w.WishlistItems)
-                        .ThenInclude(wi => wi.Course)
-                    .AsSplitQuery()
-                    .FirstOrDefaultAsync(w => w.StudentId == request.studentId);
+                var wishlistItem = await _context.WishlistItem
+                    .Where(b => b.Wishlist.StudentId == request.studentId)
+                    .Select(b => new GetWishListResponse
+                    {
+                        Id = b.WishlistId,
+                        StudentId = b.Wishlist.StudentId,
+                        CreatedAt = b.Wishlist.CreatedAt,
+                        LastUpdated = b.Wishlist.LastUpdated,
+                        Items = new List<WishListItemResponse>
+                        {
+                            new WishListItemResponse
+                            {
+                                Id = b.Id,
+                                CourseId = b.courseId,
+                                AddedAt = b.CreatedAt
+                            }
+                        }
 
-                if (wishlist == null || !wishlist.WishlistItems.Any())
+                    }).FirstOrDefaultAsync(cancellationToken);
+
+                if (wishlistItem == null)
                 {
                     var empty = new GetWishListResponse
                     {
@@ -49,8 +63,8 @@ namespace TechMeter.Application.Features.WishList.Queries.GetWishListById
                     return _responseHandler.Success(empty, "Wishlist is empty");
                 }
 
-                var dto = CreateWishlistResponse(wishlist);
-                return _responseHandler.Success(dto, "Wishlist retrieved successfully");
+                //var dto = CreateWishlistResponse(wishlist);
+                return _responseHandler.Success(wishlistItem, "Wishlist retrieved successfully");
             }
             catch (Exception ex)
             {
@@ -58,21 +72,6 @@ namespace TechMeter.Application.Features.WishList.Queries.GetWishListById
                 return _responseHandler.InternalServerError<GetWishListResponse>("Failed to retrieve wishlist");
             }
         }
-        private GetWishListResponse CreateWishlistResponse(Wishlist wishlist)
-        {
-            return new GetWishListResponse
-            {
-                Id = wishlist.Id,
-                StudentId = wishlist.StudentId,
-                CreatedAt = wishlist.CreatedAt,
-                LastUpdated = wishlist.LastUpdated,
-                Items = wishlist.WishlistItems.Select(wi => new WishListItemResponse
-                {
-                    Id = wi.Id,
-                    AddedAt = wi.CreatedAt,
-                    CourseId = wi.courseId
-                }).ToList()
-            };
-        }
+       
     }
 }

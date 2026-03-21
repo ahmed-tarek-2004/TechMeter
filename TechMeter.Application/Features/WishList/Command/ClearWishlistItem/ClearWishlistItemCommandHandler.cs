@@ -17,7 +17,7 @@ namespace TechMeter.Application.Features.WishList.Command.ClearWishlistItem
         private readonly IApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<ClearWishlistItemCommandHandler> _logger;
-        public ClearWishlistItemCommandHandler(IApplicationDbContext context,ResponseHandler responseHandler,
+        public ClearWishlistItemCommandHandler(IApplicationDbContext context, ResponseHandler responseHandler,
             ILogger<ClearWishlistItemCommandHandler> logger)
         {
             _responseHandler = responseHandler;
@@ -29,18 +29,15 @@ namespace TechMeter.Application.Features.WishList.Command.ClearWishlistItem
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var wishlist = await _context.Wishlist
-                    .Include(w => w.WishlistItems)
-                    .FirstOrDefaultAsync(w => w.StudentId == request.studentId);
 
-                if (wishlist == null || !wishlist.WishlistItems.Any())
+                var rows = await _context.WishlistItem.Where(b => b.Wishlist.StudentId == request.studentId).ExecuteDeleteAsync(cancellationToken);
+                if (rows == 0)
+                {
                     return _responseHandler.Success<string>(null, "Wishlist is already empty");
+                }
+                await _context.Wishlist.Where(b => b.StudentId == request.studentId)
+                    .ExecuteUpdateAsync(b => b.SetProperty(p => p.LastUpdated, DateTime.UtcNow));
 
-                _context.WishlistItem.RemoveRange(wishlist.WishlistItems);
-                wishlist.WishlistItems.Clear();
-                wishlist.LastUpdated = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync();
 
                 return _responseHandler.Deleted<string>("Wishlist cleared successfully");
