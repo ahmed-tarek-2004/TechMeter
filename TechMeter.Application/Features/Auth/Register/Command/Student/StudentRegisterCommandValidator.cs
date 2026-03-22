@@ -1,14 +1,17 @@
-﻿using System.IO;
-using FluentValidation;
-using TechMeter.Application.DTO.Auth.Register;
+﻿using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TechMeter.Domain.Enums;
 
-namespace TechMeter.API.Validators
+namespace TechMeter.Application.Features.Auth.Register.Command.Student
 {
-    public class StudentRegisterRequestValidator : AbstractValidator<StudentRegisterRequest>
+    public class StudentRegisterCommandValidator : AbstractValidator<StudentRegisterCommand>
     {
         private readonly List<string> Extensions = [".png", ".jpg", ".jpeg"];
-        public StudentRegisterRequestValidator()
+        public StudentRegisterCommandValidator()
         {
             RuleFor(b => b)
                 .Must(b => !string.IsNullOrEmpty(b.Email))
@@ -32,7 +35,7 @@ namespace TechMeter.API.Validators
 
             RuleFor(b => b.PassworfConfirmed)
                 .NotEmpty()
-                .WithMessage("PasswordConfirmed is reuired")
+                .WithMessage("PasswordConfirmed is required")
                 .Equal(b => b.Password)
                 .WithMessage("Passwords do not match.");
 
@@ -52,7 +55,6 @@ namespace TechMeter.API.Validators
             RuleFor(b => b.ProfilePhoto)
                 .Must(b => Extensions.Contains(Path.GetExtension(b.FileName)))
                 .When(b => b.ProfilePhoto != null);
-
         }
     }
 }

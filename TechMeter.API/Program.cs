@@ -1,3 +1,4 @@
+
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections.Features;
@@ -55,7 +56,7 @@ namespace TechMeter
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
-            builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
+            builder.Services.AddAutoMapper(typeof(IAssemblyMarker).Assembly);
 
 
             builder.Services.AddDataProtection()
@@ -76,9 +77,8 @@ namespace TechMeter
                     });
             });
 
-            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
-
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddTransient<StopwatchRequestMiddleware>();
             var app = builder.Build();
 
@@ -100,6 +100,8 @@ namespace TechMeter
                 app.UseSwaggerUI();
             }
 
+            app.UseExceptionHandler();
+            //app.UseProblemDetails();
             app.UseHttpsRedirection();
 
             app.UseCors("AllowAll");
@@ -107,7 +109,6 @@ namespace TechMeter
             app.UseAuthorization();
 
             app.UseMiddleware<StopwatchRequestMiddleware>();
-            app.UseExceptionHandler();
             app.MapControllers();
 
             app.Run();

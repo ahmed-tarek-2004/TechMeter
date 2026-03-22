@@ -5,6 +5,7 @@ using StackExchange.Redis;
 using Stripe;
 using System.Net;
 using System.Net.Mail;
+using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.Cart;
@@ -77,6 +78,8 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
+
             return services;
         }
         public static IServiceCollection AddingStripePayment(this IServiceCollection services, IConfiguration configuration)

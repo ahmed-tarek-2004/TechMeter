@@ -173,5 +173,6 @@ namespace TechMeter.Extensions
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             return services;
         }
+       
     }
 }

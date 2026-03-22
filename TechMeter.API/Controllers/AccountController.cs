@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -10,6 +12,9 @@ using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
 using TechMeter.Application.DTO.Auth.ResetPassword;
 using TechMeter.Application.DTO.Otp;
+using TechMeter.Application.Features.Auth.Login.Command;
+using TechMeter.Application.Features.Auth.Register.Command.Provider;
+using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
@@ -31,14 +36,16 @@ namespace TechMeter.API.Controllers
         private readonly IAuthService _authService;
         private readonly IValidator<StudentRegisterRequest> _studentRegisterValidator;
         private readonly IValidator<ProviderRegisterRequest> _providerRegisterValidator;
-        private readonly IValidator<LoginRequestDto> _loginRequestValidator;
         private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
         private readonly IValidator<ForgetPasswordRequest> _forgetPasswordValidator;
         private readonly IValidator<ChangePassword> _changePasswordValidator;
+        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
         private readonly ResponseHandler _responseHandler;
+
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
             IValidator<StudentRegisterRequest> studentRegisterValidator, ResponseHandler responseHandler
-            , IValidator<LoginRequestDto> loginRequestValidator, IValidator<ChangePassword> changePasswordValidator,
+            , IValidator<ChangePassword> changePasswordValidator, IMapper mapper, IMediator mediator,
             IValidator<ResetPasswordRequest> resetPasswordValidator, IValidator<ForgetPasswordRequest> forgetPasswordValidator,
             IValidator<ProviderRegisterRequest> providerRegisterValidator)
         {
@@ -46,11 +53,12 @@ namespace TechMeter.API.Controllers
             _authService = authService;
             _studentRegisterValidator = studentRegisterValidator;
             _responseHandler = responseHandler;
-            _loginRequestValidator = loginRequestValidator;
             _changePasswordValidator = changePasswordValidator;
             _forgetPasswordValidator = forgetPasswordValidator;
             _resetPasswordValidator = resetPasswordValidator;
             _providerRegisterValidator = providerRegisterValidator;
+            _mapper = mapper;
+            _mediator = mediator;
         }
 
 
@@ -72,49 +80,31 @@ namespace TechMeter.API.Controllers
             _logger.LogInformation("T1 interface is :{t1.GetInterfaces()}", t1.GetInterfaces());
             _logger.LogInformation("is Value Type :{t1.IsValueType}", t1.IsValueType);
 
-            
-           
+
+
             return Ok();
         }
 
         [HttpPost("student/register")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsStudent([FromForm] StudentRegisterRequest request)
         {
-            var validator = await _studentRegisterValidator.ValidateAsync(request);
-            if (!validator.IsValid)
-            {
-                var error = string.Join(",", validator.Errors.Select(e => e.ErrorMessage).ToList());
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(error));
-            }
-
-            var response = await _authService.RegisterAsStudentAsync(request);
+            var command = _mapper.Map<StudentRegisterCommand>(request);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("provider/register")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsProvider([FromForm] ProviderRegisterRequest request)
         {
-            var validator = await _providerRegisterValidator.ValidateAsync(request);
-            if (!validator.IsValid)
-            {
-                var error = string.Join(",", validator.Errors.Select(e => e.ErrorMessage).ToList());
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(error));
-            }
-
-            var response = await _authService.RegisterAsProviderAsync(request);
+            var command = _mapper.Map<ProviderRegisterCommand>(request);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("login")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> LoginAsync([FromBody] LoginRequestDto request)
         {
-            var validator = await _loginRequestValidator.ValidateAsync(request);
-            if (!validator.IsValid)
-            {
-                var error = string.Join(",", validator.Errors.Select(e => e.ErrorMessage).ToList());
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(error));
-            }
-
-            var response = await _authService.LoginAsync(request);
+            var command = _mapper.Map<LoginCommand>(request);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 

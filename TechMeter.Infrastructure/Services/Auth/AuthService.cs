@@ -11,10 +11,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Auth;
-using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
 using TechMeter.Application.DTO.Auth.ResetPassword;
 using TechMeter.Application.DTO.Otp;
+using TechMeter.Application.Features.Auth.Login.Command;
+using TechMeter.Application.Features.Auth.Register.Command.Provider;
+using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.OTPService;
@@ -53,7 +55,8 @@ namespace TechMeter.Infrastructure.Services.AuthService
             _imageUploading = imageUploading;
         }
 
-        public async Task<Domain.Shared.Bases.Response<LoginResponseDto>> LoginAsync(LoginRequestDto request)
+        #region Login
+        public async Task<Domain.Shared.Bases.Response<LoginResponseDto>> LoginAsync(LoginCommand request)
         {
             try
             {
@@ -113,7 +116,10 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 return _responseHandler.InternalServerError<LoginResponseDto>("Internal Server Error");
             }
         }
-        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterRequest request)
+        #endregion
+
+        #region student register
+        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterCommand request)
         {
             var user = await _context.Users.Include(b => b.Student)
                 .FirstOrDefaultAsync(b => b.Email == request.Email && b.PhoneNumber == request.PhoneNumber);
@@ -205,9 +211,10 @@ namespace TechMeter.Infrastructure.Services.AuthService
 
         }
 
+        #endregion
 
-
-        public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request)
+        #region provider register
+        public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterCommand request)
         {
             var user = await _context.Users.Include(b => b.Provider)
                 .FirstOrDefaultAsync(b => b.Email == request.Email);
@@ -300,6 +307,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             }
 
         }
+        #endregion
         public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> LogoutAsync(ClaimsPrincipal userclaims)
         {
             try
@@ -487,7 +495,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
 
         }
 
-        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterRequest request)
+        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterCommand request)
         {
             user.UserName = request.UserName;
             user.PhoneNumber = request.PhoneNumber;
@@ -506,7 +514,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             await _userManager.UpdateAsync(user);
             _logger.LogInformation("Existing user updated: {UserId}", user.Id);
         }
-        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterRequest request)
+        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterCommand request)
         {
             user.UserName = request.UserName;
             user.PhoneNumber = request.PhoneNumber;

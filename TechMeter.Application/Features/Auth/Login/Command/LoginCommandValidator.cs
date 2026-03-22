@@ -1,15 +1,19 @@
 ﻿using FluentValidation;
-using TechMeter.Application.DTO.Auth.Login;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace TechMeter.API.Validators
+namespace TechMeter.Application.Features.Auth.Login.Command
 {
-    public class LoginRequestValidator : AbstractValidator<LoginRequestDto>
+    public class LoginCommandValidator :AbstractValidator<LoginCommand>
     {
-        public LoginRequestValidator()
+        public LoginCommandValidator()
         {
             RuleFor(x => x)
-              .Must(x => !string.IsNullOrEmpty(x.email))
-              .WithMessage("Email is required.");
+             .Must(x => !string.IsNullOrEmpty(x.email))
+             .WithMessage("Email is required.");
 
             RuleFor(x => x.email).EmailAddress()
                 .When(b => !string.IsNullOrEmpty(b.email))

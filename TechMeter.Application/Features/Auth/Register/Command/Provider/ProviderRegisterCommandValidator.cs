@@ -1,14 +1,19 @@
 ﻿using FluentValidation;
-using TechMeter.Application.DTO.Auth.Register;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TechMeter.Domain.Enums;
 
-namespace TechMeter.API.Validators
+namespace TechMeter.Application.Features.Auth.Register.Command.Provider
 {
-    public class ProviderRegisterRequestValidator:AbstractValidator<ProviderRegisterRequest>
+    public class ProviderRegisterCommandValidator : AbstractValidator<ProviderRegisterCommand>
     {
         private readonly List<string> Extensions = [".png", ".jpg", ".jpeg"];
-        public ProviderRegisterRequestValidator()
+        public ProviderRegisterCommandValidator()
         {
+
             RuleFor(b => b)
               .Must(b => !string.IsNullOrEmpty(b.Email) && !string.IsNullOrEmpty(b.UserName))
               .WithMessage("Email and UserName are required");
@@ -23,7 +28,7 @@ namespace TechMeter.API.Validators
                 .WithMessage("PhoneNumber is required");
 
             RuleFor(b => b)
-                .Must(b=>b.ExperienceYears>0)
+                .Must(b => b.ExperienceYears > 0)
                 .WithMessage("ExperienceYears is required");
 
             RuleFor(b => b.PassworfConfirmed)
