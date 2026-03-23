@@ -12,9 +12,13 @@ using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
 using TechMeter.Application.DTO.Auth.ResetPassword;
 using TechMeter.Application.DTO.Otp;
+using TechMeter.Application.Features.Auth.ChangePassword;
+using TechMeter.Application.Features.Auth.ConfirmEmail;
+using TechMeter.Application.Features.Auth.ForgetPassword.Command;
 using TechMeter.Application.Features.Auth.Login.Command;
 using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
+using TechMeter.Application.Features.Auth.ResetPassword;
 using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
@@ -34,29 +38,22 @@ namespace TechMeter.API.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
-        private readonly IValidator<StudentRegisterRequest> _studentRegisterValidator;
-        private readonly IValidator<ProviderRegisterRequest> _providerRegisterValidator;
         private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
-        private readonly IValidator<ForgetPasswordRequest> _forgetPasswordValidator;
         private readonly IValidator<ChangePassword> _changePasswordValidator;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
         private readonly ResponseHandler _responseHandler;
 
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
-            IValidator<StudentRegisterRequest> studentRegisterValidator, ResponseHandler responseHandler
-            , IValidator<ChangePassword> changePasswordValidator, IMapper mapper, IMediator mediator,
-            IValidator<ResetPasswordRequest> resetPasswordValidator, IValidator<ForgetPasswordRequest> forgetPasswordValidator,
-            IValidator<ProviderRegisterRequest> providerRegisterValidator)
+              ResponseHandler responseHandler, IValidator<ChangePassword> changePasswordValidator
+            , IMapper mapper, IMediator mediator,
+            IValidator<ResetPasswordRequest> resetPasswordValidator)
         {
             _logger = logger;
             _authService = authService;
-            _studentRegisterValidator = studentRegisterValidator;
             _responseHandler = responseHandler;
             _changePasswordValidator = changePasswordValidator;
-            _forgetPasswordValidator = forgetPasswordValidator;
             _resetPasswordValidator = resetPasswordValidator;
-            _providerRegisterValidator = providerRegisterValidator;
             _mapper = mapper;
             _mediator = mediator;
         }
@@ -111,40 +108,26 @@ namespace TechMeter.API.Controllers
         [HttpPost("reset-password")]
         public async Task<ActionResult<Response<ResetPasswordResponse>>> ResetPasswordAsync(ResetPasswordRequest request)
         {
-            var validation = await _resetPasswordValidator.ValidateAsync(request);
-            if (!validation.IsValid)
-            {
-                var Errors = string.Join(',', validation.Errors.Select(e => e.ErrorMessage).ToList());
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Errors));
-            }
-            var response = await _authService.ResetPasswordAsync(request);
+            var command = _mapper.Map<ResetPasswordCommand>(request);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("forget-password")]
         public async Task<ActionResult<Response<ForgetPasswordResponse>>> ForgetPasswordAsync(ForgetPasswordRequest request)
         {
-            var validation = await _forgetPasswordValidator.ValidateAsync(request);
-            if (!validation.IsValid)
-            {
-                var Errors = string.Join(',', validation.Errors.Select(e => e.ErrorMessage).ToList());
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Errors));
-            }
-            var response = await _authService.ForgetPassword(request);
+
+            var command = new ForgetPasswordCommand(request.Email);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("change-password")]
         public async Task<ActionResult<Response<string>>> ChangePasswordAsync(ChangePassword request)
         {
-            var validation = await _changePasswordValidator.ValidateAsync(request);
-            if (!validation.IsValid)
-            {
-                var Errors = string.Join(',', validation.Errors.Select(e => e.ErrorMessage).ToList());
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Errors));
-            }
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _authService.ChangePassword(userId, request);
+            var command = _mapper.Map<ChangePasswordCommand>(request);
+            command.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -153,21 +136,15 @@ namespace TechMeter.API.Controllers
         [HttpPost("confirm-email")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyConfirmEmailAsync([FromBody] VerifyOtp request)
         {
-            if (!ModelState.IsValid)
-                return StatusCode((int)_responseHandler.BadRequest<object>("Invalid input data.").StatusCode,
-                    _responseHandler.BadRequest<object>("Invalid input data."));
-
-            var result = await _authService.VerifyConfirmEmailOtp(request);
+            var command = _mapper.Map<ConfirmEmailCommand>(request);
+            var result = await _mediator.Send(command);
             return StatusCode((int)result.StatusCode, result);
         }
         [HttpPost("verify-reset-password")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyResetPasswordAsync([FromBody] VerifyOtp request)
         {
-            if (!ModelState.IsValid)
-                return StatusCode((int)_responseHandler.BadRequest<object>("Invalid input data.").StatusCode,
-                    _responseHandler.BadRequest<object>("Invalid input data."));
-
-            var result = await _authService.VerifyResetPasswordOtp(request);
+            var command = _mapper.Map<ConfirmEmailCommand>(request);
+            var result = await _mediator.Send(command);
             return StatusCode((int)result.StatusCode, result);
         }
 
@@ -175,12 +152,8 @@ namespace TechMeter.API.Controllers
         [EnableRateLimiting("SendOtpPolicy")]
         public async Task<ActionResult<string>> ResendOtpAsync(ResendOtp request)
         {
-            if (!ModelState.IsValid)
-            {
-                return StatusCode((int)_responseHandler.BadRequest<object>("Invalid input data.").StatusCode,
-                   _responseHandler.BadRequest<object>("Invalid input data."));
-            }
-            var response = await _authService.ResponseOtp(request);
+            var command = _mapper.Map<ResetPasswordCommand>(request);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("logout")]

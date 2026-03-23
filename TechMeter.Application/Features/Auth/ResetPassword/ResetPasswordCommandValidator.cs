@@ -1,11 +1,15 @@
 ﻿using FluentValidation;
-using TechMeter.Application.DTO.Auth.ResetPassword;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace TechMeter.API.Validators
+namespace TechMeter.Application.Features.Auth.ResetPassword
 {
-    public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequest>
+    public class ResetPasswordCommandValidator:AbstractValidator<ResetPasswordCommand>
     {
-        public ResetPasswordRequestValidator()
+        public ResetPasswordCommandValidator()
         {
             RuleFor(b => b.Password)
                 .NotEmpty()
@@ -22,8 +26,6 @@ namespace TechMeter.API.Validators
             RuleFor(b => b.ConfirmPassword)
                 .NotEmpty()
                 .WithMessage("Confirm Password Is Required");
-
-
         }
     }
 }

@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Auth\ForgetPassword\ForgetPasswordCommand.cs" />
     <Compile Remove="Features\WishList\Command\ClearWishlistItemCommand.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Mapping\Auth\VerifyResetPasswordProfile.cs" />
   </ItemGroup>
 
 	<ItemGroup>

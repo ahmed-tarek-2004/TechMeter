@@ -1,15 +1,19 @@
 ﻿using FluentValidation;
-using TechMeter.Application.DTO.Auth.ResetPassword;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace TechMeter.API.Validators
+namespace TechMeter.Application.Features.Auth.ChangePassword
 {
-    public class ChangePasswordValidator : AbstractValidator<ChangePassword>
+    public class ChangePasswordCommandHandlerValidator:AbstractValidator<ChangePasswordCommand>
     {
-        public ChangePasswordValidator()
+        public ChangePasswordCommandHandlerValidator() 
         {
             RuleFor(b => b.NewPassword)
-                .NotEmpty()
-                .WithMessage("New Password Is Required");
+               .NotEmpty()
+               .WithMessage("New Password Is Required");
             RuleFor(b => b.ConfirmNewPassword)
                 .NotEmpty()
                 .WithMessage("Confirm Password is required")
