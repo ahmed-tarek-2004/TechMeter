@@ -32,7 +32,6 @@ using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Persistence;
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFib1RhcmVrIiwibmFtZWlkIjoiMzdjODZiOWYtMzE5Ni00ZGMzLTljMjUtZTkzNjBmN2NkODcxIiwiZW1haWwiOiJhaG1lZHRhcmVrNzU4MEBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IjAxMTU4OTA1NTg5Iiwicm9sZSI6InN0dWRlbnQiLCJuYmYiOjE3NzExNzM2NjUsImV4cCI6MTc3MTc3ODQ2NSwiaWF0IjoxNzcxMTczNjY1fQ.oR7d2tqTgYnBJMD8CEGL3OydwpFiPE0KltlvI0347gQ
 
 namespace TechMeter.Infrastructure.Services.AuthService
 {
@@ -334,11 +333,13 @@ namespace TechMeter.Infrastructure.Services.AuthService
             }
         }
         #endregion
+
         //private async Task<Domain.Models.Auth.Identity.User> CheckEmailOrPhoneNumberAsync(string EmailAddress, string Phone)
         //{
         //    var user = await _context.Users.FirstOrDefaultAsync(b => b.Email == EmailAddress || b.PhoneNumber == Phone);
         //    return user;
         //}
+
         #region Confirm Email
         public async Task<Response<string>> VerifyConfirmEmailOtp(ConfirmEmailCommand verifyOtp)
         {
