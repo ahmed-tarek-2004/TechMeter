@@ -53,17 +53,11 @@ namespace TechMeter
                     .UseRecommendedSerializerSettings()
                 .UseSqlServerStorage(builder.Configuration.GetConnectionString("Hangfire"), new SqlServerStorageOptions
                 {
-
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-
                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-
                     QueuePollInterval = TimeSpan.FromSeconds(12),
-
                     UseRecommendedIsolationLevel = true,
-
                     DisableGlobalLocks = true
-
                 });
             });
             builder.Services.AddHangfireServer();
