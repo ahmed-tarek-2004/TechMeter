@@ -11,8 +11,8 @@ namespace TechMeter.Application.Interfaces.WishList
     public interface IWishListService
     {
         Task<Response<GetWishListResponse>> GetWishlistAsync(string studentId);
-        Task<Response<GetWishListResponse>> AddToWishlistAsync(string studentId, AddToWishListRequest request);
-        Task<Response<GetWishListResponse>> RemoveFromWishlistAsync(string studentId, string wishlistItemId);
-        Task<Response<object>> ClearWishlistAsync(string studentId);
+        Task<Response<string>> AddToWishlistAsync(string studentId, string request);
+        Task<Response<string>> RemoveFromWishlistAsync(string studentId, string wishlistItemId);
+        Task<Response<string>> ClearWishlistAsync(string studentId);
     }
 }

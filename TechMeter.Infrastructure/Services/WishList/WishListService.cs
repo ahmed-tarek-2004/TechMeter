@@ -10,6 +10,7 @@ using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TechMeter.Infrastructure.Services.WishList
 {
@@ -29,22 +30,22 @@ namespace TechMeter.Infrastructure.Services.WishList
             _context = context;
             _responseHandler = responseHandler;
         }
-        public async Task<Response<GetWishListResponse>> AddToWishlistAsync(string studentId, AddToWishListRequest request)
+        public async Task<Response<string>> AddToWishlistAsync(string studentId, string request)
         {
             var student = await _context.Student.FindAsync(studentId);
             if (student == null)
             {
-                return _responseHandler.NotFound<GetWishListResponse>("Stuend is not found");
+                return _responseHandler.NotFound<string>("student is not found");
             }
-            var transaction = await _context.Database.BeginTransactionAsync();
+            var Course = await _context.Course
+                //.Include(p => p.)
+                .FirstOrDefaultAsync(p => p.Id == request);
+            if (Course == null)
+                return _responseHandler.NotFound<string>("Course not found");
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var Course = await _context.Course
-                    //.Include(p => p.)
-                    .FirstOrDefaultAsync(p => p.Id == request.CourseId);
-
-                if (Course == null)
-                    return _responseHandler.NotFound<GetWishListResponse>("Course not found");
 
                 var wishlist = await _context.Wishlist
                     .Include(w => w.WishlistItems)
@@ -59,17 +60,19 @@ namespace TechMeter.Infrastructure.Services.WishList
                         CreatedAt = DateTime.UtcNow,
                         LastUpdated = DateTime.UtcNow
                     };
-                    _context.Wishlist.Add(wishlist);
+                    await _context.Wishlist.AddAsync(wishlist);
                 }
-
-                if (wishlist.WishlistItems.Any(wi => wi.courseId == request.CourseId))
-                    return _responseHandler.BadRequest<GetWishListResponse>("Course is already in wishlist");
+                else
+                {
+                    if (wishlist.WishlistItems.Any(wi => wi.courseId == request))
+                        return _responseHandler.BadRequest<string>("Course is already in wishlist");
+                }
 
                 var item = new WishlistItem
                 {
                     Id = Guid.NewGuid().ToString(),
                     WishlistId = wishlist.Id,
-                    courseId = request.CourseId,
+                    courseId = request,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -79,43 +82,39 @@ namespace TechMeter.Infrastructure.Services.WishList
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                var response = CreateWishlistResponse(wishlist);
 
-                return _responseHandler.Success(response, "Course added to wishlist");
+                return _responseHandler.Success(string.Empty, $"Course {Course.Title} added to wishlist");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return _responseHandler.InternalServerError<GetWishListResponse>("Failed to add Course to wishlist");
+                return _responseHandler.InternalServerError<string>("Failed to add Course to wishlist");
             }
         }
 
-        public async Task<Response<object>> ClearWishlistAsync(string studentId)
+        public async Task<Response<string>> ClearWishlistAsync(string studentId)
         {
-            var transaction = await _context.Database.BeginTransactionAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var wishlist = await _context.Wishlist
-                    .Include(w => w.WishlistItems)
-                    .FirstOrDefaultAsync(w => w.StudentId == studentId);
 
-                if (wishlist == null || !wishlist.WishlistItems.Any())
-                    return _responseHandler.Success<object>(null, "Wishlist is already empty");
+                var rows = await _context.WishlistItem.Where(b => b.Wishlist.StudentId == studentId).ExecuteDeleteAsync();
+                if (rows == 0)
+                {
+                    return _responseHandler.Success<string>(null, "Wishlist is already empty");
+                }
+                await _context.Wishlist.Where(b => b.StudentId == studentId)
+                    .ExecuteUpdateAsync(b => b.SetProperty(p => p.LastUpdated, DateTime.UtcNow));
 
-                _context.WishlistItem.RemoveRange(wishlist.WishlistItems);
-                wishlist.WishlistItems.Clear();
-                wishlist.LastUpdated = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return _responseHandler.Deleted<object>("Wishlist cleared successfully");
+                return _responseHandler.Deleted<string>("Wishlist cleared successfully");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(ex, "Error clearing wishlist for Student {StudentId}", studentId);
-                return _responseHandler.InternalServerError<object>("Failed to clear wishlist");
+                return _responseHandler.InternalServerError<string>(ex.Message);
             }
         }
 
@@ -123,13 +122,27 @@ namespace TechMeter.Infrastructure.Services.WishList
         {
             try
             {
-                var wishlist = await _context.Wishlist
-                    .Include(w => w.WishlistItems)
-                        .ThenInclude(wi => wi.Course)
-                    .AsSplitQuery()
-                    .FirstOrDefaultAsync(w => w.StudentId == studentId);
+                var wishlistItem = await _context.WishlistItem
+                    .Where(b => b.Wishlist.StudentId == studentId)
+                    .Select(b => new GetWishListResponse
+                    {
+                        Id = b.WishlistId,
+                        StudentId = b.Wishlist.StudentId,
+                        CreatedAt = b.Wishlist.CreatedAt,
+                        LastUpdated = b.Wishlist.LastUpdated,
+                        Items = new List<WishListItemResponse>
+                        {
+                            new WishListItemResponse
+                            {
+                                Id = b.Id,
+                                CourseId = b.courseId,
+                                AddedAt = b.CreatedAt
+                            }
+                        }
 
-                if (wishlist == null || !wishlist.WishlistItems.Any())
+                    }).FirstOrDefaultAsync();
+
+                if (wishlistItem == null)
                 {
                     var empty = new GetWishListResponse
                     {
@@ -142,8 +155,8 @@ namespace TechMeter.Infrastructure.Services.WishList
                     return _responseHandler.Success(empty, "Wishlist is empty");
                 }
 
-                var dto = CreateWishlistResponse(wishlist);
-                return _responseHandler.Success(dto, "Wishlist retrieved successfully");
+                //var dto = CreateWishlistResponse(wishlist);
+                return _responseHandler.Success(wishlistItem, "Wishlist retrieved successfully");
             }
             catch (Exception ex)
             {
@@ -152,55 +165,32 @@ namespace TechMeter.Infrastructure.Services.WishList
             }
         }
 
-        public async Task<Response<GetWishListResponse>> RemoveFromWishlistAsync(string studentId, string wishlistItemId)
+        public async Task<Response<string>> RemoveFromWishlistAsync(string studentId, string wishlistItemId)
         {
-            var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var wishlist = await _context.Wishlist
                     .Include(w => w.WishlistItems)
-                        .ThenInclude(wi => wi.Course)
                     .FirstOrDefaultAsync(w => w.StudentId == studentId);
 
                 if (wishlist == null)
-                    return _responseHandler.NotFound<GetWishListResponse>("Wishlist not found");
+                    return _responseHandler.NotFound<string>("Wishlist not found");
 
                 var item = wishlist.WishlistItems.FirstOrDefault(i => i.Id == wishlistItemId);
                 if (item == null)
-                    return _responseHandler.NotFound<GetWishListResponse>("Wishlist item not found");
+                    return _responseHandler.NotFound<string>("Wishlist item not found");
 
                 wishlist.WishlistItems.Remove(item);
                 wishlist.LastUpdated = DateTime.UtcNow;
 
-                _context.WishlistItem.Remove(item);
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
 
-                var response = CreateWishlistResponse(wishlist);
-                return _responseHandler.Deleted<GetWishListResponse>("Item removed from wishlist");
+                return _responseHandler.Deleted<string>("Item removed from wishlist");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await transaction.RollbackAsync();
-                return _responseHandler.InternalServerError<GetWishListResponse>("Failed to remove item");
+                return _responseHandler.InternalServerError<string>("Failed to remove item");
             }
-
-        }
-        private GetWishListResponse CreateWishlistResponse(Wishlist wishlist)
-        {
-            return new GetWishListResponse
-            {
-                Id = wishlist.Id,
-                StudentId = wishlist.StudentId,
-                CreatedAt = wishlist.CreatedAt,
-                LastUpdated = wishlist.LastUpdated,
-                Items = wishlist.WishlistItems.Select(wi => new WishListItemResponse
-                {
-                    Id = wi.Id,
-                    AddedAt = wi.CreatedAt,
-                    CourseId = wi.courseId
-                }).ToList()
-            };
         }
     }
 }

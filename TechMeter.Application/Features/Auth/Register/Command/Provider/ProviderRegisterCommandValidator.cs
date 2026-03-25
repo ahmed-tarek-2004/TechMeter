@@ -1,0 +1,54 @@
+﻿using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TechMeter.Domain.Enums;
+
+namespace TechMeter.Application.Features.Auth.Register.Command.Provider
+{
+    public class ProviderRegisterCommandValidator : AbstractValidator<ProviderRegisterCommand>
+    {
+        private readonly List<string> Extensions = [".png", ".jpg", ".jpeg"];
+        public ProviderRegisterCommandValidator()
+        {
+
+            RuleFor(b => b)
+              .Must(b => !string.IsNullOrEmpty(b.Email) && !string.IsNullOrEmpty(b.UserName))
+              .WithMessage("Email and UserName are required");
+
+            RuleFor(x => x.Email)
+              .EmailAddress()
+              .When(b => !string.IsNullOrEmpty(b.Email));
+
+
+            RuleFor(b => b)
+                .Must(b => !string.IsNullOrEmpty(b.PhoneNumber))
+                .WithMessage("PhoneNumber is required");
+
+            RuleFor(b => b)
+                .Must(b => b.ExperienceYears > 0)
+                .WithMessage("ExperienceYears is required");
+
+            RuleFor(b => b.PassworfConfirmed)
+                .NotEmpty()
+                .WithMessage("PasswordConfirmed is reuired")
+                .Equal(b => b.Password)
+                .WithMessage("Passwords do not match.");
+
+            RuleFor(x => x.Country)
+                .Must(b => !string.IsNullOrEmpty(b))
+                .WithMessage("Country is required");
+
+
+            RuleFor(x => x.Gender)
+                .Must(x => x != Gender.none)
+                .WithMessage("Gender is required");
+
+            RuleFor(b => b.ProfilePhoto)
+                .Must(b => Extensions.Contains(Path.GetExtension(b.FileName)))
+                .When(b => b.ProfilePhoto != null);
+        }
+    }
+}

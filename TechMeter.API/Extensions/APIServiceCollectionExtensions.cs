@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.RateLimiting;
 using TechMeter.API.Validators;
+using TechMeter.Application.Behaviors;
+using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -162,11 +165,14 @@ namespace TechMeter.Extensions
             return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
         }
 
-        public static IServiceCollection AddFluentValidation(this IServiceCollection services)
+        public static IServiceCollection ApplyingMediatoR_Requirements(this IServiceCollection services)
         {
-            services.AddValidatorsFromAssemblyContaining<StudentRegisterRequestValidator>();
-            services.AddFluentValidationAutoValidation();
+            services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(IAssemblyMarker).Assembly));
+            services.AddValidatorsFromAssembly(typeof(IAssemblyMarker).Assembly);
+            //services.AddFluentValidationAutoValidation();
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             return services;
         }
+       
     }
 }

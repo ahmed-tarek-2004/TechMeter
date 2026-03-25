@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Otp
 {
-    public record ResendOtp([Required] string Id);
+    public record ResendOtp(string Id);
 }
