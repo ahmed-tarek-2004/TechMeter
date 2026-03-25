@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.DTO.Section;
+using TechMeter.Application.Features.Section.Command.AddSection;
+using TechMeter.Application.Features.Section.Command.EditSection;
 using TechMeter.Application.Interfaces.SectionService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Users;
@@ -26,23 +28,24 @@ namespace TechMeter.Infrastructure.Services.SectionService
             _context = context;
             _responseHandler = responseHandler;
         }
-        public async Task<Response<AddSectionResponse>> AddSectionAsync(string providerId, AddSectionRequest request)
+        #region AddSectionAsync
+        public async Task<Response<string>> AddSectionAsync(AddSectionCommand request)
         {
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
+            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == request.providerId);
             if (provider == null)
             {
-                return _responseHandler.BadRequest<AddSectionResponse>("Provider Is Not Found");
+                return _responseHandler.BadRequest<string>("Provider Is Not Found");
             }
 
-            var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.courseId && b.ProviderId == providerId);
+            var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.courseId && b.ProviderId == request.providerId);
             if (course == null)
             {
-                return _responseHandler.NotFound<AddSectionResponse>("Course Is Not Found");
+                return _responseHandler.NotFound<string>("Course Is Not Found");
             }
-            var isExists = await _context.Section.AnyAsync(b => b.Name == request.SectionName);
+            var isExists = await _context.Section.AnyAsync(b => b.Name == request.sectionName);
             if (isExists)
             {
-                return _responseHandler.BadRequest<AddSectionResponse>("Section Name Is Exsists");
+                return _responseHandler.BadRequest<string>("Section Name Is Exsists");
             }
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -50,31 +53,27 @@ namespace TechMeter.Infrastructure.Services.SectionService
                 var Section = new Sections()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Name = request.SectionName,
+                    Name = request.sectionName,
                     CourseId = request.courseId
                 };
                 course.SectionCount += 1;
                 await _context.AddAsync(Section);
                 await _context.SaveChangesAsync();
 
-                var response = new AddSectionResponse
-                {
-                    SectionId = Section.Id,
-                    SectionName = Section.Name,
-                };
+               
 
                 await transaction.CommitAsync();
-                return _responseHandler.Created(response, "Section is Created Successfully");
+                return _responseHandler.Created(string.Empty, "Section is Created Successfully");
 
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return _responseHandler.InternalServerError<AddSectionResponse>(ex.Message);
+                return _responseHandler.InternalServerError<string>(ex.Message);
             }
 
         }
-
+        #endregion
         public async Task<Response<string>> DeleteSectionByIdAsync(string providerId, string courseId, string sectionId)
         {
             var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
@@ -110,52 +109,46 @@ namespace TechMeter.Infrastructure.Services.SectionService
             }
         }
 
-        public async Task<Response<GetSectionResponse>> EditSectionAsync(string providerId, string Id, EditSectionRequest request)
+        public async Task<Response<string>> EditSectionAsync(EditSectionCommand request)
         {
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
+            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == request.providerId);
             if (provider == null)
             {
-                return _responseHandler.BadRequest<GetSectionResponse>("Provider Is Not Found");
+                return _responseHandler.BadRequest<string>("Provider Is Not Found");
             }
 
-            var Newcourse = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.CourseId && b.ProviderId == providerId);
+            var Newcourse = await _context.Course.FirstOrDefaultAsync(b => b.Id == request.courseId && b.ProviderId == request.providerId);
             if (Newcourse == null)
             {
-                return _responseHandler.NotFound<GetSectionResponse>("NewCourse Is Not Found");
+                return _responseHandler.NotFound<string>("NewCourse Is Not Found");
             }
-            var section = await _context.Section.FirstOrDefaultAsync(b => b.Id == Id && b.Course.ProviderId == providerId);
+            var section = await _context.Section.FirstOrDefaultAsync(b => b.Id == request.Id && b.Course.ProviderId == request.providerId);
             if (section == null)
             {
-                return _responseHandler.NotFound<GetSectionResponse>("Section is not found");
+                return _responseHandler.NotFound<string>("Section is not found");
             }
-            var isExists = await _context.Section.AnyAsync(b => b.Name == request.Name);
+            var isExists = await _context.Section.AnyAsync(b => b.Name == request.sectionName);
             if (isExists)
             {
-                return _responseHandler.BadRequest<GetSectionResponse>("Section Name Is Exsists");
+                return _responseHandler.BadRequest<string>("Section Name Is Exsists");
             }
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                section.Name = request.Name;
-                section.CourseId = request.CourseId;
+                section.Name = request.sectionName;
+                section.CourseId = request.courseId;
 
                 await _context.SaveChangesAsync();
-                var response = new GetSectionResponse
-                {
-                    Id = section.Id,
-                    Name = request.Name,
-                    courseId = section.CourseId,
-                    //LessonCount = section.LessonCount
-                };
+               
 
                 await transaction.CommitAsync();
-                return _responseHandler.Success(response, "Section is Edited Successfully");
+                return _responseHandler.Success(string.Empty, "Section is Edited Successfully");
 
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return _responseHandler.InternalServerError<GetSectionResponse>(ex.Message);
+                return _responseHandler.InternalServerError<string>(ex.Message);
             }
 
         }
