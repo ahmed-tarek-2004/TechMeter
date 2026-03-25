@@ -24,12 +24,10 @@ namespace TechMeter.API.Controllers
 
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-        private readonly ISectionService _sectionService;
         private readonly ResponseHandler _responseHandler;
         public SectionController(ISectionService sectionService, IMediator mediator, IMapper mapper
             , ResponseHandler responseHandler)
         {
-            _sectionService = sectionService;
             _responseHandler = responseHandler;
             _mediator = mediator;
             _mapper = mapper;
@@ -38,7 +36,6 @@ namespace TechMeter.API.Controllers
         [Authorize]
         public async Task<ActionResult<Response<GetSectionResponse>>> GetSectionById([FromRoute] string courseId, [FromRoute] string Id)
         {
-            //var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var command = new GetSectionByIdQuery(courseId = courseId, Id = Id);
             var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
@@ -46,7 +43,6 @@ namespace TechMeter.API.Controllers
         [HttpGet("course/{courseId}/get-all/sections")]
         public async Task<ActionResult<Response<List<GetSectionResponse>>>> GetAllSectionAsync([FromRoute] string courseId)
         {
-            //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await _mediator.Send(new GetAllSectionQuery(courseId));
             return StatusCode((int)response.StatusCode, response);
         }
