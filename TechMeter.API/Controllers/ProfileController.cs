@@ -11,7 +11,7 @@ using TechMeter.Application.Features.Profile.Query.GetProviderProfile;
 using TechMeter.Application.Features.Profile.Query.StudentProfile.StudentProfileQuery;
 
 //using TechMeter.Application.Features.Profile.Query.StudentProfile.StudentProfileQuery;
-using TechMeter.Application.Features.ProviderProfile.Command;
+//using TechMeter.Application.Features.ProviderProfile.Command;
 
 using TechMeter.Application.Interfaces.UserProfile;
 using TechMeter.Domain.Shared.Bases;

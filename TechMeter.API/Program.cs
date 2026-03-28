@@ -17,6 +17,7 @@ using TechMeter.API.Common.Exceptions;
 using TechMeter.API.Common.Middleware;
 using TechMeter.Application.Behaviors;
 using TechMeter.Application.Common;
+using TechMeter.Application.Hubs;
 using TechMeter.Application.Jobs;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -75,7 +76,7 @@ namespace TechMeter
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
             builder.Services.AddAutoMapper(typeof(IAssemblyMarker).Assembly);
-
+            builder.Services.AddSignalR();
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()
@@ -130,6 +131,7 @@ namespace TechMeter
             {
                 Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
             });
+            app.MapHub<NotificationHub>("/notificationHub");
 
             BackgroundJob.Schedule(() => Console.WriteLine("Hello From Scheduled TechMeter"), TimeSpan.FromSeconds(60));
             BackgroundJob.Enqueue(() => Console.WriteLine("Hello From Enqueue TechMeter"));

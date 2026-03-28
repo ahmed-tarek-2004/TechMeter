@@ -28,7 +28,7 @@ namespace TechMeter.API.Controllers
             _deleteAdminRatingRequestValidator = deleteAdminRatingRequestValidator;
         }
 
-        [HttpPost("Student/add")]
+        [HttpPost("student/add")]
         public async Task<ActionResult<Response<StudentCourseRatingDto>>> AddStudentRatingToCourse([FromBody] AddStudentRatingRequest request)
         {
             var validationResult = await _addStudentRatingRequestValidator.ValidateAsync(request);
@@ -42,7 +42,7 @@ namespace TechMeter.API.Controllers
             var response = await _ratingService.AddRatingToCourse(StudentId!, request);
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPut("Student/edit")]
+        [HttpPut("student/edit")]
         public async Task<ActionResult<Response<StudentCourseRatingDto>>> EditStudentRating([FromBody] EditStudentRatingRequest request)
         {
             var validationResult = await _editStudentRatingRequestValidator.ValidateAsync(request);
@@ -57,7 +57,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("Student/get/{CourseId}")]
+        [HttpGet("student/get/{CourseId}")]
         public async Task<ActionResult<Response<string>>> StudentGetCourseRating([FromRoute] string CourseId)
         {
             var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -75,7 +75,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpDelete("Student/delete/{CourseId}")]
+        [HttpDelete("student/delete/{CourseId}")]
         public async Task<ActionResult<Response<string>>> StudentDeleteRating([FromRoute] string CourseId)
         {
             var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
