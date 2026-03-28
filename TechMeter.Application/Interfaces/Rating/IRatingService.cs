@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Rating;
+using TechMeter.Application.Features.Rating.Command.AddStudentRating;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Interfaces.Rating
 {
     public interface IRatingService
     {
-        Task<Response<StudentCourseRatingDto>> AddRatingToCourse(string StudentId, AddStudentRatingRequest addStudentRatingRequest);
-        Task<Response<StudentCourseRatingDto>> EditRatingToCourse(string StudentId, EditStudentRatingRequest editStudentRatingRequest);
+        Task<Response<string>> AddRatingToCourse(AddStudentRatingCommand command);
+        Task<Response<string>> EditRatingToCourse(string StudentId, EditStudentRatingRequest editStudentRatingRequest);
         Task<Response<List<StudentCourseRatingDto>>> GetProdctRating(string sellerId, string CourseId);
         Task<Response<StudentCourseRatingDto>> GetStudentCourseRating(string StudentId, string CourseId);
         Task<Response<string>> DeleteStudentCourseionRating(string StudentId, string ratingId);
