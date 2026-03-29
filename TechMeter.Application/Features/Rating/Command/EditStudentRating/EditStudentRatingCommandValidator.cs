@@ -1,11 +1,15 @@
 ﻿using FluentValidation;
-using TechMeter.Application.DTO.Rating;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace TechMeter.API.Validators.Rating
+namespace TechMeter.Application.Features.Rating.Command.EditStudentRating
 {
-    public class EditStudentRatingRequestValidator:AbstractValidator<EditStudentRatingRequest>
+    public class EditStudentRatingCommandValidator:AbstractValidator<EditStudentRatingCommand>
     {
-        public EditStudentRatingRequestValidator()
+        public EditStudentRatingCommandValidator() 
         {
             RuleFor(x => x.CourseId)
                .Must(x => !string.IsNullOrEmpty(x))
@@ -19,7 +23,6 @@ namespace TechMeter.API.Validators.Rating
                 .Must(x => !string.IsNullOrEmpty(x))
                 .When(b => b.Rating == null || b.Rating < 0)
                 .WithMessage("comment Or Rating is Required");
-
         }
     }
 }
