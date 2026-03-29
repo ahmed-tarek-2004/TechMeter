@@ -11,10 +11,6 @@
     <Compile Remove="Features\WishList\Command\ClearWishlistItemCommand.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Mapping\Auth\VerifyResetPasswordProfile.cs" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Hangfire" Version="1.8.23" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.23" />
