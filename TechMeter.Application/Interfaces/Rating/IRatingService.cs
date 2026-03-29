@@ -15,7 +15,7 @@ namespace TechMeter.Application.Interfaces.Rating
     {
         Task<Response<string>> AddRatingToCourse(AddStudentRatingCommand command);
         Task<Response<string>> EditRatingToCourse(EditStudentRatingCommand request);
-        Task<Response<List<StudentCourseRatingDto>>> GetProdctRating(string sellerId, string CourseId);
+        Task<Response<List<StudentCourseRatingDto>>> GetAllCourseRating(string ProviderId, string CourseId);
         Task<Response<StudentCourseRatingDto>> GetStudentCourseRating(string StudentId, string CourseId);
         Task<Response<string>> DeleteStudentCourseionRating(DeleteStudentRatingCommand request);
     }

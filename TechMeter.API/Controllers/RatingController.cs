@@ -9,6 +9,8 @@ using TechMeter.Application.DTO.Rating;
 using TechMeter.Application.Features.Rating.Command.AddStudentRating;
 using TechMeter.Application.Features.Rating.Command.DeleteStudentRating;
 using TechMeter.Application.Features.Rating.Command.EditStudentRating;
+using TechMeter.Application.Features.Rating.Query.GetProviderAllCourseRating;
+using TechMeter.Application.Features.Rating.Query.GetStudentRating;
 using TechMeter.Application.Interfaces.Rating;
 using TechMeter.Domain.Shared.Bases;
 
@@ -20,15 +22,10 @@ namespace TechMeter.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly IRatingService _ratingService;
-        private readonly ResponseHandler _responseHandler;
-        public RatingController(IMediator mediator, IMapper mapper,
-            IRatingService ratingService, ResponseHandler responseHandler)
+        public RatingController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
             _mapper = mapper;
-            _ratingService = ratingService;
-            _responseHandler = responseHandler;
         }
 
         [HttpPost("student/add")]
@@ -51,24 +48,27 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpGet("student/get/{CourseId}")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<string>>> StudentGetCourseRating([FromRoute] string CourseId)
         {
-            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _ratingService.GetStudentCourseRating(StudentId!, CourseId);
+
+            var query = new GetStudentCourseRatingQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, CourseId);
+            var response = await _mediator.Send(query);
             return StatusCode((int)response.StatusCode, response);
         }
 
 
-        //[Authorize(Roles ="Provider,admin")]
         [HttpGet("get-all/{CourseId}")]
+        [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> GetAllCourseRating([FromRoute] string CourseId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _ratingService.GetProdctRating(userId!, CourseId);
+            var query = new GetProviderAllCourseRatingQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, CourseId);
+            var response = await _mediator.Send(query);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpDelete("student/delete/{CourseId}")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<string>>> StudentDeleteRating([FromRoute] string CourseId)
         {
 

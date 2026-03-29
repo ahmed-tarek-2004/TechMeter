@@ -198,7 +198,7 @@ namespace TechMeter.Infrastructure.Services.Rating
             return _responseHandler.Success(respone, "Rating returned Successfully");
         }
 
-        public async Task<Response<List<StudentCourseRatingDto>>> GetProdctRating(string ProviderId, string CourseId)
+        public async Task<Response<List<StudentCourseRatingDto>>> GetAllCourseRating(string ProviderId, string CourseId)
         {
             var Provider = await _context.Provider.FindAsync(ProviderId);
             if (Provider == null)
@@ -214,8 +214,8 @@ namespace TechMeter.Infrastructure.Services.Rating
             }
 
             var StudentCourseRating = await _context.UserCourseRating
-                  .Include(b => b.Student)
-                  .Include(b => b.Course)
+                  //.Include(b => b.Student)
+                  //.Include(b => b.Course)
                   .Where(r => r.CourseId == Course.Id && r.Course.ProviderId == ProviderId)
                   .AsNoTracking()
                   .ToListAsync();
