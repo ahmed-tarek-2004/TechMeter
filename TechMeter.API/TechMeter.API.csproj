@@ -7,6 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Mapping\Auth\VerifyResetPasswordProfile.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
@@ -30,6 +34,10 @@
 	<ItemGroup>
 		<Folder Include="Extensions\" />
 		<Folder Include="Logs\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Mapping\Auth\VerifyResetPasswordProfile.cs" />
 	</ItemGroup>
 
 </Project>
