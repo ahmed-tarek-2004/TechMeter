@@ -29,9 +29,9 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("student/add")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<StudentCourseRatingDto>>> AddStudentRatingToCourse([FromBody] AddStudentRatingRequest request)
         {
-
             var command = _mapper.Map<AddStudentRatingCommand>(request);
             command.StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await _mediator.Send(command);
