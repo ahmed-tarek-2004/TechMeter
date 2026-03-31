@@ -10,6 +10,6 @@ namespace TechMeter.Application.DTO.Cart
     {
         public string CourseId { get; set; }
         public decimal UnitPrice { get; set; } = 0;
-        public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+        //public DateTime AddedAt { get; set; } = DateTime.UtcNow;
     }
 }

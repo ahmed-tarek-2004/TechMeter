@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Cart;
+using TechMeter.Application.Features.Cart.Command.AddToCart;
 using TechMeter.Application.Interfaces.Cart;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
@@ -96,29 +97,29 @@ namespace TechMeter.Infrastructure.Services.Cart
             var cartResponse = CreateCartResponse(Cart);
             return _responseHandler.Success(cartResponse, $"Cart For Student {StudentId} return successfully");
         }
-        public async Task<Response<CartResponse>> AddToCartAsync(string StudentId, CartRequest request)
+        public async Task<Response<string>> AddToCartAsync(AddToCartCommand request)
         {
-           await using var transaction = await _context.Database.BeginTransactionAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var Course = _context.Course.FirstOrDefault(p => p.Id == request.CourseId);
+                var Course = await _context.Course.FirstOrDefaultAsync(p => p.Id == request.CourseId);
                 if (Course == null)
                 {
-                    return _responseHandler.BadRequest<CartResponse>("Course is not found");
+                    return _responseHandler.BadRequest<string>("Course is not found");
                 }
 
 
                 var cart = await _context.Cart
                     .Include(b => b.CartItems)
                     //.ThenInclude(b => b.Course)
-                    .FirstOrDefaultAsync(c => c.StudentId == StudentId);
+                    .FirstOrDefaultAsync(c => c.StudentId == request.StudentId);
 
                 if (cart == null)
                 {
                     cart = new()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        StudentId = StudentId,
+                        StudentId = request.StudentId,
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now,
                     };
@@ -128,7 +129,7 @@ namespace TechMeter.Infrastructure.Services.Cart
                 {
                     cart.CartItems = new List<CartItem>();
                 }
-                var existingCartItem = cart.CartItems.Any(b => b.CourseId == request.CourseId && cart.Id == b.CartId);
+                var existingCartItem = cart.CartItems.Any(b => b.CourseId == request.CourseId);
                 if (existingCartItem == false)
                 {
                     var CartItem = new CartItem()
@@ -140,24 +141,24 @@ namespace TechMeter.Infrastructure.Services.Cart
                         CartId = cart.Id,
                     };
                     cart.CartItems.Add(CartItem);
-                    await _context.AddAsync(CartItem);
+                    //await _context.AddAsync(CartItem);
                 }
                 else
                 {
-                    return _responseHandler.BadRequest<CartResponse>($"course {request.CourseId} already in the cart for this student");
+                    return _responseHandler.BadRequest<string>($"course {request.CourseId} already in the cart for this student");
                 }
 
                 await _context.SaveChangesAsync();
-                var cartResponse = CreateCartResponse(cart);
+                //var cartResponse = CreateCartResponse(cart);
                 await transaction.CommitAsync();
-                return _responseHandler.Success(cartResponse, "Course Add To Cart Successfully");
+                return _responseHandler.Success(string.Empty, "Course Add To Cart Successfully");
 
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(ex.Message);
-                return _responseHandler.InternalServerError<CartResponse>("Internal Server Error");
+                return _responseHandler.InternalServerError<string>(ex.Message);
             }
 
         }
