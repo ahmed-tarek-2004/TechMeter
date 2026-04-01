@@ -1,25 +1,26 @@
 ﻿using FluentValidation;
-using TechMeter.Application.DTO.Cart;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SmartStore.API.Validators.CartValidation
+namespace TechMeter.Application.Features.Cart.Command.AddToCart
 {
-    public class CartRequestValidator : AbstractValidator<CartRequest>
+    internal class AddToCartCommandValidator:AbstractValidator<AddToCartCommand>
     {
-        public CartRequestValidator()
+        public AddToCartCommandValidator()
         {
             RuleFor(x => x)
                 .NotNull()
                 .WithMessage("Request cannot be null");
-
             RuleFor(b => b.CourseId)
                 .Must(b => !string.IsNullOrEmpty(b))
                 .WithMessage("CourseId Is Required");
-
             RuleFor(b => b.UnitPrice)
                 .NotNull().WithMessage("Unit price is required")
                 .GreaterThan(0)
                 .WithMessage("Unit Price Is Required");
         }
-
     }
 }
