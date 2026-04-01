@@ -40,7 +40,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("update")]
+        [HttpPost("create/category")]
         public async Task<ActionResult<Response<AddCategoryResponse>>> Create([FromBody] AddCategoryRequest request)
         {
             var validationResult = await _createCategoryValidator.ValidateAsync(request);
@@ -55,7 +55,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<ActionResult<Response<object>>> Update(string Id, [FromBody] UpdateCategoryRequest request)
+        public async Task<ActionResult<Response<object>>> Update([FromRoute] string Id, [FromBody] UpdateCategoryRequest request)
         {
             var validationResult = await _updateCategoryValidator.ValidateAsync(request);
             if (!validationResult.IsValid)

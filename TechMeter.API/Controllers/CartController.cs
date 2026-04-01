@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Cart;
 using TechMeter.Application.Features.Cart.Command.AddToCart;
+using TechMeter.Application.Features.Cart.Command.ClearStudentCart;
+using TechMeter.Application.Features.Cart.Command.RemoveCartItem;
 using TechMeter.Application.Features.Cart.Query.GetProviderStudentCart;
 using TechMeter.Application.Features.Cart.Query.GetStudentCart;
 using TechMeter.Application.Interfaces.Cart;
@@ -22,21 +24,19 @@ namespace TechMeter.API.Controllers
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
         private readonly ILogger<CartController> _logger;
-        private readonly ICartService _cartService;
-        private readonly ApplicationDbContext _context;
-        private readonly ResponseHandler _responseHandler;
-        private readonly IValidator<UpdateCartItemRequest> _updateCartItemRequestValidator;
-        public CartController(IMediator mediator, IMapper mapper, ILogger<CartController> logger, ApplicationDbContext context,
-            ICartService cartService, ResponseHandler responseHandler,
-            IValidator<UpdateCartItemRequest> updateCartItemRequestValidator)
+        //private readonly ICartService _cartService;
+        //private readonly ApplicationDbContext _context;
+        //private readonly ResponseHandler _responseHandler;
+        //private readonly IValidator<UpdateCartItemRequest> _updateCartItemRequestValidator;
+        public CartController(IMediator mediator, IMapper mapper, ILogger<CartController> logger)
         {
             _logger = logger;
-            _context = context;
-            _cartService = cartService;
+            //_context = context;
+            //_cartService = cartService;
             _mapper = mapper;
             _mediator = mediator;
-            _responseHandler = responseHandler;
-            _updateCartItemRequestValidator = updateCartItemRequestValidator;
+            //_responseHandler = responseHandler;
+            //_updateCartItemRequestValidator = updateCartItemRequestValidator;
         }
 
         [Authorize(Roles = "student")]
@@ -52,7 +52,7 @@ namespace TechMeter.API.Controllers
         [HttpGet("provider/cart/{studentId}")]
         public async Task<ActionResult<Response<CartResponse>>> GetProviderCartAsync([FromRoute] string studentId)
         {
-            var command = new GetProviderStudentCartCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value??"", studentId);
+            var command = new GetProviderStudentCartCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "", studentId);
             var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
@@ -82,21 +82,20 @@ namespace TechMeter.API.Controllers
         //    return StatusCode((int)response.StatusCode, response);
         //}
 
+        [HttpDelete("student/cart/{cartItemId}")]
         [Authorize(Roles = "student")]
-        [HttpDelete("delete/Student/cart/{CartItemId}")]
-        public async Task<ActionResult<Response<CartResponse>>> RemoveFromCartAsync([FromRoute] string CartItemId)
+        public async Task<ActionResult<Response<CartResponse>>> RemoveFromCartAsync([FromRoute] string cartItemId)
         {
-            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _cartService.RemoveFromCartAsync(StudentId ?? "", CartItemId.ToString());
+            var command = new RemoveCartItemCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, cartItemId);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
+        [HttpDelete("clear/student/cart")]
         [Authorize(Roles = "student")]
-        [HttpDelete("clear/Student/cart")]
         public async Task<ActionResult<Response<CartResponse>>> ClearStudentCartAsync()
         {
-            var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _cartService.ClearStudentCartAsync(StudentId ?? "");
+            var response = await _mediator.Send(new ClearStudentCartCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
             return StatusCode((int)response.StatusCode, response);
         }
     }
