@@ -77,7 +77,11 @@ namespace TechMeter.Infrastructure.Services.Category
         public async Task<Domain.Shared.Bases.Response<List<GetCategoryDto>>> GetCategoriesAsync()
         {
             
+<<<<<<< HEAD
             var response = await _context.Category.Select(c => new GetCategoryDto()
+=======
+            var response = await _context.Category.AsNoTracking().Select(c => new GetCategoryDto()
+>>>>>>> refactor/using-cqrs/apllying-by-mediatoR
             {
                 Id = c.Id,
                 Description = c.Description,
