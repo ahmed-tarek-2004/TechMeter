@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using TechMeter.Application.DTO.Category;
+using TechMeter.Application.Features.Category.GetCategories;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Domain.Shared.Bases;
 
@@ -12,14 +14,16 @@ namespace TechMeter.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
+        private readonly IMediator _mediator;
         private readonly ICategoryService _categoryService;
         private readonly ResponseHandler _responseHandler;
         private readonly IValidator<AddCategoryRequest> _createCategoryValidator;
         private readonly IValidator<UpdateCategoryRequest> _updateCategoryValidator;
 
-        public CategoryController(ICategoryService categoryService, ResponseHandler responseHandler,
+        public CategoryController(ICategoryService categoryService, ResponseHandler responseHandler,IMediator mediator,
             IValidator<AddCategoryRequest> createCategoryValidator, IValidator<UpdateCategoryRequest> updateCategoryValidator)
         {
+            _mediator = mediator;
             _categoryService = categoryService;
             _responseHandler = responseHandler;
             _createCategoryValidator = createCategoryValidator;
@@ -27,9 +31,9 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<ActionResult<Response<IEnumerable<GetCategoryDto>>>> GetAll()
+        public async Task<ActionResult<Response<List<GetCategoryDto>>>> GetAll()
         {
-            var response = await _categoryService.GetCategoriesAsync();
+            var response = await _mediator.Send(new GetCategoriesQuery());
             return StatusCode((int)response.StatusCode, response);
         }
 
