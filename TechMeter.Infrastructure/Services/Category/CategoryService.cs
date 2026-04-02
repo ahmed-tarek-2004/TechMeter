@@ -76,13 +76,8 @@ namespace TechMeter.Infrastructure.Services.Category
 
         public async Task<Domain.Shared.Bases.Response<List<GetCategoryDto>>> GetCategoriesAsync()
         {
-            var categories = await _context.Category
-               .AsNoTracking()
-               .Include(b => b.Courses)
-               .ThenInclude(b => b.Provider)
-               .ToListAsync();
-
-            var response = categories.Select(c => new GetCategoryDto()
+            
+            var response = await _context.Category.Select(c => new GetCategoryDto()
             {
                 Id = c.Id,
                 Description = c.Description,
@@ -96,8 +91,8 @@ namespace TechMeter.Infrastructure.Services.Category
                     ProviderId = b.ProviderId,
                     Title = b.Title,
 
-                }).ToList()
-            }).ToList();
+                })
+            }).ToListAsync();
 
             return _responseHandler.Success(response, $"All Categories returned successfully");
         }
