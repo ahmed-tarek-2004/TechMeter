@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Category;
 using TechMeter.Domain.Shared.Bases;
 
-namespace TechMeter.Application.Features.Category.GetCategories
+namespace TechMeter.Application.Features.Category.Query.GetCategories
 {
     public sealed record GetCategoriesQuery : IRequest<Response<List<GetCategoryDto>>>;
 }

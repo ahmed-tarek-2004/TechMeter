@@ -8,7 +8,7 @@ using TechMeter.Application.DTO.Category;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Domain.Shared.Bases;
 
-namespace TechMeter.Application.Features.Category.GetCategories
+namespace TechMeter.Application.Features.Category.Query.GetCategories
 {
     public class GetCategoriesQueriesCommandHandler(ICategoryService categoryService) : IRequestHandler<GetCategoriesQuery, Response<List<GetCategoryDto>>>
     {
