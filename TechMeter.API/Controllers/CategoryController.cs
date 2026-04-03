@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using TechMeter.Application.DTO.Category;
-using TechMeter.Application.Features.Category.GetCategories;
+using TechMeter.Application.Features.Category.Command.DeleteCategory;
+using TechMeter.Application.Features.Category.Query.GetCategories;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Domain.Shared.Bases;
 
@@ -37,7 +38,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("get/{Id}")]
+        [HttpGet("detail/by/{Id}")]
         public async Task<ActionResult<Response<GetCategoryDto>>> GetById(string Id)
         {
             var response = await _categoryService.GetCategoryByIdAsync(Id);
@@ -75,7 +76,7 @@ namespace TechMeter.API.Controllers
         [HttpDelete("{Id}")]
         public async Task<ActionResult<Response<string>>> Delete(string Id)
         {
-            var response = await _categoryService.DeleteCategoryByIdAsync(Id);
+            var response = await _mediator.Send(new DeleteCategoryCommand(Id));
             return StatusCode((int)response.StatusCode, response);
         }
     }
