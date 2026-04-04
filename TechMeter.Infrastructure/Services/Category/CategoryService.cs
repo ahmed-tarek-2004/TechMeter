@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Category;
+using TechMeter.Application.Features.Category.Command.AddCategory;
+using TechMeter.Application.Features.Category.Command.UpdateCategory;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
@@ -22,7 +24,7 @@ namespace TechMeter.Infrastructure.Services.Category
             _context = context;
             _responseHandler = responseHandler;
         }
-        public async Task<Domain.Shared.Bases.Response<AddCategoryResponse>> AddCategoryAsync(AddCategoryRequest addCategoryRequest)
+        public async Task<Domain.Shared.Bases.Response<AddCategoryResponse>> AddCategoryAsync(AddCategoryCommand addCategoryRequest)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -126,10 +128,10 @@ namespace TechMeter.Infrastructure.Services.Category
             return _responseHandler.Success(response, $"Category {response.Name} returned successfully");
         }
 
-        public async Task<Domain.Shared.Bases.Response<UpdateCategoryResponse>> UpdateCategoryAsync(string categoryId, UpdateCategoryRequest updateCategoryRequest)
+        public async Task<Domain.Shared.Bases.Response<UpdateCategoryResponse>> UpdateCategoryAsync(UpdateCategoryCommand updateCategoryRequest)
         {
             var category = await _context.Category
-               .FirstOrDefaultAsync(b => b.Id == categoryId);
+               .FirstOrDefaultAsync(b => b.Id == updateCategoryRequest.Id);
 
             if (category == null)
             {
