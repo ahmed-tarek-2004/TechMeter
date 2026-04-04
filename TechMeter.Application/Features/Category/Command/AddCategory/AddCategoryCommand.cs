@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Category.Command.AddCategory
 {
-    public sealed record AddCategoryCommand(string Name, string? Description) : IRequest<Response<AddCategoryResponse>>;
+    public sealed record AddCategoryCommand(string Name, string Description) : IRequest<Response<AddCategoryResponse>>;
 }
