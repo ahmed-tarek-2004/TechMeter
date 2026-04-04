@@ -1,9 +1,12 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using TechMeter.Application.DTO.Category;
+using TechMeter.Application.Features.Cart.Command.AddToCart;
+using TechMeter.Application.Features.Category.Command.AddCategory;
 using TechMeter.Application.Features.Category.Command.DeleteCategory;
 using TechMeter.Application.Features.Category.Query.GetCategories;
 using TechMeter.Application.Interfaces.Category;
@@ -16,18 +19,17 @@ namespace TechMeter.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
         private readonly ICategoryService _categoryService;
         private readonly ResponseHandler _responseHandler;
-        private readonly IValidator<AddCategoryRequest> _createCategoryValidator;
         private readonly IValidator<UpdateCategoryRequest> _updateCategoryValidator;
 
-        public CategoryController(ICategoryService categoryService, ResponseHandler responseHandler,IMediator mediator,
-            IValidator<AddCategoryRequest> createCategoryValidator, IValidator<UpdateCategoryRequest> updateCategoryValidator)
+        public CategoryController(ICategoryService categoryService, ResponseHandler responseHandler, IMapper mapper, IMediator mediator, IValidator<UpdateCategoryRequest> updateCategoryValidator)
         {
             _mediator = mediator;
+            _mapper = mapper;
             _categoryService = categoryService;
             _responseHandler = responseHandler;
-            _createCategoryValidator = createCategoryValidator;
             _updateCategoryValidator = updateCategoryValidator;
         }
 
@@ -48,14 +50,8 @@ namespace TechMeter.API.Controllers
         [HttpPost("create/category")]
         public async Task<ActionResult<Response<AddCategoryResponse>>> Create([FromBody] AddCategoryRequest request)
         {
-            var validationResult = await _createCategoryValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                string errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
-                    _responseHandler.BadRequest<object>(errors));
-            }
-            var response = await _categoryService.AddCategoryAsync(request);
+            var command = _mapper.Map<AddCategoryCommand>(request);
+            var response = await _categoryService.AddCategoryAsync(command);
             return StatusCode((int)response.StatusCode, response);
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Category;
+using TechMeter.Application.Features.Category.Command.AddCategory;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
 
@@ -13,7 +14,7 @@ namespace TechMeter.Application.Interfaces.Category
     {
         Task<Response<GetCategoryDto>>GetCategoryByIdAsync(string categoryId);
         Task<Response<List<GetCategoryDto>>>GetCategoriesAsync();
-        Task<Response<AddCategoryResponse>>AddCategoryAsync(AddCategoryRequest addCategoryRequest);
+        Task<Response<AddCategoryResponse>>AddCategoryAsync(AddCategoryCommand addCategoryRequest);
         Task<Response<UpdateCategoryResponse>>UpdateCategoryAsync(string categoryId,UpdateCategoryRequest updateCategoryRequest);
         Task<Response<string>>DeleteCategoryByIdAsync(string categoryId);
     }
