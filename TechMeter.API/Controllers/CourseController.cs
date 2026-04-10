@@ -56,7 +56,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpGet("student/courses")]
-        public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetStudentCoursesAsync()
+        public async Task<ActionResult<Response<List<GetStudentCourseResponse>>>> GetStudentCoursesAsync()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await _courseService.GetStudentCoursesAsync(userId!);
