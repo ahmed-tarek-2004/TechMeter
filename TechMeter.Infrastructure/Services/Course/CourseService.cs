@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
+using TechMeter.Application.Features.Course.Command.DeleteCourse;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Domain.Models;
@@ -214,14 +215,14 @@ namespace TechMeter.Infrastructure.Services.CourseService
             }
         }
 
-        public async Task<Response<string>> DeleteCourseByIdAsync(string responsiableId, string courseId)
+        public async Task<Response<string>> DeleteCourseByIdAsync(DeleteCourseCommand request)
         {
-            var responisble = await _userManager.FindByIdAsync(responsiableId);
+            var responisble = await _userManager.FindByIdAsync(request.responsibleId);
             if (responisble == null)
             {
                 return _responseHandler.BadRequest<string>("Responsible Is Not Found");
             }
-            var course = await _context.Course.FindAsync(courseId);
+            var course = await _context.Course.FindAsync(request.courseId);
             if (course == null)
             {
                 return _responseHandler.NotFound<string>("Course is not Found");

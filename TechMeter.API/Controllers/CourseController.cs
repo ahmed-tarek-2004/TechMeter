@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
+using TechMeter.Application.Features.Course.Command.DeleteCourse;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Features.Course.Query.GetCategoryById;
 using TechMeter.Application.Features.Course.Query.GetProviderCourses;
@@ -98,12 +99,12 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpDelete("{CourseId}")]
+        [HttpDelete("{courseId}")]
         [Authorize(Roles = "admin,provider")]
-        public async Task<ActionResult<Response<string>>> Delete(string CourseId)
+        public async Task<ActionResult<Response<string>>> Delete(string courseId)
         {
             var responsiableId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _courseService.DeleteCourseByIdAsync(responsiableId!, CourseId);
+            var response = await _mediator.Send(new DeleteCourseCommand(responsiableId!, courseId));
             return StatusCode((int)response.StatusCode, response);
         }
 
