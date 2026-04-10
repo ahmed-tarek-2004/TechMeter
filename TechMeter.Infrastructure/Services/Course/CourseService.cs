@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
+using TechMeter.Application.Features.Course.Command.AddCourse;
 using TechMeter.Application.Features.Course.Command.DeleteCourse;
 using TechMeter.Application.Features.Course.Command.EditCourse;
 using TechMeter.Application.Interfaces;
@@ -39,9 +40,9 @@ namespace TechMeter.Infrastructure.Services.CourseService
             _userManager = userManager;
         }
 
-        public async Task<Response<AddCourseResponse>> AddCourseAsync(string providerId, AddCourseRequest request)
+        public async Task<Response<AddCourseResponse>> AddCourseAsync(AddCourseCommand request)
         {
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
+            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == request.providerId);
             if (provider == null)
             {
                 return _responseHandler.BadRequest<AddCourseResponse>("Provider Is Not Found");
@@ -75,7 +76,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
                     CategoryId = request.CategoryId,
                     Description = request.Description,
                     Title = request.Title,
-                    ProviderId = providerId,
+                    ProviderId = request.providerId,
                     Price = request.Price,
                     Currency = request.Currency,
 
