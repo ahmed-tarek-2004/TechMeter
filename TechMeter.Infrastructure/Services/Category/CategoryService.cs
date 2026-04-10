@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Category;
+using TechMeter.Application.Features.Category.Command.AddCategory;
+using TechMeter.Application.Features.Category.Command.UpdateCategory;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
@@ -22,7 +24,7 @@ namespace TechMeter.Infrastructure.Services.Category
             _context = context;
             _responseHandler = responseHandler;
         }
-        public async Task<Domain.Shared.Bases.Response<AddCategoryResponse>> AddCategoryAsync(AddCategoryRequest addCategoryRequest)
+        public async Task<Domain.Shared.Bases.Response<AddCategoryResponse>> AddCategoryAsync(AddCategoryCommand addCategoryRequest)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -76,13 +78,8 @@ namespace TechMeter.Infrastructure.Services.Category
 
         public async Task<Domain.Shared.Bases.Response<List<GetCategoryDto>>> GetCategoriesAsync()
         {
-            var categories = await _context.Category
-               .AsNoTracking()
-               .Include(b => b.Courses)
-               .ThenInclude(b => b.Provider)
-               .ToListAsync();
 
-            var response = categories.Select(c => new GetCategoryDto()
+            var response = await _context.Category.AsNoTracking().Select(c => new GetCategoryDto()
             {
                 Id = c.Id,
                 Description = c.Description,
@@ -96,8 +93,8 @@ namespace TechMeter.Infrastructure.Services.Category
                     ProviderId = b.ProviderId,
                     Title = b.Title,
 
-                }).ToList()
-            }).ToList();
+                })
+            }).ToListAsync();
 
             return _responseHandler.Success(response, $"All Categories returned successfully");
         }
@@ -132,10 +129,10 @@ namespace TechMeter.Infrastructure.Services.Category
             return _responseHandler.Success(response, $"Category {response.Name} returned successfully");
         }
 
-        public async Task<Domain.Shared.Bases.Response<UpdateCategoryResponse>> UpdateCategoryAsync(string categoryId, UpdateCategoryRequest updateCategoryRequest)
+        public async Task<Domain.Shared.Bases.Response<UpdateCategoryResponse>> UpdateCategoryAsync(UpdateCategoryCommand updateCategoryRequest)
         {
             var category = await _context.Category
-               .FirstOrDefaultAsync(b => b.Id == categoryId);
+               .FirstOrDefaultAsync(b => b.Id == updateCategoryRequest.Id);
 
             if (category == null)
             {

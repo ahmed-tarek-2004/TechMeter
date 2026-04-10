@@ -15,9 +15,11 @@ using System.Threading.Tasks;
 using TechMeter;
 using TechMeter.API.Common.Exceptions;
 using TechMeter.API.Common.Middleware;
+using TechMeter.API.Hubs;
+
+//using TechMeter.API.Hubs;
 using TechMeter.Application.Behaviors;
 using TechMeter.Application.Common;
-using TechMeter.Application.Hubs;
 using TechMeter.Application.Jobs;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -47,6 +49,8 @@ namespace TechMeter
                  option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
              });
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddHangfire(config =>
             {
                 config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -75,8 +79,7 @@ namespace TechMeter
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
-            builder.Services.AddAutoMapper(typeof(IAssemblyMarker).Assembly);
-            builder.Services.AddSignalR();
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()
@@ -127,14 +130,14 @@ namespace TechMeter
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<StopwatchRequestMiddleware>();
+            app.MapHub<NotificationHub>("/notificationHub");
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
             });
-            app.MapHub<NotificationHub>("/notificationHub");
 
-            BackgroundJob.Schedule(() => Console.WriteLine("Hello From Scheduled TechMeter"), TimeSpan.FromSeconds(60));
-            BackgroundJob.Enqueue(() => Console.WriteLine("Hello From Enqueue TechMeter"));
+            //BackgroundJob.Schedule(() => Console.WriteLine("Hello From Scheduled TechMeter"), TimeSpan.FromSeconds(60));
+            //BackgroundJob.Enqueue(() => Console.WriteLine("Hello From Enqueue TechMeter"));
             app.MapControllers();
 
             app.Run();

@@ -1,8 +1,16 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using TechMeter.Application.DTO.Category;
+using TechMeter.Application.Features.Cart.Command.AddToCart;
+using TechMeter.Application.Features.Category.Command.AddCategory;
+using TechMeter.Application.Features.Category.Command.DeleteCategory;
+using TechMeter.Application.Features.Category.Command.UpdateCategory;
+using TechMeter.Application.Features.Category.Query.GetCategories;
+using TechMeter.Application.Features.Category.Query.GetCategoryById;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Domain.Shared.Bases;
 
@@ -12,66 +20,51 @@ namespace TechMeter.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryService _categoryService;
-        private readonly ResponseHandler _responseHandler;
-        private readonly IValidator<AddCategoryRequest> _createCategoryValidator;
-        private readonly IValidator<UpdateCategoryRequest> _updateCategoryValidator;
+        private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryService categoryService, ResponseHandler responseHandler,
-            IValidator<AddCategoryRequest> createCategoryValidator, IValidator<UpdateCategoryRequest> updateCategoryValidator)
+        public CategoryController(IMapper mapper, IMediator mediator)
         {
-            _categoryService = categoryService;
-            _responseHandler = responseHandler;
-            _createCategoryValidator = createCategoryValidator;
-            _updateCategoryValidator = updateCategoryValidator;
+            _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet("getAll")]
-        public async Task<ActionResult<Response<IEnumerable<GetCategoryDto>>>> GetAll()
+        public async Task<ActionResult<Response<List<GetCategoryDto>>>> GetAll()
         {
-            var response = await _categoryService.GetCategoriesAsync();
+            var response = await _mediator.Send(new GetCategoriesQuery());
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("get/{Id}")]
+        [HttpGet("detail/by/{Id}")]
         public async Task<ActionResult<Response<GetCategoryDto>>> GetById(string Id)
         {
-            var response = await _categoryService.GetCategoryByIdAsync(Id);
+            var command = new GetCategoryByIdQuery(Id);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("update")]
+        [HttpPost("create/category")]
         public async Task<ActionResult<Response<AddCategoryResponse>>> Create([FromBody] AddCategoryRequest request)
         {
-            var validationResult = await _createCategoryValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                string errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
-                    _responseHandler.BadRequest<object>(errors));
-            }
-            var response = await _categoryService.AddCategoryAsync(request);
+            var command = _mapper.Map<AddCategoryCommand>(request);
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPut("{Id}")]
-        public async Task<ActionResult<Response<object>>> Update(string Id, [FromBody] UpdateCategoryRequest request)
+        public async Task<ActionResult<Response<object>>> Update([FromRoute] string Id, [FromBody] UpdateCategoryRequest request)
         {
-            var validationResult = await _updateCategoryValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                string errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
-                    _responseHandler.BadRequest<object>(errors));
-            }
-            var response = await _categoryService.UpdateCategoryAsync(Id, request);
+            var command = _mapper.Map<UpdateCategoryCommand>(request);
+            command.Id = Id;
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpDelete("{Id}")]
         public async Task<ActionResult<Response<string>>> Delete(string Id)
         {
-            var response = await _categoryService.DeleteCategoryByIdAsync(Id);
+            var response = await _mediator.Send(new DeleteCategoryCommand(Id));
             return StatusCode((int)response.StatusCode, response);
         }
     }
