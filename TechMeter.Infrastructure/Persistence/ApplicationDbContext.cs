@@ -35,6 +35,7 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<UserCourseRating> UserCourseRating { get; set; }
         public DbSet<CourseStudent> CourseStudent { get; set; }
         public DbSet<StudentLessonWatched> StudentLessonWatched {  get; set; }
+        public DbSet<Notification> Notification { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

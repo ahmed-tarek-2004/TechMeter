@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
+using TechMeter.Application.Hubs;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
@@ -33,18 +34,20 @@ namespace TechMeter.Infrastructure.Services.Payment
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService;
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<PaymentService> _logger;
         private readonly StripeSettings stripe;
 
-        public PaymentService(ApplicationDbContext context,ResponseHandler responseHandler,
+        public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
             ILogger<PaymentService> logger, IOptions<StripeSettings> option,
-            IEmailService emailService)
+            IEmailService emailService, IHubContext<NotificationHub> hubContext)
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
             stripe = option.Value;
+            _hubContext = hubContext;
             _emailService = emailService;
         }
         public async Task<Response<PaymentResponse>> CreateACheckOut(string studentId, PaymentRequest request)

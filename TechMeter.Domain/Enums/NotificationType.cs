@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TechMeter.Domain.Enums
+{
+    public enum NotificationType
+    {
+        Enrollment,
+        Assignment,
+        Payment,
+        Message,
+        Comment,
+        Like,
+        FinishCourse,
+    }
+}
