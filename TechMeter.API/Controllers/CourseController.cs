@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
+using TechMeter.Application.Features.Course.Command.AddCourse;
 using TechMeter.Application.Features.Course.Command.DeleteCourse;
 using TechMeter.Application.Features.Course.Command.EditCourse;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
@@ -25,18 +26,11 @@ namespace TechMeter.API.Controllers
     {
         public IMediator _mediator;
         public IMapper _mapper;
-        private readonly ICourseService _courseService;
-        private readonly ResponseHandler _responseHandler;
-        private readonly IValidator<AddCourseRequest> _addCourseValidator;
 
-        public CourseController(IMediator mediator, IMapper mapper, ICourseService courseService, ResponseHandler responseHandler,
-            IValidator<AddCourseRequest> addCourseValidator)
+        public CourseController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
             _mapper = mapper;
-            _courseService = courseService;
-            _responseHandler = responseHandler;
-            _addCourseValidator = addCourseValidator;
         }
 
         [HttpGet("all/course")]
@@ -72,15 +66,9 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromForm] AddCourseRequest request)
         {
-            var validationResult = await _addCourseValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                string errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
-                    _responseHandler.BadRequest<object>(errors));
-            }
-            var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _courseService.AddCourseAsync(providerId!, request);
+            var command = _mapper.Map<AddCourseCommand>(request);
+            command.providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
