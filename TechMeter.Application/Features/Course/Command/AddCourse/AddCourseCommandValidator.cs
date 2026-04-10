@@ -1,15 +1,19 @@
 ﻿using FluentValidation;
-using TechMeter.Application.DTO.Course;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace TechMeter.API.Validators
+namespace TechMeter.Application.Features.Course.Command.AddCourse
 {
-    public class AddCourseRequestValidator : AbstractValidator<AddCourseRequest>
+    public class AddCourseCommandValidator : AbstractValidator<AddCourseCommand>
     {
-        public AddCourseRequestValidator()
+        public AddCourseCommandValidator()
         {
             RuleFor(b => b)
-               .Must(b => !string.IsNullOrEmpty(b.CategoryId))
-               .WithMessage("CategoryId is Requires");
+              .Must(b => !string.IsNullOrEmpty(b.CategoryId))
+              .WithMessage("CategoryId is Requires");
 
             RuleFor(b => b.Title)
                 .Must(b => !string.IsNullOrEmpty(b))
@@ -28,8 +32,6 @@ namespace TechMeter.API.Validators
                 .NotEmpty()
                 .GreaterThanOrEqualTo(0)
                 .WithMessage("Price Is Required and Must be Greater Than 0");
-
         }
-
     }
 }
