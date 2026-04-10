@@ -86,6 +86,19 @@ namespace TechMeter.Extensions
                     ClockSkew = TimeSpan.Zero,
                 };
 
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var path = context.HttpContext.Request.Path;
+                        var token = context.Request.Query["access_token"];
+                        if (!string.IsNullOrEmpty(token) && (path.StartsWithSegments("/notificationHub")))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             return services;
@@ -173,6 +186,6 @@ namespace TechMeter.Extensions
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             return services;
         }
-       
+
     }
 }

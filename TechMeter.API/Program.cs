@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 using TechMeter;
 using TechMeter.API.Common.Exceptions;
 using TechMeter.API.Common.Middleware;
+using TechMeter.API.Hubs;
+
+//using TechMeter.API.Hubs;
 using TechMeter.Application.Behaviors;
 using TechMeter.Application.Common;
 using TechMeter.Application.Jobs;
@@ -45,6 +48,8 @@ namespace TechMeter
              {
                  option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
              });
+
+            builder.Services.AddSignalR();
 
             builder.Services.AddHangfire(config =>
             {
@@ -125,13 +130,14 @@ namespace TechMeter
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<StopwatchRequestMiddleware>();
+            app.MapHub<NotificationHub>("/notificationHub");
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
             });
 
-            BackgroundJob.Schedule(() => Console.WriteLine("Hello From Scheduled TechMeter"), TimeSpan.FromSeconds(60));
-            BackgroundJob.Enqueue(() => Console.WriteLine("Hello From Enqueue TechMeter"));
+            //BackgroundJob.Schedule(() => Console.WriteLine("Hello From Scheduled TechMeter"), TimeSpan.FromSeconds(60));
+            //BackgroundJob.Enqueue(() => Console.WriteLine("Hello From Enqueue TechMeter"));
             app.MapControllers();
 
             app.Run();

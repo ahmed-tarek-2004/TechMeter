@@ -22,14 +22,11 @@ namespace TechMeter.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly ResponseHandler _responseHandler;
 
-        public CategoryController(ResponseHandler responseHandler, IMapper mapper, IMediator mediator)
+        public CategoryController(IMapper mapper, IMediator mediator)
         {
             _mediator = mediator;
             _mapper = mapper;
-            _responseHandler = responseHandler;
-
         }
 
         [HttpGet("getAll")]
