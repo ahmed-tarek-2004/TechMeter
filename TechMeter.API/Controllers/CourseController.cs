@@ -9,6 +9,7 @@ using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Features.Course.Query.GetCategoryById;
 using TechMeter.Application.Features.Course.Query.GetProviderCourses;
+using TechMeter.Application.Features.Course.Query.GetStudentCourses;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -49,17 +50,18 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpGet("provider/courses")]
+        [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetProviderCoursesAsync()
         {
-            var response = await _mediator.Send(new GetProviderCoursesQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value??""));
+            var response = await _mediator.Send(new GetProviderCoursesQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? ""));
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpGet("student/courses")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<List<GetStudentCourseResponse>>>> GetStudentCoursesAsync()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _courseService.GetStudentCoursesAsync(userId!);
+            var response = await _mediator.Send(new GetStudentCoursesQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? ""));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -97,6 +99,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpDelete("{CourseId}")]
+        [Authorize(Roles = "admin,provider")]
         public async Task<ActionResult<Response<string>>> Delete(string CourseId)
         {
             var responsiableId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
