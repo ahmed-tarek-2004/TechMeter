@@ -4,7 +4,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
+using TechMeter.API.Hubs;
 using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Features.Course.Command.AddCourse;
@@ -24,9 +26,8 @@ namespace TechMeter.API.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        public IMediator _mediator;
-        public IMapper _mapper;
-
+        private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
         public CourseController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;

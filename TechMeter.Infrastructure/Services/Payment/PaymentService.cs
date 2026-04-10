@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,7 @@ namespace TechMeter.Infrastructure.Services.Payment
         private readonly ILogger<PaymentService> _logger;
         private readonly StripeSettings stripe;
 
-        public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
+        public PaymentService(ApplicationDbContext context,ResponseHandler responseHandler,
             ILogger<PaymentService> logger, IOptions<StripeSettings> option,
             IEmailService emailService)
         {

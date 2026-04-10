@@ -4,10 +4,12 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.SignalR;
 using StackExchange.Redis;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
+//using TechMeter.API.Hubs;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
 using TechMeter.Application.DTO.Auth.ResetPassword;
@@ -16,6 +18,7 @@ using TechMeter.Application.Features.Auth.ChangePassword;
 using TechMeter.Application.Features.Auth.ConfirmEmail;
 using TechMeter.Application.Features.Auth.ForgetPassword.Command;
 using TechMeter.Application.Features.Auth.Login.Command;
+using TechMeter.Application.Features.Auth.Logout;
 using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResetPassword;
@@ -33,28 +36,24 @@ namespace TechMeter.API.Controllers
     //provider
     //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFobWVkWmFoZXIiLCJuYW1laWQiOiIwOTM0ZDk0My00OGNhLTQ3OTEtOGY4My0wNTI1MzFjOWJiODIiLCJlbWFpbCI6ImFobWVkdGFyZWs3NTgwQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDExNTg5MDU1ODkiLCJyb2xlIjoicHJvdmlkZXIiLCJuYmYiOjE3NzIyNzQ0MTIsImV4cCI6MTc3NTI5ODQxMiwiaWF0IjoxNzcyMjc0NDEyfQ.uHPlhh7soy84ZadWSVqpGNtv8XKr_BpCjIUS-iyvrUg
     //student
-    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFobWVkVGFyZWtaYWhlciIsIm5hbWVpZCI6ImE1YzdhMThlLTFhOTUtNDkzOS05YmQxLWQ4MTU1NjM1NzgyNiIsImVtYWlsIjoiaWdub3JlZG1lbWJlckBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IjAxMDMwMTg3MDEzIiwicm9sZSI6InN0dWRlbnQiLCJuYmYiOjE3NzIyNzQ3MDgsImV4cCI6MTc3NTI5ODcwOCwiaWF0IjoxNzcyMjc0NzA4fQ.HG7NJxfd4PA6BMUoFxSJC4xmGXuN6tFzvjFBVUSFJfk
+    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFobWVkVGFyZWtaYWhlciIsIm5hbWVpZCI6ImE1YzdhMThlLTFhOTUtNDkzOS05YmQxLWQ4MTU1NjM1NzgyNiIsImVtYWlsIjoiaWdub3JlZG1lbWJlckBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IjAxMDMwMTg3MDEzIiwicm9sZSI6InN0dWRlbnQiLCJuYmYiOjE3NzU4NDAwMTYsImV4cCI6MTc3ODg2MDQxNiwiaWF0IjoxNzc1ODQwMDE2fQ.vqQY4sf0Ky--J0_P4ouLiLF0XbOhy67v0Ar5dh3h3p0
     public class AccountController : ControllerBase
     {
+        //private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ILogger<AccountController> _logger;
-        private readonly IAuthService _authService;
-        private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
-        private readonly IValidator<ChangePassword> _changePasswordValidator;
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
         private readonly ResponseHandler _responseHandler;
 
-        public AccountController(ILogger<AccountController> logger, IAuthService authService,
-              ResponseHandler responseHandler, IValidator<ChangePassword> changePasswordValidator
-            , IMapper mapper, IMediator mediator,
-            IValidator<ResetPasswordRequest> resetPasswordValidator)
+        public AccountController(ILogger<AccountController> logger, ResponseHandler responseHandler,
+            IMapper mapper, IMediator mediator//, IHubContext<NotificationHub> hubContext
+            )
         {
+            //_hubContext = hubContext;
             _logger = logger;
-            _authService = authService;
             _responseHandler = responseHandler;
-            _changePasswordValidator = changePasswordValidator;
-            _resetPasswordValidator = resetPasswordValidator;
             _mapper = mapper;
+
             _mediator = mediator;
         }
 
@@ -62,22 +61,8 @@ namespace TechMeter.API.Controllers
         [HttpGet("Assmebly")]
         public async Task<IActionResult> TestAssembly()
         {
-            Type t1 = typeof(ResendOtp);
-            var type = _authService.GetType();
-            _logger.LogInformation("type is :{type}", type);
-            _logger.LogInformation("t1 is :{type}", t1);
-            //_logger.LogInformation("FullName is :{type}", type.FullName);
-            _logger.LogInformation("FullName is :{type}", type.FullName);
-            _logger.LogInformation("Name is :{type}", type.Name);
-            _logger.LogInformation("isPublic is :{type}", type.IsPublic);
-            _logger.LogInformation("isInterface is :{type}", type.IsInterface);
-            _logger.LogInformation("namespace is :{type}", type.Namespace);
-            _logger.LogInformation("BaseType is :{type}", type.BaseType);
-            _logger.LogInformation("interface is :{type}", type.GetInterfaces());
-            _logger.LogInformation("T1 interface is :{t1.GetInterfaces()}", t1.GetInterfaces());
-            _logger.LogInformation("is Value Type :{t1.IsValueType}", t1.IsValueType);
 
-
+            //await _hubContext.Clients.All.SendAsync("fromassembly", "Test", "This is a test message from the server.");
 
             return Ok();
         }
@@ -159,7 +144,7 @@ namespace TechMeter.API.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult<string>> LogoutAsync()
         {
-            var response = await _authService.LogoutAsync(User);
+            var response = await _mediator.Send(new LogoutCommand(User));
             return StatusCode((int)response.StatusCode, response);
         }
     }
