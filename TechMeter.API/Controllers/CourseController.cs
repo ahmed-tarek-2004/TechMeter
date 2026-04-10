@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using System.Security.Claims;
 using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Features.Course.Command.DeleteCourse;
+using TechMeter.Application.Features.Course.Command.EditCourse;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Features.Course.Query.GetCategoryById;
 using TechMeter.Application.Features.Course.Query.GetProviderCourses;
@@ -22,19 +24,19 @@ namespace TechMeter.API.Controllers
     public class CourseController : ControllerBase
     {
         public IMediator _mediator;
+        public IMapper _mapper;
         private readonly ICourseService _courseService;
         private readonly ResponseHandler _responseHandler;
         private readonly IValidator<AddCourseRequest> _addCourseValidator;
-        private readonly IValidator<EditCourseRequest> _editCourseValidator;
 
-        public CourseController(IMediator mediator, ICourseService courseService, ResponseHandler responseHandler,
-            IValidator<AddCourseRequest> addCourseValidator, IValidator<EditCourseRequest> editCourseValidator)
+        public CourseController(IMediator mediator, IMapper mapper, ICourseService courseService, ResponseHandler responseHandler,
+            IValidator<AddCourseRequest> addCourseValidator)
         {
             _mediator = mediator;
+            _mapper = mapper;
             _courseService = courseService;
             _responseHandler = responseHandler;
             _addCourseValidator = addCourseValidator;
-            _editCourseValidator = editCourseValidator;
         }
 
         [HttpGet("all/course")]
@@ -82,20 +84,14 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPut("edit/{Id}")]
+        [HttpPut("edit/{courseId}")]
         [Authorize(Roles = "provider")]
-        public async Task<ActionResult<Response<object>>> Update(string Id, [FromForm] EditCourseRequest request)
+        public async Task<ActionResult<Response<string>>> Update([FromRoute] string courseId, [FromForm] EditCourseRequest request)
         {
-            var validationResult = await _editCourseValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                string errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return StatusCode((int)_responseHandler.BadRequest<object>(errors).StatusCode,
-                    _responseHandler.BadRequest<object>(errors));
-            }
-
-            var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _courseService.EditCourseAsync(providerId!, Id, request);
+            var command = _mapper.Map<EditCourseCommand>(request);
+            command.providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            command.courseId = courseId;
+            var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
