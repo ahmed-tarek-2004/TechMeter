@@ -74,8 +74,7 @@ namespace TechMeter
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
-            builder.Services.AddAutoMapper(typeof(IAssemblyMarker).Assembly);
-
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()
