@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
+using TechMeter.Application.Features.Course.Command.AddCourse;
+using TechMeter.Application.Features.Course.Command.DeleteCourse;
+using TechMeter.Application.Features.Course.Command.EditCourse;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Domain.Models;
@@ -37,9 +40,9 @@ namespace TechMeter.Infrastructure.Services.CourseService
             _userManager = userManager;
         }
 
-        public async Task<Response<AddCourseResponse>> AddCourseAsync(string providerId, AddCourseRequest request)
+        public async Task<Response<AddCourseResponse>> AddCourseAsync(AddCourseCommand request)
         {
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
+            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == request.providerId);
             if (provider == null)
             {
                 return _responseHandler.BadRequest<AddCourseResponse>("Provider Is Not Found");
@@ -73,7 +76,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
                     CategoryId = request.CategoryId,
                     Description = request.Description,
                     Title = request.Title,
-                    ProviderId = providerId,
+                    ProviderId = request.providerId,
                     Price = request.Price,
                     Currency = request.Currency,
 
@@ -159,22 +162,22 @@ namespace TechMeter.Infrastructure.Services.CourseService
             return _responseHandler.Success(coursesResponse, "Courses returned successfully");
         }
 
-        public async Task<Response<GetCourseResponse>> EditCourseAsync(string providerId, string courseId, EditCourseRequest request)
+        public async Task<Response<string>> EditCourseAsync(EditCourseCommand request)
         {
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
+            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == request. providerId);
             if (provider == null)
             {
-                return _responseHandler.BadRequest<GetCourseResponse>("Provider Is Not Found");
+                return _responseHandler.BadRequest<string>("Provider Is Not Found");
             }
-            var course = await _context.Course.FindAsync(courseId);
+            var course = await _context.Course.FindAsync(request.courseId);
             if (course == null)
             {
-                return _responseHandler.NotFound<GetCourseResponse>("Course is not Found");
+                return _responseHandler.NotFound<string>("Course is not Found");
             }
             var category = await _context.Category.FindAsync(request.CategoryId);
             if (category == null)
             {
-                return _responseHandler.NotFound<GetCourseResponse>("category is not Found");
+                return _responseHandler.NotFound<string>("category is not Found");
             }
             if (request.CourseProfileImageUrl != null)
             {
@@ -183,7 +186,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                course.ProviderId = providerId;
+                course.ProviderId = request.providerId;
                 course.CategoryId = request.CategoryId;
                 course.Description = request.Description;
                 course.Title = request.Title;
@@ -191,37 +194,24 @@ namespace TechMeter.Infrastructure.Services.CourseService
                 course.Currency = request.Currency;
 
                 await _context.SaveChangesAsync();
-
-                var response = new GetCourseResponse()
-                {
-                    Id = course.Id,
-                    CategoryId = course.CategoryId,
-                    CourseProfileImageUrl = course.CourseProfileImageUrl,
-                    Description = course.Description,
-                    ProviderId = course.ProviderId,
-                    Title = course.Title,
-                    Currency = course.Currency,
-                    Price = course.Price,
-                };
-
                 await transaction.CommitAsync();
-                return _responseHandler.Success(response, "Course Updated Successfully");
+                return _responseHandler.Success(string.Empty, "Course Updated Successfully");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return _responseHandler.InternalServerError<GetCourseResponse>(ex.Message);
+                return _responseHandler.InternalServerError<string>(ex.Message);
             }
         }
 
-        public async Task<Response<string>> DeleteCourseByIdAsync(string responsiableId, string courseId)
+        public async Task<Response<string>> DeleteCourseByIdAsync(DeleteCourseCommand request)
         {
-            var responisble = await _userManager.FindByIdAsync(responsiableId);
+            var responisble = await _userManager.FindByIdAsync(request.responsibleId);
             if (responisble == null)
             {
                 return _responseHandler.BadRequest<string>("Responsible Is Not Found");
             }
-            var course = await _context.Course.FindAsync(courseId);
+            var course = await _context.Course.FindAsync(request.courseId);
             if (course == null)
             {
                 return _responseHandler.NotFound<string>("Course is not Found");

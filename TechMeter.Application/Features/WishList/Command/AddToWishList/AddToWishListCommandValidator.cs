@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechMeter.Application.Validators;
+//using TechMeter.Application.Validators;
 
 namespace TechMeter.Application.Features.WishList.Command.AddToWishList
 {
