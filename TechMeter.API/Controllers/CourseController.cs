@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
+using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -15,24 +17,26 @@ namespace TechMeter.API.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
+        public IMediator _mediator;
         private readonly ICourseService _courseService;
         private readonly ResponseHandler _responseHandler;
         private readonly IValidator<AddCourseRequest> _addCourseValidator;
         private readonly IValidator<EditCourseRequest> _editCourseValidator;
 
-        public CourseController(ICourseService courseService, ResponseHandler responseHandler,
+        public CourseController(IMediator mediator, ICourseService courseService, ResponseHandler responseHandler,
             IValidator<AddCourseRequest> addCourseValidator, IValidator<EditCourseRequest> editCourseValidator)
         {
+            _mediator = mediator;
             _courseService = courseService;
             _responseHandler = responseHandler;
             _addCourseValidator = addCourseValidator;
             _editCourseValidator = editCourseValidator;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<Response<IEnumerable<GetCourseResponse>>>> GetAll()
+        [HttpGet("all/course")]
+        public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetAll()
         {
-            var response = await _courseService.GetAllCoursesAsync();
+            var response = await _mediator.Send(new GetAllCoursesQuery());
             return StatusCode((int)response.StatusCode, response);
         }
 
