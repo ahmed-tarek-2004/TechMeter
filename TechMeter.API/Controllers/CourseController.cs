@@ -7,6 +7,8 @@ using System.Security.Claims;
 using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
+using TechMeter.Application.Features.Course.Query.GetCategoryById;
+using TechMeter.Application.Features.Course.Query.GetProviderCourses;
 using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -43,19 +45,18 @@ namespace TechMeter.API.Controllers
         [HttpGet("course/by/{Id}")]
         public async Task<ActionResult<Response<GetCourseResponse>>> GetCourseByIdAsync(string Id)
         {
-            var response = await _courseService.GetCourseByIdAsync(Id);
+            var response = await _mediator.Send(new GetCourseByIdQuery(Id));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpGet("provider/courses")]
-        public async Task<ActionResult<Response<GetCourseResponse>>> GetProviderCoursesAsync()
+        public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetProviderCoursesAsync()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _courseService.GetProviderCoursesAsync(userId!);
+            var response = await _mediator.Send(new GetProviderCoursesQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value??""));
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpGet("student/courses")]
-        public async Task<ActionResult<Response<GetCourseResponse>>> GetStudentCoursesAsync()
+        public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetStudentCoursesAsync()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await _courseService.GetStudentCoursesAsync(userId!);
