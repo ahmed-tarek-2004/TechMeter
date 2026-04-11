@@ -301,6 +301,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 var updatedProgress = await _context.CourseStudent
                                       .Where(x => x.StudentId == studentId && x.CourseId == courseId)
                                       .ExecuteUpdateAsync(b => b.SetProperty(x => x.Progrss, x => x.Progrss > 0 ? x.Progrss - 1 : 0));
+
                 await transaction.CommitAsync();
                 return _responseHandler.Success("Updated", "Lesson status updated successfully");
             }
