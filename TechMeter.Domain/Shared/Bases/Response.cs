@@ -4,12 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TechMeter.Domain.Shared.Bases
 {
     public class Response<T>
     {
+        [JsonConverter(typeof(JsonNumberEnumConverter<HttpStatusCode>))]
         public HttpStatusCode StatusCode { get; set; }
         public string? Message { get; set; }
         public bool Succeeded { get; set; }

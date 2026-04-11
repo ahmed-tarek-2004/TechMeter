@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Domain.Models;
@@ -32,8 +33,8 @@ namespace TechMeter.Application.Common
         public DbSet<UserCourseRating> UserCourseRating { get; }
         public DbSet<CourseStudent> CourseStudent { get; }
         public DbSet<StudentLessonWatched> StudentLessonWatched { get; }
+        public DbSet<Notification> Notification { get; }
         public DatabaseFacade Database { get; }
-
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
