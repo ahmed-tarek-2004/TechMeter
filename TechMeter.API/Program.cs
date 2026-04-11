@@ -80,10 +80,8 @@ namespace TechMeter
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
-<<<<<<< HEAD
             builder.Services.AddAPiDependencyInjection();
-=======
->>>>>>> refactor/using-cqrs/apllying-by-mediatoR
+
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()

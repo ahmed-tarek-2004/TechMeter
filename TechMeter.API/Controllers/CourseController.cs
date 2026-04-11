@@ -26,14 +26,8 @@ namespace TechMeter.API.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-<<<<<<< HEAD
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-=======
-        public IMediator _mediator;
-        public IMapper _mapper;
-
->>>>>>> refactor/using-cqrs/apllying-by-mediatoR
         public CourseController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
