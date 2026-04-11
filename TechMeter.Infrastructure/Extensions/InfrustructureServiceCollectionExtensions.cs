@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -11,7 +12,9 @@ using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.Cart;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Application.Interfaces.CourseService;
+using TechMeter.Application.Interfaces.Jobs;
 using TechMeter.Application.Interfaces.Lesson;
+using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Interfaces.Order;
 using TechMeter.Application.Interfaces.OTPService;
 using TechMeter.Application.Interfaces.Payment;
@@ -24,12 +27,14 @@ using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Adapters.Payment;
+//using TechMeter.Infrastructure.Jobs;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services.AuthService;
 using TechMeter.Infrastructure.Services.Cart;
 using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Lesson;
+//using TechMeter.Infrastructure.Services.Notification;
 using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.Rating;
@@ -79,6 +84,8 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
+            //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
+            //services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }

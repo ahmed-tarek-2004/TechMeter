@@ -12,10 +12,12 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.RateLimiting;
+using TechMeter.API.Hubs;
 using TechMeter.API.Validators;
 using TechMeter.Application.Behaviors;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
+using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -184,6 +186,11 @@ namespace TechMeter.Extensions
             services.AddValidatorsFromAssembly(typeof(IAssemblyMarker).Assembly);
             //services.AddFluentValidationAutoValidation();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            return services;
+        }
+        public static IServiceCollection AddAPiDependencyInjection(this IServiceCollection services)
+        {
+            services.AddScoped<INotificationService,NotificationService>();
             return services;
         }
 

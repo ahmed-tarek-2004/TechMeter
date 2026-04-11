@@ -14,7 +14,7 @@ namespace TechMeter.Application.Features.Category.Command.UpdateCategory
     {
         public async Task<Response<UpdateCategoryResponse>> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await categoryService.UpdateCategoryAsync(request);
         }
     }
 }

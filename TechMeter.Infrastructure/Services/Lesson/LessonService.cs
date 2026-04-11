@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Lesson;
+using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -22,13 +23,15 @@ namespace TechMeter.Infrastructure.Services.Lesson
         private readonly ResponseHandler _responseHandler;
         private readonly IImageUploading _imageUploading;
         private readonly ILogger<LessonService> _logger;
+        private readonly INotificationService _notificationService;
         public LessonService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<LessonService> logger, IImageUploading imageUploading)
+            ILogger<LessonService> logger, IImageUploading imageUploading, INotificationService notificationService)
 
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
+            _notificationService = notificationService;
             _imageUploading = imageUploading;
 
         }
@@ -203,59 +206,82 @@ namespace TechMeter.Infrastructure.Services.Lesson
             return response;
         }
 
-        public async Task<Response<string>> StudentLessonWatchedAndUnWatched(string studentId, string LessonId)
+        public async Task<Response<string>> StudentLessonWatchedAndUnWatched(string studentId, string lessonId)
         {
-            var lesson = await _context.Lessons.FindAsync(LessonId);
+            var lesson = await _context.Lessons
+                .FirstOrDefaultAsync(x => x.Id == lessonId);
+
             if (lesson == null)
-            {
                 return _responseHandler.NotFound<string>("Lesson not found");
-            }
 
-            //if (lessonWatched)
-            //    return _responseHandler.Success("Lesson already marked as watched", "LessonAlreadyWatched");
+            var courseInfo = await _context.Section
+                .Where(s => s.Id == lesson.SectionId)
+                .Select(s => new { s.CourseId })
+                .FirstOrDefaultAsync();
 
-            var course = await _context.Section.Where(b => b.Id == lesson.SectionId).Select(b => new { b.CourseId, b.Course.LessonCount }).FirstOrDefaultAsync();
+            if (courseInfo == null)
+                return _responseHandler.NotFound<string>("Course not found");
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
+
             try
             {
-                var rows = await _context.StudentLessonWatched
-                    .Where(slw => slw.StudentId == studentId && slw.LessonId == LessonId)
-                    .ExecuteDeleteAsync();
-                int delta = rows;
+                var existing = await _context.StudentLessonWatched
+                    .FirstOrDefaultAsync(x => x.StudentId == studentId && x.LessonId == lessonId);
 
-                if (delta == 0)
+                int delta;
+
+                if (existing != null)
                 {
-                    var studentLessonWatched = new StudentLessonWatched
+                    _context.StudentLessonWatched.Remove(existing);
+                    delta = -1;
+                }
+                else
+                {
+                    await _context.StudentLessonWatched.AddAsync(new StudentLessonWatched
                     {
-                        LessonId = LessonId,
+                        LessonId = lessonId,
                         StudentId = studentId,
                         WatchedDate = DateTime.UtcNow
-                    };
+                    });
 
-                    await _context.AddAsync(studentLessonWatched);
-                    delta++;
+                    delta = 1;
                 }
-                else delta = -1;
+
                 await _context.SaveChangesAsync();
 
-                await _context.CourseStudent.Where(b => b.StudentId == studentId && b.CourseId == course.CourseId)
-                    .ExecuteUpdateAsync(b => b.SetProperty(c => c.Progrss, c => c.Progrss + delta));
-                //await _context.CourseStudent.Where(b => b.StudentId == studentId && b.CourseId == course.CourseId)
-                //    .ExecuteUpdateAsync(b => b.SetProperty(c => c.Progrss, (int)(((count + 1) / (double)course.LessonCount) * 100)));
+                var courseStudent = await _context.CourseStudent
+                    .FirstOrDefaultAsync(x => x.StudentId == studentId && x.CourseId == courseInfo.CourseId);
 
+                if (courseStudent != null)
+                {
+                    courseStudent.Progrss += delta;
+
+                    var totalLessons = await _context.Lessons
+                        .CountAsync(l => l.section.CourseId == courseInfo.CourseId);
+
+                    if (courseStudent.Progrss == totalLessons)
+                    {
+                        await _notificationService.FinishCourseNotification(
+                            studentId,
+                            "Finished Course",
+                            $"Congratulations! You have completed course {courseInfo.CourseId}",
+                            DateTime.UtcNow
+                        );
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
 
                 await transaction.CommitAsync();
 
-                return _responseHandler.Success("Lesson Status Updated", "Lesson Status Updated successfully");
-
+                return _responseHandler.Success("Updated", "Lesson status updated successfully");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 return _responseHandler.InternalServerError<string>(ex.Message);
             }
-
         }
         public async Task<Response<List<GetLessonResponse>>> GetStudentLessonWatched(string studentId)
         {
