@@ -12,6 +12,7 @@ using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
+using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;
 
@@ -193,19 +194,6 @@ namespace TechMeter.Infrastructure.Services.Lesson
             }
         }
 
-        private GetLessonResponse CreateALessonResponse(TechMeter.Domain.Models.Lessons lesson)
-        {
-            var response = new GetLessonResponse()
-            {
-                Id = lesson.Id,
-                Description = lesson.Description,
-                LessonUrl = lesson.LessonUrl,
-                Name = lesson.Name,
-                SectionId = lesson.SectionId,
-            };
-            return response;
-        }
-
         public async Task<Response<string>> StudentLessonWatched(string studentId, string lessonId)
         {
 
@@ -252,18 +240,11 @@ namespace TechMeter.Infrastructure.Services.Lesson
 
                 if (updatedProgress >= totalLessons)
                 {
-                    await _notificationService.FinishCourseNotification(
-                        studentId,
-                        "Finished Course",
-                        $"Congratulations! You have completed course {courseId}",
-                        DateTime.UtcNow
-                    );
+                    await StoreAndSendNotification(studentId, courseId);
                 }
 
 
                 await _context.SaveChangesAsync();
-                //}
-
                 await transaction.CommitAsync();
 
                 return _responseHandler.Success("Updated", "Lesson status updated successfully");
@@ -301,10 +282,8 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 var updatedProgress = await _context.CourseStudent
                                       .Where(x => x.StudentId == studentId && x.CourseId == courseId)
                                       .ExecuteUpdateAsync(b => b.SetProperty(x => x.Progrss, x => x.Progrss > 0 ? x.Progrss - 1 : 0));
-<<<<<<< HEAD
-=======
 
->>>>>>> refactor/lesson/separate-watch-andunwatch
+
                 await transaction.CommitAsync();
                 return _responseHandler.Success("Updated", "Lesson status updated successfully");
             }
@@ -327,6 +306,35 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 }).AsNoTracking().ToListAsync();
             return _responseHandler.Success(lessons, "Lesson Watched Returned Successfully");
         }
-
+        private GetLessonResponse CreateALessonResponse(TechMeter.Domain.Models.Lessons lesson)
+        {
+            var response = new GetLessonResponse()
+            {
+                Id = lesson.Id,
+                Description = lesson.Description,
+                LessonUrl = lesson.LessonUrl,
+                Name = lesson.Name,
+                SectionId = lesson.SectionId,
+            };
+            return response;
+        }
+        private async Task StoreAndSendNotification(string studentId, string courseId)
+        {
+            var notification = new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                Title = "Finished Course",
+                Message = $"Congratulations! You have completed the course {courseId}.",
+                CreatedAt = DateTime.UtcNow
+            };
+            await _notificationService.FinishCourseNotification(
+                        studentId,
+                        "Finished Course",
+                        $"Congratulations! You have completed course {courseId}.",
+                        DateTime.UtcNow
+                    );
+            await _context.Notification.AddAsync(notification);
+            //await _context.SaveChangesAsync();
+        }
     }
 }
