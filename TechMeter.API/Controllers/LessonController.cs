@@ -39,12 +39,20 @@ namespace TechMeter.API.Controllers
             var response = await _lessonService.AddLessonAsync(sectionId, request);
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPost("student/{lessonId}/finish-unfinish/lesson")]
+        [HttpPost("student/{lessonId}/finish/lesson")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<GetLessonResponse>> StudentLessonWatched([FromRoute] string lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _lessonService.StudentLessonWatchedAndUnWatched(userId!, lessonId);
+            var response = await _lessonService.StudentLessonWatched(userId!, lessonId);
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpPost("student/{lessonId}/unfinish/lesson")]
+        [Authorize(Roles = "student")]
+        public async Task<ActionResult<GetLessonResponse>> StudentLessonUnwatched([FromRoute] string lessonId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _lessonService.StudentLessonUnwatched(userId!, lessonId);
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPut("edit/lesson/detail/by/{Id}")]
