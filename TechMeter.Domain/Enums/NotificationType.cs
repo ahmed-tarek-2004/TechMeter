@@ -10,7 +10,6 @@ namespace TechMeter.Domain.Enums
     {
         Enrollment,
         Assignment,
-        Payment,
         Message,
         Comment,
         Like,

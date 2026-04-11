@@ -9,6 +9,8 @@ using StackExchange.Redis;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
+using TechMeter.API.Hubs;
+
 //using TechMeter.API.Hubs;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
@@ -23,6 +25,7 @@ using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResetPassword;
 using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -39,19 +42,19 @@ namespace TechMeter.API.Controllers
     //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFobWVkVGFyZWtaYWhlciIsIm5hbWVpZCI6ImE1YzdhMThlLTFhOTUtNDkzOS05YmQxLWQ4MTU1NjM1NzgyNiIsImVtYWlsIjoiaWdub3JlZG1lbWJlckBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IjAxMDMwMTg3MDEzIiwicm9sZSI6InN0dWRlbnQiLCJuYmYiOjE3NzU4NDAwMTYsImV4cCI6MTc3ODg2MDQxNiwiaWF0IjoxNzc1ODQwMDE2fQ.vqQY4sf0Ky--J0_P4ouLiLF0XbOhy67v0Ar5dh3h3p0
     public class AccountController : ControllerBase
     {
-        //private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ILogger<AccountController> _logger;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly ResponseHandler _responseHandler;
+        private readonly INotificationService _notificationService;
 
-        public AccountController(ILogger<AccountController> logger, ResponseHandler responseHandler,
-            IMapper mapper, IMediator mediator//, IHubContext<NotificationHub> hubContext
+        public AccountController(ILogger<AccountController> logger, INotificationService notificationService,
+            IMapper mapper, IMediator mediator, IHubContext<NotificationHub> hubContext
             )
         {
-            //_hubContext = hubContext;
+            _hubContext = hubContext;
             _logger = logger;
-            _responseHandler = responseHandler;
+            _notificationService = notificationService;
             _mapper = mapper;
 
             _mediator = mediator;
@@ -62,7 +65,9 @@ namespace TechMeter.API.Controllers
         public async Task<IActionResult> TestAssembly()
         {
 
-            //await _hubContext.Clients.All.SendAsync("fromassembly", "Test", "This is a test message from the server.");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            await _notificationService.EnrollmantNotification(userId, "Account", "From Assembly", DateTime.UtcNow);
+            await _hubContext.Clients.All.SendAsync("enrollment", "fromAccount");
 
             return Ok();
         }

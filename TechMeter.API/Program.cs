@@ -80,6 +80,7 @@ namespace TechMeter
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
+            builder.Services.AddAPiDependencyInjection();
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()
@@ -125,20 +126,20 @@ namespace TechMeter
             app.UseExceptionHandler();
             //app.UseProblemDetails();
             app.UseHttpsRedirection();
-
+            app.UseRouting();
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<StopwatchRequestMiddleware>();
-            app.MapHub<NotificationHub>("/notificationHub");
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            {
-                Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
-            });
+            app.MapHub<NotificationHub>("/notificationHub").RequireAuthorization();
 
             //BackgroundJob.Schedule(() => Console.WriteLine("Hello From Scheduled TechMeter"), TimeSpan.FromSeconds(60));
             //BackgroundJob.Enqueue(() => Console.WriteLine("Hello From Enqueue TechMeter"));
             app.MapControllers();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
+            });
 
             app.Run();
         }

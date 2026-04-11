@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Hangfire;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.Options;
@@ -15,7 +16,9 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
-using TechMeter.Application.Hubs;
+//using TechMeter.Application.Hubs;
+using TechMeter.Application.Interfaces.Jobs;
+using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
@@ -33,21 +36,21 @@ namespace TechMeter.Infrastructure.Services.Payment
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
         private readonly IEmailService _emailService;
-        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<PaymentService> _logger;
         private readonly StripeSettings stripe;
 
         public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<PaymentService> logger, IOptions<StripeSettings> option,
-            IEmailService emailService, IHubContext<NotificationHub> hubContext)
+            ILogger<PaymentService> logger, IOptions<StripeSettings> option, INotificationService notificationService,
+        IEmailService emailService)
         {
+            _notificationService = notificationService;
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
             stripe = option.Value;
-            _hubContext = hubContext;
             _emailService = emailService;
         }
         public async Task<Response<PaymentResponse>> CreateACheckOut(string studentId, PaymentRequest request)
@@ -154,7 +157,7 @@ namespace TechMeter.Infrastructure.Services.Payment
         public async Task<Response<object>> HandleWebHookAsync(string json, string stripeSignature)
         {
             _logger.LogInformation("Received webhook event. Signature: {Signature}", stripeSignature);
-
+            //await _backgroundJobClient.Enqueue(()=>);
             try
             {
                 Event stripeEvent;
@@ -191,7 +194,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                         _logger.LogInformation("user Id is : {userId}", userId);
                         return _responseHandler.BadRequest<object>("user not found.");
                     }
-
+                    _logger.LogInformation("Start To sent Notification");
+                    await SendingAndStoreNotification(userId!);
                     await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid, userId);
 
                     _logger.LogInformation($" Checkout session completed for Order {order.Id}");
@@ -213,6 +217,8 @@ namespace TechMeter.Infrastructure.Services.Payment
                         return _responseHandler.BadRequest<object>("Order not found.");
 
                     var userId = paymentIntent.Metadata.ContainsKey("clientId") ? paymentIntent.Metadata["clientId"] : null;
+                    _logger.LogInformation("Start To sent Notification");
+                    await SendingAndStoreNotification(userId!);
                     await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid, userId);
 
                 }
@@ -326,7 +332,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             return _responseHandler.Success(response, "Transaction Returned Successfully");
         }
 
-        public async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus, string userId)
+        private async Task AddingTransctionAndEditOrderStatusAsync(Domain.Models.Order order, TransactionStatus transactionStatus, OrderStatus orderStatus, string userId)
         {
 
             var user = await _context.Users.FirstOrDefaultAsync(b => b.Id == userId);
@@ -365,7 +371,10 @@ namespace TechMeter.Infrastructure.Services.Payment
                 await _context.CourseStudent.AddRangeAsync(studentCourses);
                 order.Status = orderStatus;
                 if (transactionStatus == TransactionStatus.Paid)
+                {
                     await _emailService.InvoiceEmailAsync(user!, Transaction, courses);
+                    //await _context.SaveChangesAsync();
+                }
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -373,6 +382,28 @@ namespace TechMeter.Infrastructure.Services.Payment
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+            }
+        }
+        private async Task SendingAndStoreNotification(string userId)
+        {
+            var notification = new Domain.Models.Notification
+            {
+                ReceiptId = userId,
+                Title = "Successful Payment",
+                IsRead = false,
+                notificationType = NotificationType.Enrollment,
+                Message = "Your Payment was successful"
+            };
+            try
+            {
+                await _context.Notification.AddAsync(notification);
+                await _context.SaveChangesAsync();
+                await _notificationService.EnrollmantNotification(userId, "Successful Payment", "Your payment was successful", DateTime.UtcNow);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
             }
         }
     }
