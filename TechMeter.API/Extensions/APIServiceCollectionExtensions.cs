@@ -11,6 +11,7 @@ using Serilog;
 using StackExchange.Redis;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
 using TechMeter.API.Hubs;
@@ -170,15 +171,20 @@ namespace TechMeter.Extensions
                             QueueLimit = 0,
                             Window = TimeSpan.FromMinutes(1)
                         }));
+
+                options.AddPolicy("toggle", context =>
+                    RateLimitPartition.GetSlidingWindowLimiter(
+                        partitionKey: context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown",
+                        factory: _ => new SlidingWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 5,
+                            QueueLimit = 0,
+                            Window = TimeSpan.FromSeconds(2),
+                            SegmentsPerWindow = 2
+                        }));
             });
-            services.AddRateLimiter(options =>
-            {
-                options.AddFixedWindowLimiter("toggle", opt =>
-                {
-                    opt.PermitLimit = 5;
-                    opt.Window = TimeSpan.FromSeconds(1);
-                });
-            });
+
             return services;
         }
         private static string GetClientIp(HttpContext context)
