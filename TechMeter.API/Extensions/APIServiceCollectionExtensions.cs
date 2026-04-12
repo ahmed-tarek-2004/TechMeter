@@ -170,15 +170,14 @@ namespace TechMeter.Extensions
                             QueueLimit = 0,
                             Window = TimeSpan.FromMinutes(1)
                         }));
-            });
-            services.AddRateLimiter(options =>
-            {
+
                 options.AddFixedWindowLimiter("toggle", opt =>
                 {
                     opt.PermitLimit = 5;
                     opt.Window = TimeSpan.FromSeconds(1);
                 });
             });
+
             return services;
         }
         private static string GetClientIp(HttpContext context)
