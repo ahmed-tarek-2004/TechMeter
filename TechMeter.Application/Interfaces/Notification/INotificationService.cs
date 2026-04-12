@@ -13,6 +13,6 @@ namespace TechMeter.Application.Interfaces.Notification
         Task EnrollmantNotification(string userId, string Titile, string Message, DateTime dateTime);
         Task FinishCourseNotification(string userId, string Titile, string Message, DateTime dateTime);
         Task<Response<bool>> ReadNotification(string userId,string notificationId);
-        Task<Response<List<NotificationResponseDto>>> GetUserNotification(string userId);
+        Task<Response<List<NotificationResponseDto>>> GetUserNotifications(string userId);
     }
 }

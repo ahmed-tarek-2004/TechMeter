@@ -39,9 +39,12 @@ namespace TechMeter.Infrastructure.Services.Notification
             await _notificationSenderService.FinishCourseNotification(userId, Titile, Message, dateTime);
         }
 
-        public async Task<Response<List<NotificationResponseDto>>> GetUserNotification(string userId)
+        public async Task<Response<List<NotificationResponseDto>>> GetUserNotifications(string userId)
         {
-            var notifications = await _context.Notification.AsNoTracking().Where(n => n.ReceiptId == userId && !n.IsRead).Select(n => new NotificationResponseDto
+            var notifications = await _context.Notification
+                .AsNoTracking()
+                .Where(n => n.ReceiptId == userId)
+                .Select(n => new NotificationResponseDto
             {
                 Id = n.Id,
                 Title = n.Title,
