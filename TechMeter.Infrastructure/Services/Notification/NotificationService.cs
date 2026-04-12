@@ -16,27 +16,14 @@ namespace TechMeter.Infrastructure.Services.Notification
 {
     public class NotificationService : INotificationService
     {
-        private readonly INotificationSenderService _notificationSenderService;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<NotificationService> _logger;
         private readonly ResponseHandler _responseHandler;
-        public NotificationService(INotificationSenderService notificationSenderService
-            , ILogger<NotificationService> logger, ApplicationDbContext context, ResponseHandler responseHandler)
+        public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context, ResponseHandler responseHandler)
         {
-            _notificationSenderService = notificationSenderService;
             _logger = logger;
             _context = context;
             _responseHandler = responseHandler;
-        }
-
-        public async Task EnrollmantNotification(string userId, string Titile, string Message, DateTime dateTime)
-        {
-            await _notificationSenderService.EnrollmantNotification(userId, Titile, Message, dateTime);
-        }
-
-        public async Task FinishCourseNotification(string userId, string Titile, string Message, DateTime dateTime)
-        {
-            await _notificationSenderService.FinishCourseNotification(userId, Titile, Message, dateTime);
         }
 
         public async Task<Response<List<NotificationResponseDto>>> GetUserNotifications(string userId)

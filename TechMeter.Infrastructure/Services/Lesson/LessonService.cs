@@ -10,6 +10,7 @@ using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.NotificationSender;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
@@ -24,9 +25,9 @@ namespace TechMeter.Infrastructure.Services.Lesson
         private readonly ResponseHandler _responseHandler;
         private readonly IImageUploading _imageUploading;
         private readonly ILogger<LessonService> _logger;
-        private readonly INotificationService _notificationService;
+        private readonly INotificationSenderService _notificationService;
         public LessonService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<LessonService> logger, IImageUploading imageUploading, INotificationService notificationService)
+            ILogger<LessonService> logger, IImageUploading imageUploading, INotificationSenderService notificationService)
 
         {
             _context = context;
