@@ -26,6 +26,7 @@ using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResetPassword;
 using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.NotificationSender;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -46,9 +47,9 @@ namespace TechMeter.API.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly INotificationService _notificationService;
+        private readonly INotificationSenderService _notificationService;
 
-        public AccountController(ILogger<AccountController> logger, INotificationService notificationService,
+        public AccountController(ILogger<AccountController> logger, INotificationSenderService notificationService,
             IMapper mapper, IMediator mediator, IHubContext<NotificationHub> hubContext
             )
         {

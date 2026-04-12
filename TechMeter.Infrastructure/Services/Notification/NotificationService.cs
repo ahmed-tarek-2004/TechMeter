@@ -29,16 +29,6 @@ namespace TechMeter.Infrastructure.Services.Notification
             _responseHandler = responseHandler;
         }
 
-        public async Task EnrollmantNotification(string userId, string Titile, string Message, DateTime dateTime)
-        {
-            await _notificationSenderService.EnrollmantNotification(userId, Titile, Message, dateTime);
-        }
-
-        public async Task FinishCourseNotification(string userId, string Titile, string Message, DateTime dateTime)
-        {
-            await _notificationSenderService.FinishCourseNotification(userId, Titile, Message, dateTime);
-        }
-
         public async Task<Response<List<NotificationResponseDto>>> GetUserNotifications(string userId)
         {
             var notifications = await _context.Notification
