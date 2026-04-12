@@ -18,6 +18,7 @@ using TechMeter.Application.Behaviors;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.NotificationSender;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -190,7 +191,7 @@ namespace TechMeter.Extensions
         }
         public static IServiceCollection AddAPiDependencyInjection(this IServiceCollection services)
         {
-            services.AddScoped<INotificationService,NotificationService>();
+            services.AddScoped<INotificationSenderService,NotificationSenderService>();
             return services;
         }
 

@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces.Jobs;
-using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.NotificationSender;
 using TechMeter.Domain.Enums;
 
 namespace TechMeter.API.Hubs
 {
-    public class NotificationService : INotificationService
+    public class NotificationSenderService : INotificationSenderService
     {
         private readonly IHubContext<NotificationHub> _hubContext;
-        private readonly ILogger<NotificationService> _logger;
-        public NotificationService(IHubContext<NotificationHub> hubContext, ILogger<NotificationService> logger)
+        private readonly ILogger<NotificationSenderService> _logger;
+        public NotificationSenderService(IHubContext<NotificationHub> hubContext, ILogger<NotificationSenderService> logger)
         {
             _hubContext = hubContext;
             _logger = logger;
@@ -35,6 +36,6 @@ namespace TechMeter.API.Hubs
             }
             await _hubContext.Clients.User(userId).SendAsync("Finish", Titile, Message, dateTime, NotificationType.FinishCourse);
         }
-
+      
     }
 }

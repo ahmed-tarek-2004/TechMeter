@@ -34,6 +34,8 @@ using TechMeter.Infrastructure.Services.Cart;
 using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Lesson;
+using TechMeter.Infrastructure.Services.Notification;
+
 //using TechMeter.Infrastructure.Services.Notification;
 using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.Payment;
@@ -85,7 +87,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
             //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
-            //services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }

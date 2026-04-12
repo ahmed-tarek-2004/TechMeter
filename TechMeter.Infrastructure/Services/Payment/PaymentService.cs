@@ -19,6 +19,7 @@ using TechMeter.Application.DTO.Payment;
 //using TechMeter.Application.Hubs;
 using TechMeter.Application.Interfaces.Jobs;
 using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.NotificationSender;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
@@ -36,14 +37,14 @@ namespace TechMeter.Infrastructure.Services.Payment
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext _context;
-        private readonly INotificationService _notificationService;
+        private readonly INotificationSenderService _notificationService;
         private readonly IEmailService _emailService;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<PaymentService> _logger;
         private readonly StripeSettings stripe;
 
         public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<PaymentService> logger, IOptions<StripeSettings> option, INotificationService notificationService,
+            ILogger<PaymentService> logger, IOptions<StripeSettings> option, INotificationSenderService notificationService,
         IEmailService emailService)
         {
             _notificationService = notificationService;
