@@ -319,7 +319,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
         }
         private async Task StoreAndSendNotification(string studentId, string courseId)
         {
-            var notification = new Notification
+            var notification = new Domain.Models.Notification
             {
                 Id = Guid.NewGuid().ToString(),
                 Title = "Finished Course",
