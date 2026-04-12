@@ -172,17 +172,23 @@ namespace TechMeter.Extensions
                             Window = TimeSpan.FromMinutes(1)
                         }));
 
-                options.AddPolicy("toggle", context =>
-                    RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey: context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown",
-                        factory: _ => new SlidingWindowRateLimiterOptions
+                options.AddPolicy("TogglePolicy", context =>
+                {
+                    var key = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown";
+
+                    return RateLimitPartition.GetTokenBucketLimiter(
+                        partitionKey: key,
+                        factory: _ => new TokenBucketRateLimiterOptions
                         {
-                            AutoReplenishment = true,
-                            PermitLimit = 5,
+                            TokenLimit = 5,
+                            TokensPerPeriod = 1,
+                            ReplenishmentPeriod = TimeSpan.FromSeconds(2),
+
                             QueueLimit = 0,
-                            Window = TimeSpan.FromSeconds(2),
-                            SegmentsPerWindow = 2
-                        }));
+                            AutoReplenishment = true
+                        });
+                });
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             });
 
             return services;
