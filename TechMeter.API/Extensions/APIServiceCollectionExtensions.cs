@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -170,6 +171,14 @@ namespace TechMeter.Extensions
                             Window = TimeSpan.FromMinutes(1)
                         }));
             });
+            services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("toggle", opt =>
+                {
+                    opt.PermitLimit = 5;
+                    opt.Window = TimeSpan.FromSeconds(1);
+                });
+            });
             return services;
         }
         private static string GetClientIp(HttpContext context)
@@ -191,7 +200,7 @@ namespace TechMeter.Extensions
         }
         public static IServiceCollection AddAPiDependencyInjection(this IServiceCollection services)
         {
-            services.AddScoped<INotificationSenderService,NotificationSenderService>();
+            services.AddScoped<INotificationSenderService, NotificationSenderService>();
             return services;
         }
 
