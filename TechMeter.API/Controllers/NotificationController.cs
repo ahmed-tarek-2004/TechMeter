@@ -24,7 +24,7 @@ namespace TechMeter.API.Controllers
         }
 
         [EnableRateLimiting("toggle")]
-        [HttpPost("{notificationId}")]
+        [HttpPost("read/{notificationId}")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<bool>>> ReadNotification([FromRoute] string notificationId)
         {

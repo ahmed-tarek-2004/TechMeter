@@ -172,6 +172,7 @@ namespace TechMeter.Extensions
                             Window = TimeSpan.FromMinutes(1)
                         }));
 
+
                 options.AddPolicy("TogglePolicy", context =>
                 {
                     var key = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown";
@@ -189,6 +190,7 @@ namespace TechMeter.Extensions
                         });
                 });
                 options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
             });
 
             return services;
