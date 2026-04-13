@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using TechMeter.API.Hubs;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces.Jobs;
 using TechMeter.Application.Interfaces.NotificationSender;
 using TechMeter.Domain.Enums;
 
-namespace TechMeter.API.Hubs
+namespace TechMeter.API.Services
 {
     public class NotificationSenderService : INotificationSenderService
     {
@@ -22,6 +23,7 @@ namespace TechMeter.API.Hubs
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("UserId is Null");
+                return;
             }
 
             await _hubContext.Clients.User(userId).SendAsync("Enrollment", Titile, Message, dateTime, NotificationType.Enrollment);
