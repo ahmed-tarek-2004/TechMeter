@@ -1,25 +1,16 @@
 
 using Hangfire;
 using Hangfire.SqlServer;
-using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Options;
-using Microsoft.OpenApi.Models;
-using Serilog;
-using StackExchange.Redis;
+using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using TechMeter;
 using TechMeter.API.Common.Exceptions;
 using TechMeter.API.Common.Middleware;
 using TechMeter.API.Hubs;
+using Microsoft.OpenApi;
 
 //using TechMeter.API.Hubs;
-using TechMeter.Application.Behaviors;
-using TechMeter.Application.Common;
 using TechMeter.Application.Jobs;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -81,7 +72,7 @@ namespace TechMeter
             builder.Services.ApplyingMediatoR_Requirements();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddAPiDependencyInjection();
-
+            builder.Services.AddOpenApi();
 
             builder.Services.AddDataProtection()
               .PersistKeysToDbContext<ApplicationDbContext>()
@@ -120,9 +111,11 @@ namespace TechMeter
             if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
                 //app.MapOpenApi();
+                //app.MapScalarApiReference();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
 
             app.UseExceptionHandler();
             //app.UseProblemDetails();
