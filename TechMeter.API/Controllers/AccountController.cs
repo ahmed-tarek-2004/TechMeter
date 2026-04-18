@@ -69,8 +69,7 @@ namespace TechMeter.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             await _notificationService.EnrollmantNotification(userId, "Account", "From Assembly", DateTime.UtcNow);
             await _hubContext.Clients.All.SendAsync("enrollment", "fromAccount");
-
-            return Ok();
+            throw new Exception("Something went wrong");
         }
 
         [HttpPost("student/register")]

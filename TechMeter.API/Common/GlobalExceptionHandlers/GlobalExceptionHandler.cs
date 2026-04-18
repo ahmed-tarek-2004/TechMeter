@@ -21,7 +21,7 @@ namespace TechMeter.API.Common.Exceptions
 
             var problemDeatils = new ProblemDetails()
             {
-                Status = (int)HttpStatusCode.InternalServerError,
+                Status = StatusCodes.Status500InternalServerError,
                 Title = "An unexpected error has occurred, check Logger files ",
                 Detail = exception.Message,
                 Instance = httpContext.Request.Path
