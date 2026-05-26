@@ -20,6 +20,8 @@ using TechMeter.Infrastructure.Adapters.JwtSettings;
 using TechMeter.Infrastructure.Extensions;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Seeder;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 namespace TechMeter
 {
@@ -31,6 +33,11 @@ namespace TechMeter
             builder.Services.AddControllers();
 
             builder.Host.UseSerilogLogging();
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile("Firebase//firebase.json")
+            });
+
 
             builder.Services.AddControllers()
              .ConfigureApiBehaviorOptions(options =>

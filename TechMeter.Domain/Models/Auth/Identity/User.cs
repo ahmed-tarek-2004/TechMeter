@@ -16,5 +16,6 @@ namespace TechMeter.Domain.Models.Auth.Identity
         public Gender Gender { get; set; }
         public Student Student { get; set; }
         public Provider Provider { get; set; }
+        public ICollection<UserFcmToken> userFcmTokens { get; set; }
     }
 }

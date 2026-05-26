@@ -12,6 +12,7 @@ using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Interfaces.Cart;
 using TechMeter.Application.Interfaces.Category;
 using TechMeter.Application.Interfaces.CourseService;
+using TechMeter.Application.Interfaces.Fcm;
 using TechMeter.Application.Interfaces.Jobs;
 using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Application.Interfaces.Notification;
@@ -33,6 +34,7 @@ using TechMeter.Infrastructure.Services.AuthService;
 using TechMeter.Infrastructure.Services.Cart;
 using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
+using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.Lesson;
 using TechMeter.Infrastructure.Services.Notification;
 
@@ -88,6 +90,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
             //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IFcmService, FcmService>();
 
             return services;
         }
