@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
+using TechMeter.Application.Features.Payment.Command.Checkout;
+using TechMeter.Application.Features.Payment.Command.PaymentIntent;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
@@ -46,9 +48,9 @@ namespace TechMeter.Infrastructure.Services.Payment
             stripe = option.Value;
             _emailService = emailService;
         }
-        public async Task<Response<PaymentResponse>> CreateACheckOut(string studentId, PaymentRequest request)
+        public async Task<Response<PaymentResponse>> CreateACheckOut(CheckoutCommand command)
         {
-            var user = await _context.Users.FindAsync(studentId);
+            var user = await _context.Users.FindAsync(command.studentId);
             if (user == null)
             {
                 return _responseHandler.BadRequest<PaymentResponse>("User is not found");
@@ -57,7 +59,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 .AsNoTracking()
                 .Include(b => b.OrderItems)
                 .ThenInclude(b => b.Course)
-                .FirstOrDefaultAsync(b => b.Id == request.OrderId && b.StudentId == user.Id);
+                .FirstOrDefaultAsync(b => b.Id == command.orderId && b.StudentId == user.Id);
             if (order == null)
             {
                 return _responseHandler.NotFound<PaymentResponse>("User is not found");
@@ -67,7 +69,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                          {
                              PriceData = new SessionLineItemPriceDataOptions
                              {
-                                 Currency = request.Currency,
+                                 Currency = command.currency,
                                  UnitAmountDecimal = item.UnitPrice * 100,
                                  ProductData = new SessionLineItemPriceDataProductDataOptions
                                  {
@@ -88,7 +90,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 CustomerEmail = user.Email,
                 Metadata = new Dictionary<string, string>
                 {
-                   { "orderId", request.OrderId },
+                   { "orderId", command.orderId },
                    { "clientId", user.Id }
                 },
 
@@ -105,9 +107,9 @@ namespace TechMeter.Infrastructure.Services.Payment
             return _responseHandler.Success(response, "Continue to pay");
         }
 
-        public async Task<Response<PaymentIntentResponse>> PaymentIntentService(string StudentId, PaymentRequest request)
+        public async Task<Response<PaymentIntentResponse>> PaymentIntentService(PaymentIntentCommand request)
         {
-            var user = await _context.Users.FindAsync(StudentId);
+            var user = await _context.Users.FindAsync(request.studentId);
             if (user == null)
             {
                 return _responseHandler.BadRequest<PaymentIntentResponse>("User is not found");
@@ -115,7 +117,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             var order = await _context.Order
                 .AsNoTracking()
                 .Include(b => b.OrderItems)
-                .FirstOrDefaultAsync(b => b.Id == request.OrderId && b.StudentId == StudentId && b.Status == OrderStatus.PendingPayment);
+                .FirstOrDefaultAsync(b => b.Id == request.orderId && b.StudentId == request.studentId && b.Status == OrderStatus.PendingPayment);
             if (order == null)
             {
                 return _responseHandler.NotFound<PaymentIntentResponse>("Order is not found");
@@ -123,7 +125,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             var options = new PaymentIntentCreateOptions
             {
                 Amount = (long)(order.OrderItems.Sum(b => b.UnitPrice) * 100),
-                Currency = request.Currency ?? "usd",
+                Currency = request.currency ?? "usd",
                 PaymentMethodTypes = new List<string> { "card" },
                 //AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                 //{
@@ -131,7 +133,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 //},
                 Metadata = new Dictionary<string, string>
                 {
-                   { "orderId", request.OrderId },
+                   { "orderId", request.orderId },
                    { "clientId", user.Id }
                 }
             };
