@@ -10,7 +10,6 @@ namespace TechMeter.Application.Features.Section.Command.AddSection
 {
     public sealed class AddSectionCommand : IRequest<Response<string>>
     {
-
         public string providerId { get; set; }
         public string courseId { get; set; }
         public string sectionName { get; set; }

@@ -21,16 +21,9 @@ namespace TechMeter.API.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderService _orderService;
-        private readonly ResponseHandler _responseHandler;
         private readonly IMediator _mediator;
-        private readonly IValidator<GetOrders> _getOrderValidation;
-        public OrderController(IOrderService orderService, IValidator<GetOrders> getOrderValidation,
-            ResponseHandler responseHandler, IMediator mediator)
+        public OrderController(IMediator mediator)
         {
-            _orderService = orderService;
-            _responseHandler = responseHandler;
-            _getOrderValidation = getOrderValidation;
             _mediator = mediator;
         }
         [HttpGet("{OrderId}")]

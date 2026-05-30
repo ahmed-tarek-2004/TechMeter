@@ -38,22 +38,15 @@ namespace TechMeter.API.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
-        private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
-        private readonly IValidator<ChangePassword> _changePasswordValidator;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-        private readonly ResponseHandler _responseHandler;
 
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
-              ResponseHandler responseHandler, IValidator<ChangePassword> changePasswordValidator
-            , IMapper mapper, IMediator mediator,
-            IValidator<ResetPasswordRequest> resetPasswordValidator)
+              ResponseHandler responseHandler
+            , IMapper mapper, IMediator mediator)
         {
             _logger = logger;
             _authService = authService;
-            _responseHandler = responseHandler;
-            _changePasswordValidator = changePasswordValidator;
-            _resetPasswordValidator = resetPasswordValidator;
             _mapper = mapper;
             _mediator = mediator;
         }

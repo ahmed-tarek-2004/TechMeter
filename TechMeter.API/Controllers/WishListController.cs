@@ -16,32 +16,14 @@ namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WishListController : ControllerBase
+    public class WishListController(IMediator mediator) : ControllerBase
     {
-        private readonly ILogger<WishListController> _logger;
-        //private readonly IWishListService _wishlistService;
-        private readonly ResponseHandler _responseHandler;
-        //private readonly IValidator<AddToWishListRequest> _addToWishlistValidator;
-        private readonly IMediator _mediator;
-
-        public WishListController(
-            ILogger<WishListController> logger,
-            //IWishListService wishlistService,
-            ResponseHandler responseHandler,
-            IMediator mediator)
-        {
-            _logger = logger;
-            //_wishlistService = wishlistService;
-            _responseHandler = responseHandler;
-            _mediator = mediator;
-        }
-
+       
         //[Authorize(Roles = "student")]
         [HttpGet("get/student/wishlist")]
         public async Task<ActionResult<Response<GetWishListResponse>>> GetWishlistAsync()
         {
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _mediator.Send(new GetWishListByIdQuery(studentId!));
+            var response = await mediator.Send(new GetWishListByIdQuery(GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -50,9 +32,8 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<GetWishListResponse>>> AddToWishlistAsync(string courseId)
         {
 
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var command = new AddToWishListCommand(studentId!, courseId);
-            var response = await _mediator.Send(command);
+            var command = new AddToWishListCommand(GetUserId(), courseId);
+            var response = await mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -60,9 +41,8 @@ namespace TechMeter.API.Controllers
         [HttpDelete("student/remove/item/{wishlistItemId}")]
         public async Task<ActionResult<Response<GetWishListResponse>>> RemoveFromWishlistAsync([FromRoute] string wishlistItemId)
         {
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var command = new RemoveFromWishlistCommand(studentId!, wishlistItemId);
-            var response = await _mediator.Send(command);
+            var command = new RemoveFromWishlistCommand(GetUserId(), wishlistItemId);
+            var response = await mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -70,10 +50,13 @@ namespace TechMeter.API.Controllers
         [HttpDelete("student/clear/wishlist")]
         public async Task<ActionResult<Response<object>>> ClearWishlistAsync()
         {
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var command = new ClearWishlistItemCommand(studentId!);
-            var response = await _mediator.Send(command);
+            var command = new ClearWishlistItemCommand(GetUserId());
+            var response = await mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
+        }
+        private string GetUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
         }
     }
 }
