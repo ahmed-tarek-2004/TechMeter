@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Payment;
-using TechMeter.Application.Features.Payment.Query.ProviderQuery;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Shared.Bases;
 
-namespace TechMeter.Application.Features.Payment.Query
+namespace TechMeter.Application.Features.Payment.Query.ProviderQuery
 {
     public class ProviderTransactionQueryHandler(IPaymentService paymentService) : IRequestHandler<ProviderTransactionQuery, Response<PaginatedList<TransactionResponse>>>
     {

@@ -1,8 +1,17 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Order;
+using TechMeter.Application.Features.Order.Command.CancelOrder;
+using TechMeter.Application.Features.Order.Command.CreateOrder;
+using TechMeter.Application.Features.Order.Command.DeleteOrder;
+using TechMeter.Application.Features.Order.Command.UpdateOrderStatus;
+using TechMeter.Application.Features.Order.Query.GetAdminOrders;
+using TechMeter.Application.Features.Order.Query.GetOrderById;
+using TechMeter.Application.Features.Order.Query.GetProviderOrders;
+using TechMeter.Application.Features.Order.Query.GetStudentOrders;
 using TechMeter.Application.Interfaces.Order;
 using TechMeter.Domain.Shared.Bases;
 
@@ -14,21 +23,21 @@ namespace TechMeter.API.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly ResponseHandler _responseHandler;
+        private readonly IMediator _mediator;
         private readonly IValidator<GetOrders> _getOrderValidation;
-        private readonly IValidator<UpdateOrderStatus> _updateOrderStatus;
-        public OrderController(IOrderService orderService, IValidator<UpdateOrderStatus> updateOrderStatus,
-            IValidator<GetOrders> getOrderValidation, ResponseHandler responseHandler)
+        public OrderController(IOrderService orderService, IValidator<GetOrders> getOrderValidation,
+            ResponseHandler responseHandler, IMediator mediator)
         {
             _orderService = orderService;
             _responseHandler = responseHandler;
             _getOrderValidation = getOrderValidation;
-            _updateOrderStatus = updateOrderStatus;
+            _mediator = mediator;
         }
-        [HttpGet("order/{OrderId}")]
+        [HttpGet("{OrderId}")]
         public async Task<ActionResult<Response<OrderResponse>>> GetOrderByIdAsync([FromRoute] string OrderId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _orderService.GetOrderById(userId!, OrderId);
+
+            var response = await _mediator.Send(new GetOrderByIdQuery() { userId = GetUserId(), orderId = OrderId });
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -43,54 +52,28 @@ namespace TechMeter.API.Controllers
         [HttpGet("student/orders/{studentId}")]
         public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetStudentOrdersAsync([FromRoute] string studentId, [FromQuery] GetOrders getOrders)
         {
-
-            var ValidationResult = await _getOrderValidation.ValidateAsync(getOrders);
-            if (!ValidationResult.IsValid)
-            {
-                var Error = string.Join(", ", ValidationResult.Errors.Select(b => b.ErrorMessage));
-                var badRequestResponse = _responseHandler.BadRequest<PaginatedList<OrderSummaryResponse>>(Error);
-                return StatusCode((int)badRequestResponse.StatusCode, badRequestResponse);
-            }
-
-            var response = await _orderService.GetStudentOrders(studentId, getOrders);
+            var response = await _mediator.Send(new GetStudentOrdersQuery() { StudentId = studentId, GetOrders = getOrders });
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpGet("provider/orders/{providerId}")]
         public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetProviderOrdersAsync([FromRoute] string ProviderId, [FromQuery] GetOrders getOrders)
         {
-
-            var ValidationResult = await _getOrderValidation.ValidateAsync(getOrders);
-            if (!ValidationResult.IsValid)
-            {
-                var Error = string.Join(", ", ValidationResult.Errors.Select(b => b.ErrorMessage));
-                var badRequestResponse = _responseHandler.BadRequest<PaginatedList<OrderSummaryResponse>>(Error);
-                return StatusCode((int)badRequestResponse.StatusCode, badRequestResponse);
-            }
-
-            var response = await _orderService.GetProviderOrders(ProviderId, getOrders);
+            var response = await _mediator.Send(new GetProviderOrdersQuery() { ProviderId = ProviderId, GetOrders = getOrders });
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpGet("admin")]
         public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetAdminOrdersAsync([FromQuery] GetOrders getOrders)
         {
-            var ValidationResult = await _getOrderValidation.ValidateAsync(getOrders);
-            if (!ValidationResult.IsValid)
-            {
-                var Error = string.Join(", ", ValidationResult.Errors.Select(b => b.ErrorMessage));
-                var badRequestResponse = _responseHandler.BadRequest<PaginatedList<OrderSummaryResponse>>(Error);
-                return StatusCode((int)badRequestResponse.StatusCode, badRequestResponse);
-            }
-
-            var response = await _orderService.GetAdminOrders(getOrders);
+            var response = await _mediator.Send(new GetAdminOrdersQuery() { GetOrders = getOrders });
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("create")] 
+        [HttpPost]
         public async Task<ActionResult<Response<OrderResponse>>> CreateOrderFromCart([FromBody] CreateOrderRequest request)
         {
-           // var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _orderService.CreateStudentOrder(request.StuentId);
+            // var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _mediator.Send(new CreateOrderCommand() { StudentId = request.StudentId });
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -98,27 +81,27 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<OrderResponse>>> StudentCancelOrder([FromRoute] string orderId)
         {
 
-            var response = await _orderService.CancelOrderStatus(orderId);
+            var response = await _mediator.Send(new CancelOrderCommand() { OrderId = orderId });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPut("update/status")]
-        public async Task<ActionResult<Response<OrderResponse>>> updateOrderAsync([FromBody] UpdateOrderStatus updateOrderStatus)
+        [HttpPut("status/{orderId}")]
+        public async Task<ActionResult<Response<OrderResponse>>> updateOrderAsync([FromRoute] string orderId, [FromBody] UpdateOrderStatusRequest updateOrderStatus)
         {
-            var validation = await _updateOrderStatus.ValidateAsync(updateOrderStatus);
-            if (!validation.IsValid)
-            {
-                var error = string.Join(", ", validation.Errors.Select(b => b.ErrorMessage));
-                return StatusCode((int)_responseHandler.BadRequest<OrderResponse>(error).StatusCode,
-                    _responseHandler.BadRequest<OrderResponse>(error));
-            }
-            var response = await _orderService.UpdatOrderStatus(updateOrderStatus);
+
+            var response = await _mediator.Send(new UpdateOrderStatusCommand() { OrderId = orderId, Status = updateOrderStatus.Status });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpDelete("delete/{orderId}")]
+        [HttpDelete("{orderId}")]
+       
         public async Task<ActionResult<Response<OrderResponse>>> DeleteOrderAsync([FromRoute] string orderId)
         {
-            var response = await _orderService.DeleteOrderByProviderOrAdmin(orderId);
+            var response = await _mediator.Send(new DeleteOrderCommand() { OrderId = orderId });
             return StatusCode((int)response.StatusCode, response);
+        }
+
+        private string GetUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
     }
 }
