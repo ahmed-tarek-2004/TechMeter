@@ -28,26 +28,28 @@ namespace TechMeter.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("student/add")]
+        [HttpPost("student")]
         [Authorize(Roles = "student")]
-        public async Task<ActionResult<Response<StudentCourseRatingDto>>> AddStudentRatingToCourse([FromBody] AddStudentRatingRequest request)
+        public async Task<ActionResult<Response<string>>> AddStudentRatingToCourse([FromBody] AddStudentRatingRequest request)
         {
-            var command = _mapper.Map<AddStudentRatingCommand>(request);
-            command.StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _mediator.Send(command);
+            var response = await _mediator.Send(new AddStudentRatingCommand()
+            {
+                studentId = GetUserId(),
+                addStudentRatingRequest = request
+            });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPut("student/edit")]
+        [HttpPut("student")]
         [Authorize(Roles = "student")]
-        public async Task<ActionResult<Response<StudentCourseRatingDto>>> EditStudentRating([FromBody] EditStudentRatingRequest request)
+        public async Task<ActionResult<Response<string>>> EditStudentRating([FromBody] EditStudentRatingRequest request)
         {
             var command = _mapper.Map<EditStudentRatingCommand>(request);
-            command.StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            command.StudentId = GetUserId();
             var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("student/get/{CourseId}")]
+        [HttpGet("student/{CourseId}")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<string>>> StudentGetCourseRating([FromRoute] string CourseId)
         {
@@ -58,7 +60,7 @@ namespace TechMeter.API.Controllers
         }
 
 
-        [HttpGet("get-all/{CourseId}")]
+        [HttpGet("all/{CourseId}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> GetAllCourseRating([FromRoute] string CourseId)
         {
@@ -67,7 +69,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpDelete("student/delete/{CourseId}")]
+        [HttpDelete("student/{CourseId}")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<string>>> StudentDeleteRating([FromRoute] string CourseId)
         {
@@ -77,13 +79,17 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpDelete("admin/delete/student/{studentId}/rating-to-course/{courseId}")]
+        [HttpDelete("admin/{studentId}/rating/rating-to-course/{courseId}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<Response<string>>> AdminDeleteRating([FromRoute] string studentId, [FromRoute] string courseId)
         {
             var command = new DeleteStudentRatingCommand(studentId, courseId);
             var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
+        }
+        private string GetUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
     }
 }

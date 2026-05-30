@@ -13,7 +13,7 @@ namespace TechMeter.Application.Features.Auth.ResendOtp
     {
         public async Task<Response<string>> Handle(ResendOtpCommand request, CancellationToken cancellationToken)
         {
-            return await authService.ResponseOtp(request);
+            return await authService.ResponseOtp(request.Id);
         }
     }
 }

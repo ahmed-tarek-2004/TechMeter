@@ -13,48 +13,56 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
         private readonly List<string> Extensions = [".png", ".jpg", ".jpeg"];
         public StudentRegisterCommandValidator()
         {
-            RuleFor(b => b)
-                .Must(b => !string.IsNullOrEmpty(b.Email))
-                .WithMessage("Email is required");
+            RuleFor(b => b.StudentRegisterRequest)
+                 .NotEmpty()
+                 .WithMessage("Student Register Request is required.")
+                 .DependentRules(() =>
+                 {
+                     RuleFor(b => b)
+                 .Must(b => !string.IsNullOrEmpty(b.StudentRegisterRequest.Email))
+                 .WithMessage("Email is required");
 
-            RuleFor(x => x.Email)
-              .EmailAddress()
-              .When(b => !string.IsNullOrEmpty(b.Email));
+                     RuleFor(x => x.StudentRegisterRequest.Email)
+                       .EmailAddress()
+                       .When(b => !string.IsNullOrEmpty(b.StudentRegisterRequest.Email));
 
-            RuleFor(b => b)
-                .Must(b => !string.IsNullOrEmpty(b.UserName))
-                .WithMessage("UserName is required");
+                     RuleFor(b => b)
+                         .Must(b => !string.IsNullOrEmpty(b.StudentRegisterRequest.UserName))
+                         .WithMessage("UserName is required");
 
-            RuleFor(b => b)
-                .Must(b => !string.IsNullOrEmpty(b.PhoneNumber))
-                .WithMessage("PhoneNumber is required");
+                     RuleFor(b => b)
+                         .Must(b => !string.IsNullOrEmpty(b.StudentRegisterRequest.PhoneNumber))
+                         .WithMessage("PhoneNumber is required");
 
-            RuleFor(b => b)
-                .Must(b => !string.IsNullOrEmpty(b.EducationLevel))
-                .WithMessage("Education Level  is required");
+                     RuleFor(b => b)
+                         .Must(b => !string.IsNullOrEmpty(b.StudentRegisterRequest.EducationLevel))
+                         .WithMessage("Education Level  is required");
 
-            RuleFor(b => b.PassworfConfirmed)
-                .NotEmpty()
-                .WithMessage("PasswordConfirmed is required")
-                .Equal(b => b.Password)
-                .WithMessage("Passwords do not match.");
+                     RuleFor(b => b.StudentRegisterRequest.PassworfConfirmed)
+                         .NotEmpty()
+                         .WithMessage("PasswordConfirmed is required")
+                         .Equal(b => b.StudentRegisterRequest.Password)
+                         .WithMessage("Passwords do not match.");
 
-            RuleFor(x => x.BirthDate)
-                .NotNull()
-                .WithMessage("Birthday is required");
+                     RuleFor(x => x.StudentRegisterRequest.BirthDate)
+                         .NotNull()
+                         .WithMessage("Birthday is required");
 
-            RuleFor(x => x.Country)
-                .Must(b => !string.IsNullOrEmpty(b))
-                .WithMessage("Country is required");
+                     RuleFor(x => x.StudentRegisterRequest.Country)
+                         .Must(b => !string.IsNullOrEmpty(b))
+                         .WithMessage("Country is required");
 
 
-            RuleFor(x => x.Gender)
-                .Must(x => x != Gender.none)
-                .WithMessage("Gender is required");
+                     RuleFor(x => x.StudentRegisterRequest.Gender)
+                         .Must(x => x != Gender.none)
+                         .WithMessage("Gender is required");
 
-            RuleFor(b => b.ProfilePhoto)
-                .Must(b => Extensions.Contains(Path.GetExtension(b.FileName)))
-                .When(b => b.ProfilePhoto != null);
+                     RuleFor(b => b.StudentRegisterRequest.ProfilePhoto)
+                         .Must(b => Extensions.Contains(Path.GetExtension(b.FileName)))
+                         .When(b => b.StudentRegisterRequest.ProfilePhoto != null);
+                 })
+
+                 ;
         }
     }
 }

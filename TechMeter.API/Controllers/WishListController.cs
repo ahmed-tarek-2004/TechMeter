@@ -20,7 +20,7 @@ namespace TechMeter.API.Controllers
     {
        
         //[Authorize(Roles = "student")]
-        [HttpGet("get/student/wishlist")]
+        [HttpGet("")]
         public async Task<ActionResult<Response<GetWishListResponse>>> GetWishlistAsync()
         {
             var response = await mediator.Send(new GetWishListByIdQuery(GetUserId()));
@@ -28,7 +28,7 @@ namespace TechMeter.API.Controllers
         }
 
         //[Authorize(Roles = "student")]
-        [HttpPost("student/add/course/{courseId}/to/wishlist")]
+        [HttpPost("{courseId}")]
         public async Task<ActionResult<Response<GetWishListResponse>>> AddToWishlistAsync(string courseId)
         {
 
@@ -38,7 +38,7 @@ namespace TechMeter.API.Controllers
         }
 
         //[Authorize(Roles = "student")]
-        [HttpDelete("student/remove/item/{wishlistItemId}")]
+        [HttpDelete("{wishlistItemId}")]
         public async Task<ActionResult<Response<GetWishListResponse>>> RemoveFromWishlistAsync([FromRoute] string wishlistItemId)
         {
             var command = new RemoveFromWishlistCommand(GetUserId(), wishlistItemId);
@@ -47,7 +47,7 @@ namespace TechMeter.API.Controllers
         }
 
         //[Authorize(Roles = "student")]
-        [HttpDelete("student/clear/wishlist")]
+        [HttpDelete("clear")]
         public async Task<ActionResult<Response<object>>> ClearWishlistAsync()
         {
             var command = new ClearWishlistItemCommand(GetUserId());

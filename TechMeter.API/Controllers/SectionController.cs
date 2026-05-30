@@ -30,7 +30,7 @@ namespace TechMeter.API.Controllers
             var response = await mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpGet("course/{courseId}/all/sections")]
+        [HttpGet("{courseId}/all")]
         public async Task<ActionResult<Response<List<GetSectionResponse>>>> GetAllSectionAsync([FromRoute] string courseId)
         {
             var response = await mediator.Send(new GetAllSectionQuery(courseId));
@@ -47,7 +47,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
 
         }
-        [HttpPut("section/{Id}")]
+        [HttpPut("{Id}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> EditSectionAsync([FromRoute] string Id, [FromBody] EditSectionRequest request)
         {
@@ -61,7 +61,7 @@ namespace TechMeter.API.Controllers
 
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpDelete("course/{courseId}/section/{Id}")]
+        [HttpDelete("{courseId}/section/{Id}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> Delete([FromRoute] string courseId, [FromRoute] string Id)
         {

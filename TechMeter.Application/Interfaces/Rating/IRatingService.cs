@@ -13,10 +13,10 @@ namespace TechMeter.Application.Interfaces.Rating
 {
     public interface IRatingService
     {
-        Task<Response<string>> AddRatingToCourse(AddStudentRatingCommand command);
+        Task<Response<string>> AddRatingToCourse(string studentId, AddStudentRatingRequest command);
         Task<Response<string>> EditRatingToCourse(EditStudentRatingCommand request);
         Task<Response<List<StudentCourseRatingDto>>> GetAllCourseRating(string ProviderId, string CourseId);
         Task<Response<StudentCourseRatingDto>> GetStudentCourseRating(string StudentId, string CourseId);
-        Task<Response<string>> DeleteStudentCourseionRating(DeleteStudentRatingCommand request);
+        Task<Response<string>> DeleteStudentCourseRating(DeleteStudentRatingCommand request);
     }
 }

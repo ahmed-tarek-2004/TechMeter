@@ -33,20 +33,20 @@ namespace TechMeter.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("all/course")]
+        [HttpGet("all")]
         public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetAll()
         {
             var response = await _mediator.Send(new GetAllCoursesQuery());
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("course/by/{Id}")]
+        [HttpGet("{Id}")]
         public async Task<ActionResult<Response<GetCourseResponse>>> GetCourseByIdAsync(string Id)
         {
             var response = await _mediator.Send(new GetCourseByIdQuery(Id));
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpGet("provider/courses")]
+        [HttpGet("provider")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetProviderCoursesAsync()
         {
@@ -54,7 +54,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("student/courses")]
+        [HttpGet("student")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<List<GetStudentCourseResponse>>>> GetStudentCoursesAsync()
         {
@@ -62,7 +62,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("add")]
+        [HttpPost()]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromForm] AddCourseRequest request)
         {
@@ -72,7 +72,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPut("edit/{courseId}")]
+        [HttpPut("{courseId}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> Update([FromRoute] string courseId, [FromForm] EditCourseRequest request)
         {

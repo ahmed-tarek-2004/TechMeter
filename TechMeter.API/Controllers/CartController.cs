@@ -48,8 +48,8 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
+        [HttpGet("provider/{studentId}/cart")]
         [Authorize(Roles = "provider")]
-        [HttpGet("provider/cart/{studentId}")]
         public async Task<ActionResult<Response<CartResponse>>> GetProviderCartAsync([FromRoute] string studentId)
         {
             var command = new GetProviderStudentCartCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "", studentId);
@@ -58,7 +58,7 @@ namespace TechMeter.API.Controllers
         }
 
         [Authorize(Roles = "student")]
-        [HttpPost("student/add/to/cart")]
+        [HttpPost("student")]
         public async Task<ActionResult<Response<CartResponse>>> AddToCartAsync([FromBody] CartRequest cartRequest)
         {
             var command = _mapper.Map<AddToCartCommand>(cartRequest);
@@ -82,7 +82,7 @@ namespace TechMeter.API.Controllers
         //    return StatusCode((int)response.StatusCode, response);
         //}
 
-        [HttpDelete("student/cart/{cartItemId}")]
+        [HttpDelete("student/{cartItemId}")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<CartResponse>>> RemoveFromCartAsync([FromRoute] string cartItemId)
         {
@@ -91,7 +91,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpDelete("clear/student/cart")]
+        [HttpDelete("clear")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<CartResponse>>> ClearStudentCartAsync()
         {
