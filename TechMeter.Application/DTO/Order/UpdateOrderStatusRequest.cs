@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Order
 {
-    public class UpdateOrderStatus
+    public class UpdateOrderStatusRequest
     {
-        public string OrderId { get; set; }
         public string Status { get; set; }
     }
 }

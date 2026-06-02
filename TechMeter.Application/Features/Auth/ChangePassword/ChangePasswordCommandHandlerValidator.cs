@@ -7,21 +7,33 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.Features.Auth.ChangePassword
 {
-    public class ChangePasswordCommandHandlerValidator:AbstractValidator<ChangePasswordCommand>
+    public class ChangePasswordCommandHandlerValidator : AbstractValidator<ChangePasswordCommand>
     {
-        public ChangePasswordCommandHandlerValidator() 
+        public ChangePasswordCommandHandlerValidator()
         {
-            RuleFor(b => b.NewPassword)
-               .NotEmpty()
-               .WithMessage("New Password Is Required");
-            RuleFor(b => b.ConfirmNewPassword)
+            RuleFor(b => b.UserId)
                 .NotEmpty()
-                .WithMessage("Confirm Password is required")
-                .Equal(b => b.NewPassword)
-                .WithMessage("New Password must match confirmed password");
-            RuleFor(b => b.CurrentPassword)
-                .NotEmpty()
-                .WithMessage("Current Password is required");
+                .WithMessage("User Id is required");
+
+            RuleFor(b => b.changePasswordRequest)
+                .NotNull()
+                .WithMessage("Change Password Request is required")
+                .DependentRules(() =>
+                {
+                    RuleFor(b => b.changePasswordRequest.NewPassword)
+                        .NotEmpty()
+                        .WithMessage("New Password is required");
+
+                    RuleFor(b => b.changePasswordRequest.ConfirmNewPassword)
+                        .NotEmpty()
+                        .WithMessage("Confirm Password is required")
+                        .Equal(b => b.changePasswordRequest.NewPassword)
+                        .WithMessage("New Password must match Confirm Password");
+
+                    RuleFor(b => b.changePasswordRequest.CurrentPassword)
+                        .NotEmpty()
+                        .WithMessage("Current Password is required");
+                });
         }
     }
 }

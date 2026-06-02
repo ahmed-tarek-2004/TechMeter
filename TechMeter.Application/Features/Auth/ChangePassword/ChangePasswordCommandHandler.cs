@@ -13,7 +13,7 @@ namespace TechMeter.Application.Features.Auth.ChangePassword
     {
         public async Task<Response<string>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            return await authService.ChangePasswordAsync(request);
+            return await authService.ChangePasswordAsync(request.UserId, request.changePasswordRequest);
         }
     }
 }

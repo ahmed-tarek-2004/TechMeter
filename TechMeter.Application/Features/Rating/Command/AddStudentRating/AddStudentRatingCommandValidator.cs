@@ -11,10 +11,10 @@ namespace TechMeter.Application.Features.Rating.Command.AddStudentRating
     {
         public AddStudentRatingCommandValidator()
         {
-            RuleFor(x => x.StudentId).NotEmpty().WithMessage("StudentId is required.");
-            RuleFor(x => x.CourseId).NotEmpty().WithMessage("CourseId is required.");
-            RuleFor(x => x.Rating).InclusiveBetween(1, 5).WithMessage("Rating must be between 1 and 5.");
-            RuleFor(x => x.Comment).MaximumLength(500).WithMessage("Comment cannot exceed 500 characters.");
+            RuleFor(x => x.studentId).NotEmpty().WithMessage("StudentId is required.");
+            RuleFor(x => x.addStudentRatingRequest.CourseId).NotEmpty().WithMessage("CourseId is required.");
+            RuleFor(x => x.addStudentRatingRequest.Rating).InclusiveBetween(1, 5).WithMessage("Rating must be between 1 and 5.");
+            RuleFor(x => x.addStudentRatingRequest.Comment).MaximumLength(500).WithMessage("Comment cannot exceed 500 characters.");
         }
     }
 }

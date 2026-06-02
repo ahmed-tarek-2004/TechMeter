@@ -29,14 +29,14 @@ namespace TechMeter.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("getAll")]
+        [HttpGet()]
         public async Task<ActionResult<Response<List<GetCategoryDto>>>> GetAll()
         {
             var response = await _mediator.Send(new GetCategoriesQuery());
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("detail/by/{Id}")]
+        [HttpGet("detail/{Id}")]
         public async Task<ActionResult<Response<GetCategoryDto>>> GetById(string Id)
         {
             var command = new GetCategoryByIdQuery(Id);
@@ -44,7 +44,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("create/category")]
+        [HttpPost("category")]
         public async Task<ActionResult<Response<AddCategoryResponse>>> Create([FromBody] AddCategoryRequest request)
         {
             var command = _mapper.Map<AddCategoryCommand>(request);

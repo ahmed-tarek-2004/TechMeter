@@ -1,10 +1,20 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Lesson;
+using TechMeter.Application.Features.Lesson.Command.AddLesson;
+using TechMeter.Application.Features.Lesson.Command.ChangeLessonState;
+using TechMeter.Application.Features.Lesson.Command.DeleteLesson;
+using TechMeter.Application.Features.Lesson.Command.EditLesson;
+using TechMeter.Application.Features.Lesson.Query.GetAllLessons;
+using TechMeter.Application.Features.Lesson.Query.GetLessonById;
+using TechMeter.Application.Features.Lesson.Query.GetSectionLessons;
+using TechMeter.Application.Features.Lesson.Query.StudentLessonWatched;
 using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Domain.Shared.Bases;
 
@@ -14,91 +24,72 @@ namespace TechMeter.API.Controllers
     [ApiController]
     public class LessonController : ControllerBase
     {
-        private readonly ILessonService _lessonService;
-        private readonly ResponseHandler _responseHandler;
-        private readonly IValidator<AddLessonRequest> _addLessonRequest;
-        private readonly IValidator<EditLessonRequest> _editLessonRequest;
-        public LessonController(ILessonService lessonService, IValidator<EditLessonRequest> editLessonRequest,
-            IValidator<AddLessonRequest> addLessonRequest, ResponseHandler responseHandler)
+        private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
+        public LessonController(
+             ResponseHandler responseHandler, IMediator mediator, IMapper mapper)
         {
-            _lessonService = lessonService;
-            _editLessonRequest = editLessonRequest;
-            _addLessonRequest = addLessonRequest;
-            _responseHandler = responseHandler;
+            _mediator = mediator;
+            _mapper = mapper;
         }
 
-        [HttpPost("add/lesson/to-section/{sectionId}")]
+        [HttpPost("{sectionId}")]
         public async Task<ActionResult<GetLessonResponse>> AddLessonToSectionAsync([FromRoute] string sectionId, [FromForm] AddLessonRequest request)
         {
-            var validation = await _addLessonRequest.ValidateAsync(request);
-            if (!validation.IsValid)
+
+            var response = await _mediator.Send(new AddLessonCommand
             {
-                var Error = string.Join(", ", validation.Errors.Select(b => b.ErrorMessage));
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Error));
-            }
-            var response = await _lessonService.AddLessonAsync(sectionId, request);
+                SectionId = sectionId,
+                request = request
+            });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPost("student/{lessonId}/finish/lesson")]
+        [HttpPost("student/{lessonId}/finish-unfinish")]
         [Authorize(Roles = "student")]
-        public async Task<ActionResult<GetLessonResponse>> StudentLessonWatched([FromRoute] string lessonId)
+        public async Task<ActionResult<string>> StudentLessonWatched([FromRoute] string lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _lessonService.StudentLessonWatched(userId!, lessonId);
+            var response = await _mediator.Send(new ChangeLessonStateCommand { LessonId = lessonId, StudentId = userId! });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPost("student/{lessonId}/unfinish/lesson")]
-        [Authorize(Roles = "student")]
-        public async Task<ActionResult<GetLessonResponse>> StudentLessonUnwatched([FromRoute] string lessonId)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _lessonService.StudentLessonUnwatched(userId!, lessonId);
-            return StatusCode((int)response.StatusCode, response);
-        }
-        [HttpPut("edit/lesson/detail/by/{Id}")]
+        [HttpPut("{Id}")]
         public async Task<ActionResult<GetLessonResponse>> EditLEssonByIdAsync([FromRoute] string Id, [FromForm] EditLessonRequest request)
         {
-            var validation = await _editLessonRequest.ValidateAsync(request);
-            if (!validation.IsValid)
-            {
-                var Error = string.Join(", ", validation.Errors.Select(b => b.ErrorMessage));
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<object>(Error));
-            }
-            var response = await _lessonService.EditLessonAsync(Id, request);
+            var response = await _mediator.Send(new EditLessonCommand { Id = Id, EditLessonRequest = request });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpGet("lesson/by/{Id}")]
+        [HttpGet("{Id}")]
         public async Task<ActionResult<GetLessonResponse>> GetLessonById(string Id)
         {
-            var response = await _lessonService.GetLessonByIdAsync(Id);
+            var response = await _mediator.Send(new GetLessonByIdQuery { Id = Id });
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("all/lesson")]
+        [HttpGet("all")]
         public async Task<ActionResult<List<GetLessonResponse>>> GetAllLessonsAsync()
         {
-            var response = await _lessonService.GetALLessonAsync();
+            var response = await _mediator.Send(new GetAllLessonsQuery());
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("student/lesson-watched")]
+        [HttpGet("student/watched")]
         public async Task<ActionResult<List<GetLessonResponse>>> GetStudentLessonWatchedAsync()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _lessonService.GetStudentLessonWatched(userId!);
+            var response = await _mediator.Send(new StudentLessonWatchedQuery { StudentId = userId! });
             return StatusCode((int)response.StatusCode, response);
 
         }
-        [HttpGet("section/lesson/{sectionId}")]
+        [HttpGet("{sectionId}/lessons")]
         public async Task<ActionResult<List<GetLessonResponse>>> GetAllLessonsAsync([FromRoute] string sectionId)
         {
-            var response = await _lessonService.GetSectionLessonResponse(sectionId);
+            var response = await _mediator.Send(new GetSectionLessonsQuery { SectionId = sectionId });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpDelete("delete/lesson/by/{Id}")]
-        public async Task<ActionResult<List<GetLessonResponse>>> DeleteLwssonByIdAsync(string Id)
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult<Response<string>>> DeleteLessonByIdAsync(string Id)
         {
-            var response = await _lessonService.DeleteLessonAsync(Id);
+            var response = await _mediator.Send(new DeleteLessonCommand { Id = Id });
             return StatusCode((int)response.StatusCode, response);
         }
 
