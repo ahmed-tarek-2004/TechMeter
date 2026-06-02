@@ -14,8 +14,8 @@ namespace TechMeter.Application.Interfaces.SectionService
     {
         Task<Response<List<GetSectionResponse>>> GetAllCourseSectionsAsync(string courseId);
         Task<Response<GetSectionResponse>> GetSectionDetailedByIdAsync(string courseId, string sectionId);
-        Task<Response<string>> AddSectionAsync(AddSectionCommand sectionCommand);
-        Task<Response<string>> EditSectionAsync(EditSectionCommand request);
+        Task<Response<string>> AddSectionAsync(string providerId,string courseId, string sectionName);
+        Task<Response<string>> EditSectionAsync(string Id,string providerId,EditSectionRequest request);
         Task<Response<string>>DeleteSectionByIdAsync(string providerId,string courseId,string sectionId);
         //Task<Response<List<GetSectionResponse>>> GetCourseSectionsAsync(string courseId);
 

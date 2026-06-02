@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Auth;
@@ -22,16 +23,16 @@ namespace TechMeter.Application.Interfaces.AuthService
 {
     public interface IAuthService
     {
-        public Task<Response<LoginResponseDto>> LoginAsync(LoginCommand request);
-        public Task<Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterCommand request);
-        public Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterCommand request);
-        public Task<Response<string>> VerifyConfirmEmailOtp(ConfirmEmailCommand request);
-        public Task<Response<VerifyResetPasswordResponse>> VerifyResetPasswordOtp(ConfirmResetPasswordCommand request);
-        public Task<Response<string>> ResponseOtp(ResendOtpCommand request);
+        public Task<Response<LoginResponseDto>> LoginAsync(string email, string password, string otp = "");
+        public Task<Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterRequest request);
+        public Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request);
+        public Task<Response<string>> VerifyConfirmEmailOtp(string userId, string otp);
+        public Task<Response<VerifyResetPasswordResponse>> VerifyResetPasswordOtp(string userId, string otp);
+        public Task<Response<string>> ResponseOtp(string otp);
         public Task<Response<string>> LogoutAsync(ClaimsPrincipal userclaims);
         public Task<Response<ForgetPasswordResponse>> ForgetPassword(string request);
-        public Task<Response<ResetPasswordResponse>> ResetPasswordAsync(ResetPasswordCommand request);
-        public Task<Response<string>> ChangePasswordAsync(ChangePasswordCommand request);
+        public Task<Response<ResetPasswordResponse>> ResetPasswordAsync(string userId, string token, string password, string confirmPassword);
+        public Task<Response<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request);
         //public Task<Response<string>> Logoutasync(string userId);
     }
 }

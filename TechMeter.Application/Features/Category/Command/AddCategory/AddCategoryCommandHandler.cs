@@ -14,7 +14,7 @@ namespace TechMeter.Application.Features.Category.Command.AddCategory
     {
         public async Task<Response<AddCategoryResponse>> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
         {
-            return await categoryService.AddCategoryAsync(request);
+            return await categoryService.AddCategoryAsync(request.Name, request.Description);
         }
     }
 }

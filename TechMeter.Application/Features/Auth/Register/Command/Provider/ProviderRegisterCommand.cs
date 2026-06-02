@@ -11,7 +11,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.Register.Command.Provider
 {
-    public sealed record ProviderRegisterCommand(string UserName, string Email, string PhoneNumber,
-        string Password, string PassworfConfirmed, string Country, IFormFile? ProfilePhoto,
-        Gender Gender, string BankAccount, string? Brief, int ExperienceYears):IRequest<Response<ProviderRegisterResponse>>;
+    public sealed record ProviderRegisterCommand(ProviderRegisterRequest ProviderRegisterRequest):IRequest<Response<ProviderRegisterResponse>>;
 }

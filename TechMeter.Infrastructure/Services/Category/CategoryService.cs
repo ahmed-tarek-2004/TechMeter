@@ -24,7 +24,7 @@ namespace TechMeter.Infrastructure.Services.Category
             _context = context;
             _responseHandler = responseHandler;
         }
-        public async Task<Domain.Shared.Bases.Response<AddCategoryResponse>> AddCategoryAsync(AddCategoryCommand addCategoryRequest)
+        public async Task<Domain.Shared.Bases.Response<AddCategoryResponse>> AddCategoryAsync(string name, string description)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -32,8 +32,8 @@ namespace TechMeter.Infrastructure.Services.Category
                 var Category = new TechMeter.Domain.Models.Category()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Name = addCategoryRequest.Name,
-                    Description = addCategoryRequest.Description,
+                    Name = name,
+                    Description = description,
                     Courses = new List<Course>()
                 };
                 await _context.AddAsync(Category);
@@ -128,10 +128,10 @@ namespace TechMeter.Infrastructure.Services.Category
             return _responseHandler.Success(response, $"Category {response.Name} returned successfully");
         }
 
-        public async Task<Domain.Shared.Bases.Response<UpdateCategoryResponse>> UpdateCategoryAsync(UpdateCategoryCommand updateCategoryRequest)
+        public async Task<Domain.Shared.Bases.Response<UpdateCategoryResponse>> UpdateCategoryAsync(string id, string name, string description)
         {
             var category = await _context.Category
-               .FirstOrDefaultAsync(b => b.Id == updateCategoryRequest.Id);
+               .FirstOrDefaultAsync(b => b.Id == id);
 
             if (category == null)
             {
@@ -140,8 +140,8 @@ namespace TechMeter.Infrastructure.Services.Category
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                category.Description = updateCategoryRequest.Description;
-                category.Name = updateCategoryRequest.Name;
+                category.Description = description;
+                category.Name = name;
                 await _context.SaveChangesAsync();
 
                 var response = new UpdateCategoryResponse()

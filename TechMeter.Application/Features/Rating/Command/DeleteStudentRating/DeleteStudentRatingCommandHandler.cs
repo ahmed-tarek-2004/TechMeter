@@ -13,7 +13,7 @@ namespace TechMeter.Application.Features.Rating.Command.DeleteStudentRating
     {
         public async Task<Response<string>> Handle(DeleteStudentRatingCommand request, CancellationToken cancellationToken)
         {
-            return await ratingService.DeleteStudentCourseionRating(request);
+            return await ratingService.DeleteStudentCourseRating(request.StudentId, request.CourseId);
         }
     }
 }

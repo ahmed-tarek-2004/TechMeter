@@ -12,8 +12,8 @@ namespace TechMeter.Application.Features.Category.Command.UpdateCategory
         public UpdateCategoryCommandValidator()
         {
             RuleFor(b => b)
-               .Must(b => !string.IsNullOrEmpty(b.Name) && !string.IsNullOrEmpty(b.Description))
-               .WithMessage("Name and Description is Required");
+               .Must(b => !string.IsNullOrEmpty(b.name) && !string.IsNullOrEmpty(b.description))
+               .WithMessage("Name and Description are Required");
         }
     }
 }

@@ -19,66 +19,58 @@ namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SectionController : ControllerBase
+    public class SectionController(IMediator mediator) : ControllerBase
     {
 
-        private readonly IMapper _mapper;
-        private readonly IMediator _mediator;
-        private readonly ResponseHandler _responseHandler;
-        public SectionController(ISectionService sectionService, IMediator mediator, IMapper mapper
-            , ResponseHandler responseHandler)
-        {
-            _responseHandler = responseHandler;
-            _mediator = mediator;
-            _mapper = mapper;
-        }
-        [HttpGet("course/{courseId}/get-section-detail/{Id}")]
+        [HttpGet("course/{courseId}/detail/{sectionId}")]
         [Authorize]
-        public async Task<ActionResult<Response<GetSectionResponse>>> GetSectionById([FromRoute] string courseId, [FromRoute] string Id)
+        public async Task<ActionResult<Response<GetSectionResponse>>> GetSectionById([FromRoute] string courseId, [FromRoute] string sectionId)
         {
-            var command = new GetSectionByIdQuery(courseId = courseId, Id = Id);
-            var response = await _mediator.Send(command);
+            var command = new GetSectionByIdQuery(courseId = courseId, sectionId = sectionId);
+            var response = await mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpGet("course/{courseId}/get-all/sections")]
+        [HttpGet("{courseId}/all")]
         public async Task<ActionResult<Response<List<GetSectionResponse>>>> GetAllSectionAsync([FromRoute] string courseId)
         {
-            var response = await _mediator.Send(new GetAllSectionQuery(courseId));
+            var response = await mediator.Send(new GetAllSectionQuery(courseId));
             return StatusCode((int)response.StatusCode, response);
         }
 
-
-
-        [HttpPost("add-section")]
+        [HttpPost("section")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> AddSectionToCourseByIdAsync([FromBody] AddSectionRequest request)
         {
-
-            var command = _mapper.Map<AddSectionCommand>(request);
-            command.providerId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
-            var response = await _mediator.Send(command);
+            var response = await mediator.Send(new AddSectionCommand(GetUserId(), request.courseId, request.SectionName));
             return StatusCode((int)response.StatusCode, response);
 
         }
-        [HttpPut("edit/section/{Id}")]
+        [HttpPut("{Id}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> EditSectionAsync([FromRoute] string Id, [FromBody] EditSectionRequest request)
         {
-            var command = _mapper.Map<EditSectionCommand>(request);
-            command.providerId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
-            command.Id = Id;
-            var response = await _mediator.Send(command);
+
+            var response = await mediator.Send(new EditSectionCommand()
+            {
+                Id = Id,
+                providerId = GetUserId(),
+                editSectionRequest = request
+            });
 
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpDelete("course/{courseId}/section/{Id}")]
+        [HttpDelete("{courseId}/section/{Id}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> Delete([FromRoute] string courseId, [FromRoute] string Id)
         {
-            var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var providerId = GetUserId();
             var command = new DeleteSectionCommand(providerId ?? "", courseId, Id);
-            var response = await _mediator.Send(command);
+            var response = await mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
+        }
+        private string GetUserId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
         }
     }
 }

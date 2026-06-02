@@ -11,27 +11,33 @@ namespace TechMeter.Application.Features.Course.Command.AddCourse
     {
         public AddCourseCommandValidator()
         {
-            RuleFor(b => b)
-              .Must(b => !string.IsNullOrEmpty(b.CategoryId))
-              .WithMessage("CategoryId is Requires");
+            RuleFor(b=>b.addCourseRequest)
+               .NotNull()
+               .WithMessage("Name and Description are Required")
+               .DependentRules(() =>
+               {
+                   RuleFor(b => b)
+               .Must(b => !string.IsNullOrEmpty(b.addCourseRequest.CategoryId))
+               .WithMessage("CategoryId is Requires");
 
-            RuleFor(b => b.Title)
-                .Must(b => !string.IsNullOrEmpty(b))
-                .WithMessage("Title Is Required");
+                   RuleFor(b => b.addCourseRequest.Title)
+                       .Must(b => !string.IsNullOrEmpty(b))
+                       .WithMessage("Title Is Required");
 
-            RuleFor(b => b.Description)
-                .Must(b => !string.IsNullOrEmpty(b))
-                .WithMessage("Description Is Required");
+                   RuleFor(b => b.addCourseRequest.Description)
+                       .Must(b => !string.IsNullOrEmpty(b))
+                       .WithMessage("Description Is Required");
 
-            RuleFor(b => b.Currency)
-                .Must(b => !string.IsNullOrEmpty(b))
-                .WithMessage("Currency Is Required");
+                   RuleFor(b => b.addCourseRequest.Currency)
+                       .Must(b => !string.IsNullOrEmpty(b))
+                       .WithMessage("Currency Is Required");
 
-            RuleFor(b => b.Price)
-                .NotNull()
-                .NotEmpty()
-                .GreaterThanOrEqualTo(0)
-                .WithMessage("Price Is Required and Must be Greater Than 0");
+                   RuleFor(b => b.addCourseRequest.Price)
+                       .NotNull()
+                       .NotEmpty()
+                       .GreaterThanOrEqualTo(0)
+                       .WithMessage("Price Is Required and Must be Greater Than 0");
+               });
         }
     }
 }

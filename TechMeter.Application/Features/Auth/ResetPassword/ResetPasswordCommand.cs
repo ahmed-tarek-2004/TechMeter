@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.ResetPassword
 {
-    public sealed record ResetPasswordCommand(string UserId, string token, string Password, string ConfirmPassword) : IRequest<Response<ResetPasswordResponse>>;
+    public sealed record ResetPasswordCommand(string UserId, string Token, string Password, string ConfirmPassword) : IRequest<Response<ResetPasswordResponse>>;
 }

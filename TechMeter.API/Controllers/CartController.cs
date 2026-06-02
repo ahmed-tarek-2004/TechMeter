@@ -43,27 +43,25 @@ namespace TechMeter.API.Controllers
         [HttpGet("student/cart")]
         public async Task<ActionResult<Response<CartResponse>>> GetCartAsync()
         {
-            var command = new GetStudentCartQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var command = new GetStudentCartQuery(GetUserId());
             var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
+        [HttpGet("provider/{studentId}/cart")]
         [Authorize(Roles = "provider")]
-        [HttpGet("provider/cart/{studentId}")]
         public async Task<ActionResult<Response<CartResponse>>> GetProviderCartAsync([FromRoute] string studentId)
         {
-            var command = new GetProviderStudentCartCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "", studentId);
+            var command = new GetProviderStudentCartCommand(GetUserId(), studentId);
             var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
         [Authorize(Roles = "student")]
-        [HttpPost("student/add/to/cart")]
+        [HttpPost("student")]
         public async Task<ActionResult<Response<CartResponse>>> AddToCartAsync([FromBody] CartRequest cartRequest)
         {
-            var command = _mapper.Map<AddToCartCommand>(cartRequest);
-            command.StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _mediator.Send(command);
+            var response = await _mediator.Send(new AddToCartCommand { StudentId = GetUserId(), CourseId = cartRequest.CourseId, UnitPrice = cartRequest.UnitPrice });
             return StatusCode((int)response.StatusCode, response);
         }
         //[Authorize(Roles = "student")]
@@ -82,21 +80,25 @@ namespace TechMeter.API.Controllers
         //    return StatusCode((int)response.StatusCode, response);
         //}
 
-        [HttpDelete("student/cart/{cartItemId}")]
+        [HttpDelete("student/{cartItemId}")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<CartResponse>>> RemoveFromCartAsync([FromRoute] string cartItemId)
         {
-            var command = new RemoveCartItemCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, cartItemId);
+            var command = new RemoveCartItemCommand(GetUserId(), cartItemId);
             var response = await _mediator.Send(command);
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpDelete("clear/student/cart")]
+        [HttpDelete("clear")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<CartResponse>>> ClearStudentCartAsync()
         {
-            var response = await _mediator.Send(new ClearStudentCartCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+            var response = await _mediator.Send(new ClearStudentCartCommand(GetUserId()));
             return StatusCode((int)response.StatusCode, response);
+        }
+        private string GetUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
         }
     }
 }

@@ -34,53 +34,48 @@ namespace TechMeter.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("all/course")]
+        [HttpGet("all")]
         public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetAll()
         {
             var response = await _mediator.Send(new GetAllCoursesQuery());
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("course/by/{Id}")]
+        [HttpGet("{Id}")]
         public async Task<ActionResult<Response<GetCourseResponse>>> GetCourseByIdAsync(string Id)
         {
             var response = await _mediator.Send(new GetCourseByIdQuery(Id));
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpGet("provider/courses")]
+        [HttpGet("provider")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<List<GetCourseResponse>>>> GetProviderCoursesAsync()
         {
-            var response = await _mediator.Send(new GetProviderCoursesQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? ""));
+            var response = await _mediator.Send(new GetProviderCoursesQuery(GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("student/courses")]
+        [HttpGet("student")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<List<GetStudentCourseResponse>>>> GetStudentCoursesAsync()
         {
-            var response = await _mediator.Send(new GetStudentCoursesQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? ""));
+            var response = await _mediator.Send(new GetStudentCoursesQuery(GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromForm] AddCourseRequest request)
         {
-            var command = _mapper.Map<AddCourseCommand>(request);
-            command.providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            var response = await _mediator.Send(command);
+            var response = await _mediator.Send(new AddCourseCommand { providerId = GetUserId(), addCourseRequest = request });
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPut("edit/{courseId}")]
+        [HttpPut("{courseId}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<string>>> Update([FromRoute] string courseId, [FromForm] EditCourseRequest request)
         {
-            var command = _mapper.Map<EditCourseCommand>(request);
-            command.providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            command.courseId = courseId;
-            var response = await _mediator.Send(command);
+            var response = await _mediator.Send(new EditCourseCommand { courseId = courseId, providerId = GetUserId(), editCourseRequest = request });
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -88,10 +83,13 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles = "admin,provider")]
         public async Task<ActionResult<Response<string>>> Delete(string courseId)
         {
-            var responsiableId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var responsiableId = GetUserId();
             var response = await _mediator.Send(new DeleteCourseCommand(responsiableId!, courseId));
             return StatusCode((int)response.StatusCode, response);
         }
-
+        private string GetUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+        }
     }
 }
