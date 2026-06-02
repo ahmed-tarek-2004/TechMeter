@@ -97,12 +97,12 @@ namespace TechMeter.Infrastructure.Services.Cart
             var cartResponse = CreateCartResponse(Cart);
             return _responseHandler.Success(cartResponse, $"Cart For Student {StudentId} return successfully");
         }
-        public async Task<Response<string>> AddToCartAsync(AddToCartCommand request)
+        public async Task<Response<string>> AddToCartAsync(string studentId, string courseId, decimal unitPrice)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var Course = await _context.Course.FirstOrDefaultAsync(p => p.Id == request.CourseId);
+                var Course = await _context.Course.FirstOrDefaultAsync(p => p.Id == courseId);
                 if (Course == null)
                 {
                     return _responseHandler.BadRequest<string>("Course is not found");
@@ -112,14 +112,14 @@ namespace TechMeter.Infrastructure.Services.Cart
                 var cart = await _context.Cart
                     .Include(b => b.CartItems)
                     //.ThenInclude(b => b.Course)
-                    .FirstOrDefaultAsync(c => c.StudentId == request.StudentId);
+                    .FirstOrDefaultAsync(c => c.StudentId == studentId);
 
                 if (cart == null)
                 {
                     cart = new()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        StudentId = request.StudentId,
+                        StudentId = studentId,
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now,
                     };
@@ -129,14 +129,14 @@ namespace TechMeter.Infrastructure.Services.Cart
                 {
                     cart.CartItems = new List<CartItem>();
                 }
-                var existingCartItem = cart.CartItems.Any(b => b.CourseId == request.CourseId);
+                var existingCartItem = cart.CartItems.Any(b => b.CourseId == courseId);
                 if (existingCartItem == false)
                 {
                     var CartItem = new CartItem()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        CourseId = request.CourseId,
-                        UnitPrice = request.UnitPrice,
+                        CourseId = courseId,
+                        UnitPrice = unitPrice,
                         CreatedAt = DateTime.Now,
                         CartId = cart.Id,
                     };
@@ -145,7 +145,7 @@ namespace TechMeter.Infrastructure.Services.Cart
                 }
                 else
                 {
-                    return _responseHandler.BadRequest<string>($"course {request.CourseId} already in the cart for this student");
+                    return _responseHandler.BadRequest<string>($"course {courseId} already in the cart for this student");
                 }
 
                 await _context.SaveChangesAsync();

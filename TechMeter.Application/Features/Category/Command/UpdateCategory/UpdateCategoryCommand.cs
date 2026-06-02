@@ -9,10 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Category.Command.UpdateCategory
 {
-    public class UpdateCategoryCommand:IRequest<Response<UpdateCategoryResponse>>
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
+    public sealed record UpdateCategoryCommand(string id, string name, string description) : IRequest<Response<UpdateCategoryResponse>>;
 }

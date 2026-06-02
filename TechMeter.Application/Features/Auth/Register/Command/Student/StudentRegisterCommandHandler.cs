@@ -10,16 +10,11 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.Register.Command.Student
 {
-    public class StudentRegisterCommandHandler : IRequestHandler<StudentRegisterCommand, Response<StudentRegisterResponse>>
+    public class StudentRegisterCommandHandler(IAuthService authService) : IRequestHandler<StudentRegisterCommand, Response<StudentRegisterResponse>>
     {
-        private readonly IAuthService _authService;
-        public StudentRegisterCommandHandler(IAuthService authService) 
-        {
-            _authService = authService;
-        }
         public async Task<Response<StudentRegisterResponse>> Handle(StudentRegisterCommand request, CancellationToken cancellationToken)
         {
-            return await _authService.RegisterAsStudentAsync(request);
+            return await authService.RegisterAsStudentAsync(request.StudentRegisterRequest);
         }
     }
 }

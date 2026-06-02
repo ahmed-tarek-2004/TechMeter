@@ -15,8 +15,8 @@ namespace TechMeter.Application.Interfaces.Category
     {
         Task<Response<GetCategoryDto>> GetCategoryByIdAsync(string categoryId);
         Task<Response<List<GetCategoryDto>>> GetCategoriesAsync();
-        Task<Response<AddCategoryResponse>> AddCategoryAsync(AddCategoryCommand addCategoryRequest);
-        Task<Response<UpdateCategoryResponse>> UpdateCategoryAsync(UpdateCategoryCommand updateCategoryRequest);
+        Task<Response<AddCategoryResponse>> AddCategoryAsync(string Name, string Description);
+        Task<Response<UpdateCategoryResponse>> UpdateCategoryAsync(string Id, string Name, string Description);
         Task<Response<string>> DeleteCategoryByIdAsync(string categoryId);
     }
 }

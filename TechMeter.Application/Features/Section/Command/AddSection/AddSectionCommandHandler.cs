@@ -13,7 +13,7 @@ namespace TechMeter.Application.Features.Section.Command.AddSection
     {
         public async Task<Response<string>> Handle(AddSectionCommand request, CancellationToken cancellationToken)
         {
-            return await sectionService.AddSectionAsync(request);
+            return await sectionService.AddSectionAsync(request.providerId, request.courseId, request.sectionName);
         }
     }
 }

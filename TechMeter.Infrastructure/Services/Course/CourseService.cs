@@ -40,15 +40,15 @@ namespace TechMeter.Infrastructure.Services.CourseService
             _userManager = userManager;
         }
 
-        public async Task<Response<AddCourseResponse>> AddCourseAsync(AddCourseCommand request)
+        public async Task<Response<AddCourseResponse>> AddCourseAsync(string providerId, AddCourseRequest addCourseRequest)
         {
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == request.providerId);
+            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
             if (provider == null)
             {
                 return _responseHandler.BadRequest<AddCourseResponse>("Provider Is Not Found");
             }
 
-            var category = await _context.Category.FirstOrDefaultAsync(b => b.Id == request.CategoryId);
+            var category = await _context.Category.FirstOrDefaultAsync(b => b.Id == addCourseRequest.CategoryId);
             if (category == null)
             {
                 return _responseHandler.NotFound<AddCourseResponse>("Category Is Not Found");
@@ -57,7 +57,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
             string imageUrl = "";
             try
             {
-                imageUrl = request.CourseProfileImageUrl == null ? "Empty" : await _imageUploading.UploadAsync(request.CourseProfileImageUrl);
+                imageUrl = addCourseRequest.CourseProfileImageUrl == null ? "Empty" : await _imageUploading.UploadAsync(addCourseRequest.CourseProfileImageUrl);
             }
             catch (Exception ex)
             {
@@ -73,12 +73,12 @@ namespace TechMeter.Infrastructure.Services.CourseService
                 {
                     Id = Guid.NewGuid().ToString(),
                     CourseProfileImageUrl = imageUrl,
-                    CategoryId = request.CategoryId,
-                    Description = request.Description,
-                    Title = request.Title,
-                    ProviderId = request.providerId,
-                    Price = request.Price,
-                    Currency = request.Currency,
+                    CategoryId = addCourseRequest.CategoryId,
+                    Description = addCourseRequest.Description,
+                    Title = addCourseRequest.Title,
+                    ProviderId = providerId,
+                    Price = addCourseRequest.Price,
+                    Currency = addCourseRequest.Currency,
 
                 };
                 await _context.AddAsync(course);
@@ -162,14 +162,14 @@ namespace TechMeter.Infrastructure.Services.CourseService
             return _responseHandler.Success(coursesResponse, "Courses returned successfully");
         }
 
-        public async Task<Response<string>> EditCourseAsync(EditCourseCommand request)
+        public async Task<Response<string>> EditCourseAsync(string courseId,string providerId,EditCourseRequest request)
         {
-            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == request. providerId);
+            var provider = await _context.Provider.FirstOrDefaultAsync(b => b.Id == providerId);
             if (provider == null)
             {
                 return _responseHandler.BadRequest<string>("Provider Is Not Found");
             }
-            var course = await _context.Course.FindAsync(request.courseId);
+            var course = await _context.Course.FindAsync(courseId);
             if (course == null)
             {
                 return _responseHandler.NotFound<string>("Course is not Found");
@@ -186,7 +186,7 @@ namespace TechMeter.Infrastructure.Services.CourseService
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                course.ProviderId = request.providerId;
+                course.ProviderId = providerId;
                 course.CategoryId = request.CategoryId;
                 course.Description = request.Description;
                 course.Title = request.Title;
@@ -204,14 +204,14 @@ namespace TechMeter.Infrastructure.Services.CourseService
             }
         }
 
-        public async Task<Response<string>> DeleteCourseByIdAsync(DeleteCourseCommand request)
+        public async Task<Response<string>> DeleteCourseByIdAsync(string responsibleId, string courseId)
         {
-            var responisble = await _userManager.FindByIdAsync(request.responsibleId);
+            var responisble = await _userManager.FindByIdAsync(responsibleId);
             if (responisble == null)
             {
                 return _responseHandler.BadRequest<string>("Responsible Is Not Found");
             }
-            var course = await _context.Course.FindAsync(request.courseId);
+            var course = await _context.Course.FindAsync(courseId);
             if (course == null)
             {
                 return _responseHandler.NotFound<string>("Course is not Found");

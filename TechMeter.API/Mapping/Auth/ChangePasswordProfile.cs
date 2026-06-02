@@ -13,7 +13,7 @@ namespace TechMeter.Application.Mapping.Auth
     {
         public ChangePasswordProfile()
         {
-            CreateMap<ChangePassword, ChangePasswordCommand>()
+            CreateMap<ChangePasswordRequest, ChangePasswordCommand>()
                 .ForMember(dest => dest.UserId, opt => opt.Ignore());
         }
     }

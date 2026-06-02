@@ -139,7 +139,7 @@ namespace TechMeter.Infrastructure.Services.Order
 
 
         #region GetOrderById
-        public async Task<Response<OrderResponse>> GetOrderById(string UserId, string OrderId)
+        public async Task<Response<OrderResponse>> GetOrderByIdAsync(string UserId, string OrderId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(b => b.Id == UserId);
             if (user == null)
@@ -218,17 +218,17 @@ namespace TechMeter.Infrastructure.Services.Order
 
 
         #region UpdateOrderStatus
-        public async Task<Response<OrderResponse>> UpdatOrderStatus(UpdateOrderStatus updateOrderStatus)
+        public async Task<Response<OrderResponse>> UpdateOrderStatus(string orderId,string status)
         {
             var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                if (!Enum.TryParse<OrderStatus>(updateOrderStatus.Status, true, out OrderStatus orderStatus))
+                if (!Enum.TryParse<OrderStatus>(status, true, out OrderStatus orderStatus))
                 {
                     return _responseHandler.BadRequest<OrderResponse>("New Status is not defined");
                 }
 
-                var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == updateOrderStatus.OrderId);
+                var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
                 if (order == null)
                 {
                     return _responseHandler.NotFound<OrderResponse>("order is not found");

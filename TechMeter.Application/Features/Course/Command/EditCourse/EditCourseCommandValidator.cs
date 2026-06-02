@@ -12,7 +12,7 @@ namespace TechMeter.Application.Features.Course.Command.EditCourse
         public EditCourseCommandValidator() 
         {
             RuleFor(b => b)
-               .Must(b => !string.IsNullOrEmpty(b.CategoryId))
+               .Must(b => !string.IsNullOrEmpty(b.editCourseRequest.CategoryId))
                .WithMessage("CategoryId is Requires");
         }
     }

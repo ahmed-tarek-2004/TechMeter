@@ -8,11 +8,6 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Section.Command.AddSection
 {
-    public sealed class AddSectionCommand : IRequest<Response<string>>
-    {
-
-        public string providerId { get; set; }
-        public string courseId { get; set; }
-        public string sectionName { get; set; }
-    }
+    public sealed record AddSectionCommand(string providerId, string courseId, string sectionName) : IRequest<Response<string>>;
+   
 }

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Otp
 {
-    public record VerifyOtp( string userId, string otp);
+    public record VerifyOtp(string userId, string otp);
 }

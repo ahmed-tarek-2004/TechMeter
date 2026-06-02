@@ -12,7 +12,7 @@ namespace TechMeter.Application.Features.Section.Command.EditSection
         public EditSectionCommandValidator() 
         {
             RuleFor(b => b)
-               .Must(b => !string.IsNullOrEmpty(b.courseId) && !string.IsNullOrEmpty(b.sectionName))
+               .Must(b => !string.IsNullOrEmpty(b.editSectionRequest.courseId) && !string.IsNullOrEmpty(b.editSectionRequest.name))
                .WithMessage("CourseId and Name are required");
         }
 

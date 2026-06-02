@@ -15,7 +15,7 @@ namespace TechMeter.Application.Features.Auth.ResetPassword
                 .NotEmpty()
                 .WithMessage("Password is required");
 
-            RuleFor(b => b.token)
+            RuleFor(b => b.Token)
                 .NotEmpty()
                 .WithMessage("Token Is required");
 

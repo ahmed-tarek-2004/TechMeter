@@ -13,7 +13,7 @@ namespace TechMeter.Application.Features.Auth.ConfirmEmail
     {
         public async Task<Response<string>> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
         {
-            return await authService.VerifyConfirmEmailOtp(request);
+            return await authService.VerifyConfirmEmailOtp(request.userId,request.otp);
         }
     }
 }

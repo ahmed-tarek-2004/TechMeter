@@ -14,7 +14,7 @@ namespace TechMeter.Application.Features.Course.Command.AddCourse
     {
         public async Task<Response<AddCourseResponse>> Handle(AddCourseCommand request, CancellationToken cancellationToken)
         {
-            return await courseService.AddCourseAsync(request);
+            return await courseService.AddCourseAsync(request.providerId, request.addCourseRequest);
         }
     }
 }

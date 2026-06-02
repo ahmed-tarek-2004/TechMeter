@@ -14,7 +14,7 @@ namespace TechMeter.Application.Mapping.Rating
         public AddRatingProfile()
         {
              CreateMap<AddStudentRatingRequest,AddStudentRatingCommand>()
-                .ForMember(des=>des.StudentId,opt=>opt.Ignore());
+                .ForMember(des=>des.studentId,opt=>opt.Ignore());
         }
     }
 }

@@ -8,7 +8,7 @@ namespace TechMeter.Application.DTO.Order
 {
     public class CreateOrderRequest
     {
-        public string StuentId { get; set; }
+        public string StudentId { get; set; }
 
     }
 }

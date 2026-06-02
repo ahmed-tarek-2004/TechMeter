@@ -14,7 +14,7 @@ namespace TechMeter.Application.Features.Auth.ConfirmResetPassword
     {
         public async Task<Response<VerifyResetPasswordResponse>> Handle(ConfirmResetPasswordCommand request, CancellationToken cancellationToken)
         {
-            return await authService.VerifyResetPasswordOtp(request);
+            return await authService.VerifyResetPasswordOtp(request.userId,request.otp);
         }
     }
 }

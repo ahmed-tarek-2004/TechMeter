@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.DTO.Auth.ResetPassword
 {
-    public class ChangePassword
+    public class ChangePasswordRequest
     {
         public string CurrentPassword { get; set; }
         public string NewPassword { get; set; }

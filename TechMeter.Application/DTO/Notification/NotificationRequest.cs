@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Application.DTO
+namespace TechMeter.Application.DTO.Notification
 {
     public class NotificationRequest
     {

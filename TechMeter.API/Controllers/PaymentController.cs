@@ -1,12 +1,17 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using System.Net;
 using System.Security.Claims;
-using TechMeter.API.Validators.Payment;
 using TechMeter.Application.DTO.Payment;
+using TechMeter.Application.Features.Payment.Command.Checkout;
+using TechMeter.Application.Features.Payment.Command.PaymentIntent;
+using TechMeter.Application.Features.Payment.Query.AdminTransaction;
+using TechMeter.Application.Features.Payment.Query.ProviderQuery;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Shared.Bases;
 
@@ -18,25 +23,28 @@ namespace TechMeter.API.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
+        private readonly IMediator _mediator;
         public readonly ResponseHandler _responseHandler;
+        private readonly IMapper _mapper;
         private readonly ILogger<PaymentController> _logger;
-        private readonly IValidator<PaymentRequest> _paymentRequestValidator;
 
-        public PaymentController(IPaymentService paymentService, IValidator<PaymentRequest> paymentRequestValidator,
-            ResponseHandler responseHandler, ILogger<PaymentController> logger)
+        public PaymentController(IPaymentService paymentService, ResponseHandler responseHandler,
+            ILogger<PaymentController> logger, IMapper mapper, IMediator mediator)
         {
             _paymentService = paymentService;
-            _paymentRequestValidator = paymentRequestValidator;
             _responseHandler = responseHandler;
             _logger = logger;
+            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpPost("check-out")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<PaymentResponse>> CheckoutAsync([FromBody] PaymentRequest request)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _paymentService.CreateACheckOut(userId, request);
+            var command = _mapper.Map<CheckoutCommand>(request);
+            command.studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _mediator.Send(command);
 
             return StatusCode((int)response.StatusCode, response);
         }
@@ -44,14 +52,10 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<PaymentIntentResponse>>> CreatePaymentIntent([FromBody] PaymentRequest request)
         {
-            var Validation = await _paymentRequestValidator.ValidateAsync(request);
-            if (!Validation.IsValid)
-            {
-                var Error = string.Join(',', Validation.Errors.Select(b => b.ErrorMessage));
-                return StatusCode((int)HttpStatusCode.BadRequest, _responseHandler.BadRequest<PaymentResponse>(Error));
-            }
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _paymentService.PaymentIntentService(userId, request);
+
+            var command = _mapper.Map<PaymentIntentCommand>(request);
+            command.studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var response = await _mediator.Send(command);
 
             return StatusCode((int)response.StatusCode, response);
 
@@ -76,7 +80,14 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<PaymentResponse>> GetAdminAllTransactionAsync(string? providerId, [FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
         {
-            var response = await _paymentService.GetAllAdminTransaction(providerId, from, to, pageNumber, pageSiaze);
+            var response = await _mediator.Send(new AdminTransactionQuery
+            {
+                providerId = providerId,
+                from = from,
+                to = to,
+                pageNumber = pageNumber,
+                pageSize = pageSiaze
+            });
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -85,7 +96,14 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<PaymentResponse>> GetProviderAllTransactionAsync([FromQuery] DateTime? from, DateTime? to, int pageNumber = 1, int pageSiaze = 10)
         {
             var providerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _paymentService.GetAllProviderTransaction(providerId!, from, to, pageNumber, pageSiaze);
+            var response = await _mediator.Send(new ProviderTransactionQuery
+            {
+                providerId = providerId!,
+                from = from,
+                to = to,
+                pageNumber = pageNumber,
+                pageSize = pageSiaze
+            });
             return StatusCode((int)response.StatusCode, response);
         }
 

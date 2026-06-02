@@ -60,17 +60,17 @@ namespace TechMeter.Infrastructure.Services.AuthService
         }
 
         #region Login
-        public async Task<Domain.Shared.Bases.Response<LoginResponseDto>> LoginAsync(LoginCommand request)
+        public async Task<Domain.Shared.Bases.Response<LoginResponseDto>> LoginAsync(string email, string password, string otp = "")
         {
             try
             {
-                var user = await _userManager.FindByEmailAsync(request.email);
+                var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    _logger.LogWarning("User with Email {request.email} : Not Found", request.email);
-                    return _responseHandler.NotFound<LoginResponseDto>($"User with Email {request.email} : Not Found");
+                    _logger.LogWarning("User with Email {request.email} : Not Found", email);
+                    return _responseHandler.NotFound<LoginResponseDto>($"User with Email {email} : Not Found");
                 }
-                bool checkPassword = await _userManager.CheckPasswordAsync(user, request.password);
+                bool checkPassword = await _userManager.CheckPasswordAsync(user, password);
                 if (!checkPassword)
                 {
                     _logger.LogWarning("Password is Incorrext");
@@ -80,7 +80,6 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 {
                     return _responseHandler.BadRequest<LoginResponseDto>("verify Your Email");
                 }
-                var otp = request.otp;
                 if (string.IsNullOrEmpty(otp))
                 {
                     otp = await _otpService.GenerateAndSetOTP(user.Id);
@@ -91,7 +90,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 }
                 else
                 {
-                    var confirmOTP = await _otpService.ValidateOtp(request.otp, user.Id);
+                    var confirmOTP = await _otpService.ValidateOtp(otp, user.Id);
                     if (!confirmOTP)
                     {
                         return _responseHandler.BadRequest<LoginResponseDto>("Enter A correct OTP");
@@ -123,7 +122,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
         #endregion
 
         #region student register
-        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterCommand request)
+        public async Task<Domain.Shared.Bases.Response<StudentRegisterResponse>> RegisterAsStudentAsync(StudentRegisterRequest request)
         {
             var user = await _context.Users.Include(b => b.Student)
                 .FirstOrDefaultAsync(b => b.Email == request.Email && b.PhoneNumber == request.PhoneNumber);
@@ -219,7 +218,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
         #endregion
 
         #region provider register
-        public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterCommand request)
+        public async Task<Domain.Shared.Bases.Response<ProviderRegisterResponse>> RegisterAsProviderAsync(ProviderRegisterRequest request)
         {
             var user = await _context.Users.Include(b => b.Provider)
                 .FirstOrDefaultAsync(b => b.Email == request.Email);
@@ -341,12 +340,12 @@ namespace TechMeter.Infrastructure.Services.AuthService
         //}
 
         #region Confirm Email
-        public async Task<Response<string>> VerifyConfirmEmailOtp(ConfirmEmailCommand verifyOtp)
+        public async Task<Response<string>> VerifyConfirmEmailOtp(string userId, string otp)
         {
             await using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var user = await _userManager.FindByIdAsync(verifyOtp.userId);
+                var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
                     return _responseHandler.BadRequest<string>("User is not found");
@@ -354,7 +353,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
 
                 if (user.EmailConfirmed)
                     return _responseHandler.Success<string>(null, "Email is already verified.");
-                var isValid = await _otpService.ValidateOtp(verifyOtp.otp, verifyOtp.userId);
+                var isValid = await _otpService.ValidateOtp(otp, userId);
                 if (!isValid)
                 {
                     return _responseHandler.BadRequest<string>("Otp is not Correct");
@@ -373,17 +372,17 @@ namespace TechMeter.Infrastructure.Services.AuthService
         #endregion
 
         #region Confirm Reset Password Otp
-        public async Task<Response<VerifyResetPasswordResponse>> VerifyResetPasswordOtp(ConfirmResetPasswordCommand verifyOtp)
+        public async Task<Response<VerifyResetPasswordResponse>> VerifyResetPasswordOtp(string userId, string otp)
         {
             await using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var user = await _userManager.FindByIdAsync(verifyOtp.userId);
+                var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
                     return _responseHandler.BadRequest<VerifyResetPasswordResponse>("User is not found");
                 }
-                var isValid = await _otpService.ValidateOtp(verifyOtp.otp, verifyOtp.userId);
+                var isValid = await _otpService.ValidateOtp(otp, userId);
                 if (!isValid)
                 {
                     return _responseHandler.BadRequest<VerifyResetPasswordResponse>("Otp is not Correct");
@@ -407,11 +406,44 @@ namespace TechMeter.Infrastructure.Services.AuthService
             }
         }
         #endregion
+        #region Reset Password
+        public async Task<Response<ResetPasswordResponse>> ResetPasswordAsync(string userId, string token, string password, string confirmPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return _responseHandler.BadRequest<ResetPasswordResponse>($"User With Id {userId} Is not Found");
+            }
+            //var IsValid = await _otpService.ValidateOtp(request.OTP, user.Id);
+            //if (!IsValid)
+            //{
+            //    _responseHandler.BadRequest<ResetPasswordResponse>("Otp IS Wrong");
+            //}
+            //var PasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var changePassword = await _userManager.ResetPasswordAsync(user, token, password);
+            if (!changePassword.Succeeded)
+            {
+                var Errors = string.Join(",", changePassword.Errors.Select(e => e.Description).ToList());
+                _responseHandler.Forbidden<ResetPasswordResponse>(Errors);
+            }
+            await _tokenService.InValidateOldTokenAsync(user.Id);
+            var roles = await _userManager.GetRolesAsync(user);
+            var respnse = new ResetPasswordResponse()
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Role = roles.FirstOrDefault()
+            };
+            return _responseHandler.Success(respnse, "Password Has been Reset Successfully");
+            //throw new NotImplementedException();
+        }
+        #endregion
 
         #region Resend Otp
-        public async Task<Response<string>> ResponseOtp(ResendOtpCommand request)
+        public async Task<Response<string>> ResponseOtp(string Id)
         {
-            var user = await _userManager.FindByIdAsync(request.Id);
+            var user = await _userManager.FindByIdAsync(Id);
             if (user == null)
             {
                 return _responseHandler.BadRequest<string>("user is not found");
@@ -455,47 +487,13 @@ namespace TechMeter.Infrastructure.Services.AuthService
         }
         #endregion
 
-        #region Reset Password
-        public async Task<Response<ResetPasswordResponse>> ResetPasswordAsync(ResetPasswordCommand request)
-        {
-            var user = await _userManager.FindByIdAsync(request.UserId);
-            if (user == null)
-            {
-                return _responseHandler.BadRequest<ResetPasswordResponse>($"User With Id {request.UserId} Is not Found");
-            }
-            //var IsValid = await _otpService.ValidateOtp(request.OTP, user.Id);
-            //if (!IsValid)
-            //{
-            //    _responseHandler.BadRequest<ResetPasswordResponse>("Otp IS Wrong");
-            //}
-            //var PasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var changePassword = await _userManager.ResetPasswordAsync(user, request.token, request.Password);
-            if (!changePassword.Succeeded)
-            {
-                var Errors = string.Join(",", changePassword.Errors.Select(e => e.Description).ToList());
-                _responseHandler.Forbidden<ResetPasswordResponse>(Errors);
-            }
-            await _tokenService.InValidateOldTokenAsync(user.Id);
-            var roles = await _userManager.GetRolesAsync(user);
-            var respnse = new ResetPasswordResponse()
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Role = roles.FirstOrDefault()
-            };
-            return _responseHandler.Success(respnse, "Password Has been Reset Successfully");
-            //throw new NotImplementedException();
-        }
-        #endregion
-
         #region Change Password
-        public async Task<Response<string>> ChangePasswordAsync(ChangePasswordCommand request)
+        public async Task<Response<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return _responseHandler.BadRequest<string>($"User With {request.UserId} is not found ");
+                return _responseHandler.BadRequest<string>($"User With {userId} is not found ");
             }
 
             var checkPassword = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
@@ -510,7 +508,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 var Errors = string.Join(",", changePassword.Errors.Select(e => e.Description).ToList());
                 return _responseHandler.BadRequest<string>(Errors);
             }
-            await _tokenService.InValidateOldTokenAsync(request.UserId);
+            await _tokenService.InValidateOldTokenAsync(userId);
 
             return _responseHandler.Success<string>(null, "Password changed successfully. Please login again.");
 
@@ -518,8 +516,9 @@ namespace TechMeter.Infrastructure.Services.AuthService
         #endregion
 
         #region update register status
-        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterCommand request)
+        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterRequest request)
         {
+
             user.UserName = request.UserName;
             user.PhoneNumber = request.PhoneNumber;
             user.Country = request.Country;
@@ -537,7 +536,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             await _userManager.UpdateAsync(user);
             _logger.LogInformation("Existing user updated: {UserId}", user.Id);
         }
-        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterCommand request)
+        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterRequest request)
         {
             user.UserName = request.UserName;
             user.PhoneNumber = request.PhoneNumber;
@@ -558,6 +557,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             await _tokenService.InValidateOldTokenAsync(user.Id);
             _logger.LogInformation("Existing user updated: {UserId}", user.Id);
         }
+
         #endregion
     }
 }

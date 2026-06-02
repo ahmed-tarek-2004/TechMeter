@@ -11,7 +11,7 @@ namespace TechMeter.API.Mapping.Category
         {
             CreateMap<AddCategoryRequest, AddCategoryCommand>();
             CreateMap<UpdateCategoryRequest, UpdateCategoryCommand>()
-                .ForMember(des => des.Id, opt => opt.Ignore());
+                .ForMember(des => des.id, opt => opt.Ignore());
         }
     }
 }

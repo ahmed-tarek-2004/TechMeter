@@ -16,7 +16,7 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.Rating
 {
-    public class RatingService:IRatingService
+    public class RatingService : IRatingService
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
@@ -28,10 +28,10 @@ namespace TechMeter.Infrastructure.Services.Rating
             _responseHandler = responseHandler;
             _logger = logger;
         }
-        public async Task<Response<string>> AddRatingToCourse(AddStudentRatingCommand request)
+        public async Task<Response<string>> AddRatingToCourse(string studentId, AddStudentRatingRequest request)
         {
 
-            var Student = await _context.Student.FindAsync(request.StudentId);
+            var Student = await _context.Student.FindAsync(studentId);
             if (Student == null)
             {
                 _logger.LogWarning("User is not found ");
@@ -45,7 +45,7 @@ namespace TechMeter.Infrastructure.Services.Rating
 
             }
             var existingRating = await _context.UserCourseRating
-              .FirstOrDefaultAsync(r => r.StudentId == request.StudentId && r.CourseId == Course.Id);
+              .FirstOrDefaultAsync(r => r.StudentId == studentId && r.CourseId == Course.Id);
 
             if (existingRating != null)
             {
@@ -58,7 +58,7 @@ namespace TechMeter.Infrastructure.Services.Rating
                 var StudentCourseRating = new UserCourseRating()
                 {
 
-                    StudentId = request.StudentId,
+                    StudentId = studentId,
                     CourseId = Course.Id,
                     Comment = request.Comment,
                     RatedAt = DateTime.UtcNow,
@@ -69,7 +69,7 @@ namespace TechMeter.Infrastructure.Services.Rating
                 await _context.AddAsync(StudentCourseRating);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                
+
                 return _responseHandler.Success(string.Empty, "Rating Added Successfully");
 
             }
@@ -79,16 +79,15 @@ namespace TechMeter.Infrastructure.Services.Rating
                 return _responseHandler.InternalServerError<string>(ex.Message);
             }
         }
-
-        public async Task<Response<string>> DeleteStudentCourseionRating(DeleteStudentRatingCommand request)
+        public async Task<Response<string>> DeleteStudentCourseRating(string studentId, string courseId)
         {
-            var Student = await _context.Student.FindAsync(request.StudentId);
+            var Student = await _context.Student.FindAsync(studentId);
             if (Student == null)
             {
                 _logger.LogWarning("User is not found ");
                 return _responseHandler.NotFound<string>("User Not Found , Login/Register To Continue");
             }
-            var Course = await _context.Course.FindAsync(request.CourseId);
+            var Course = await _context.Course.FindAsync(courseId);
             if (Course == null)
             {
                 _logger.LogWarning("Course is not found ");
@@ -99,7 +98,7 @@ namespace TechMeter.Infrastructure.Services.Rating
             {
 
                 var StudentCourseRating = await _context.UserCourseRating
-                  .FirstOrDefaultAsync(r => r.StudentId == request.StudentId && r.CourseId == Course.Id);
+                  .FirstOrDefaultAsync(r => r.StudentId == studentId && r.CourseId == Course.Id);
                 if (StudentCourseRating == null)
                 {
                     return _responseHandler.BadRequest<string>("Student didn't rate this Course");
@@ -118,10 +117,9 @@ namespace TechMeter.Infrastructure.Services.Rating
             }
 
         }
-
-        public async Task<Response<string>> EditRatingToCourse(EditStudentRatingCommand editStudentRatingRequest)
+        public async Task<Response<string>> EditRatingToCourse(string studentId, EditStudentRatingRequest editStudentRatingRequest)
         {
-            var Student = await _context.Student.FindAsync(editStudentRatingRequest.StudentId);
+            var Student = await _context.Student.FindAsync(studentId);
             if (Student == null)
             {
                 _logger.LogWarning("User is not found ");
@@ -138,7 +136,7 @@ namespace TechMeter.Infrastructure.Services.Rating
             {
 
                 var StudentCourseRating = await _context.UserCourseRating
-                  .FirstOrDefaultAsync(r => r.StudentId == editStudentRatingRequest.StudentId && r.CourseId == Course.Id);
+                  .FirstOrDefaultAsync(r => r.StudentId == studentId && r.CourseId == Course.Id);
                 if (StudentCourseRating == null)
                 {
                     return _responseHandler.BadRequest<string>("Student didn't rate this Course before");
@@ -151,7 +149,7 @@ namespace TechMeter.Infrastructure.Services.Rating
                 _context.UserCourseRating.Update(StudentCourseRating);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-              
+
                 return _responseHandler.Success(string.Empty, "Rating Edited Successfully");
 
             }
@@ -163,8 +161,6 @@ namespace TechMeter.Infrastructure.Services.Rating
             }
 
         }
-
-
         public async Task<Response<StudentCourseRatingDto>> GetStudentCourseRating(string StudentId, string CourseId)
         {
             var Student = await _context.Student.FindAsync(StudentId);
@@ -197,7 +193,6 @@ namespace TechMeter.Infrastructure.Services.Rating
             };
             return _responseHandler.Success(respone, "Rating returned Successfully");
         }
-
         public async Task<Response<List<StudentCourseRatingDto>>> GetAllCourseRating(string ProviderId, string CourseId)
         {
             var Provider = await _context.Provider.FindAsync(ProviderId);
