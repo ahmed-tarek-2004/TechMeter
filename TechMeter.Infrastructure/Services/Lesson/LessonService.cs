@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,13 +22,15 @@ namespace TechMeter.Infrastructure.Services.Lesson
 {
     public class LessonService : ILessonService
     {
+        private readonly string[] videoExtensions = new[] {".mp4",".mov",".avi",".wmv",".flv",".mkv",".webm",".m4v",".mpeg",".mpg",".3gp",".ts",".mts",".m2ts",".ogv"};
+        private readonly string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
-        private readonly IImageUploading _imageUploading;
+        private readonly IMediaUploading _imageUploading;
         private readonly ILogger<LessonService> _logger;
         private readonly INotificationSenderService _notificationService;
         public LessonService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<LessonService> logger, IImageUploading imageUploading, INotificationSenderService notificationService)
+            ILogger<LessonService> logger, IMediaUploading imageUploading, INotificationSenderService notificationService)
 
         {
             _context = context;
@@ -47,7 +50,8 @@ namespace TechMeter.Infrastructure.Services.Lesson
             string LessonUrl = string.Empty;
             try
             {
-                LessonUrl = await _imageUploading.UploadVideoAsync(request.LessonStream);
+
+                LessonUrl = await UploadMedia(request.LessonStream);
             }
             catch (Exception ex)
             {
@@ -336,6 +340,31 @@ namespace TechMeter.Infrastructure.Services.Lesson
                     );
             await _context.Notification.AddAsync(notification);
             //await _context.SaveChangesAsync();
+        }
+
+        private async Task<string> UploadMedia(IFormFile file)
+        {
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            try
+            {
+                if (videoExtensions.Contains(fileExtension))
+                {
+                    return await _imageUploading.UploadVideoAsync(file);
+                }
+                else if (imageExtensions.Contains(fileExtension))
+                {
+                    return await _imageUploading.UploadAsync(file);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unsupported file type");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading media file");
+                throw new Exception("An error occurred while uploading the media file. Please try again later.");
+            }
         }
     }
 }

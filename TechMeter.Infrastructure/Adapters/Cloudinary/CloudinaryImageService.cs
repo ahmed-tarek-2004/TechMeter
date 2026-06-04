@@ -12,7 +12,7 @@ using TechMeter.Application.Interfaces;
 
 namespace TechMeter.Infrastructure.Adapters.Cloudinary
 {
-    public class CloudinaryImageService : IImageUploading
+    public class CloudinaryImageService : IMediaUploading
     {
         private readonly ILogger<CloudinaryImageService> logger;
         private readonly CloudinarySettings _cloudinarySettings;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.Interfaces
 {
-    public interface IImageUploading
+    public interface IMediaUploading
     {
         public Task<string> UploadAsync(IFormFile file);
         public Task<string> UploadVideoAsync(IFormFile file);
