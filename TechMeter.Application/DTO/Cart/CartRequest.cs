@@ -8,8 +8,8 @@ namespace TechMeter.Application.DTO.Cart
 {
     public class CartRequest
     {
-        public string CourseId { get; set; }
-        public decimal UnitPrice { get; set; } = 0;
+        //public string CourseId { get; set; }
+        //public decimal UnitPrice { get; set; } = 0;
         //public DateTime AddedAt { get; set; } = DateTime.UtcNow;
     }
 }

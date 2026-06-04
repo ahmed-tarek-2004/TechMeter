@@ -17,10 +17,10 @@ namespace TechMeter.Application.Features.Cart.Command.AddToCart
             RuleFor(b => b.CourseId)
                 .Must(b => !string.IsNullOrEmpty(b))
                 .WithMessage("CourseId Is Required");
-            RuleFor(b => b.UnitPrice)
-                .NotNull().WithMessage("Unit price is required")
-                .GreaterThan(0)
-                .WithMessage("Unit Price Is Required");
+            //RuleFor(b => b.UnitPrice)
+            //    .NotNull().WithMessage("Unit price is required")
+            //    .GreaterThan(0)
+            //    .WithMessage("Unit Price Is Required");
         }
     }
 }

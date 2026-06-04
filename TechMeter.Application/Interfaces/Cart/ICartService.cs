@@ -13,7 +13,7 @@ namespace TechMeter.Application.Interfaces.Cart
     {
         Task<Response<CartResponse>> GetCartAsync(string StudentId);
         Task<Response<CartResponse>> GetProviderCartAsync(string ProviderId, string StudentId);
-        Task<Response<string>> AddToCartAsync(string studentId,string courseId,decimal unitPrice);
+        Task<Response<string>> AddToCartAsync(string studentId,string courseId);
         Task<Response<string>> RemoveFromCartAsync(string StudentId, string cartItemId);
         //Task<Response<CartResponse>> UpdateCartAsync(string StudentId, UpdateCartItemRequest request);
         Task<Response<string>> ClearStudentCartAsync(string StudentId);

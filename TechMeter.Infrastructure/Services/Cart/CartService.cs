@@ -35,15 +35,13 @@ namespace TechMeter.Infrastructure.Services.Cart
             }
             try
             {
-                var cart = await _context.Cart
-                    .Include(c => c.CartItems)
-                    .ThenInclude(ci => ci.Course)
-                        //.ThenInclude(p => p.CourseImages.Where(image => image.isPrimary == true))
-                        .AsSplitQuery()
+                var cart = _context.Cart
+                        .Where(c => c.StudentId == StudentId)
                         .AsNoTracking()
-                    .FirstOrDefaultAsync(c => c.StudentId == StudentId);
+                        .AsQueryable();
 
-                if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
+                var response = await CreateCartResponse(cart);
+                if (response.Items?.Any() != true)
                 {
                     var cartResponse = new CartResponse()
                     {
@@ -53,11 +51,9 @@ namespace TechMeter.Infrastructure.Services.Cart
                         TotalPrice = 0,
                         Items = new List<CartItemResponse>(),
                     };
-                    return _responseHandler.Success<CartResponse>(cartResponse, "Cart Is Empty");
+                    return _responseHandler.Success(cartResponse, "Cart Is Empty");
                 }
-
-                var response = CreateCartResponse(cart);
-                return _responseHandler.Success<CartResponse>(response, "Cart Returned Successfully");
+                return _responseHandler.Success(response, "Cart Returned Successfully");
 
             }
             catch (Exception ex)
@@ -74,17 +70,15 @@ namespace TechMeter.Infrastructure.Services.Cart
             {
                 return _responseHandler.NotFound<CartResponse>("Student Not Found");
             }
-            var Cart = await _context.Cart
-                .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.Course)
-                // .ThenInclude(p => p.CourseImages.Where(image => image.isPrimary == true))
+            var Cart = _context.Cart
                 .Where(c => c.StudentId == StudentId && c.CartItems.Any(ci => ci.Course.ProviderId == sellerId))
-                .AsSplitQuery()
                 .AsNoTracking()
-                .FirstOrDefaultAsync();
-            if (Cart == null)
+                .AsQueryable();
+
+            var cartResponse = await CreateCartResponse(Cart);
+            if(cartResponse.Items?.Any() != true)
             {
-                var response = new CartResponse()
+                cartResponse = new CartResponse()
                 {
                     CartId = Guid.Empty.ToString(),
                     CreatedAt = DateTime.Now,
@@ -92,12 +86,12 @@ namespace TechMeter.Infrastructure.Services.Cart
                     TotalPrice = 0,
                     Items = new List<CartItemResponse>(),
                 };
-                return _responseHandler.Success<CartResponse>(response, "Cart Is Empty");
+                return _responseHandler.Success(cartResponse, $"Cart For Student {StudentId} is Empty for this provider");
             }
-            var cartResponse = CreateCartResponse(Cart);
+
             return _responseHandler.Success(cartResponse, $"Cart For Student {StudentId} return successfully");
         }
-        public async Task<Response<string>> AddToCartAsync(string studentId, string courseId, decimal unitPrice)
+        public async Task<Response<string>> AddToCartAsync(string studentId, string courseId)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -136,7 +130,7 @@ namespace TechMeter.Infrastructure.Services.Cart
                     {
                         Id = Guid.NewGuid().ToString(),
                         CourseId = courseId,
-                        UnitPrice = unitPrice,
+                        UnitPrice = Course.Price,
                         CreatedAt = DateTime.Now,
                         CartId = cart.Id,
                     };
@@ -149,7 +143,6 @@ namespace TechMeter.Infrastructure.Services.Cart
                 }
 
                 await _context.SaveChangesAsync();
-                //var cartResponse = CreateCartResponse(cart);
                 await transaction.CommitAsync();
                 return _responseHandler.Success(string.Empty, "Course Add To Cart Successfully");
 
@@ -165,32 +158,17 @@ namespace TechMeter.Infrastructure.Services.Cart
         public async Task<Response<string>> RemoveFromCartAsync(string StudentId, string cartItemId)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            var user = await _context.Student.FirstOrDefaultAsync(b => b.Id == StudentId);
-            if (user == null)
-            {
-                _logger.LogWarning("Student not found for StudentId: {StudentId}", StudentId);
-                return _responseHandler.NotFound<string>("Student not found.");
-            }
             try
             {
-                var cart = await _context.Cart
-               .Include(x => x.CartItems.Where(b => b.Id == cartItemId))
-               // .ThenInclude(c => c.Course)
-               .FirstOrDefaultAsync(b => b.StudentId == StudentId);
-                if (cart == null)
-                {
-                    _logger.LogWarning("Cart not found for StudentId: {StudentId}", StudentId);
-                    return _responseHandler.NotFound<string>("no Cart has found for studnet.");
-                }
-                var cartItem = cart.CartItems.FirstOrDefault();
+                var cartItem = await _context.CartItem.Include(b=>b.Cart).FirstOrDefaultAsync(b=>b.Id== cartItemId && b.Cart.StudentId == StudentId);
                 if (cartItem == null)
                 {
-                    _logger.LogWarning("CartItem not found. Cart: {CartId}", cart.Id);
-                    return _responseHandler.NotFound<string>($"no CartItem found. Cart: {cart.Id}");
+                    _logger.LogWarning("CartItem not found for StudentId: {StudentId}", StudentId);
+                    return _responseHandler.NotFound<string>("no CartItem has found for student.");
                 }
+               
                 _context.CartItem.Remove(cartItem);
-                cart.UpdatedAt = DateTime.UtcNow;
-
+                cartItem.Cart.UpdatedAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -208,37 +186,25 @@ namespace TechMeter.Infrastructure.Services.Cart
         public async Task<Response<string>> ClearStudentCartAsync(string StudentId)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            var user = await _context.Student.FirstOrDefaultAsync(b => b.Id == StudentId);
-            if (user == null)
+            var existingUser = await _context.Student.AnyAsync(b => b.Id == StudentId);
+            if (!existingUser)
             {
                 _logger.LogWarning("Student not found for StudentId: {StudentId}", StudentId);
                 return _responseHandler.NotFound<string>("Student not found.");
             }
             try
             {
-                var cart = await _context.Cart
-               .Include(x => x.CartItems)
-               .FirstOrDefaultAsync(b => b.StudentId == StudentId);
-                if (cart == null)
+                var rows = await _context.CartItem
+                    .Where(ci => ci.Cart.StudentId == StudentId)
+                    .ExecuteDeleteAsync();
+                if(rows == 0)
                 {
-                    _logger.LogWarning("Cart not found for StudentId: {StudentId}", StudentId);
-                    return _responseHandler.NotFound<string>("Cart not found.");
+                    _logger.LogWarning("No cart items found to delete for StudentId: {StudentId}", StudentId);
+                    return _responseHandler.NotFound<string>("No cart items found to delete.");
                 }
-                var cartItem = cart.CartItems.FirstOrDefault();
-                if (cartItem == null)
-                {
-                    _logger.LogWarning("CartItem not found. Cart: {CartId}", cart.Id);
-                    return _responseHandler.NotFound<string>($"no CartItem found. Cart: {cart.Id}");
-                }
-                if (cart.CartItems == null || !cart.CartItems.Any())
-                    return _responseHandler.BadRequest<string>("Cart is already empty.");
-
-
-                _context.CartItem.RemoveRange(cart.CartItems);
-                cart.CartItems.Clear();
-                cart.UpdatedAt = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
+                rows = await _context.Cart
+                    .Where(c => c.StudentId == StudentId)
+                    .ExecuteUpdateAsync(c => c.SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
                 await transaction.CommitAsync();
 
 
@@ -252,6 +218,7 @@ namespace TechMeter.Infrastructure.Services.Cart
                 return _responseHandler.InternalServerError<string>("An error occurred while removing cart item.");
             }
         }
+       
         //public async Task<Response<CartResponse>> UpdateCartAsync(string StudentId, UpdateCartItemRequest request)
         //{
         //    var transaction = await _context.Database.BeginTransactionAsync();
@@ -290,27 +257,26 @@ namespace TechMeter.Infrastructure.Services.Cart
         //    }
 
         //}
-        private CartResponse CreateCartResponse(TechMeter.Domain.Models.Cart cart)
+        private async Task<CartResponse> CreateCartResponse(IQueryable<Domain.Models.Cart> cart)
         {
-            var cartItemResponse = cart.CartItems
-                     .Select(c => new CartItemResponse
-                     {
-                         Id = c.Id,
-                         CourseName = c.Course.Title,
-                         CourseId = c.CourseId,
-                         UnitPrice = c.UnitPrice,
-                     });
-
-            var cartResponse = new CartResponse()
+            var response = await cart.Select(c => new CartResponse()
             {
-                CartId = cart.Id,
-                CreatedAt = cart.CreatedAt,
-                UpdatedAt = cart.UpdatedAt,
-                Items = cartItemResponse?.ToList(),
-                TotalItems = cart.CartItems.Count(),
-                TotalPrice = cart.CartItems.Sum(b => b.UnitPrice)
-            };
-            return cartResponse;
+                CartId = c.Id,
+                CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt,
+                Items = c.CartItems.Select(ci => new CartItemResponse()
+                {
+                    Id = ci.Id,
+                    CourseId = ci.CourseId,
+                    CourseName = ci.Course.Title,
+                    UnitPrice = ci.UnitPrice,
+                    CreatedAt = ci.CreatedAt
+                }).ToList(),
+                TotalItems = c.CartItems.Count(),
+                TotalPrice = c.CartItems.Sum(b => b.UnitPrice)
+            }).FirstOrDefaultAsync();
+
+            return response ?? new CartResponse();
         }
 
 
