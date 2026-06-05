@@ -74,7 +74,7 @@ namespace TechMeter.Infrastructure.Extensions
         {
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IImageUploading, CloudinaryImageService>();
+            services.AddScoped<IMediaUploading, CloudinaryImageService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();

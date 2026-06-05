@@ -11,6 +11,7 @@ using TechMeter.Application.Features.Lesson.Command.AddLesson;
 using TechMeter.Application.Features.Lesson.Command.ChangeLessonState;
 using TechMeter.Application.Features.Lesson.Command.DeleteLesson;
 using TechMeter.Application.Features.Lesson.Command.EditLesson;
+using TechMeter.Application.Features.Lesson.Command.UnWatchLesson;
 using TechMeter.Application.Features.Lesson.Query.GetAllLessons;
 using TechMeter.Application.Features.Lesson.Query.GetLessonById;
 using TechMeter.Application.Features.Lesson.Query.GetSectionLessons;
@@ -44,12 +45,20 @@ namespace TechMeter.API.Controllers
             });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPost("student/{lessonId}/finish-unfinish")]
+        [HttpPost("{lessonId}/finish")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<string>> StudentLessonWatched([FromRoute] string lessonId)
         {
             var userId = GetUserId();
-            var response = await _mediator.Send(new ChangeLessonStateCommand { LessonId = lessonId, StudentId = userId! });
+            var response = await _mediator.Send(new WatchLessonCommand { LessonId = lessonId, StudentId = userId! });
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpDelete("{lessonId}/unfinish")]
+        [Authorize(Roles = "student")]
+        public async Task<ActionResult<string>> StudentLessonUnwatched([FromRoute] string lessonId)
+        {
+            var userId = GetUserId();
+            var response = await _mediator.Send(new UnWatchLessonCommand { LessonId = lessonId, StudentId = userId! });
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPut("{Id}")]
@@ -65,10 +74,10 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("all")]
-        public async Task<ActionResult<List<GetLessonResponse>>> GetAllLessonsAsync()
+        [HttpGet("course/{courseId}/all")]
+        public async Task<ActionResult<List<GetLessonResponse>>> GetCourseLessonsAsync(string courseId)
         {
-            var response = await _mediator.Send(new GetAllLessonsQuery());
+            var response = await _mediator.Send(new GetCourseLessonsQuery(courseId));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -81,7 +90,7 @@ namespace TechMeter.API.Controllers
 
         }
         [HttpGet("{sectionId}/lessons")]
-        public async Task<ActionResult<List<GetLessonResponse>>> GetAllLessonsAsync([FromRoute] string sectionId)
+        public async Task<ActionResult<List<GetLessonResponse>>> GetSectionLessonsAsync([FromRoute] string sectionId)
         {
             var response = await _mediator.Send(new GetSectionLessonsQuery { SectionId = sectionId });
             return StatusCode((int)response.StatusCode, response);

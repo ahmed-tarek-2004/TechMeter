@@ -40,13 +40,13 @@ namespace TechMeter.Infrastructure.Services.AuthService
         private readonly ITokenService _tokenService;
         private readonly ILogger<AuthService> _logger;
         private readonly IEmailService _emailService;
-        private readonly IImageUploading _imageUploading;
+        private readonly IMediaUploading _imageUploading;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Domain.Models.Auth.Identity.User> _userManager;
         private readonly IOTPService _otpService;
         private readonly ResponseHandler _responseHandler;
         public AuthService(ITokenService tokenService, ILogger<AuthService> logger,
-            ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager, IImageUploading imageUploading,
+            ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager, IMediaUploading imageUploading,
             ResponseHandler responseHandler, IOTPService otpService, IEmailService emailService)
         {
             _tokenService = tokenService;

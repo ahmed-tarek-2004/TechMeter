@@ -19,10 +19,10 @@ namespace TechMeter.Infrastructure.Services.User
     {
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
-        private readonly IImageUploading _imageUploading;
+        private readonly IMediaUploading _imageUploading;
         private readonly UserManager<Domain.Models.Auth.Identity.User> _userManager;
         public ProfileService(ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager,
-            ResponseHandler responseHandler, IImageUploading imageUploading)
+            ResponseHandler responseHandler, IMediaUploading imageUploading)
         {
             _context = context;
             _userManager = userManager;

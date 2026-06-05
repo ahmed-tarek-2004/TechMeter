@@ -9,7 +9,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
 {
-    public class ChangeLessonStateCommand : IRequest<Response<string>>
+    public class WatchLessonCommand : IRequest<Response<string>>
     {
         public string LessonId { get; set; }
         public string StudentId { get; set; }

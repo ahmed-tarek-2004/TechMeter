@@ -27,10 +27,10 @@ namespace TechMeter.Infrastructure.Services.CourseService
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<CourseService> _logger;
-        private readonly IImageUploading _imageUploading;
+        private readonly IMediaUploading _imageUploading;
         private readonly UserManager<Domain.Models.Auth.Identity.User> _userManager;
         public CourseService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<CourseService> logger, IImageUploading imageUploading, UserManager<Domain.Models.Auth.Identity.User> userManager)
+            ILogger<CourseService> logger, IMediaUploading imageUploading, UserManager<Domain.Models.Auth.Identity.User> userManager)
 
         {
             _context = context;

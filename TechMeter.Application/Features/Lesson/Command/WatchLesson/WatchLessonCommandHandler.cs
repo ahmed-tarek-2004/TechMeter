@@ -10,9 +10,9 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
 {
-    public class ChangeLessonStateCommandHandler(ILessonService lessonService) : IRequestHandler<ChangeLessonStateCommand, Response<string>>
+    public class WatchLessonCommandHandler(ILessonService lessonService) : IRequestHandler<WatchLessonCommand, Response<string>>
     {
-        public async Task<Response<string>> Handle(ChangeLessonStateCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(WatchLessonCommand request, CancellationToken cancellationToken)
         {
             return await lessonService.StudentLessonWatched(request.StudentId, request.LessonId);
         }

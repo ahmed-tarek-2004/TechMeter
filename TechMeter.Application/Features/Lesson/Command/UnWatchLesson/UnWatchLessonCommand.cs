@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Lesson;
 using TechMeter.Domain.Shared.Bases;
 
-namespace TechMeter.Application.Features.Lesson.Query.GetAllLessons
+namespace TechMeter.Application.Features.Lesson.Command.UnWatchLesson
 {
-    public class GetAllLessonsQuery:IRequest<Response<List<GetLessonResponse>>>
+    public class UnWatchLessonCommand : IRequest<Response<string>>
     {
-
+        public string LessonId { get; set; }
+        public string StudentId { get; set; }
     }
 }

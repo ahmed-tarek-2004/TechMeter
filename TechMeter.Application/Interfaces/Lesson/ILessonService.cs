@@ -15,7 +15,7 @@ namespace TechMeter.Application.Interfaces.Lesson
         Task<Response<string>> StudentLessonUnwatched(string studentId,string LessonId);
         Task<Response<List<GetLessonResponse>>> GetStudentLessonWatched(string studentId);
         Task<Response<GetLessonResponse>>EditLessonAsync(string Id,EditLessonRequest editLessonRequest);
-        Task<Response<List<GetLessonResponse>>>GetALLessonAsync();
+        Task<Response<List<GetLessonResponse>>>GetCourseLessonsAsync(string courseId);
         Task<Response<GetLessonResponse>> GetLessonByIdAsync(string Id);
         Task<Response<List<GetLessonResponse>>> GetSectionLessonResponse(string sectionId);
         Task<Response<string>> DeleteLessonAsync(string Id);

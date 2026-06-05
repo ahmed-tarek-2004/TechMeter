@@ -22,7 +22,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
 {
     public class LessonService : ILessonService
     {
-        private readonly string[] videoExtensions = new[] {".mp4",".mov",".avi",".wmv",".flv",".mkv",".webm",".m4v",".mpeg",".mpg",".3gp",".ts",".mts",".m2ts",".ogv"};
+        private readonly string[] videoExtensions = new[] { ".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".m4v", ".mpeg", ".mpg", ".3gp", ".ts", ".mts", ".m2ts", ".ogv" };
         private readonly string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
         private readonly ApplicationDbContext _context;
         private readonly ResponseHandler _responseHandler;
@@ -42,7 +42,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
         }
         public async Task<Response<GetLessonResponse>> AddLessonAsync(string sectionId, AddLessonRequest request)
         {
-            var section = await _context.Section.FindAsync(sectionId);
+            var section = await _context.Section.FirstOrDefaultAsync(s => s.Id == sectionId);
             if (section == null)
             {
                 return _responseHandler.NotFound<GetLessonResponse>("Section is not found");
@@ -50,7 +50,6 @@ namespace TechMeter.Infrastructure.Services.Lesson
             string LessonUrl = string.Empty;
             try
             {
-
                 LessonUrl = await UploadMedia(request.LessonStream);
             }
             catch (Exception ex)
@@ -58,6 +57,11 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 return _responseHandler.BadRequest<GetLessonResponse>(ex.Message);
             }
 
+            var course = await _context.Course.FirstOrDefaultAsync(b => b.Id == section.CourseId);
+            if (course == null)
+            {
+                return _responseHandler.NotFound<GetLessonResponse>("Course is not found");
+            }
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -69,13 +73,23 @@ namespace TechMeter.Infrastructure.Services.Lesson
                     SectionId = sectionId,
                     LessonUrl = LessonUrl
                 };
-                await _context.Course.Where(b => b.Id == section.CourseId)
-              .ExecuteUpdateAsync(b => b.SetProperty(c => c.LessonCount, lc => lc.LessonCount + 1));
-                section.LessonCount += 1;
+
                 await _context.AddAsync(Lesson);
+
+                await _context.Course
+                    .Where(c => c.Id == section.CourseId)
+                    .ExecuteUpdateAsync(x =>
+                        x.SetProperty(c => c.LessonCount, c => c.LessonCount + 1));
+
                 await _context.SaveChangesAsync();
-                var response = CreateALessonResponse(Lesson);
                 await transaction.CommitAsync();
+                var response = new GetLessonResponse()
+                {
+                    Id = Lesson.Id,
+                    Name = Lesson.Name,
+                    Description = Lesson.Description,
+                    LessonUrl = Lesson.LessonUrl
+                };
                 return _responseHandler.Created(response, $"Lesson {request.Name} Created Successfully");
             }
             catch (Exception ex)
@@ -109,7 +123,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 var response = new GetLessonResponse()
                 {
                     Id = Id,
-                    LessonUrl = editLessonRequest.LessonUrl,
+                    //LessonUrl = editLessonRequest.LessonUrl,
                     SectionId = editLessonRequest.SectionId,
                     Description = Lesson.Description,
                     Name = Lesson.Name,
@@ -124,73 +138,50 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 return _responseHandler.InternalServerError<GetLessonResponse>(ex.Message);
             }
         }
-        public async Task<Response<List<GetLessonResponse>>> GetALLessonAsync()
+        public async Task<Response<List<GetLessonResponse>>> GetCourseLessonsAsync(string courseId)
         {
-            var response = await _context.Lessons.Select(b => new GetLessonResponse()
-            {
-                Id = b.Id,
-                Description = b.Description,
-                LessonUrl = b.LessonUrl,
-                Name = b.Name,
-                SectionId = b.SectionId,
-            }).ToListAsync();
-
-            return _responseHandler.Success(response, "Lessons returned successfully");
+            var lessons = _context.Lessons
+                .AsNoTracking()
+                .Where(l => l.section.CourseId == courseId)
+                .AsQueryable();
+            var respone = await CreateALessonResponse(lessons);
+            return _responseHandler.Success(respone, "Course lessons returned successfully");
         }
         public async Task<Response<GetLessonResponse>> GetLessonByIdAsync(string Id)
         {
-            var lesson = await _context.Lessons.FirstOrDefaultAsync(b => b.Id == Id);
-            if (lesson == null)
-                return _responseHandler.NotFound<GetLessonResponse>("Lesson not found");
-            var response = CreateALessonResponse(lesson!);
-            return _responseHandler.Success(response, "Lesson returned successfully");
-        }
+            var lesson = _context.Lessons.Where(b => b.Id == Id).AsQueryable();
+            var response = await CreateALessonResponse(lesson);
+            if (response.FirstOrDefault() == null)
+                return _responseHandler.NotFound<GetLessonResponse>("Lesson is not found");
 
+            return _responseHandler.Success(response.FirstOrDefault()!, "Lesson returned successfully");
+        }
         public async Task<Response<List<GetLessonResponse>>> GetSectionLessonResponse(string sectionId)
         {
             if (!await _context.Section.AnyAsync(s => s.Id == sectionId))
                 return _responseHandler.NotFound<List<GetLessonResponse>>("Section is not found");
 
-            var lessons = await _context.Lessons
+            var lessons = _context.Lessons
                 .AsNoTracking()
                 .Where(l => l.SectionId == sectionId)
-                .Select(l => new GetLessonResponse
-                {
-                    SectionId = l.SectionId,
-                    Id = l.Id,
-                    Description = l.Description,
-                    LessonUrl = l.LessonUrl,
-                    Name = l.Name
-                })
-                .ToListAsync();
+                .AsQueryable();
 
-            return _responseHandler.Success(lessons, "Section lessons returned successfully");
+            return _responseHandler.Success(await CreateALessonResponse(lessons), "Section lessons returned successfully");
         }
         public async Task<Response<string>> DeleteLessonAsync(string Id)
         {
-            var Lesson = await _context.Lessons.FindAsync(Id);
-            if (Lesson == null)
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            var lesson = await _context.Lessons.FirstOrDefaultAsync(b => b.Id == Id);
+            if (lesson == null)
             {
                 return _responseHandler.NotFound<string>("Lesson Not Found");
             }
-            var section = await _context.Section.Where(b => b.Id == Lesson.SectionId).Select(b => new
-            {
-                Id = b.Id,
-                CourseId = b.CourseId,
-            }).FirstOrDefaultAsync();
-            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                await _context.Section.Where(b => b.Id == section.Id)
-                    .ExecuteUpdateAsync(b => b.SetProperty(s => s.LessonCount, s => s.LessonCount - 1));
-
-                await _context.Course.Where(b => b.Id == section.CourseId)
-                    .ExecuteUpdateAsync(b => b.SetProperty(s => s.LessonCount, s => s.LessonCount - 1));
-
-                _context.Remove(Lesson);
+                _context.Remove(lesson);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return _responseHandler.Deleted<string>($"Lesson {Lesson.Name} Deleted Successfully");
+                return _responseHandler.Deleted<string>($"Lesson {lesson.Name} Deleted Successfully");
             }
             catch (Exception ex)
             {
@@ -198,28 +189,32 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 return _responseHandler.InternalServerError<string>(ex.Message);
             }
         }
-
         public async Task<Response<string>> StudentLessonWatched(string studentId, string lessonId)
         {
+            var courseInfo = await _context.Lessons
+                .Where(l => l.Id == lessonId)
+                .Select(l => new
+                {
+                    l.section.CourseId,
+                    l.section.Course.LessonCount
+                })
+                .FirstOrDefaultAsync();
 
-            var courseId = await _context.Lessons.Where(l => l.Id == lessonId)
-                               .Select(l => l.section.CourseId)
-                               .FirstOrDefaultAsync();
-            if (string.IsNullOrEmpty(courseId))
-            {
+            if (courseInfo == null)
                 return _responseHandler.NotFound<string>("Lesson not found");
-            }
-            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            await using var transaction =
+                await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var existing = await _context.StudentLessonWatched
-                    .AnyAsync(x => x.StudentId == studentId && x.LessonId == lessonId);
+                var exists = await _context.StudentLessonWatched
+                    .AnyAsync(x =>
+                        x.StudentId == studentId &&
+                        x.LessonId == lessonId);
 
-                if (existing)
-                {
-                    return _responseHandler.Success(string.Empty, "Lesson already marked as watched");
-                }
+                if (exists)
+                    return _responseHandler.Success("", "Already watched");
 
                 await _context.StudentLessonWatched.AddAsync(new StudentLessonWatched
                 {
@@ -228,31 +223,31 @@ namespace TechMeter.Infrastructure.Services.Lesson
                     WatchedDate = DateTime.UtcNow
                 });
 
-
-                //await _context.SaveChangesAsync();
-
-
-                await _context.CourseStudent.Where(b => b.StudentId == studentId && b.CourseId == courseId)
-                            .ExecuteUpdateAsync(b => b.SetProperty(c => c.Progrss, c => c.Progrss + 1));
-
-                var totalLessons = await _context.Lessons
-                    .CountAsync(l => l.section.CourseId == courseId);
+                await _context.CourseStudent
+                    .Where(x =>
+                        x.StudentId == studentId &&
+                        x.CourseId == courseInfo.CourseId)
+                    .ExecuteUpdateAsync(x =>
+                        x.SetProperty(p => p.Progrss, p => p.Progrss + 1));
 
                 var updatedProgress = await _context.CourseStudent
-                                      .Where(x => x.StudentId == studentId && x.CourseId == courseId)
-                                      .Select(x => x.Progrss)
-                                      .FirstOrDefaultAsync();
+                    .Where(x =>
+                        x.StudentId == studentId &&
+                        x.CourseId == courseInfo.CourseId)
+                    .Select(x => x.Progrss)
+                    .FirstAsync();
 
-                if (updatedProgress >= totalLessons)
+                if (updatedProgress >= courseInfo.LessonCount)
                 {
-                    await StoreAndSendNotification(studentId, courseId);
+                    await StoreAndSendNotification(studentId,courseInfo.CourseId);
                 }
-
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return _responseHandler.Success("Updated", "Lesson status updated successfully");
+                return _responseHandler.Success(
+                    "Updated",
+                    "Lesson status updated successfully");
             }
             catch (Exception ex)
             {
@@ -280,7 +275,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 if (deleted == 0)
                 {
                     await transaction.CommitAsync();
-                    return _responseHandler.Success<string>(string.Empty, "Lesson  marked as unwatched");
+                    return _responseHandler.Success(string.Empty, "Lesson already unwatched");
                 }
 
 
@@ -300,27 +295,28 @@ namespace TechMeter.Infrastructure.Services.Lesson
         }
         public async Task<Response<List<GetLessonResponse>>> GetStudentLessonWatched(string studentId)
         {
-            var lessons = await _context.StudentLessonWatched.Where(slw => slw.StudentId == studentId)
-                .Select(slw => new GetLessonResponse
+            var lessons = await _context.StudentLessonWatched
+                .Where(slw => slw.StudentId == studentId)
+                .Select(b => new GetLessonResponse
                 {
-                    Id = slw.Lessons.Id,
-                    Description = slw.Lessons.Description,
-                    LessonUrl = slw.Lessons.LessonUrl,
-                    Name = slw.Lessons.Name,
-                    SectionId = slw.Lessons.SectionId,
-                }).AsNoTracking().ToListAsync();
+                    Id = b.LessonId,
+                    Description = b.Lessons.Description,
+                    //LessonUrl = b.lesson.LessonUrl,
+                    Name = b.Lessons.Name,
+                    SectionId = b.Lessons.SectionId,
+                }).ToListAsync();
             return _responseHandler.Success(lessons, "Lesson Watched Returned Successfully");
         }
-        private GetLessonResponse CreateALessonResponse(TechMeter.Domain.Models.Lessons lesson)
+        private async Task<List<GetLessonResponse>> CreateALessonResponse(IQueryable<TechMeter.Domain.Models.Lessons> lesson)
         {
-            var response = new GetLessonResponse()
+            var response = await lesson.Select(b => new GetLessonResponse()
             {
-                Id = lesson.Id,
-                Description = lesson.Description,
-                LessonUrl = lesson.LessonUrl,
-                Name = lesson.Name,
-                SectionId = lesson.SectionId,
-            };
+                Id = b.Id,
+                Description = b.Description,
+                //LessonUrl = lesson.LessonUrl,
+                Name = b.Name,
+                SectionId = b.SectionId,
+            }).ToListAsync();
             return response;
         }
         private async Task StoreAndSendNotification(string studentId, string courseId)
@@ -341,7 +337,6 @@ namespace TechMeter.Infrastructure.Services.Lesson
             await _context.Notification.AddAsync(notification);
             //await _context.SaveChangesAsync();
         }
-
         private async Task<string> UploadMedia(IFormFile file)
         {
             var fileExtension = Path.GetExtension(file.FileName).ToLower();
