@@ -24,7 +24,7 @@ namespace TechMeter.API.Controllers
     {
 
         [Authorize(Roles = "provider")]
-        [HttpGet("provider/profile")]
+        [HttpGet("provider")]
         public async Task<ActionResult<Response<GetProviderProfileInfoResponse>>> GetProviderProfileAsync()
         {
             var query = new ProviderProfileQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "");
@@ -33,7 +33,7 @@ namespace TechMeter.API.Controllers
         }
 
         [Authorize(Roles = "provider")]
-        [HttpPut("provider/update/profile")]
+        [HttpPut("provider")]
         public async Task<ActionResult<Response<string>>> UpdateProviderProfileAsync([FromForm] EditProviderProfileRequest request)
         {
 
@@ -42,7 +42,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [Authorize(Roles = "student")]
-        [HttpGet("student/profile")]
+        [HttpGet("student")]
         public async Task<ActionResult<Response<GetStudentProfileInfoResponse>>> GetStudentProfileAsync()
         {
             var response = await mediator.Send(new StudentProfileQuery(User.FindFirst(ClaimTypes.NameIdentifier)?.Value));
@@ -50,7 +50,7 @@ namespace TechMeter.API.Controllers
         }
 
         [Authorize(Roles = "student")]
-        [HttpPut("student/update/profile")]
+        [HttpPut("student")]
         public async Task<ActionResult<Response<string>>> UpdateStudentProfileAsync([FromForm] EditStudentProfileRequest request)
         {
 
