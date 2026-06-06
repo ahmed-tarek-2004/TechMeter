@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Lesson;
@@ -45,6 +46,7 @@ namespace TechMeter.API.Controllers
             });
             return StatusCode((int)response.StatusCode, response);
         }
+        [EnableRateLimiting("TogglePolicy")]
         [HttpPost("{lessonId}/finish")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<string>> StudentLessonWatched([FromRoute] string lessonId)
@@ -53,6 +55,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new WatchLessonCommand { LessonId = lessonId, StudentId = userId! });
             return StatusCode((int)response.StatusCode, response);
         }
+        [EnableRateLimiting("TogglePolicy")]
         [HttpDelete("{lessonId}/unfinish")]
         [Authorize(Roles = "student")]
         public async Task<ActionResult<string>> StudentLessonUnwatched([FromRoute] string lessonId)
