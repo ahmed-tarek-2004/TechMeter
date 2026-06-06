@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using TechMeter.API.Hubs;
@@ -64,6 +65,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost]
+        //[EnableRateLimiting(")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<AddCourseResponse>>> Create([FromForm] AddCourseRequest request)
         {
