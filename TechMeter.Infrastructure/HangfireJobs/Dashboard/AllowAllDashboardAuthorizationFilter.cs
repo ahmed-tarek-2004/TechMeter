@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Application.Jobs
+namespace TechMeter.Infrastructure.BackgroundJob.Dashboard
 {
     public class AllowAllDashboardAuthorizationFilter : IDashboardAuthorizationFilter
     {

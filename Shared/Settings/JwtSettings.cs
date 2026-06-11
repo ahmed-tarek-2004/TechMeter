@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Infrastructure.Adapters.JwtSettings
+namespace TechMeter.Shared
 {
     public class JwtSettings
     {

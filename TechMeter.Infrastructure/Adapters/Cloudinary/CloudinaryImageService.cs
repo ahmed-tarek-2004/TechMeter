@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Interfaces;
+using TechMeter.Shared;
 
 namespace TechMeter.Infrastructure.Adapters.Cloudinary
 {

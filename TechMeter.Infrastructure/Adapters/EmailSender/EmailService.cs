@@ -25,7 +25,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
             _userManager = userManager;
             _logger = logger;
         }
-        public async Task SendOtpEmailAsync(User user, string otp)
+        public async Task SendOtpEmailAsync(string UserName,string Email, string otp)
         {
             try
             {
@@ -43,25 +43,25 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
                 emailTemplate = emailTemplate
                     .Replace("{OtpCode}", otp)
                     .Replace("{CurrentYear}", DateTime.UtcNow.Year.ToString())
-                    .Replace("{Username}", user.UserName ?? user.Email ?? "User");
+                    .Replace("{Username}", UserName);
 
                 var sendResult = await _fluentEmail
-                    .To(user.Email)
+                    .To(Email)
                     .Subject("Email Confirmation Code")
                     .Body(emailTemplate, isHtml: true)
                     .SendAsync();
 
                 if (!sendResult.Successful)
                 {
-                    _logger.LogError($"Failed to send OTP email to {user.Email}. Errors: {string.Join(", ", sendResult.ErrorMessages)}");
+                    _logger.LogError($"Failed to send OTP email to {Email}. Errors: {string.Join(", ", sendResult.ErrorMessages)}");
                     throw new Exception("Failed to send OTP email.");
                 }
 
-                _logger.LogInformation($"OTP email successfully sent to {user.Email}");
+                _logger.LogInformation($"OTP email successfully sent to {Email}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred while sending OTP email to {user.Email}");
+                _logger.LogError(ex, $"An error occurred while sending OTP email to {Email}");
                 throw;
             }
         }

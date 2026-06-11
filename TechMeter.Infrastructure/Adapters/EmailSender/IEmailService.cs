@@ -11,7 +11,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
 {
     public interface IEmailService
     {
-        public Task SendOtpEmailAsync(User user, string otp);
+        public Task SendOtpEmailAsync(string UserName, string Email, string otp);
         public Task InvoiceEmailAsync(User user, PaymentTransaction transaction,List<GetCourseResponse>courseResponses);
     }
 }

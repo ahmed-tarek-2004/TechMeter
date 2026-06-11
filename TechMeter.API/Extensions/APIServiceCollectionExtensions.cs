@@ -26,8 +26,8 @@ using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
-using TechMeter.Infrastructure.Adapters.JwtSettings;
 using TechMeter.Infrastructure.Persistence;
+using TechMeter.Shared;
 
 
 namespace TechMeter.Extensions
@@ -143,7 +143,7 @@ namespace TechMeter.Extensions
 
         public static IServiceCollection AddEmailServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var emailSettings = configuration.GetSection("EmailSettings").Get<EmailSettings>();
+            var emailSettings = configuration.GetSection("EmailSettings").Get<Shared.EmailSettings>();
 
             services.AddFluentEmail(emailSettings.FromEmail)
                 .AddSmtpSender(new SmtpClient(emailSettings.SmtpServer)

@@ -11,9 +11,9 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using TechMeter.Infrastructure.Adapters.JwtSettings;
 using TechMeter.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using TechMeter.Shared;
 
 namespace TechMeter.Application.Interfaces.TokenService
 {

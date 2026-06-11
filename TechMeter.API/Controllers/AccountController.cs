@@ -80,16 +80,14 @@ namespace TechMeter.API.Controllers
         [HttpPost("student/register")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsStudent([FromForm] StudentRegisterRequest request)
         {
-            var command = _mapper.Map<StudentRegisterCommand>(request);
-            var response = await _mediator.Send(command);
+            var response = await _mediator.Send(new StudentRegisterCommand(request));
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("provider/register")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsProvider([FromForm] ProviderRegisterRequest request)
         {
-            var command = _mapper.Map<ProviderRegisterCommand>(request);
-            var response = await _mediator.Send(command);
+            var response = await _mediator.Send(new ProviderRegisterCommand(request));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("login")]

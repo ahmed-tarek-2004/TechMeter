@@ -27,7 +27,8 @@ using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
-using TechMeter.Infrastructure.Adapters.Payment;
+using TechMeter.Infrastructure.HangfireJobs;
+
 //using TechMeter.Infrastructure.Jobs;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services.AuthService;
@@ -45,6 +46,7 @@ using TechMeter.Infrastructure.Services.Rating;
 using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.User;
 using TechMeter.Infrastructure.Services.WishList;
+using TechMeter.Shared;
 using TokenService = TechMeter.Application.Interfaces.TokenService.TokenService;
 
 namespace TechMeter.Infrastructure.Extensions
@@ -89,6 +91,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
             //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
+            services.AddScoped<IBackgroundJobService, HangfireJobService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFcmService, FcmService>();
 

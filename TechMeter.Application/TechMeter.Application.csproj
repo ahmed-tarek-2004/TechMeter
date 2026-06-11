@@ -28,6 +28,7 @@
 	</ItemGroup>
 	
   <ItemGroup>
+    <ProjectReference Include="..\Shared\TechMeter.Shared.csproj" />
     <ProjectReference Include="..\TechMeter.Domain\TechMeter.Domain.csproj" />
   </ItemGroup>
 
