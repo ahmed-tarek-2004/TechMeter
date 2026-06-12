@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="HangfireJobs\Jobs\EmailJob\**" />
+	  <EmbeddedResource Remove="HangfireJobs\Jobs\EmailJob\**" />
+	  <None Remove="HangfireJobs\Jobs\EmailJob\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CloudinaryDotNet" Version="1.27.5" />
 		<PackageReference Include="FluentEmail.Core" Version="3.0.2" />
 		<PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
@@ -30,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="HangfireJobs\Jobs\" />
 		<Folder Include="Migrations\" />
 	</ItemGroup>
 

@@ -11,19 +11,24 @@ namespace TechMeter.Infrastructure.HangfireJobs
 {
     public class HangfireJobService : IBackgroundJobService
     {
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        public HangfireJobService(IBackgroundJobClient backgroundJobClient)
+        {
+            _backgroundJobClient = backgroundJobClient;
+        }
         public string Enqueue(Expression<Action> methodCall)
         {
-            return Hangfire.BackgroundJob.Enqueue(methodCall);
+            return _backgroundJobClient.Enqueue(methodCall);
         }
 
         public string Enqueue<T>(Expression<Action<T>> methodCall)
         {
-            return Hangfire.BackgroundJob.Enqueue(methodCall);
+            return _backgroundJobClient.Enqueue(methodCall);
         }
 
         public string Schedule<T>(Expression<Action<T>> methodCall, TimeSpan delay)
         {
-            return Hangfire.BackgroundJob.Schedule(methodCall, delay);
+            return _backgroundJobClient.Schedule(methodCall, delay);
         }
     }
 }

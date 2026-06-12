@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.Interfaces;
+using TechMeter.Application.Interfaces.Jobs;
 using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Interfaces.NotificationSender;
@@ -25,20 +26,19 @@ namespace TechMeter.Infrastructure.Services.Lesson
         private readonly string[] videoExtensions = new[] { ".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".m4v", ".mpeg", ".mpg", ".3gp", ".ts", ".mts", ".m2ts", ".ogv" };
         private readonly string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
         private readonly ApplicationDbContext _context;
+        private readonly IBackgroundJobService _backgroundJobService;
         private readonly ResponseHandler _responseHandler;
-        private readonly IMediaUploading _imageUploading;
         private readonly ILogger<LessonService> _logger;
         private readonly INotificationSenderService _notificationService;
         public LessonService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<LessonService> logger, IMediaUploading imageUploading, INotificationSenderService notificationService)
+            ILogger<LessonService> logger, IBackgroundJobService backgroundJobService, INotificationSenderService notificationService)
 
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
+            _backgroundJobService = backgroundJobService;
             _notificationService = notificationService;
-            _imageUploading = imageUploading;
-
         }
         public async Task<Response<GetLessonResponse>> AddLessonAsync(string sectionId, AddLessonRequest request)
         {
@@ -344,11 +344,11 @@ namespace TechMeter.Infrastructure.Services.Lesson
             {
                 if (videoExtensions.Contains(fileExtension))
                 {
-                    return await _imageUploading.UploadVideoAsync(file);
+                    return _backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadVideoAsync(file));
                 }
                 else if (imageExtensions.Contains(fileExtension))
                 {
-                    return await _imageUploading.UploadAsync(file);
+                    return _backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(file));
                 }
                 else
                 {

@@ -32,7 +32,6 @@ using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.EmailSender;
-using TechMeter.Infrastructure.BackgroundJob.Jobs;
 using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services.AuthService
@@ -42,13 +41,12 @@ namespace TechMeter.Infrastructure.Services.AuthService
         private readonly ITokenService _tokenService;
         private readonly ILogger<AuthService> _logger;
         private readonly IBackgroundJobService _backgroundJobService;
-        private readonly IMediaUploading _imageUploading;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Domain.Models.Auth.Identity.User> _userManager;
         private readonly IOTPService _otpService;
         private readonly ResponseHandler _responseHandler;
         public AuthService(ITokenService tokenService, ILogger<AuthService> logger,
-            ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager, IMediaUploading imageUploading,
+            ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager,
             ResponseHandler responseHandler, IOTPService otpService, IBackgroundJobService backgroundJobService)
         {
             _tokenService = tokenService;
@@ -57,7 +55,6 @@ namespace TechMeter.Infrastructure.Services.AuthService
             _userManager = userManager;
             _responseHandler = responseHandler;
             _otpService = otpService;
-            _imageUploading = imageUploading;
             _backgroundJobService = backgroundJobService;
         }
 
@@ -85,8 +82,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 if (string.IsNullOrEmpty(otp))
                 {
                     otp = await _otpService.GenerateAndSetOTP(user.Id);
-                    _backgroundJobService.Enqueue<SendEmailJob>( service => service.SendOtpEmail(user.UserName ?? user.Email ?? "User", user.Email, otp));
-                    _logger.LogInformation($"Otp Sent is : {otp}");
+                    _backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); _logger.LogInformation($"Otp Sent is : {otp}");
 
                     return _responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
                 }
@@ -154,7 +150,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                         Country = request.Country,
                         Gender = request.Gender,
                         ProfileUrl = request.ProfilePhoto != null
-                            ? await _imageUploading.UploadAsync(request.ProfilePhoto)
+                            ? _backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto))
                             : string.Empty,
                     };
 
@@ -184,8 +180,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
 
                 var Tokens = await _tokenService.GenerateTokensAsync(user, user.Id);
                 var otp = await _otpService.GenerateAndSetOTP(user.Id);
-                _backgroundJobService.Enqueue<SendEmailJob>(service=>service.SendOtpEmail(user.UserName ?? user.Email ?? "User", user.Email, otp));
-
+                _backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
                 await transaction.CommitAsync();
                 _logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.Email);
                 var response = new StudentRegisterResponse()
@@ -251,7 +246,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                         PhoneNumber = request.PhoneNumber,
                         Country = request.Country,
                         Gender = request.Gender,
-                        ProfileUrl = request.ProfilePhoto != null ? await _imageUploading.UploadAsync(request.ProfilePhoto) : string.Empty,
+                        ProfileUrl = request.ProfilePhoto != null ? _backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto)) : string.Empty,
                     };
                     var result = await _userManager.CreateAsync(user, request.Password);
                     if (!result.Succeeded)
@@ -279,7 +274,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
 
                 var Tokens = await _tokenService.GenerateTokensAsync(user, user.Id);
                 var otp = await _otpService.GenerateAndSetOTP(user.Id);
-                _backgroundJobService.Enqueue<SendEmailJob>(service => service.SendOtpEmail(user.UserName ?? user.Email ?? "User", user.Email, otp));
+                _backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -455,8 +450,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 return _responseHandler.Success<string>(null, "Email is already verified.");
             }
             var otp = await _otpService.GenerateAndSetOTP(user.Id);
-            _backgroundJobService.Enqueue<SendEmailJob>(service => service.SendOtpEmail(user.UserName ?? user.Email ?? "User", user.Email, otp));
-            _logger.LogInformation("Email With {Otp} has ben Sent to {Email}", otp, user.Email);
+            _backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); _logger.LogInformation("Email With {Otp} has ben Sent to {Email}", otp, user.Email);
             return _responseHandler.Success<string>(null, "Email Has been Sent successfully");
         }
         #endregion
@@ -472,7 +466,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             try
             {
                 var otp = await _otpService.GenerateAndSetOTP(user.Id);
-                _backgroundJobService.Enqueue<SendEmailJob>(service => service.SendOtpEmail(user.UserName ?? user.Email ?? "User", user.Email, otp));
+                _backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
                 _logger.LogInformation("Email for forget Password is Sent");
                 var response = new ForgetPasswordResponse()
                 {
@@ -527,7 +521,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             user.Gender = request.Gender;
             if (request.ProfilePhoto != null)
             {
-                user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
+                user.ProfileUrl = _backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto));
             }
             user.Student.BirthDate = request.BirthDate;
             user.Student.EducationLevel = request.EducationLevel;
@@ -546,7 +540,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
             user.Gender = request.Gender;
             if (request.ProfilePhoto != null)
             {
-                user.ProfileUrl = await _imageUploading.UploadAsync(request.ProfilePhoto);
+                user.ProfileUrl = _backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto));
             }
             user.Provider.Brief = request.Brief;
             user.Provider.BankAccount = request.BankAccount;
