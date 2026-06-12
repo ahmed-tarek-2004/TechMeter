@@ -30,6 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="HangfireJobs\Jobs\EmailJob\" />
 		<Folder Include="Migrations\" />
 	</ItemGroup>
 
