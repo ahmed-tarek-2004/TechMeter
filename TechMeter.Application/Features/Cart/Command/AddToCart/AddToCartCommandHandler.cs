@@ -13,7 +13,7 @@ namespace TechMeter.Application.Features.Cart.Command.AddToCart
     {
         public async Task<Response<string>> Handle(AddToCartCommand request, CancellationToken cancellationToken)
         {
-            return await cartService.AddToCartAsync(request.StudentId, request.CourseId, request.UnitPrice);
+            return await cartService.AddToCartAsync(request.StudentId, request.CourseId);//, request.UnitPrice);
         }
     }
 }

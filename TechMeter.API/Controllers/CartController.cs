@@ -61,7 +61,7 @@ namespace TechMeter.API.Controllers
         [HttpPost("student")]
         public async Task<ActionResult<Response<CartResponse>>> AddToCartAsync([FromBody] CartRequest cartRequest)
         {
-            var response = await _mediator.Send(new AddToCartCommand { StudentId = GetUserId(), CourseId = cartRequest.CourseId, UnitPrice = cartRequest.UnitPrice });
+            var response = await _mediator.Send(new AddToCartCommand { StudentId = GetUserId(), CourseId = cartRequest.CourseId });
             return StatusCode((int)response.StatusCode, response);
         }
         //[Authorize(Roles = "student")]

@@ -12,6 +12,6 @@ namespace TechMeter.Application.Features.Cart.Command.AddToCart
     {
         public string StudentId { get; set; }
         public string CourseId { get; set; }
-        public decimal UnitPrice { get; set; } = 0;
+        //public decimal UnitPrice { get; set; } = 0;
     }
 }

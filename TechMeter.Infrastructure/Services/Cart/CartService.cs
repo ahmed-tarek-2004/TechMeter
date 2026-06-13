@@ -97,7 +97,7 @@ namespace TechMeter.Infrastructure.Services.Cart
             var cartResponse = CreateCartResponse(Cart);
             return _responseHandler.Success(cartResponse, $"Cart For Student {StudentId} return successfully");
         }
-        public async Task<Response<string>> AddToCartAsync(string studentId, string courseId, decimal unitPrice)
+        public async Task<Response<string>> AddToCartAsync(string studentId, string courseId)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -136,7 +136,7 @@ namespace TechMeter.Infrastructure.Services.Cart
                     {
                         Id = Guid.NewGuid().ToString(),
                         CourseId = courseId,
-                        UnitPrice = unitPrice,
+                        UnitPrice = Course.Price,
                         CreatedAt = DateTime.Now,
                         CartId = cart.Id,
                     };
@@ -252,44 +252,6 @@ namespace TechMeter.Infrastructure.Services.Cart
                 return _responseHandler.InternalServerError<string>("An error occurred while removing cart item.");
             }
         }
-        //public async Task<Response<CartResponse>> UpdateCartAsync(string StudentId, UpdateCartItemRequest request)
-        //{
-        //    var transaction = await _context.Database.BeginTransactionAsync();
-        //    try
-        //    {
-        //        var cart = await _context.Cart
-        //            .Include(b => b.CartItems)
-        //            .ThenInclude(b => b.Course)
-        //            .FirstOrDefaultAsync(b => b.StudentId == StudentId);
-        //        if (cart == null)
-        //        {
-        //            _logger.LogWarning("Cart not found for StudentId: {StudentId}", StudentId);
-        //            return _responseHandler.NotFound<CartResponse>("Cart not found.");
-        //        }
-        //        var cartItem = cart.CartItems.FirstOrDefault(b => b.Id == request.CartItemId);
-        //        if (cartItem == null)
-        //        {
-        //            _logger.LogWarning("CartItem not found. CartItemId: {CartItemId}", request.CartItemId);
-        //            return _responseHandler.NotFound<CartResponse>("Cart item not found.");
-        //        }
-
-        //        cart.UpdatedAt = DateTime.UtcNow;
-
-        //        await _context.SaveChangesAsync();
-
-        //        await transaction.CommitAsync();
-        //        var response = CreateCartResponse(cart);
-        //        _logger.LogInformation("Cart item quantity updated successfully for StudentId: {StudentId}", StudentId);
-        //        return _responseHandler.Success(response, "Cart item quantity updated successfully.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await transaction.RollbackAsync();
-        //        _logger.LogError(ex, "Error occurred while updating cart item quantity for StudentId: {StudentId}", StudentId);
-        //        return _responseHandler.InternalServerError<CartResponse>("An error occurred while updating cart item quantity.");
-        //    }
-
-        //}
         private CartResponse CreateCartResponse(TechMeter.Domain.Models.Cart cart)
         {
             var cartItemResponse = cart.CartItems
