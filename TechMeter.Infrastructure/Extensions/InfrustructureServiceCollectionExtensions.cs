@@ -15,6 +15,7 @@ using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Application.Interfaces.Fcm;
 using TechMeter.Application.Interfaces.Jobs;
 using TechMeter.Application.Interfaces.Lesson;
+using TechMeter.Application.Interfaces.LessonComment;
 using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Interfaces.Order;
 using TechMeter.Application.Interfaces.OTPService;
@@ -31,12 +32,14 @@ using TechMeter.Infrastructure.HangfireJobs;
 
 //using TechMeter.Infrastructure.Jobs;
 using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Services;
 using TechMeter.Infrastructure.Services.AuthService;
 using TechMeter.Infrastructure.Services.Cart;
 using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.Lesson;
+using TechMeter.Infrastructure.Services.LessonComment;
 using TechMeter.Infrastructure.Services.Notification;
 
 //using TechMeter.Infrastructure.Services.Notification;
@@ -94,6 +97,8 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFcmService, FcmService>();
+            services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
+            services.AddScoped<ILessonCommentService, LessonCommentService>();
 
             return services;
         }
