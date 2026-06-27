@@ -41,7 +41,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("{Id}/comment")]
-        public async Task<ActionResult<Response<string>>> AddCommentToLesson([FromRoute] string Id, [FromBody] string content)
+        public async Task<ActionResult<Response<LessonCommentResponse>>> AddCommentToLesson([FromRoute] string Id, [FromBody] string content)
         {
             var response = await _mediator.Send(new AddLessonCommentCommand(GetUserId(), Id, content));
             return StatusCode((int)response.StatusCode, response);
@@ -86,7 +86,7 @@ namespace TechMeter.API.Controllers
         }
         [HttpPatch("{Id}/comment/{commentId}")]
         [Authorize(Roles = "student")]
-        public async Task<ActionResult<Response<string>>> EditLessonCommentByIdAsync([FromRoute] string Id, [FromRoute] string commentId, [FromBody] LessonCommentRequest request)
+        public async Task<ActionResult<Response<LessonCommentResponse>>> EditLessonCommentByIdAsync([FromRoute] string Id, [FromRoute] string commentId, [FromBody] LessonCommentRequest request)
         {
             var response = await _mediator.Send(new EditLessonCommentCommand(Id, commentId, GetUserId(), request.Content));
             return StatusCode((int)response.StatusCode, response);

@@ -15,30 +15,30 @@ using TechMeter.Infrastructure.Persistence;
 
 namespace TechMeter.Infrastructure.Services
 {
-    public class LessonCommentService(ApplicationDbContext context,ILessonCommentAuthorization lessonCommentAuthorization,
+    public class LessonCommentService(ApplicationDbContext context, ILessonCommentAuthorization lessonCommentAuthorization,
         ResponseHandler responseHandler) : ILessonCommentService
     {
-        public async Task<Response<string>> AddLessonComment(string userId, string lessonId, string content)
+        public async Task<Response<LessonCommentResponse>> AddLessonComment(string userId, string lessonId, string content)
         {
             var user = await context.Users.FindAsync(userId);
             if (user == null)
             {
-                return responseHandler.NotFound<string>("user is not found");
+                return responseHandler.NotFound<LessonCommentResponse>("user is not found");
             }
             var Lesson = await lessonCommentAuthorization.GetLessonAsync(lessonId);
             if (Lesson == null)
             {
-                return responseHandler.NotFound<string>("Lesson is not found");
+                return responseHandler.NotFound<LessonCommentResponse>("Lesson is not found");
             }
 
             try
             {
                 if (!await lessonCommentAuthorization.HasCourseAccess(userId, Lesson.Value.CourseId))
                 {
-                    return responseHandler.Forbidden<string>("you don't have access to the course");
+                    return responseHandler.Forbidden<LessonCommentResponse>("you don't have access to the course");
                 }
 
-                var LessonComment = new Domain.Models.LessonComment
+                var comment = new Domain.Models.LessonComment
                 {
                     Id = Guid.NewGuid().ToString(),
                     CreatedAt = DateTime.UtcNow,
@@ -50,13 +50,25 @@ namespace TechMeter.Infrastructure.Services
                     UserImage = "",
                     UserName = user.UserName ?? "",
                 };
-                await context.AddAsync(LessonComment);
+                await context.AddAsync(comment);
                 await context.SaveChangesAsync();
-                return responseHandler.Success(string.Empty, "Comment Added Successfully");
+                var response = new LessonCommentResponse
+                {
+                    Id = comment.Id,
+                    LessonId = comment.LessonId,
+                    IsEdited = comment.IsEdited,
+                    Content = comment.Content,
+                    CreatedAt = comment.CreatedAt,
+                    UserEmail = comment.UserEmail,
+                    UserId = comment.UserId,
+                    UserImage = comment.UserImage,
+                    UserName = comment.UserName,
+                };
+                return responseHandler.Success(response, "Comment Added Successfully");
             }
             catch (Exception ex)
             {
-                return responseHandler.InternalServerError<string>("internal server error");
+                return responseHandler.InternalServerError<LessonCommentResponse>("internal server error");
             }
 
         }
@@ -77,7 +89,7 @@ namespace TechMeter.Infrastructure.Services
             try
             {
 
-                var rows = await lessonCommentAuthorization.CanDeleteAsync(userId,commentId,lessonId);
+                var rows = await lessonCommentAuthorization.CanDeleteAsync(userId, commentId, lessonId);
 
                 if (rows == 0)
                 {
@@ -94,41 +106,52 @@ namespace TechMeter.Infrastructure.Services
             }
         }
 
-        public async Task<Response<string>> EditLessonComment(string lessonId, string commentId, string userId, string content)
+        public async Task<Response<LessonCommentResponse>> EditLessonComment(string lessonId, string commentId, string userId, string content)
         {
             var Lesson = await lessonCommentAuthorization.GetLessonAsync(lessonId);
             if (Lesson == null)
             {
-                return responseHandler.NotFound<string>("Lesson is not found");
+                return responseHandler.NotFound<LessonCommentResponse>("Lesson is not found");
             }
 
             if (!await lessonCommentAuthorization.HasCourseAccess(userId, Lesson.Value.CourseId))
             {
-                return responseHandler.Forbidden<string>("you don't have access to the course");
+                return responseHandler.Forbidden<LessonCommentResponse>("you don't have access to the course");
             }
 
             try
             {
 
-                var rows = await context.lessonComments
+                var comment = await context.lessonComments
                     .Where(b => b.LessonId == lessonId && b.UserId == userId && b.Id == commentId)
-                    .ExecuteUpdateAsync(b =>
-                    b.SetProperty(p => p.Content, content)
-                    .SetProperty(p => p.IsEdited, true));
+                    .FirstOrDefaultAsync();
 
+                if (comment == null)
+                {
+                    return responseHandler.NotFound<LessonCommentResponse>("Comment is not found");
+                }
 
-                if (rows == 0)
+                comment.Content = content;
+                comment.IsEdited = true;
+                await context.SaveChangesAsync();
+                var response = new LessonCommentResponse
                 {
-                    return responseHandler.NotFound<string>("Comment is not found");
-                }
-                else
-                {
-                    return responseHandler.Success(string.Empty, "Comment Updated Successfully");
-                }
+                    Id = comment.Id,
+                    LessonId = comment.LessonId,
+                    IsEdited = comment.IsEdited,
+                    Content = comment.Content,
+                    CreatedAt = comment.CreatedAt,
+                    UserEmail = comment.UserEmail,
+                    UserId = comment.UserId,
+                    UserImage = comment.UserImage,
+                    UserName = comment.UserName,
+                };
+                return responseHandler.Success(response, "Comment Updated Successfully");
+
             }
             catch (Exception ex)
             {
-                return responseHandler.InternalServerError<string>("internal server error");
+                return responseHandler.InternalServerError<LessonCommentResponse>("internal server error");
             }
 
         }
@@ -151,6 +174,6 @@ namespace TechMeter.Infrastructure.Services
             return responseHandler.Success(resposne, "Lesson Comments Retrived Successfully");
         }
 
-       
+
     }
 }
