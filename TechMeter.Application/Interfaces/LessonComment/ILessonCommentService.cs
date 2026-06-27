@@ -10,10 +10,10 @@ namespace TechMeter.Application.Interfaces.LessonComment
 {
     public interface ILessonCommentService
     {
-        Task<Response<string>> AddLessonComment(string userId, string LessonId,string content);
-        Task<Response<string>> DeleteLessonComment(string commentId, string userId);
+        Task<Response<LessonCommentResponse>> AddLessonComment(string userId, string LessonId, string content);
+        Task<Response<string>> DeleteLessonComment(string lessonId, string commentId, string userId);
         Task<Response<List<LessonCommentResponse>>> GetAllLessonComment(string UserId, string LessonId);
-        Task<Response<LessonCommentResponse>> GetLessonComment(string CommentId, string userId);
-        Task<Response<string>> EditLeessonComment(string CommentId, string userId);
+        //Task<Response<LessonCommentResponse>> GetLessonComment(string CommentId, string userId);
+        Task<Response<LessonCommentResponse>> EditLessonComment(string CommentId,string lessonId, string userId, string content);
     }
 }

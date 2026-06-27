@@ -8,13 +8,18 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Lesson;
+using TechMeter.Application.DTO.LessonComment;
 using TechMeter.Application.Features.Lesson.Command.AddLesson;
+using TechMeter.Application.Features.Lesson.Command.AddLessonComment;
 using TechMeter.Application.Features.Lesson.Command.ChangeLessonState;
 using TechMeter.Application.Features.Lesson.Command.DeleteLesson;
+using TechMeter.Application.Features.Lesson.Command.DeleteLessonComment;
 using TechMeter.Application.Features.Lesson.Command.EditLesson;
+using TechMeter.Application.Features.Lesson.Command.EditLessonComment;
 using TechMeter.Application.Features.Lesson.Command.UnWatchLesson;
 using TechMeter.Application.Features.Lesson.Query.GetAllLessons;
 using TechMeter.Application.Features.Lesson.Query.GetLessonById;
+using TechMeter.Application.Features.Lesson.Query.GetLessonComments;
 using TechMeter.Application.Features.Lesson.Query.GetSectionLessons;
 using TechMeter.Application.Features.Lesson.Query.StudentLessonWatched;
 using TechMeter.Application.Interfaces.Lesson;
@@ -35,8 +40,9 @@ namespace TechMeter.API.Controllers
             _mapper = mapper;
         }
 
+
         [HttpPost("{sectionId}")]
-        public async Task<ActionResult<GetLessonResponse>> AddLessonToSectionAsync([FromRoute] string sectionId, [FromForm] AddLessonRequest request)
+        public async Task<ActionResult<Response<GetLessonResponse>>> AddLessonToSectionAsync([FromRoute] string sectionId, [FromForm] AddLessonRequest request)
         {
 
             var response = await _mediator.Send(new AddLessonCommand
@@ -46,46 +52,50 @@ namespace TechMeter.API.Controllers
             });
             return StatusCode((int)response.StatusCode, response);
         }
+
         [EnableRateLimiting("TogglePolicy")]
-        [HttpPost("{lessonId}/finish")]
+        [HttpPost("{Id}/finish")]
         [Authorize(Roles = "student")]
-        public async Task<ActionResult<string>> StudentLessonWatched([FromRoute] string lessonId)
+        public async Task<ActionResult<Response<string>>> StudentLessonWatched([FromRoute] string Id)
         {
             var userId = GetUserId();
-            var response = await _mediator.Send(new WatchLessonCommand { LessonId = lessonId, StudentId = userId! });
+            var response = await _mediator.Send(new WatchLessonCommand { LessonId = Id, StudentId = userId! });
             return StatusCode((int)response.StatusCode, response);
         }
         [EnableRateLimiting("TogglePolicy")]
-        [HttpDelete("{lessonId}/unfinish")]
+        [HttpDelete("{Id}/unfinish")]
         [Authorize(Roles = "student")]
-        public async Task<ActionResult<string>> StudentLessonUnwatched([FromRoute] string lessonId)
+        public async Task<ActionResult<Response<string>>> StudentLessonUnwatched([FromRoute] string Id)
         {
             var userId = GetUserId();
-            var response = await _mediator.Send(new UnWatchLessonCommand { LessonId = lessonId, StudentId = userId! });
+            var response = await _mediator.Send(new UnWatchLessonCommand { LessonId = Id, StudentId = userId! });
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPut("{Id}")]
-        public async Task<ActionResult<GetLessonResponse>> EditLEssonByIdAsync([FromRoute] string Id, [FromForm] EditLessonRequest request)
+        [Authorize(Roles = "provider")]
+        public async Task<ActionResult<Response<GetLessonResponse>>> EditLessonByIdAsync([FromRoute] string Id, [FromForm] EditLessonRequest request)
         {
             var response = await _mediator.Send(new EditLessonCommand { Id = Id, EditLessonRequest = request });
             return StatusCode((int)response.StatusCode, response);
         }
+       
         [HttpGet("{Id}")]
-        public async Task<ActionResult<GetLessonResponse>> GetLessonById(string Id)
+        public async Task<ActionResult<Response<GetLessonResponse>>> GetLessonById(string Id)
         {
             var response = await _mediator.Send(new GetLessonByIdQuery { Id = Id });
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpGet("course/{courseId}/all")]
-        public async Task<ActionResult<List<GetLessonResponse>>> GetCourseLessonsAsync(string courseId)
+        public async Task<ActionResult<Response<List<GetLessonResponse>>>> GetCourseLessonsAsync(string courseId)
         {
             var response = await _mediator.Send(new GetCourseLessonsQuery(courseId));
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpGet("student/watched")]
-        public async Task<ActionResult<List<GetLessonResponse>>> GetStudentLessonWatchedAsync()
+        [Authorize("student")]
+        public async Task<ActionResult<Response<List<GetLessonResponse>>>> GetStudentLessonWatchedAsync()
         {
             var userId = GetUserId();
             var response = await _mediator.Send(new StudentLessonWatchedQuery { StudentId = userId! });
@@ -93,17 +103,20 @@ namespace TechMeter.API.Controllers
 
         }
         [HttpGet("{sectionId}/lessons")]
-        public async Task<ActionResult<List<GetLessonResponse>>> GetSectionLessonsAsync([FromRoute] string sectionId)
+        public async Task<ActionResult<Response<List<GetLessonResponse>>>> GetSectionLessonsAsync([FromRoute] string sectionId)
         {
             var response = await _mediator.Send(new GetSectionLessonsQuery { SectionId = sectionId });
             return StatusCode((int)response.StatusCode, response);
         }
+
         [HttpDelete("{Id}")]
-        public async Task<ActionResult<Response<string>>> DeleteLessonByIdAsync(string Id)
+        [Authorize(Roles = "provider,admin")]
+        public async Task<ActionResult<Response<string>>> DeleteLessonByIdAsync([FromRoute] string Id)
         {
             var response = await _mediator.Send(new DeleteLessonCommand { Id = Id });
             return StatusCode((int)response.StatusCode, response);
         }
+       
         private string GetUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
