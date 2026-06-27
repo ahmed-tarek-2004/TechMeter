@@ -40,12 +40,6 @@ namespace TechMeter.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("{Id}/comment")]
-        public async Task<ActionResult<Response<LessonCommentResponse>>> AddCommentToLesson([FromRoute] string Id, [FromBody] string content)
-        {
-            var response = await _mediator.Send(new AddLessonCommentCommand(GetUserId(), Id, content));
-            return StatusCode((int)response.StatusCode, response);
-        }
 
         [HttpPost("{sectionId}")]
         public async Task<ActionResult<Response<GetLessonResponse>>> AddLessonToSectionAsync([FromRoute] string sectionId, [FromForm] AddLessonRequest request)
@@ -84,13 +78,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new EditLessonCommand { Id = Id, EditLessonRequest = request });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpPatch("{Id}/comment/{commentId}")]
-        [Authorize(Roles = "student")]
-        public async Task<ActionResult<Response<LessonCommentResponse>>> EditLessonCommentByIdAsync([FromRoute] string Id, [FromRoute] string commentId, [FromBody] LessonCommentRequest request)
-        {
-            var response = await _mediator.Send(new EditLessonCommentCommand(Id, commentId, GetUserId(), request.Content));
-            return StatusCode((int)response.StatusCode, response);
-        }
+       
         [HttpGet("{Id}")]
         public async Task<ActionResult<Response<GetLessonResponse>>> GetLessonById(string Id)
         {
@@ -121,13 +109,6 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("{Id}/comments")]
-        public async Task<ActionResult<Response<List<LessonCommentResponse>>>> GetLessonCommentsAsync([FromRoute] string Id)
-        {
-            var response = await _mediator.Send(new GetLessonCommentsQuery(GetUserId(), Id));
-            return StatusCode((int)response.StatusCode, response);
-        }
-
         [HttpDelete("{Id}")]
         [Authorize(Roles = "provider,admin")]
         public async Task<ActionResult<Response<string>>> DeleteLessonByIdAsync([FromRoute] string Id)
@@ -135,13 +116,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new DeleteLessonCommand { Id = Id });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpDelete("{Id}/comment/{commentId}")]
-        [Authorize(Roles = "provider,admin")]
-        public async Task<ActionResult<Response<string>>> DeleteLessonCommentByIdAsync([FromRoute] string Id, [FromRoute] string commentId)
-        {
-            var response = await _mediator.Send(new DeleteLessonCommentCommand(Id, commentId, GetUserId()));
-            return StatusCode((int)response.StatusCode, response);
-        }
+       
         private string GetUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
