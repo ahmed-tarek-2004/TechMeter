@@ -10,7 +10,7 @@ using TechMeter.Application.Common;
 
 namespace TechMeter.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IDataProtectionKeyContext,IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IDataProtectionKeyContext, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -34,8 +34,10 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         public DbSet<UserCourseRating> UserCourseRating { get; set; }
         public DbSet<CourseStudent> CourseStudent { get; set; }
-        public DbSet<StudentLessonWatched> StudentLessonWatched {  get; set; }
+        public DbSet<StudentLessonWatched> StudentLessonWatched { get; set; }
         public DbSet<Notification> Notification { get; set; }
+        public DbSet<LessonComment> lessonComments { get; set; }
+        public DbSet<LessonCommentLike> LessonCommentLikes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
