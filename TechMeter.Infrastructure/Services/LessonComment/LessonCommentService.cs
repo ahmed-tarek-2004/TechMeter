@@ -10,6 +10,7 @@ using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.DTO.LessonComment;
 using TechMeter.Application.Interfaces.LessonComment;
 using TechMeter.Domain.Models;
+using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;
 
@@ -72,20 +73,25 @@ namespace TechMeter.Infrastructure.Services
             }
 
         }
-
-        public async Task<Response<string>> DeleteLessonComment(string lessonId, string commentId, string userId)
+        public async Task<Response<string>> DeleteLessonComment(string lessonId, string commentId, string userId, bool IsAdmin = false)
         {
+            var comment = await context.lessonComments
+                  .AnyAsync(b => b.Id == commentId && b.UserId == userId);
+
+            if (!comment)
+            {
+                return responseHandler.NotFound<string>("Comment is not found");
+            }
             var Lesson = await lessonCommentAuthorization.GetLessonAsync(lessonId);
 
             if (Lesson == null)
             {
                 return responseHandler.NotFound<string>("Lesson is not found");
             }
-            if (!await lessonCommentAuthorization.HasCourseAccess(userId, Lesson.Value.CourseId))
+            if (!await lessonCommentAuthorization.HasCourseAccess(userId, Lesson.Value.CourseId, IsAdmin))
             {
                 return responseHandler.Forbidden<string>("you don't have access to the course");
             }
-
             try
             {
 
@@ -93,7 +99,7 @@ namespace TechMeter.Infrastructure.Services
 
                 if (rows == 0)
                 {
-                    return responseHandler.NotFound<string>("Comment is not found");
+                    return responseHandler.Forbidden<string>("you don't have access to delete");
                 }
                 else
                 {
@@ -105,10 +111,17 @@ namespace TechMeter.Infrastructure.Services
                 return responseHandler.InternalServerError<string>("internal server error");
             }
         }
-
-        public async Task<Response<LessonCommentResponse>> EditLessonComment(string lessonId, string commentId, string userId, string content)
+        public async Task<Response<LessonCommentResponse>> EditLessonComment(string commentId, string userId, string content)
         {
-            var Lesson = await lessonCommentAuthorization.GetLessonAsync(lessonId);
+            var comment = await context.lessonComments
+                    .Where(b => b.Id == commentId && b.UserId == userId)
+                    .FirstOrDefaultAsync();
+
+            if (comment == null)
+            {
+                return responseHandler.NotFound<LessonCommentResponse>("Comment is not found");
+            }
+            var Lesson = await lessonCommentAuthorization.GetLessonAsync(comment.LessonId);
             if (Lesson == null)
             {
                 return responseHandler.NotFound<LessonCommentResponse>("Lesson is not found");
@@ -122,14 +135,7 @@ namespace TechMeter.Infrastructure.Services
             try
             {
 
-                var comment = await context.lessonComments
-                    .Where(b => b.LessonId == lessonId && b.UserId == userId && b.Id == commentId)
-                    .FirstOrDefaultAsync();
 
-                if (comment == null)
-                {
-                    return responseHandler.NotFound<LessonCommentResponse>("Comment is not found");
-                }
 
                 comment.Content = content;
                 comment.IsEdited = true;
@@ -155,9 +161,18 @@ namespace TechMeter.Infrastructure.Services
             }
 
         }
-
-        public async Task<Response<List<LessonCommentResponse>>> GetAllLessonComment(string UserId, string LessonId)
+        public async Task<Response<List<LessonCommentResponse>>> GetAllLessonComment(string userId, string LessonId, bool isAdmin = false)
         {
+            var lesson = await lessonCommentAuthorization.GetLessonAsync(LessonId);
+            if (lesson == null)
+            {
+                return responseHandler.NotFound<List<LessonCommentResponse>>("Lesson is not found");
+            }
+            if (!await lessonCommentAuthorization.HasCourseAccess(userId, lesson.Value.CourseId, isAdmin))
+            {
+                return responseHandler.Forbidden<List<LessonCommentResponse>>("you don't have access to the course");
+            }
+
             var resposne = await context.lessonComments.Where(b => b.LessonId == LessonId)
                 .Select(b => new LessonCommentResponse
                 {
@@ -174,6 +189,114 @@ namespace TechMeter.Infrastructure.Services
             return responseHandler.Success(resposne, "Lesson Comments Retrived Successfully");
         }
 
+        public async Task<Response<List<LessonCommentLikesResponse>>> GetCommentLikesAsync(string commentId, string userId, bool isAdmin = false)
+        {
+            var comment = await context.lessonComments.FirstOrDefaultAsync(b => b.Id == commentId);
+            if (comment == null)
+            {
+                return responseHandler.NotFound<List<LessonCommentLikesResponse>>("comment is not found");
+            }
+            var lesson = await lessonCommentAuthorization.GetLessonAsync(comment.LessonId);
+            if (lesson == null)
+            {
+                return responseHandler.NotFound<List<LessonCommentLikesResponse>>("Lesson is not found");
+            }
+            if (!await lessonCommentAuthorization.HasCourseAccess(userId, lesson.Value.CourseId, isAdmin))
+            {
+                return responseHandler.Forbidden<List<LessonCommentLikesResponse>>("you don't have access to the course");
+            }
+            var response = await context.LessonCommentLikes.Where(b => b.CommentId == commentId)
+                .Select(b => new LessonCommentLikesResponse
+                {
+                    CommentId = b.CommentId,
+                    AddedAt = b.AddedAt,
+                    UserEmail = b.UserEmail,
+                    UserId = b.UserId,
+                    UserName = b.UserName,
+                    UserImage = b.UserImage,
+                }).ToListAsync();
+            return responseHandler.Success(response, "Comment Likes Returned Successfully");
+        }
 
+        public async Task<Response<string>> LikeOnComment(string CommentId, string UserId)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(b => b.Id == UserId);
+
+            var comment = await context.lessonComments.FirstOrDefaultAsync(b => b.Id == CommentId);
+            if (comment == null)
+            {
+                return responseHandler.NotFound<string>("comment is not found");
+            }
+            var lesson = await lessonCommentAuthorization.GetLessonAsync(comment.LessonId);
+            if (lesson == null)
+            {
+                return responseHandler.NotFound<string>("Lesson not found");
+            }
+
+            if (!await lessonCommentAuthorization.HasCourseAccess(UserId, lesson.Value.CourseId))
+            {
+                return responseHandler.Forbidden<string>("you don't have access to the course");
+            }
+
+            try
+            {
+                var lessonComemntLike = await context.LessonCommentLikes
+                    .FirstOrDefaultAsync(b => b.UserId == UserId && b.CommentId == CommentId);
+
+                if (lessonComemntLike is null)
+                {
+                    var lessonCommentLike = new LessonCommentLike
+                    {
+                        CommentId = comment.Id,
+                        UserEmail = user.Email,
+                        UserId = user.Id,
+                        UserImage = user.ProfileUrl ?? "",
+                        UserName = user.UserName,
+                        AddedAt = DateTime.UtcNow,
+                    };
+                    await context.LessonCommentLikes.AddAsync(lessonCommentLike);
+                    await context.SaveChangesAsync();
+                    return responseHandler.Success(string.Empty, "Like added successfully");
+                }
+                return responseHandler.Success(string.Empty, "Like already added");
+            }
+            catch (Exception ex)
+            {
+                return responseHandler.InternalServerError<string>("internal server error");
+            }
+        }
+        public async Task<Response<string>> UnLikeOnComment(string CommentId, string UserId)
+        {
+            var comment = await context.lessonComments.FirstOrDefaultAsync(b => b.Id == CommentId);
+            if (comment is null)
+            {
+                return responseHandler.NotFound<string>("comment is not found");
+            }
+            var lesson = await lessonCommentAuthorization.GetLessonAsync(comment.LessonId);
+            if (lesson == null)
+            {
+                return responseHandler.NotFound<string>("Lesson not found");
+            }
+            if (!await lessonCommentAuthorization.HasCourseAccess(UserId, lesson.Value.CourseId))
+            {
+                return responseHandler.Forbidden<string>("you don't have access to the course");
+            }
+            try
+            {
+                var rows = await context.LessonCommentLikes
+                    .Where(b => b.UserId == UserId && b.CommentId == CommentId)
+                    .ExecuteDeleteAsync();
+
+                if (rows > 0)
+                {
+                    return responseHandler.Success(string.Empty, "Like removed successfully");
+                }
+                return responseHandler.Success(string.Empty, "Like already removed");
+            }
+            catch (Exception ex)
+            {
+                return responseHandler.InternalServerError<string>("internal server error");
+            }
+        }
     }
 }

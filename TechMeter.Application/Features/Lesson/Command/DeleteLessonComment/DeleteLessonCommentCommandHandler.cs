@@ -14,7 +14,7 @@ namespace TechMeter.Application.Features.Lesson.Command.DeleteLessonComment
     {
         public async Task<Response<string>> Handle(DeleteLessonCommentCommand request, CancellationToken cancellationToken)
         {
-            return await lessonCommentService.DeleteLessonComment(request.lessonId, request.commentId, request.userId);
+            return await lessonCommentService.DeleteLessonComment(request.lessonId, request.commentId, request.userId,request.isAdmin);
         }
     }
 }

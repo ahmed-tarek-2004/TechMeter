@@ -8,5 +8,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.DeleteLessonComment
 {
-    public sealed record DeleteLessonCommentCommand(string lessonId, string commentId, string userId) : IRequest<Response<string>>;
+    public sealed record DeleteLessonCommentCommand(string lessonId, string commentId, string userId,bool isAdmin = false) : IRequest<Response<string>>;
 }
