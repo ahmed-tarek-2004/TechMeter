@@ -9,6 +9,6 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.EditLessonComment
 {
-    public sealed record EditLessonCommentCommand(string lessonId, string commentId, string userId, string content)
+    public sealed record EditLessonCommentCommand(string commentId, string userId, string content)
         :IRequest<Response<LessonCommentResponse>>;
 }

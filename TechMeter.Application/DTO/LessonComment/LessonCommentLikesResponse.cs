@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechMeter.Domain.Models.Auth.Identity;
 
-namespace TechMeter.Domain.Models
+namespace TechMeter.Application.DTO.LessonComment
 {
-    public class LessonCommentLike
+    public class LessonCommentLikesResponse
     {
         public string CommentId { get; set; }
         public string UserId { get; set; }
@@ -15,7 +14,5 @@ namespace TechMeter.Domain.Models
         public string UserEmail { get; set; }
         public string? UserImage { get; set; }
         public DateTime AddedAt { get; set; }
-        public User User { get; set; }
-        public LessonComment LessonComment { get; set; }
     }
 }

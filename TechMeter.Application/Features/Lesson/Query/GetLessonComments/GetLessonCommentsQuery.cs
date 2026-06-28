@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Query.GetLessonComments
 {
-    public sealed record GetLessonCommentsQuery(string userId,string LessonId) : IRequest<Response<List<LessonCommentResponse>>>;
+    public sealed record GetLessonCommentsQuery(string userId,string LessonId,bool isAdmin=false) : IRequest<Response<List<LessonCommentResponse>>>;
 }

@@ -15,14 +15,26 @@ namespace TechMeter.Infrastructure.Services.LessonComment
     public class LessonCommentAuthorization(ApplicationDbContext context, UserManager<Domain.Models.Auth.Identity.User> userManager)
         : ILessonCommentAuthorization
     {
-        public async Task<bool> HasCourseAccess(string userId, string courseId)
+        public async Task<bool> HasCourseAccess(string userId, string courseId, bool IsAdmin = false)
         {
-            var IsSubscribed = await context.CourseStudent.AnyAsync(b => b.StudentId == userId && b.CourseId == courseId);
-            if (!IsSubscribed)
-            {
-                return await context.Course.AnyAsync(b => b.ProviderId == userId && b.Id == courseId);
-            }
-            return IsSubscribed;
+            var hasAccess = await context.CourseStudent
+                       .AnyAsync(x => x.StudentId == userId && x.CourseId == courseId);
+
+            if (hasAccess)
+                return true;
+
+            hasAccess = await context.Course
+                .AnyAsync(x => x.Id == courseId && x.ProviderId == userId);
+
+            if (hasAccess)
+                return true;
+
+
+
+            if (!IsAdmin)
+                return false;
+
+            return true;
         }
         public async Task<(string LessonId, string CourseId)?> GetLessonAsync(string lessonId)
         {
@@ -35,8 +47,7 @@ namespace TechMeter.Infrastructure.Services.LessonComment
                 ))
                 .FirstOrDefaultAsync();
         }
-
-        public async Task<int> CanDeleteAsync(string userId, string CommentId, string LessonId)
+        public async Task<int> CanDeleteAsync(string userId, string CommentId, string LessonId )
         {
             var user = await context.Users.FindAsync(userId);
             var roles = await userManager.GetRolesAsync(user!);
