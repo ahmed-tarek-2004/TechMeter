@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,18 +21,16 @@ namespace TechMeter.API.Controllers
     public class CartController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
         private readonly ILogger<CartController> _logger;
         //private readonly ICartService _cartService;
         //private readonly ApplicationDbContext _context;
         //private readonly ResponseHandler _responseHandler;
         //private readonly IValidator<UpdateCartItemRequest> _updateCartItemRequestValidator;
-        public CartController(IMediator mediator, IMapper mapper, ILogger<CartController> logger)
+        public CartController(IMediator mediator,ILogger<CartController> logger)
         {
             _logger = logger;
             //_context = context;
             //_cartService = cartService;
-            _mapper = mapper;
             _mediator = mediator;
             //_responseHandler = responseHandler;
             //_updateCartItemRequestValidator = updateCartItemRequestValidator;

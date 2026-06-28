@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using TechMeter.Application.DTO;
 using TechMeter.Application.DTO.Notification;
+using TechMeter.Application.Features.Notification.Command.ReadNotification;
+using TechMeter.Application.Features.Notification.Query.GetUserNotifications;
+using TechMeter.Application.Features.Notification.Query.GetUserUnReadNotifications;
 using TechMeter.Application.Interfaces.Fcm;
 using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Domain.Shared.Bases;
@@ -13,7 +17,7 @@ namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationController(INotificationService notificationService, IFcmService fcmService) : ControllerBase
+    public class NotificationController(IMediator mediator, IFcmService fcmService) : ControllerBase
     {
 
         [HttpGet("all")]
@@ -22,17 +26,26 @@ namespace TechMeter.API.Controllers
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
 
-            var response = await notificationService.GetUserNotifications(userId);
+            var response = await mediator.Send(new GetUserNotificationQuery(userId));
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpGet("unread")]
+        [Authorize(Roles = "student")]
+        public async Task<ActionResult<Response<List<NotificationResponseDto>>>> GetUserUnReadNotifications()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+
+            var response = await mediator.Send(new GetUserUnReadNotificationQuery(userId));
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [EnableRateLimiting("toggle")]
-        [HttpPost("read/{notificationId}")]
+        [EnableRateLimiting("TogglePolicy")]
+        [HttpPost("{Id}/read")]
         [Authorize(Roles = "student")]
-        public async Task<ActionResult<Response<bool>>> ReadNotification([FromRoute] string notificationId)
+        public async Task<ActionResult<Response<bool>>> ReadNotification([FromRoute] string Id)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-            var response = await notificationService.ReadNotification(userId ?? "", notificationId);
+            var response = await mediator.Send(new ReadNotificationCommand(userId, Id));
             return StatusCode((int)response.StatusCode, response);
         }
         //[HttpPost("token")]

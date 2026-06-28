@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,16 +24,14 @@ namespace TechMeter.API.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IMediator _mediator;
         public readonly ResponseHandler _responseHandler;
-        private readonly IMapper _mapper;
         private readonly ILogger<PaymentController> _logger;
 
         public PaymentController(IPaymentService paymentService, ResponseHandler responseHandler,
-            ILogger<PaymentController> logger, IMapper mapper, IMediator mediator)
+            ILogger<PaymentController> logger, IMediator mediator)
         {
             _paymentService = paymentService;
             _responseHandler = responseHandler;
             _logger = logger;
-            _mapper = mapper;
             _mediator = mediator;
         }
 
@@ -42,7 +39,11 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles = "student")]
         public async Task<ActionResult<PaymentResponse>> CheckoutAsync([FromBody] PaymentRequest request)
         {
-            var command = _mapper.Map<CheckoutCommand>(request);
+            var command = new PaymentIntentCommand
+            {
+                currency = request.Currency,
+                orderId = request.OrderId,
+            };
             command.studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await _mediator.Send(command);
 
@@ -53,7 +54,11 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<PaymentIntentResponse>>> CreatePaymentIntent([FromBody] PaymentRequest request)
         {
 
-            var command = _mapper.Map<PaymentIntentCommand>(request);
+            var command = new PaymentIntentCommand
+            {
+                currency = request.Currency,
+                orderId = request.OrderId,
+            };
             command.studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await _mediator.Send(command);
 

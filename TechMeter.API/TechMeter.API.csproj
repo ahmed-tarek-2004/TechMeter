@@ -7,10 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Mapping\Auth\VerifyResetPasswordProfile.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.9" />
 		<PackageReference Include="Scalar.AspNetCore" Version="2.14.0" />
@@ -35,10 +31,6 @@
 
 	<ItemGroup>
 		<Folder Include="Extensions\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="Mapping\Auth\VerifyResetPasswordProfile.cs" />
 	</ItemGroup>
 
 </Project>

@@ -77,7 +77,7 @@ namespace TechMeter
             builder.Services.Configure<Shared.JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.AddingStripePayment(builder.Configuration);
             builder.Services.ApplyingMediatoR_Requirements();
-            builder.Services.AddAutoMapper(typeof(Program).Assembly);
+            //builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddAPiDependencyInjection();
             builder.Services.AddOpenApi();
 
