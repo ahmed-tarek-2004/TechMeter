@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,11 +27,9 @@ namespace TechMeter.API.Controllers
     public class CourseController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-        public CourseController(IMediator mediator, IMapper mapper)
+        public CourseController(IMediator mediator)
         {
             _mediator = mediator;
-            _mapper = mapper;
         }
 
         [HttpGet("all")]

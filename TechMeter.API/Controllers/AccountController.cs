@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,16 +39,13 @@ namespace TechMeter.API.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
-              ResponseHandler responseHandler
-            , IMapper mapper, IMediator mediator)
+              ResponseHandler responseHandler, IMediator mediator)
         {
             _logger = logger;
             _authService = authService;
-            _mapper = mapper;
             _mediator = mediator;
         }
 
