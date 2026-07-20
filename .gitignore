@@ -6,6 +6,7 @@
 
 /TechMeter.Tests/
 /TechMeter.API/appsettings.json
+/TechMeter.API/Tokens.txt
 /TechMeter.API/appsettings.Development.json
 
 **/Logs/

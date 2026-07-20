@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Notification;
+using TechMeter.Application.Interfaces.Fcm;
 using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Interfaces.NotificationSender;
 using TechMeter.Domain.Enums;
@@ -21,10 +23,13 @@ namespace TechMeter.Infrastructure.Services.Notification
         private readonly ApplicationDbContext _context;
         private readonly ILogger<NotificationService> _logger;
         private readonly ResponseHandler _responseHandler;
-        public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context, ResponseHandler responseHandler)
+        private readonly IFcmService _fcmService;
+        public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context,
+            ResponseHandler responseHandler, IFcmService fcmService)
         {
             _logger = logger;
             _context = context;
+            _fcmService = fcmService;
             _responseHandler = responseHandler;
         }
 
@@ -100,6 +105,28 @@ namespace TechMeter.Infrastructure.Services.Notification
                 _logger.LogError(ex, "An unexpected error occurred.");
                 return _responseHandler.InternalServerError<string>("internal server error");
             }
+        }
+        public async Task<Response<bool>> StoreUserTokensAsync(string userId, string token)
+        {
+            var user = await _context.Users.AnyAsync(b => b.Id == userId);
+            if (!user)
+            {
+                return _responseHandler.NotFound<bool>("User is not found");
+            }
+
+            var userFcmTokenExists = await _context.FcmUserTokens.AnyAsync(b => b.token == token && b.userId == userId);
+            if (!userFcmTokenExists)
+            {
+                var FcmUserToken = new FcmUserTokens
+                {
+                    token = token,
+                    userId = userId
+                };
+                await _context.FcmUserTokens.AddAsync(FcmUserToken);
+                await _context.SaveChangesAsync();
+                return _responseHandler.Success(true, "Token Stored Successfully");
+            }
+            return _responseHandler.Success(true, "Token is Already Stored");
         }
     }
 }

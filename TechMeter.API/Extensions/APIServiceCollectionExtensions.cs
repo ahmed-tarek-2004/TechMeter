@@ -97,7 +97,7 @@ namespace TechMeter.Extensions
                     {
                         var path = context.HttpContext.Request.Path;
                         var token = context.Request.Query["access_token"];
-                        if (!string.IsNullOrEmpty(token) && (path.StartsWithSegments("/notificationHub")))
+                        if (!string.IsNullOrEmpty(token) && ((path.StartsWithSegments("/notificationHub") || (path.StartsWithSegments("/messageHub")))))
                         {
                             context.Token = token;
                         }

@@ -133,6 +133,7 @@ namespace TechMeter
             app.UseAuthorization();
             app.UseMiddleware<StopwatchRequestMiddleware>();
             app.MapHub<NotificationHub>("/notificationHub").RequireAuthorization();
+            app.MapHub<MessgaeHub>("/messageHub").RequireAuthorization();
 
             //BackgroundJob.Schedule(() => Console.WriteLine("Hello From Scheduled TechMeter"), TimeSpan.FromSeconds(60));
             //BackgroundJob.Enqueue(() => Console.WriteLine("Hello From Enqueue TechMeter"));

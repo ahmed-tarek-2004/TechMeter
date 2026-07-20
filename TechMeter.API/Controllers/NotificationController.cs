@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
 using TechMeter.Application.DTO;
 using TechMeter.Application.DTO.Notification;
 using TechMeter.Application.Features.Notification.Command.ReadNotification;
+using TechMeter.Application.Features.Notification.Command.StoreNotification;
 using TechMeter.Application.Features.Notification.Query.GetUserNotifications;
 using TechMeter.Application.Features.Notification.Query.GetUserUnReadNotifications;
 using TechMeter.Application.Interfaces.Fcm;
@@ -48,18 +50,12 @@ namespace TechMeter.API.Controllers
             var response = await mediator.Send(new ReadNotificationCommand(userId, Id));
             return StatusCode((int)response.StatusCode, response);
         }
-        //[HttpPost("token")]
-        //public async Task<IActionResult> SendToToken(
-        //NotificationRequest request)
-        //{
-        //    var result =
-        //        await fcmService.SendToTokenAsync(
-        //            request.Token!,
-        //            request.Title,
-        //            request.Body);
-
-        //    return Ok(result);
-        //}
+        [HttpPost("store/token")]
+        public async Task<IActionResult> StoreTokenAsync([FromBody] FcmUserTokenRequest request)
+        {
+            var result = await mediator.Send(new StoreNotificationCommand(GetUserId(), request.token));
+            return Ok(result);
+        }
 
 
         //[HttpPost("topic")]
@@ -101,5 +97,10 @@ namespace TechMeter.API.Controllers
 
         //    return Ok();
         //}
+
+        private string GetUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value??"";
+        }
     }
 }

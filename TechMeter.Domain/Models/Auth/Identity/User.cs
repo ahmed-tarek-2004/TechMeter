@@ -20,7 +20,7 @@ namespace TechMeter.Domain.Models.Auth.Identity
         public ICollection<LessonComment> LessonComments { get; set; }
         public ICollection<LessonCommentLike> LessonCommentLikes { get; set; }
         public ICollection<UserConnections> UserConnections { get; set; }
-        public ICollection<Groups> Groups {  get; set; }
+        public ICollection<FcmUserTokens> FcmUserTokens { get; set; }
 
     }
 }

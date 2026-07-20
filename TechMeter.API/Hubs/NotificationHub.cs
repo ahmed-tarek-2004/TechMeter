@@ -7,25 +7,26 @@ namespace TechMeter.API.Hubs
     {
         public override async Task OnConnectedAsync()
         {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            if (!string.IsNullOrEmpty(userId))
-            {
-                await Groups.AddToGroupAsync(Context.ConnectionId, userId);
-            }
+            //var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            //var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            //if (!string.IsNullOrEmpty(userId))
+            //{
+            //    await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+            //}
             await base.OnConnectedAsync();
         }
         //[HubMethodName("SendNotification")]
-        public Task sendNotification()
-        {
-            return Clients.All.SendAsync("ReceiveMessage", "Welcome To TechMeter");
-        }
+        //public Task sendNotification()
+        //{
+        //    return Clients.All.SendAsync("ReceiveMessage", "Welcome To TechMeter");
+        //}
         public override async Task OnDisconnectedAsync(Exception?exception)
         {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            if (!string.IsNullOrEmpty(userId))
-            {
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
-            }
+            //var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            //if (!string.IsNullOrEmpty(userId))
+            //{
+            //    await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
+            //}
             await base.OnDisconnectedAsync(exception);
         }
     }

@@ -9,51 +9,22 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Infrastructure.Services.Fcm
 {
-    public class FcmService(ResponseHandler responseHandler):IFcmService
+    public class FcmService(ResponseHandler responseHandler) : IFcmService
     {
 
-        public async Task<Response<string>> SendToTokenAsync(
-        string token,
-        string title,
-        string body)
+        public async Task<Response<string>> SendToTokenAsync(string token, string title, string body)
         {
             var message = new Message()
             {
                 Token = token,
-                //Data = new Dictionary<string, string>()
-                //{
-                //    { "title", title },
-                //    { "body", body }
-                //},
+
                 Notification = new FirebaseAdmin.Messaging.Notification()
                 {
                     Title = title,
                     Body = body
                 },
 
-                Android = new AndroidConfig()
-                {
-                    Priority = Priority.High
-                },
 
-                Apns = new ApnsConfig()
-                {
-                    Aps = new Aps()
-                    {
-                        Sound = "default",
-                        Badge = 1
-                    }
-                },
-
-                Webpush = new WebpushConfig()
-                {
-                    Notification = new WebpushNotification()
-                    {
-                        Title = title,
-                        Body = body,
-                        Icon = "icon.png"
-                    }
-                }
             };
             var response = await FirebaseMessaging
                 .DefaultInstance
@@ -61,10 +32,7 @@ namespace TechMeter.Infrastructure.Services.Fcm
             return responseHandler.Success(response, "Notification sent successfully");
         }
 
-        public async Task<Response<string>> SendToTopicAsync(
-            string topic,
-            string title,
-            string body)
+        public async Task<Response<string>> SendToTopicAsync(string topic, string title, string body)
         {
             var message = new Message()
             {
@@ -76,27 +44,6 @@ namespace TechMeter.Infrastructure.Services.Fcm
                     Body = body
                 },
 
-                Android = new AndroidConfig()
-                {
-                    Priority = Priority.High
-                },
-
-                Apns = new ApnsConfig()
-                {
-                    Aps = new Aps()
-                    {
-                        Sound = "default"
-                    }
-                },
-
-                Webpush = new WebpushConfig()
-                {
-                    Notification = new WebpushNotification()
-                    {
-                        Title = title,
-                        Body = body
-                    }
-                }
             };
 
             var response = await FirebaseMessaging
@@ -105,10 +52,7 @@ namespace TechMeter.Infrastructure.Services.Fcm
             return responseHandler.Success(response, "Notification sent successfully");
         }
 
-        public async Task<Response<string>> SendConditionAsync(
-            string condition,
-            string title,
-            string body)
+        public async Task<Response<string>> SendConditionAsync(string condition, string title, string body)
         {
             var message = new Message()
             {

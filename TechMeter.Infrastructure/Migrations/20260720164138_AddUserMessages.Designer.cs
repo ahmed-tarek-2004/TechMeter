@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechMeter.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using TechMeter.Infrastructure.Persistence;
 namespace TechMeter.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260720164138_AddUserMessages")]
+    partial class AddUserMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -531,32 +534,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("CourseStudent");
-                });
-
-            modelBuilder.Entity("TechMeter.Domain.Models.FcmUserTokens", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("userId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("FcmUserTokens");
                 });
 
             modelBuilder.Entity("TechMeter.Domain.Models.LessonComment", b =>
@@ -1122,17 +1099,6 @@ namespace TechMeter.Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("TechMeter.Domain.Models.FcmUserTokens", b =>
-                {
-                    b.HasOne("TechMeter.Domain.Models.Auth.Identity.User", "User")
-                        .WithMany("FcmUserTokens")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TechMeter.Domain.Models.LessonComment", b =>
                 {
                     b.HasOne("TechMeter.Domain.Models.Lessons", "Lesson")
@@ -1335,8 +1301,6 @@ namespace TechMeter.Infrastructure.Migrations
 
             modelBuilder.Entity("TechMeter.Domain.Models.Auth.Identity.User", b =>
                 {
-                    b.Navigation("FcmUserTokens");
-
                     b.Navigation("LessonCommentLikes");
 
                     b.Navigation("LessonComments");

@@ -7,6 +7,7 @@ using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Infrastructure.EntitiesConfigurations;
 using TechMeter.Domain.Models.Auth.UserTokens;
 using TechMeter.Application.Common;
+using TechMeter.Domain.Models.Auth;
 
 namespace TechMeter.Infrastructure.Persistence
 {
@@ -38,6 +39,9 @@ namespace TechMeter.Infrastructure.Persistence
         public DbSet<Notification> Notification { get; set; }
         public DbSet<LessonComment> lessonComments { get; set; }
         public DbSet<LessonCommentLike> LessonCommentLikes { get; set; }
+        public DbSet<UserConnections> UserConnections {  get; set; }
+        public DbSet<UserMessages> UserMessages { get; set; }
+        public DbSet<FcmUserTokens> FcmUserTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

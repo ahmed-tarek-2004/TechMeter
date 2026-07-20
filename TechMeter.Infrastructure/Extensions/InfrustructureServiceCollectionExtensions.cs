@@ -48,6 +48,7 @@ using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.Rating;
 using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.User;
+using TechMeter.Infrastructure.Services.UserConnection;
 using TechMeter.Infrastructure.Services.WishList;
 using TechMeter.Shared;
 using TokenService = TechMeter.Application.Interfaces.TokenService.TokenService;
@@ -99,6 +100,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IFcmService, FcmService>();
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
             services.AddScoped<ILessonCommentService, LessonCommentService>();
+            services.AddScoped<IUserConnectionService, UserConnectionService>();
 
             return services;
         }
