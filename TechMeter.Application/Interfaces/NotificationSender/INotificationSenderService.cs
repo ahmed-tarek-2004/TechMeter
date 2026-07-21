@@ -12,7 +12,6 @@ namespace TechMeter.Application.Interfaces.NotificationSender
 {
     public interface INotificationSenderService
     {
-        Task EnrollmantNotification(string userId, string Titile, string Message, DateTime dateTime);
-        Task FinishCourseNotification(string userId, string Titile, string Message, DateTime dateTime);
+        Task SendNotificationAsync(string userId, string Titile, string Message, DateTime dateTime);
     }
 }

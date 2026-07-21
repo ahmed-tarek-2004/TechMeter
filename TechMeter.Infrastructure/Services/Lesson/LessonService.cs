@@ -328,7 +328,7 @@ namespace TechMeter.Infrastructure.Services.Lesson
                 Message = $"Congratulations! You have completed the course {courseId}.",
                 CreatedAt = DateTime.UtcNow
             };
-            await _notificationService.FinishCourseNotification(
+            await _notificationService.SendNotificationAsync(
                         studentId,
                         "Finished Course",
                         $"Congratulations! You have completed course {courseId}.",

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using TechMeter.Application.Interfaces;
+using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.NotificationSender;
+using TechMeter.Domain.Enums;
 
 namespace TechMeter.API.Hubs
 {
-    public class MessgaeHub(IUserConnectionService userConnectionService) : Hub
+    public class MessgaeHub(IUserConnectionService userConnectionService, INotificationService notificationService) : Hub
     {
         public override async Task OnConnectedAsync()
         {
@@ -38,6 +41,7 @@ namespace TechMeter.API.Hubs
                 SentAt = messageStored.SentAt,
                 Sender = senderInfo
             });
+            await notificationService.SendUserNotifications(userId, "New Message", msg, NotificationType.Message);
         }
 
         public async Task MarkAsRead(string messageId, string senderId)
