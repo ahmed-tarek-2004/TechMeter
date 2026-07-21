@@ -18,7 +18,7 @@ namespace TechMeter.API.Services
             _logger = logger;
         }
 
-        public async Task SendNotificationAsync(string userId, string Titile, string Message, DateTime dateTime)
+        public async Task EnrollmantNotification(string userId, string Titile, string Message, DateTime dateTime)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -26,17 +26,18 @@ namespace TechMeter.API.Services
                 return;
             }
 
-            await _hubContext.Clients.User(userId).SendAsync("ReciveNotification", new
-            {
-                UserId = userId,
-                Titile = Titile,
-                Message = Message,
-                CreatedAt=dateTime,
-            });
+            await _hubContext.Clients.User(userId).SendAsync("Enrollment", Titile, Message, dateTime, NotificationType.Enrollment);
             //await _hubContext.Clients.All.SendAsync("enrollment", Titile, Message);
             _logger.LogInformation("notification is sent");
         }
-      
+        public async Task FinishCourseNotification(string userId, string Titile, string Message, DateTime dateTime)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning("UserId is Null");
+            }
+            await _hubContext.Clients.User(userId).SendAsync("Finish", Titile, Message, dateTime, NotificationType.FinishCourse);
+        }
       
     }
 }

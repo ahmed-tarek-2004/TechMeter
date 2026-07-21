@@ -51,11 +51,10 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("store/token")]
-        [Authorize]
         public async Task<IActionResult> StoreTokenAsync([FromBody] FcmUserTokenRequest request)
         {
             var result = await mediator.Send(new StoreNotificationCommand(GetUserId(), request.token));
-            return StatusCode((int)result.StatusCode, result);
+            return Ok(result);
         }
 
 

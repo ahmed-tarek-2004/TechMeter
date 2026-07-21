@@ -14,7 +14,7 @@ namespace TechMeter.Application.Interfaces.Notification
         Task<Response<bool>> ReadNotification(string userId,string notificationId);
         Task<Response<List<NotificationResponseDto>>> GetUserNotifications(string userId);
         Task<Response<List<NotificationResponseDto>>> GetUnReadUserNotifications(string userId);
-        Task<Response<string>> SendUserNotifications(string userId,string Title,string message,NotificationType type);
+        Task<Response<string>> StoreUserNotifications(string userId,string Title,string message,NotificationType type);
         Task<Response<bool>> StoreUserTokensAsync(string userId, string token);
     }
 }
