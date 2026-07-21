@@ -1,181 +1,277 @@
-#  Tech Meter
+# TechMeter
 
-> An online learning platform that connects students with expert instructors — built with a clean, scalable architecture.
-
----
-
-##  About The Project
-
-**Tech Meter** is a full-featured e-learning platform API where instructors (providers) can create and sell courses, and students can browse, purchase, and track their learning progress.
-
-The platform supports a complete learning lifecycle:
-- Instructors create courses organized into sections and lessons
-- Students discover courses, add them to a cart or wishlist, and purchase via Stripe
-- After enrollment, students can track their progress lesson by lesson
-- Students can rate and review completed courses
+TechMeter is a modern e-learning platform API built with ASP.NET Core. It provides a complete digital learning experience for students, course providers, and administrators. The system supports course management, lesson delivery, student progress tracking, order handling, payment processing, reviews, notifications, and scalable backend architecture.
 
 ---
 
-##  Tech Stack
+## Project Overview
+
+TechMeter is more than a simple API. It is a full-featured learning platform that supports the entire educational lifecycle:
+
+- Providers can create and manage courses.
+- Students can browse, purchase, and complete courses.
+- Learners can track progress lesson by lesson.
+- Payments are integrated through Stripe for secure purchases.
+- Different user roles are supported: Student, Provider, and Admin.
+
+---
+
+## What This Application Offers
+
+### 1) Authentication and User Management
+The platform supports multiple user roles:
+
+- Student: a user who browses, purchases, and learns from courses.
+- Provider: a user who creates and sells courses.
+- Admin: a user who manages the platform.
+
+Supported features include:
+
+- User registration
+- Login
+- Email verification through OTP
+- Resending OTP
+- Forgot password and password reset
+- Password change
+- Logout
+
+Authentication is handled using JWT Bearer Tokens to protect API endpoints.
+
+### 2) Profile Management
+Each user can manage their personal account information, including:
+
+- Full name
+- Email address
+- Phone number
+- Profile image
+- Basic identity-related details
+
+This is handled through separate profile endpoints for students and providers.
+
+### 3) Course Management
+This is one of the core features of the platform. Providers can create complete educational courses that include:
+
+- Course title
+- Description
+- Cover image
+- Category
+- Price
+- Learning content
+
+Supported actions include:
+
+- Viewing all available courses
+- Viewing courses enrolled by a student
+- Viewing courses owned by a provider
+- Updating a course
+- Deleting a course
+
+### 4) Sections and Lessons Management
+Each course is organized into educational units:
+
+- Sections: major parts of a course
+- Lessons: individual learning units inside each section
+
+Features include:
+
+- Adding a section to a course
+- Editing a section
+- Deleting a section
+- Adding lessons to a section
+- Editing or deleting lessons
+- Viewing lessons for a course or section
+
+### 5) Student Progress Tracking
+Students can mark lessons as completed or unfinished. This allows the platform to track learning progress effectively.
+
+Supported behavior includes:
+
+- Tracking progress lesson by lesson
+- Marking a lesson as finished
+- Undoing a lesson completion
+- Viewing completed lessons
+
+### 6) Cart and Wishlist
+Students can manage their learning purchases before checkout:
+
+- Add a course to the cart
+- View cart items
+- Remove cart items
+- Clear the cart
+- Add a course to the wishlist
+- Remove a course from the wishlist
+- Clear the wishlist
+
+### 7) Order Management
+Once students select courses, an order is created based on the cart contents. The system supports:
+
+- Creating an order from the cart
+- Viewing student orders
+- Viewing provider orders
+- Viewing admin orders
+- Canceling an order
+- Updating the order status
+- Deleting an order
+
+### 8) Stripe Payments
+The application supports online payments through Stripe with:
+
+- Stripe Checkout
+- Payment Intent flow
+- Webhooks for payment confirmation
+
+The payment flow works as follows:
+
+1. An order is created
+2. The payment request is sent to Stripe
+3. Payment confirmation is received from Stripe
+4. The order is updated and the student is enrolled in the course automatically
+
+### 9) Ratings and Reviews
+Students can leave feedback on courses they enrolled in or completed. Features include:
+
+- Adding a rating
+- Editing a rating
+- Deleting a rating
+- Viewing ratings for a specific course
+- Admin review moderation
+
+### 10) Real-Time Notifications and Messaging
+The app uses SignalR to support real-time communication such as:
+
+- System notifications
+- Instant messaging
+- Status updates
+
+### 11) Background Jobs and Scheduled Tasks
+The application uses Hangfire to handle background work such as:
+
+- Deferred processing
+- Background operations
+- Scheduled tasks
+
+### 12) Media and File Storage
+The platform supports:
+
+- Uploading course images
+- Uploading user profile images
+- Storing media through Cloudinary
+
+---
+
+## User Roles
+
+| Role | Main Responsibility |
+|---|---|
+| Student | Browses courses, adds them to the cart or wishlist, purchases them, and follows learning progress |
+| Provider | Creates courses, adds sections and lessons, and receives payments for their content |
+| Admin | Oversees the full platform, manages categories, moderates ratings, and monitors orders and payments |
+
+---
+
+## Architecture
+
+The project follows Clean Architecture principles, separating responsibilities into clear layers:
+
+- Domain: contains core models, entities, and base types
+- Application: contains business logic, commands, queries, handlers, and DTOs
+- Infrastructure: contains the database layer, external services, Stripe, email, storage, and background jobs
+- API: contains controllers, middleware, and startup configuration
+
+It also uses CQRS with MediatR, which is ideal for separating read and write operations clearly.
+
+---
+
+## Technologies Used
 
 | Layer | Technology |
-|-------|-----------|
+|---|---|
 | Framework | ASP.NET Core Web API |
 | Architecture | Clean Architecture |
-| Pattern | CQRS + MediatR (with Notifications) |
+| Pattern | CQRS + MediatR |
 | Authentication | JWT Bearer Tokens |
-| Payment | Stripe (Checkout & Payment Intents) |
-| ORM | Entity Framework Core |
 | Database | SQL Server |
+| ORM | Entity Framework Core |
+| Payments | Stripe |
+| Real-Time Communication | SignalR |
+| Background Jobs | Hangfire |
+| Media Storage | Cloudinary |
+| Email Verification | OTP via email |
+| Firebase | Firebase integration |
 
 ---
 
-##  Architecture Overview
+## Project Structure
 
-The project follows **Clean Architecture** principles, separating concerns into distinct layers:
-
-```
+```text
 TechMeter/
-├── TechMeter.Domain/          # Entities, Enums, Domain Events
-├── TechMeter.Application/     # CQRS Commands, Queries, Handlers, Interfaces
-├── TechMeter.Infrastructure/  # EF Core, Stripe, Email, File Storage
-└── TechMeter.API/             # Controllers, Middleware, DI Setup
-```
-
-### CQRS + MediatR
-
-Every operation in the application is modeled as either a **Command** (write) or a **Query** (read), handled by a dedicated handler — keeping business logic clean and isolated.
-
-```
-Request → Controller → MediatR → Handler → Repository/Service → Response
-```
-
-**Notifications** are used for side effects — for example, when a payment is confirmed, a `PaymentSucceededNotification` is dispatched to:
-- Enroll the student in purchased courses
-- Send a confirmation email
-- Update order status to `Paid`
-
----
-
-##  User Roles
-
-| Role | Capabilities |
-|------|-------------|
-| **Student** | Browse & purchase courses, track progress, rate courses |
-| **Provider** | Create and manage courses, sections, and lessons |
-| **Admin** | Full platform management, moderate ratings, view all orders & transactions |
-
----
-
-##  Authentication Flow
-
-The API uses **JWT Bearer** authentication with OTP-based email verification.
-
-```
-Register → Receive OTP via Email → Confirm Email → Login → Access Token + Refresh Token
-```
-
-Password reset follows the same OTP pattern:
-```
-Forget Password → OTP sent to email → Verify OTP → Reset Password
+├── TechMeter.API/              # Controllers, middleware, startup configuration
+├── TechMeter.Application/     # Commands, queries, handlers, DTOs, interfaces
+├── TechMeter.Domain/          # Entities, enums, models
+├── TechMeter.Infrastructure/  # DbContext, migrations, services, payments, email
+└── Shared/                    # Shared models and common base classes
 ```
 
 ---
 
-##  Payment Flow
+## Prerequisites
 
-Payments are handled via **Stripe** with two supported methods:
+Before running the project, make sure the following are available:
 
-**Option 1 — Stripe Hosted Checkout:**
-```
-Create Order → POST /check-out → Redirect to Stripe page → Webhook confirms → Student enrolled
-```
-
-**Option 2 — Custom Payment Intent (Stripe.js):**
-```
-Create Order → POST /create-payment-intent → clientSecret → Stripe.js on frontend → Webhook confirms
-```
-
-> Payment confirmation is handled automatically via Stripe Webhooks at `POST /api/Payment/HandleWebHook`
-
----
-
-##  Core Modules
-
-###  Account
-Registration, login, email confirmation, password management (forget/reset/change), OTP resend, and logout.
-
-###  Profile
-View and update profile info for both students and providers — including profile photo upload.
-
-###  Course
-Providers create and manage courses with a title, description, cover image, category, and price. Students can view all courses or their enrolled ones.
-
-###  Section & Lesson
-Courses are structured into **Sections**, each containing multiple **Lessons** (video files). Students can mark lessons as finished/unfinished to track their progress.
-
-###  Cart
-Students add courses to their cart before checkout. Providers can view any student's cart.
-
-###  Wishlist
-Students can save courses to a wishlist for later purchase.
-
-###  Order
-Orders are created from the cart contents. Supports full lifecycle: create → pay → cancel/complete. Paginated views for students, providers, and admins.
-
-###  Payment
-Stripe integration for checkout sessions and payment intents. Transaction history available for providers and admins with date range filtering.
-
-###  Rating
-Students rate and review courses they've enrolled in. Admins can moderate and delete any review.
-
-###  Category
-Admins manage course categories. Each category includes a list of its associated courses.
-
----
-
-##  Getting Started
-
-### Prerequisites
 - .NET 8 SDK
 - SQL Server
-- Stripe account (for payment features)
-- SMTP server (for OTP emails)
+- Stripe account
+- SMTP server for email delivery
+- Firebase credentials if Firebase services are used fully
 
-### Setup
+---
+
+## Getting Started
+
+### 1) Clone the Repository
 
 ```bash
-# Clone the repository
 git clone https://github.com/ahmed-tarek-2004/TechMeter.git
-cd tech-meter
+cd TechMeter
+```
 
-# Restore dependencies
+### 2) Restore Dependencies
+
+```bash
 dotnet restore
+```
 
-# Apply database migrations
+### 3) Apply Database Migrations
+
+```bash
 dotnet ef database update --project TechMeter.Infrastructure
+```
 
-# Run the API
+### 4) Run the API
+
+```bash
 dotnet run --project TechMeter.API
 ```
 
-### Configuration
+---
 
-Update `appsettings.json` with your credentials:
+## Basic Configuration
+
+You should update the appsettings.json file with the correct values, for example:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "your_sql_server_connection_string"
+    "DefaultConnection": "your_connection_string",
+    "Hangfire": "your_hangfire_connection_string"
   },
   "JWT": {
     "Key": "your_secret_key",
     "Issuer": "TechMeter",
-    "Audience": "TechMeterUsers",
-    "ExpiryInDays": 7
+    "Audience": "TechMeterUsers"
   },
   "Stripe": {
-    "SecretKey": "sk_...",
+    "SecretKey": "sk_test_...",
     "WebhookSecret": "whsec_..."
   },
   "Email": {
@@ -189,145 +285,71 @@ Update `appsettings.json` with your credentials:
 
 ---
 
-##  API Reference
-
-All responses follow a consistent wrapper:
-
-```json
-{
-  "statusCode": "OK",
-  "message": "string",
-  "succeeded": true,
-  "errors": [],
-  "data": {}
-}
-```
-
-### Base URL
-```
-https://your-domain.com/api
-```
+## Important API Endpoints
 
 ### Authentication
-Include the JWT token in every protected request:
-```http
-Authorization: Bearer <access_token>
-```
 
-### Quick Endpoint Reference
+- POST /api/Account/student/register
+- POST /api/Account/provider/register
+- POST /api/Account/login
+- POST /api/Account/confirm-email
+- POST /api/Account/forget-password
+- POST /api/Account/reset-password
+- POST /api/Account/logout
 
-| Module | Method | Endpoint |
-|--------|--------|----------|
-| Auth | POST | `/Account/student/register` |
-| Auth | POST | `/Account/provider/register` |
-| Auth | POST | `/Account/login` |
-| Auth | POST | `/Account/confirm-email` |
-| Auth | POST | `/Account/forget-password` |
-| Auth | POST | `/Account/reset-password` |
-| Auth | POST | `/Account/logout` |
-| Profile | GET | `/Profile/student/profile` |
-| Profile | PUT | `/Profile/student/update/profile` |
-| Profile | GET | `/Profile/provider/profile` |
-| Profile | PUT | `/Profile/provider/update/profile` |
-| Course | GET | `/Course` |
-| Course | POST | `/Course/add` |
-| Course | GET | `/Course/student/courses` |
-| Course | GET | `/Course/provider/courses` |
-| Section | GET | `/Section/course/{courseId}/get-all/sections` |
-| Section | POST | `/Section/add-section` |
-| Lesson | POST | `/Lesson/add/lesson/to-section/{sectionId}` |
-| Lesson | POST | `/Lesson/student/{lessonId}/finish-unfinish/lesson` |
-| Cart | GET | `/Cart/get/Student/cart` |
-| Cart | POST | `/Cart/student/add/to/cart` |
-| Wishlist | GET | `/WishList/get/student/wishlist` |
-| Wishlist | POST | `/WishList/student/add/course/{courseId}/to/wishlist` |
-| Order | POST | `/Order/create` |
-| Order | PUT | `/Order/cancel/{orderId}` |
-| Payment | POST | `/Payment/check-out` |
-| Payment | POST | `/Payment/create-payment-intent` |
-| Rating | POST | `/Rating/Student/add` |
-| Rating | GET | `/Rating/get-all/{CourseId}` |
-| Category | GET | `/Category/getAll` |
+### Courses
 
----
+- GET /api/Course/all
+- GET /api/Course/{Id}
+- GET /api/Course/provider
+- GET /api/Course/student
+- POST /api/Course
+- PUT /api/Course/{courseId}
+- DELETE /api/Course/{courseId}
 
-##  Project Structure
+### Sections and Lessons
 
-```
-TechMeter.Domain/
-├── Entities/
-│   ├── User, Student, Provider
-│   ├── Course, Section, Lesson
-│   ├── Order, OrderItem
-│   ├── Cart, CartItem
-│   ├── WishList, WishListItem
-│   └── Rating
-├── Enums/
-│   ├── Gender
-│   └── OrderStatus
-└── Events/                     # Domain events for MediatR notifications
+- GET /api/Section/{courseId}/all
+- POST /api/Section/course/{courseId}
+- GET /api/Lesson/course/{courseId}/all
+- POST /api/Lesson/{sectionId}
+- POST /api/Lesson/{Id}/finish
+- DELETE /api/Lesson/{Id}/unfinish
 
-TechMeter.Application/
-├── Features/
-│   ├── Account/Commands & Queries
-│   ├── Courses/Commands & Queries
-│   ├── Orders/Commands & Queries
-│   ├── Payments/Commands
-│   └── ...
-├── Notifications/              # MediatR notification handlers
-│   ├── PaymentSucceededNotification
-│   └── OrderStatusChangedNotification
-├── Interfaces/                 # IRepository, IEmailService, IFileService...
-└── DTOs/
+### Cart and Wishlist
 
-TechMeter.Infrastructure/
-├── Persistence/                # EF Core DbContext, Migrations
-├── Repositories/
-├── Services/
-│   ├── StripePaymentService
-│   ├── EmailService
-│   └── FileStorageService
-└── DependencyInjection.cs
+- GET /api/Cart/student/cart
+- POST /api/Cart/student
+- DELETE /api/Cart/student/{cartItemId}
+- GET /api/WishList
+- POST /api/WishList/{courseId}
+- DELETE /api/WishList/{wishlistItemId}
 
-TechMeter.API/
-├── Controllers/
-├── Middleware/                 # Exception handling, logging
-└── Program.cs
-```
+### Orders and Payments
+
+- POST /api/Order
+- GET /api/Order/student/orders/{studentId}
+- PUT /api/Order/cancel/{orderId}
+- POST /api/Payment/check-out
+- POST /api/Payment/create-payment-intent
+- POST /api/Payment/HandleWebHook
+
+### Ratings
+
+- POST /api/Rating/student
+- GET /api/Rating/all/{CourseId}
+- DELETE /api/Rating/student/{CourseId}
 
 ---
 
-##  MediatR Notifications Example
+## Notes
 
-When a Stripe webhook confirms payment, the system publishes a notification that fans out to multiple independent handlers:
-
-```csharp
-// Published after webhook confirmation
-public record PaymentSucceededNotification(string OrderId, string StudentId)
-    : INotification;
-
-// Handler 1 — Enroll student in courses
-public class EnrollStudentHandler : INotificationHandler<PaymentSucceededNotification> { }
-
-// Handler 2 — Send confirmation email
-public class SendConfirmationEmailHandler : INotificationHandler<PaymentSucceededNotification> { }
-
-// Handler 3 — Update order status to Paid
-public class UpdateOrderStatusHandler : INotificationHandler<PaymentSucceededNotification> { }
-```
+- The system is designed to be scalable and easy to extend with new features.
+- Business logic is organized through MediatR handlers, making the codebase modular and maintainable.
+- The application is suitable for production environments with external services like Stripe, Cloudinary, Email, and Firebase.
 
 ---
 
-##  Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
-
----
-
-##  License
+## License
 
 This project is licensed under the MIT License.
