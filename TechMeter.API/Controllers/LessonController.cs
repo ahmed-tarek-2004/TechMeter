@@ -91,7 +91,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpGet("student/watched")]
-        [Authorize("student")]
+        [Authorize(Roles="student")]
         public async Task<ActionResult<Response<List<GetLessonResponse>>>> GetStudentLessonWatchedAsync()
         {
             var userId = GetUserId();

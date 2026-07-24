@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Azure.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +30,9 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("{lessonId}")]
-        public async Task<ActionResult<Response<LessonCommentResponse>>> AddCommentToLesson([FromRoute] string lessonId, [FromBody] string content)
+        public async Task<ActionResult<Response<LessonCommentResponse>>> AddCommentToLesson([FromRoute] string lessonId, [FromBody] LessonCommentRequest request)
         {
-            var response = await mediator.Send(new AddLessonCommentCommand(GetUserId(), lessonId, content));
+            var response = await mediator.Send(new AddLessonCommentCommand(GetUserId(), lessonId, request.Content));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -39,9 +40,9 @@ namespace TechMeter.API.Controllers
         [HttpPost("{Id}/like")]
         [Authorize]
         [EnableRateLimiting("TogglePolicy")]
-        public async Task<ActionResult<Response<string>>> LikeCommentToLesson([FromRoute] string CommentId)
+        public async Task<ActionResult<Response<string>>> LikeCommentToLesson([FromRoute] string Id)
         {
-            var response = await mediator.Send(new LikeOnLessonCommentCommand(CommentId, GetUserId()));
+            var response = await mediator.Send(new LikeOnLessonCommentCommand(Id, GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpDelete("{Id}/like")]

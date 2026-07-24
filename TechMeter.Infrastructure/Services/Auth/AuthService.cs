@@ -79,21 +79,21 @@ namespace TechMeter.Infrastructure.Services.AuthService
                 {
                     return _responseHandler.BadRequest<LoginResponseDto>("verify Your Email");
                 }
-                if (string.IsNullOrEmpty(otp))
-                {
-                    otp = await _otpService.GenerateAndSetOTP(user.Id);
-                    _backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); _logger.LogInformation($"Otp Sent is : {otp}");
+                //if (string.IsNullOrEmpty(otp))
+                //{
+                //    otp = await _otpService.GenerateAndSetOTP(user.Id);
+                //    _backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); _logger.LogInformation($"Otp Sent is : {otp}");
 
-                    return _responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
-                }
-                else
-                {
-                    var confirmOTP = await _otpService.ValidateOtp(otp, user.Id);
-                    if (!confirmOTP)
-                    {
-                        return _responseHandler.BadRequest<LoginResponseDto>("Enter A correct OTP");
-                    }
-                }
+                //    return _responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
+                //}
+                //else
+                //{
+                //    var confirmOTP = await _otpService.ValidateOtp(otp, user.Id);
+                //    if (!confirmOTP)
+                //    {
+                //        return _responseHandler.BadRequest<LoginResponseDto>("Enter A correct OTP");
+                //    }
+                //}
                 var roles = await _userManager.GetRolesAsync(user);
                 var token = await _tokenService.GenerateTokensAsync(user, user.Id);
                 var respone = new LoginResponseDto()

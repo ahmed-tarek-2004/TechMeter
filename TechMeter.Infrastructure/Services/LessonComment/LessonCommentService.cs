@@ -48,8 +48,9 @@ namespace TechMeter.Infrastructure.Services
                     LessonId = lessonId,
                     UserEmail = user.Email,
                     UserId = userId,
-                    UserImage = "",
+                    UserImage = user.ProfileUrl,
                     UserName = user.UserName ?? "",
+
                 };
                 await context.AddAsync(comment);
                 await context.SaveChangesAsync();
@@ -185,7 +186,9 @@ namespace TechMeter.Infrastructure.Services
                     UserId = b.UserId,
                     UserImage = b.UserImage,
                     UserName = b.UserName,
+                    LikesCount = b.LessonCommentLikes.Count(),
                 }).ToListAsync();
+
             return responseHandler.Success(resposne, "Lesson Comments Retrived Successfully");
         }
 

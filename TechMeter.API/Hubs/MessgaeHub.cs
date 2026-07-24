@@ -43,12 +43,13 @@ namespace TechMeter.API.Hubs
             });
             await notificationService.SendUserNotifications(userId, "New Message", msg, NotificationType.Message);
         }
-
+        [HubMethodName("isonline")]
         public async Task IsOnline(string recieverId)
         {
             var isOnline = await userConnectionService.IsOnline(recieverId);
             await Clients.User(recieverId).SendAsync("CheckReceiverAvailability", isOnline);
         }
+        [HubMethodName("markasread")]
         public async Task MarkAsRead(string messageId, string senderId)
         {
             var userId = Context.UserIdentifier;
