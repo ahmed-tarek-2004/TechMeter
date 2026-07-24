@@ -30,6 +30,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("{lessonId}")]
+        [Authorize(Roles ="provider")]
         public async Task<ActionResult<Response<LessonCommentResponse>>> AddCommentToLesson([FromRoute] string lessonId, [FromBody] LessonCommentRequest request)
         {
             var response = await mediator.Send(new AddLessonCommentCommand(GetUserId(), lessonId, request.Content,request.ParentCommentId!));
@@ -55,7 +56,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpDelete("{Id}/lesson/{lessonId}")]
-        [Authorize()]
+        [Authorize]
         public async Task<ActionResult<Response<string>>> DeleteLessonCommentByIdAsync([FromRoute] string lessonId, [FromRoute] string Id)
         {
             var response = await mediator.Send(new DeleteLessonCommentCommand(lessonId, Id, GetUserId(), IsInRole()));
@@ -63,6 +64,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpGet("{lessonId}/all")]
+        [Authorize]
         public async Task<ActionResult<Response<List<LessonCommentResponse>>>> GetLessonCommentsAsync([FromRoute] string lessonId)
         {
             var response = await mediator.Send(new GetLessonCommentsQuery(GetUserId(), lessonId,IsInRole()));
@@ -70,6 +72,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpGet("{Id}/likes")]
+        [Authorize]
         public async Task<ActionResult<Response<List<LessonCommentLikesResponse>>>> GetLessonCommentsLikesAsync([FromRoute] string Id)
         {
             var response = await mediator.Send(new GetLessonsCommentLikesQuery(Id, GetUserId(),IsInRole()));
