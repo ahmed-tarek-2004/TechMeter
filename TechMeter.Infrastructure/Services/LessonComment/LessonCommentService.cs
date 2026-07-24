@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.DTO.LessonComment;
 using TechMeter.Application.Interfaces.LessonComment;
+using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -17,9 +18,9 @@ using TechMeter.Infrastructure.Persistence;
 namespace TechMeter.Infrastructure.Services
 {
     public class LessonCommentService(ApplicationDbContext context, ILessonCommentAuthorization lessonCommentAuthorization,
-        ResponseHandler responseHandler) : ILessonCommentService
+        ResponseHandler responseHandler, INotificationService notificationService) : ILessonCommentService
     {
-        public async Task<Response<LessonCommentResponse>> AddLessonComment(string userId, string lessonId, string content)
+        public async Task<Response<LessonCommentResponse>> AddLessonComment(string userId, string lessonId, string content, string? CommentParentId = null)
         {
             var user = await context.Users.FindAsync(userId);
             if (user == null)
@@ -31,7 +32,14 @@ namespace TechMeter.Infrastructure.Services
             {
                 return responseHandler.NotFound<LessonCommentResponse>("Lesson is not found");
             }
-
+            if (!string.IsNullOrEmpty(CommentParentId))
+            {
+                var CommentParentExists = await context.lessonComments.AnyAsync(b => b.Id == CommentParentId);
+                if (!CommentParentExists)
+                {
+                    return responseHandler.NotFound<LessonCommentResponse>("Comment Parent is not found");
+                }
+            }
             try
             {
                 if (!await lessonCommentAuthorization.HasCourseAccess(userId, Lesson.Value.CourseId))
@@ -50,10 +58,12 @@ namespace TechMeter.Infrastructure.Services
                     UserId = userId,
                     UserImage = user.ProfileUrl,
                     UserName = user.UserName ?? "",
+                    ParentCommentId = CommentParentId
 
                 };
                 await context.AddAsync(comment);
                 await context.SaveChangesAsync();
+                await notificationService.SendUserNotifications(comment.UserId, " new Comment", $"{user.UserName} added an new comment", Domain.Enums.NotificationType.Comment);
                 var response = new LessonCommentResponse
                 {
                     Id = comment.Id,
@@ -65,6 +75,7 @@ namespace TechMeter.Infrastructure.Services
                     UserId = comment.UserId,
                     UserImage = comment.UserImage,
                     UserName = comment.UserName,
+                    ParentCommentId = CommentParentId
                 };
                 return responseHandler.Success(response, "Comment Added Successfully");
             }
@@ -152,6 +163,7 @@ namespace TechMeter.Infrastructure.Services
                     UserId = comment.UserId,
                     UserImage = comment.UserImage,
                     UserName = comment.UserName,
+                    ParentCommentId = comment.ParentCommentId
                 };
                 return responseHandler.Success(response, "Comment Updated Successfully");
 
@@ -174,22 +186,44 @@ namespace TechMeter.Infrastructure.Services
                 return responseHandler.Forbidden<List<LessonCommentResponse>>("you don't have access to the course");
             }
 
-            var resposne = await context.lessonComments.Where(b => b.LessonId == LessonId)
-                .Select(b => new LessonCommentResponse
-                {
-                    Id = b.Id,
-                    Content = b.Content,
-                    LessonId = b.LessonId,
-                    CreatedAt = b.CreatedAt,
-                    IsEdited = b.IsEdited,
-                    UserEmail = b.UserEmail,
-                    UserId = b.UserId,
-                    UserImage = b.UserImage,
-                    UserName = b.UserName,
-                    LikesCount = b.LessonCommentLikes.Count(),
-                }).ToListAsync();
+            var comments = await context.lessonComments
+           .Where(c => c.LessonId == LessonId)
+           .AsNoTracking()
+           .OrderBy(c => c.CreatedAt)
+           .Select(c => new LessonCommentResponse
+           {
+               Id = c.Id,
+               Content = c.Content,
+               CreatedAt = c.CreatedAt,
+               IsEdited = c.IsEdited,
+               UserId = c.UserId,
+               UserName = c.UserName,
+               UserEmail = c.UserEmail,
+               UserImage = c.UserImage,
+               LessonId = c.LessonId,
+               LikesCount = c.LessonCommentLikes.Count(),
+               ParentCommentId = c.ParentCommentId
+           })
+           .ToListAsync();
 
-            return responseHandler.Success(resposne, "Lesson Comments Retrived Successfully");
+            var lookup = comments.ToDictionary(c => c.Id);
+
+            List<LessonCommentResponse> rootComments = [];
+
+            foreach (var comment in comments)
+            {
+                if (comment.ParentCommentId is null)
+                {
+                    rootComments.Add(comment);
+                }
+                else if (lookup.TryGetValue(comment.ParentCommentId, out var parent))
+                {
+                    parent.Replies.Add(comment);
+                }
+            }
+
+
+            return responseHandler.Success(rootComments, "Lesson Comments Retrived Successfully");
         }
 
         public async Task<Response<List<LessonCommentLikesResponse>>> GetCommentLikesAsync(string commentId, string userId, bool isAdmin = false)
@@ -259,6 +293,7 @@ namespace TechMeter.Infrastructure.Services
                     };
                     await context.LessonCommentLikes.AddAsync(lessonCommentLike);
                     await context.SaveChangesAsync();
+                    await notificationService.SendUserNotifications(comment.UserId, "Like on Your Comment", $"{user.UserName} Liked on your comment", Domain.Enums.NotificationType.Like);
                     return responseHandler.Success(string.Empty, "Like added successfully");
                 }
                 return responseHandler.Success(string.Empty, "Like already added");

@@ -18,6 +18,10 @@ namespace TechMeter.Domain.Models
         public string UserName { get; set; }
         public string UserEmail { get; set; }
         public string? UserImage { get; set; }
+        public string? ParentCommentId { get; set; }
+        public LessonComment? ParentComment { get; set; }
+        public ICollection<LessonComment> Replies { get; set; } = new List<LessonComment>();
+
         //public string LessonId { get; set; }
         public Lessons Lesson { get; set; }
         public User User { get; set; }

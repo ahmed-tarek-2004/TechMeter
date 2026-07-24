@@ -32,7 +32,7 @@ namespace TechMeter.API.Controllers
         [HttpPost("{lessonId}")]
         public async Task<ActionResult<Response<LessonCommentResponse>>> AddCommentToLesson([FromRoute] string lessonId, [FromBody] LessonCommentRequest request)
         {
-            var response = await mediator.Send(new AddLessonCommentCommand(GetUserId(), lessonId, request.Content));
+            var response = await mediator.Send(new AddLessonCommentCommand(GetUserId(), lessonId, request.Content,request.ParentCommentId!));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -55,7 +55,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpDelete("{Id}/lesson/{lessonId}")]
-        [Authorize(Roles = "provider,admin")]
+        [Authorize()]
         public async Task<ActionResult<Response<string>>> DeleteLessonCommentByIdAsync([FromRoute] string lessonId, [FromRoute] string Id)
         {
             var response = await mediator.Send(new DeleteLessonCommentCommand(lessonId, Id, GetUserId(), IsInRole()));

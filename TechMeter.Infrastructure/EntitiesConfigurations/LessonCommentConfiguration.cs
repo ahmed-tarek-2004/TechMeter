@@ -23,7 +23,12 @@ namespace TechMeter.Infrastructure.EntitiesConfigurations
             builder.HasOne(b => b.User)
                 .WithMany(b => b.LessonComments)
                 .HasForeignKey(b => b.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(b => b.ParentComment)
+                .WithMany(b => b.Replies)
+                .HasForeignKey(b => b.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
