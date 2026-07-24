@@ -11,6 +11,7 @@ namespace TechMeter.Application.DTO.LessonComment
         public string Id { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? ParentCommentId { get; set; }
         public bool IsEdited { get; set; } = false;
         public string UserId { get; set; }
         public string UserName { get; set; }
@@ -18,5 +19,6 @@ namespace TechMeter.Application.DTO.LessonComment
         public string? UserImage { get; set; }
         public string LessonId { get; set; }
         public int LikesCount { get; set; }
+        public List<LessonCommentResponse> Replies { get; set; } = new ();
     }
 }

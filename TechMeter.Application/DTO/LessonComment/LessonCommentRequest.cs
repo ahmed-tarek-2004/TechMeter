@@ -11,5 +11,6 @@ namespace TechMeter.Application.DTO.LessonComment
     {
         [Required]
         public string Content { get; set; }
+        public string? ParentCommentId { get; set; } = null;
     }
 }

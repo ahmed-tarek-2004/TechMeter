@@ -15,7 +15,7 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLessonComment
     {
         public async Task<Response<LessonCommentResponse>> Handle(AddLessonCommentCommand request, CancellationToken cancellationToken)
         {
-            return await lessonCommentService.AddLessonComment(request.userId, request.LessonId, request.Content);
+            return await lessonCommentService.AddLessonComment(request.userId, request.LessonId, request.Content,request.commentParentId);
         }
     }
 }
