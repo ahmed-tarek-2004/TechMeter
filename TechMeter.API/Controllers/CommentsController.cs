@@ -56,6 +56,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpDelete("{Id}/lesson/{lessonId}")]
+
         [Authorize]
         public async Task<ActionResult<Response<string>>> DeleteLessonCommentByIdAsync([FromRoute] string lessonId, [FromRoute] string Id)
         {
