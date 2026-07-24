@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Interfaces.LessonComment;
@@ -47,25 +48,43 @@ namespace TechMeter.Infrastructure.Services.LessonComment
                 ))
                 .FirstOrDefaultAsync();
         }
-        public async Task<int> CanDeleteAsync(string userId, string CommentId, string LessonId )
+        public async Task<int> CanDeleteAsync(string userId, string CommentId, string LessonId)
         {
             var user = await context.Users.FindAsync(userId);
             var roles = await userManager.GetRolesAsync(user!);
-            if (roles.Contains("admin"))
+
+            bool isAdmin = roles.Contains("admin");
+            bool isProvider = roles.Contains("provider");
+            bool canDelete = false;
+
+            if (isAdmin)
             {
-                return await context.lessonComments.Where(b => b.Id == CommentId).ExecuteDeleteAsync();
+                canDelete = true;
             }
-            else if (roles.Contains("provider"))
+            else if (isProvider)
             {
-                return await context.lessonComments.Where(b => b.Id == CommentId && b.Lesson.section.Course.ProviderId == userId)
-                    .ExecuteDeleteAsync();
+                canDelete = await context.lessonComments.AnyAsync(c => c.Lesson.section.Course.ProviderId == userId);
             }
             else
             {
-                return await context.lessonComments
-                    .Where(b => b.LessonId == LessonId && b.UserId == userId && b.Id == CommentId)
-                    .ExecuteDeleteAsync();
+                canDelete = await context.lessonComments.AnyAsync(c => c.UserId == userId && c.LessonId == LessonId);
             }
+            if (!canDelete)
+                return 0;
+            var sql = @"
+        WITH CommentTree AS (
+            SELECT Id FROM lessonComments WHERE Id = {0}
+            
+            UNION ALL
+            
+            SELECT c.Id FROM lessonComments c
+            INNER JOIN CommentTree ct ON c.ParentCommentId = ct.Id
+        )
+        DELETE FROM lessonComments 
+        WHERE Id IN (SELECT Id FROM CommentTree)
+        OPTION (MAXRECURSION 0);";
+
+            return await context.Database.ExecuteSqlRawAsync(sql, CommentId);
         }
     }
 }

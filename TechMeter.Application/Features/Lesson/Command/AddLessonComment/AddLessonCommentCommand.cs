@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.AddLessonComment
 {
-    public sealed record AddLessonCommentCommand(string userId, string LessonId, string Content) : IRequest<Response<LessonCommentResponse>>;
+    public sealed record AddLessonCommentCommand(string userId, string LessonId, string Content,string commentParentId) : IRequest<Response<LessonCommentResponse>>;
 }
