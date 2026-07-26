@@ -37,7 +37,7 @@ namespace TechMeter.API.Controllers
         }
 
         [Authorize(Roles = "student")]
-        [HttpGet("student/cart")]
+        [HttpGet("student")]
         public async Task<ActionResult<Response<CartResponse>>> GetCartAsync()
         {
             var command = new GetStudentCartQuery(GetUserId());
@@ -45,7 +45,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("provider/{studentId}/cart")]
+        [HttpGet("provider/{studentId}")]
         [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<CartResponse>>> GetProviderCartAsync([FromRoute] string studentId)
         {

@@ -9,10 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Payment.Command.PaymentIntent
 {
-    public class PaymentIntentCommand : IRequest<Response<PaymentIntentResponse>>
-    {
-        public string studentId { get; set; }
-        public string orderId { get; set; }
-        public string currency { get; set; }
-    }
+    public sealed record PaymentIntentCommand(string studentId, string currency = "usd") : IRequest<Response<PaymentIntentResponse>>;
 }

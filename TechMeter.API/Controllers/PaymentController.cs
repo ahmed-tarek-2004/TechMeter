@@ -39,12 +39,7 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles = "student")]
         public async Task<ActionResult<PaymentResponse>> CheckoutAsync([FromBody] PaymentRequest request)
         {
-            var command = new PaymentIntentCommand
-            {
-                currency = request.Currency,
-                orderId = request.OrderId,
-            };
-            command.studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var command = new CheckoutCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, request.Currency);
             var response = await _mediator.Send(command);
 
             return StatusCode((int)response.StatusCode, response);
@@ -54,12 +49,7 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<PaymentIntentResponse>>> CreatePaymentIntent([FromBody] PaymentRequest request)
         {
 
-            var command = new PaymentIntentCommand
-            {
-                currency = request.Currency,
-                orderId = request.OrderId,
-            };
-            command.studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var command = new PaymentIntentCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, request.Currency);
             var response = await _mediator.Send(command);
 
             return StatusCode((int)response.StatusCode, response);

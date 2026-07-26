@@ -9,10 +9,6 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Payment.Command.Checkout
 {
-    public class CheckoutCommand:IRequest<Response<PaymentResponse>>
-    {
-        public string orderId { get; set; }
-        public string currency { get; set; }
-        public string studentId { get; set; }
-    }
+    public sealed record CheckoutCommand(string studentId, string currency = "usd") : IRequest<Response<PaymentResponse>>;
+    
 }

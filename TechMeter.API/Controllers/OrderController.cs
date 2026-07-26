@@ -62,13 +62,13 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Response<OrderResponse>>> CreateOrderFromCart([FromBody] CreateOrderRequest request)
-        {
-            // var StudentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _mediator.Send(new CreateOrderCommand() { StudentId = request.StudentId });
-            return StatusCode((int)response.StatusCode, response);
-        }
+        //[HttpPost]
+        //public async Task<ActionResult<Response<OrderResponse>>> CreateOrderFromCart()
+        //{
+        //    var StudentId = GetUserId();
+        //    var response = await _mediator.Send(new CreateOrderCommand() { StudentId = StudentId! });
+        //    return StatusCode((int)response.StatusCode, response);
+        //}
 
         [HttpPut("cancel/{orderId}")]
         public async Task<ActionResult<Response<OrderResponse>>> StudentCancelOrder([FromRoute] string orderId)

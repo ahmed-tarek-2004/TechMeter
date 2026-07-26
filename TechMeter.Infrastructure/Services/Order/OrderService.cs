@@ -28,7 +28,7 @@ namespace TechMeter.Infrastructure.Services.Order
 
 
         #region CreateStudentOrder
-        public async Task<Response<OrderResponse>> CreateStudentOrder(string StudentId)
+        public async Task<Response<OrderResponse>> CreateStudentOrder(string StudentId,string? paymentIntentId)
         {
             var Student = await _context.Student.FirstOrDefaultAsync(b => b.Id == StudentId);
             if (Student == null)
@@ -45,8 +45,8 @@ namespace TechMeter.Infrastructure.Services.Order
                     .FirstOrDefaultAsync(b => b.StudentId == Student.Id);
                 if (cart == null || !cart.CartItems.Any() || cart.CartItems == null)
                 {
-                    _logger.LogWarning("There is no Courses in Your Cart");
-                    return _responseHandler.BadRequest<OrderResponse>("Cart Is Empty");
+                    _logger.LogWarning("Cart Is Empty.");
+                    return _responseHandler.BadRequest<OrderResponse>("Cart Is Empty.");
                 }
 
                 var order = new TechMeter.Domain.Models.Order()
@@ -57,6 +57,7 @@ namespace TechMeter.Infrastructure.Services.Order
                     Status = TechMeter.Domain.Enums.OrderStatus.PendingPayment,
                     TotalPrice = cart.CartItems.Sum(b => b.UnitPrice),
                     UpdatedAt = DateTime.UtcNow,
+                    PaymetnIntentId = paymentIntentId,
                     OrderItems = new List<OrderItem>()
                 };
                 foreach (var item in cart.CartItems)
@@ -90,7 +91,6 @@ namespace TechMeter.Infrastructure.Services.Order
                         Id = b.Id,
                         CourseId = b.CourseId,
                         CourseName = b.Course.Title,
-
                     }).ToList()
                 };
                 return _responseHandler.Success(response, "Order Created Successfully");

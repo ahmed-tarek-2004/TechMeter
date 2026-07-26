@@ -14,7 +14,7 @@ namespace TechMeter.Application.Features.Order.Command.CreateOrder
     {
         public async Task<Response<OrderResponse>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            return await orderService.CreateStudentOrder(request.StudentId);
+            return await orderService.CreateStudentOrder(request.StudentId,null);
         }
     }
 }

@@ -11,9 +11,9 @@ namespace TechMeter.Application.Features.Payment.Command.Checkout
     {
         public CheckoutCommandValidator() 
         {
-            RuleFor(b => b)
-                   .Must(b => !string.IsNullOrEmpty(b.orderId))
-                   .WithMessage("Order Id Is Required");
+            //RuleFor(b => b)
+            //       .Must(b => !string.IsNullOrEmpty(b.orderId))
+            //       .WithMessage("Order Id Is Required");
 
             RuleFor(b => b)
                     .Must(b => !string.IsNullOrEmpty(b.currency))

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
+using Stripe.Forwarding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
 using TechMeter.Application.Features.Payment.Command.Checkout;
 using TechMeter.Application.Features.Payment.Command.PaymentIntent;
+using TechMeter.Application.Interfaces.Order;
 using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
@@ -36,16 +38,18 @@ namespace TechMeter.Infrastructure.Services.Payment
         private readonly IEmailService _emailService;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<PaymentService> _logger;
+        private readonly IOrderService _orderService;
         private readonly StripeSettings stripe;
 
         public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<PaymentService> logger, IOptions<StripeSettings> option,
+            ILogger<PaymentService> logger, IOptions<StripeSettings> option, IOrderService orderService,
             IEmailService emailService)
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
             stripe = option.Value;
+            _orderService = orderService;
             _emailService = emailService;
         }
         public async Task<Response<PaymentResponse>> CreateACheckOut(CheckoutCommand command)
@@ -55,16 +59,14 @@ namespace TechMeter.Infrastructure.Services.Payment
             {
                 return _responseHandler.BadRequest<PaymentResponse>("User is not found");
             }
-            var order = await _context.Order
-                .AsNoTracking()
-                .Include(b => b.OrderItems)
-                .ThenInclude(b => b.Course)
-                .FirstOrDefaultAsync(b => b.Id == command.orderId && b.StudentId == user.Id);
-            if (order == null)
+            var cart = await _context.Cart.Include(b => b.CartItems).ThenInclude(b=>b.Course).FirstOrDefaultAsync(b => b.StudentId == command.studentId);
+
+            if (cart == null || !cart.CartItems.Any() || cart.CartItems is null)
             {
-                return _responseHandler.NotFound<PaymentResponse>("User is not found");
+                return _responseHandler.NotFound<PaymentResponse>("Cart is Empty.");
             }
-            var lineItems = order.OrderItems
+
+            var lineItems = cart.CartItems
                          .Select(item => new SessionLineItemOptions
                          {
                              PriceData = new SessionLineItemPriceDataOptions
@@ -77,7 +79,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                                      Description = item.Course.Description
                                  }
                              },
-                             Quantity = 1
+                             Quantity =1,
                          }).ToList();
 
             var options = new SessionCreateOptions
@@ -90,7 +92,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 CustomerEmail = user.Email,
                 Metadata = new Dictionary<string, string>
                 {
-                   { "orderId", command.orderId },
+                   { "cartId",cart.Id },
                    { "clientId", user.Id }
                 },
 
@@ -114,17 +116,16 @@ namespace TechMeter.Infrastructure.Services.Payment
             {
                 return _responseHandler.BadRequest<PaymentIntentResponse>("User is not found");
             }
-            var order = await _context.Order
-                .AsNoTracking()
-                .Include(b => b.OrderItems)
-                .FirstOrDefaultAsync(b => b.Id == request.orderId && b.StudentId == request.studentId && b.Status == OrderStatus.PendingPayment);
-            if (order == null)
+            var cart = await _context.Cart.Include(b => b.CartItems).FirstOrDefaultAsync(b => b.StudentId == request.studentId);
+
+            if (cart == null || !cart.CartItems.Any() || cart.CartItems is null)
             {
-                return _responseHandler.NotFound<PaymentIntentResponse>("Order is not found");
+                return _responseHandler.NotFound<PaymentIntentResponse>("Cart is Empty.");
             }
+
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)(order.OrderItems.Sum(b => b.UnitPrice) * 100),
+                Amount = (long)(cart.CartItems.Sum(b => b.UnitPrice) * 100),
                 Currency = request.currency ?? "usd",
                 PaymentMethodTypes = new List<string> { "card" },
                 //AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
@@ -133,7 +134,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                 //},
                 Metadata = new Dictionary<string, string>
                 {
-                   { "orderId", request.orderId },
+                   { "cartId", cart.Id },
                    { "clientId", user.Id }
                 }
             };
@@ -143,6 +144,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             var response = new PaymentIntentResponse()
             {
                 ClientSecret = intent.ClientSecret,
+                PaymentIntendId = intent.Id
             };
             return _responseHandler.Success(response, "ClientSecret Returned Successfully");
         }
@@ -174,27 +176,25 @@ namespace TechMeter.Infrastructure.Services.Payment
                     if (session == null)
                         return _responseHandler.BadRequest<object>("Event data object is not a session.");
 
-                    var orderId = session.Metadata.ContainsKey("orderId") ? session.Metadata["orderId"] : null;
-                    if (orderId == null)
-                        return _responseHandler.BadRequest<object>("Missing orderId in metadata.");
+                    var cartId = session.Metadata.ContainsKey("cartId") ? session.Metadata["cartId"] : null;
+                    if (cartId == null)
+                        return _responseHandler.BadRequest<object>("Missing cartId in metadata.");
 
-                    var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
-                    if (order == null)
+                    var cart = await _context.Order.FirstOrDefaultAsync(b => b.Id == cartId);
+                    if (cart == null)
                         return _responseHandler.BadRequest<object>("Order not found.");
 
-
                     var userId = session.Metadata.ContainsKey("clientId") ? session.Metadata["clientId"] : null;
-                    if (userId == null)
-                    {
-                        _logger.LogInformation("user Id is : {userId}", userId);
-                        return _responseHandler.BadRequest<object>("user not found.");
-                    }
+                    await AddingOrderToDatabaseAsync(userId!, null!);
 
-                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid, userId);
-
-                    _logger.LogInformation($" Checkout session completed for Order {order.Id}");
+                    _logger.LogInformation($" Checkout session completed for Order {cart.Id}");
                 }
-                else if (stripeEvent.Type == "payment_intent.succeeded")
+                else if (stripeEvent.Type == "payment_intent.amount_capturable_updated"
+                    ||
+                    stripeEvent.Type == "payment_intent.requires_capture"
+                    //|| stripeEvent.Type == "requires_capture"
+                    //|| stripeEvent.Type == "payment_intent.requires_action"
+                    )
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
                     if (paymentIntent == null)
@@ -202,16 +202,16 @@ namespace TechMeter.Infrastructure.Services.Payment
 
                     _logger.LogInformation($"PaymentIntent succeeded for: {paymentIntent.Id}");
 
-                    var orderId = paymentIntent.Metadata.ContainsKey("orderId") ? paymentIntent.Metadata["orderId"] : null;
-                    if (orderId == null)
-                        return _responseHandler.BadRequest<object>("Missing orderId in metadata.");
+                    var cartId = paymentIntent.Metadata.ContainsKey("cartId") ? paymentIntent.Metadata["cartId"] : null;
+                    if (cartId == null)
+                        return _responseHandler.BadRequest<object>("Missing cartId in metadata.");
 
-                    var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
-                    if (order == null)
+                    var cart = await _context.Order.FirstOrDefaultAsync(b => b.Id == cartId);
+                    if (cart == null)
                         return _responseHandler.BadRequest<object>("Order not found.");
 
                     var userId = paymentIntent.Metadata.ContainsKey("clientId") ? paymentIntent.Metadata["clientId"] : null;
-                    await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Paid, OrderStatus.Paid, userId);
+                    await AddingOrderToDatabaseAsync(userId, paymentIntent.Id);
 
                 }
                 else if (stripeEvent.Type == "payment_intent.payment_failed")
@@ -221,11 +221,11 @@ namespace TechMeter.Infrastructure.Services.Payment
                     {
                         _logger.LogWarning($"PaymentIntent failed for: {paymentIntent.Id}");
 
-                        var orderId = paymentIntent.Metadata.ContainsKey("orderId") ? paymentIntent.Metadata["orderId"] : null;
-                        if (orderId == null)
-                            return _responseHandler.BadRequest<object>("Missing orderId in metadata.");
+                        var cartId = paymentIntent.Metadata.ContainsKey("cartId") ? paymentIntent.Metadata["cartId"] : null;
+                        if (cartId == null)
+                            return _responseHandler.BadRequest<object>("Missing cartId in metadata.");
 
-                        var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == orderId);
+                        var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == cartId);
                         if (order == null)
                             return _responseHandler.BadRequest<object>("Order not found.");
 
@@ -372,6 +372,26 @@ namespace TechMeter.Infrastructure.Services.Payment
             {
                 await transaction.RollbackAsync();
             }
+        }
+        private async Task<bool> AddingOrderToDatabaseAsync(string clientId, string paymentIntentId)
+        {
+
+
+            var isExsist = await _context.Order.AnyAsync(o => o.PaymetnIntentId == paymentIntentId);
+
+            if (!isExsist)
+            {
+
+                var orderResponse = await _orderService.CreateStudentOrder(clientId, paymentIntentId);
+                if (!orderResponse.Succeeded)
+                {
+                    _logger.LogError("Failed to create order for client {ClientId}: {ErrorMessage}", clientId, orderResponse.Message);
+                    _logger.LogError("Order creation failed for client {ClientId} with details: {Errors}", clientId, string.Join(", ", orderResponse.Errors));
+                    return false;
+                }
+                _logger.LogInformation("Order created successfully for client {ClientId}: {OrderId}", clientId, orderResponse.Data.Id);
+            }
+            return true;
         }
     }
 }
