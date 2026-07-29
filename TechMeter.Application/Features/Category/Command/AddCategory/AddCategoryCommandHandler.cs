@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Category;
-using TechMeter.Application.Interfaces.Category;
+using TechMeter.Application.Interfaces.Services.Category;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Category.Command.AddCategory

@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.DTO.WhishList;
 using TechMeter.Application.Features.WishList.Command.RemoveFromWishlistItem;
-using TechMeter.Application.Interfaces.WishList;
+using TechMeter.Application.Interfaces.Services.WishList;
+//using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
 

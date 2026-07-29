@@ -10,10 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Notification;
-using TechMeter.Application.Interfaces.Fcm;
-using TechMeter.Application.Interfaces.Jobs;
-using TechMeter.Application.Interfaces.Notification;
-using TechMeter.Application.Interfaces.NotificationSender;
+using TechMeter.Application.Interfaces.Services.Fcm;
+using TechMeter.Application.Interfaces.Services.Jobs;
+using TechMeter.Application.Interfaces.Services.Notification;
+using TechMeter.Application.Interfaces.Services.NotificationSender;
+
+//using TechMeter.Application.Interfaces.Services.NotificationSender;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;

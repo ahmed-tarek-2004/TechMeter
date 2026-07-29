@@ -14,23 +14,24 @@ using System.IdentityModel.Tokens.Jwt;
 using TechMeter.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using TechMeter.Shared;
-
-namespace TechMeter.Application.Interfaces.TokenService
+using TechMeter.Application.Interfaces.Services.Token;
+//using User = TechMeter.Domain.Models.Auth.Identity.User;
+namespace TechMeter.Infrastructure.Services.TokenService
 {
     public class TokenService : ITokenService
     {
         private readonly JwtSettings _JwtSettings;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<TechMeter.Domain.Models.Auth.Identity.User> _userManager;
         private readonly SymmetricSecurityKey _symmetricSecurityKey;
         private readonly ApplicationDbContext _context;
-        public TokenService(IOptions<JwtSettings> options, UserManager<User> userManager, ApplicationDbContext context)
+        public TokenService(IOptions<JwtSettings> options, UserManager<TechMeter.Domain.Models.Auth.Identity.User> userManager, ApplicationDbContext context)
         {
             _JwtSettings = options.Value;
             _userManager = userManager;
             _context = context;
             _symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_JwtSettings.SigningKey));
         }
-        public async Task<string> GenerateAccessTokenAsync(User user)
+        public async Task<string> GenerateAccessTokenAsync(TechMeter.Domain.Models.Auth.Identity.User user)
         {
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>()
@@ -69,7 +70,7 @@ namespace TechMeter.Application.Interfaces.TokenService
             return Convert.ToBase64String(number);
         }
 
-        public async Task<(string AccessToken, string RefreshToken)> GenerateTokensAsync(User user, string userId)
+        public async Task<(string AccessToken, string RefreshToken)> GenerateTokensAsync(TechMeter.Domain.Models.Auth.Identity.User user, string userId)
         {
             var AccessToken = await GenerateAccessTokenAsync(user);
             var RefreshTokoen = await GenerateRefreshTokenAsync();

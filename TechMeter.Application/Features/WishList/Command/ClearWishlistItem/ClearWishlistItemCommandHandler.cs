@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
-using TechMeter.Application.Interfaces.WishList;
+using TechMeter.Application.Interfaces.Services.WishList;
+//using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 

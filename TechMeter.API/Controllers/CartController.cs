@@ -10,7 +10,7 @@ using TechMeter.Application.Features.Cart.Command.ClearStudentCart;
 using TechMeter.Application.Features.Cart.Command.RemoveCartItem;
 using TechMeter.Application.Features.Cart.Query.GetProviderStudentCart;
 using TechMeter.Application.Features.Cart.Query.GetStudentCart;
-using TechMeter.Application.Interfaces.Cart;
+//using TechMeter.Application.Interfaces.Cart;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;
 

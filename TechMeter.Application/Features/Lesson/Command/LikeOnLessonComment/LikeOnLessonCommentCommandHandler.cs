@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechMeter.Application.Interfaces.LessonComment;
+using TechMeter.Application.Interfaces.Services.LessonComment;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.LikeOnLessonComment

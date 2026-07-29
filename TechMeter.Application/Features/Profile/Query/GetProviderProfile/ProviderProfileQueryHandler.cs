@@ -6,7 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Profile;
 using TechMeter.Application.DTO.User;
-using TechMeter.Application.Interfaces.UserProfile;
+using TechMeter.Application.Interfaces.Services.Profile;
+//using TechMeter.Application.Interfaces.UserProfile;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Query.GetProviderProfile

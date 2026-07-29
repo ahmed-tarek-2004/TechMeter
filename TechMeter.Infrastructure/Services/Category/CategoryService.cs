@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Category;
 using TechMeter.Application.Features.Category.Command.AddCategory;
 using TechMeter.Application.Features.Category.Command.UpdateCategory;
-using TechMeter.Application.Interfaces.Category;
+using TechMeter.Application.Interfaces.Services.Category;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;

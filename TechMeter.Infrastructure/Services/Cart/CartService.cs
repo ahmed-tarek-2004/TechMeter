@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Cart;
 using TechMeter.Application.Features.Cart.Command.AddToCart;
-using TechMeter.Application.Interfaces.Cart;
+using TechMeter.Application.Interfaces.Services.Cart;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Persistence;

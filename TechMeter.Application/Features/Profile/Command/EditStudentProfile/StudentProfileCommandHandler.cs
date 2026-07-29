@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Application.Interfaces.Services.Profile;
+
 //using TechMeter.Application.Features.Student.Command;
-using TechMeter.Application.Interfaces.UserProfile;
+//using TechMeter.Application.Interfaces.UserProfile;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Command.EditStudentProfile

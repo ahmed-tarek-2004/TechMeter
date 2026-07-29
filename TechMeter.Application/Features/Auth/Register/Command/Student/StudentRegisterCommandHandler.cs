@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Auth.Register;
-using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Application.Interfaces.Services.Auth;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.Register.Command.Student

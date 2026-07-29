@@ -20,7 +20,7 @@ using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResendOtp;
 using TechMeter.Application.Features.Auth.ResetPassword;
-using TechMeter.Application.Interfaces.AuthService;
+using TechMeter.Application.Interfaces.Services.Auth;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;

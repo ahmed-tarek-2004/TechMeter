@@ -10,8 +10,8 @@ using TechMeter.Application.Features.Notification.Command.ReadNotification;
 using TechMeter.Application.Features.Notification.Command.StoreNotification;
 using TechMeter.Application.Features.Notification.Query.GetUserNotifications;
 using TechMeter.Application.Features.Notification.Query.GetUserUnReadNotifications;
-using TechMeter.Application.Interfaces.Fcm;
-using TechMeter.Application.Interfaces.Notification;
+//using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Services.Notification;
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using TechMeter.Application.Interfaces.Jobs;
+using TechMeter.Application.Interfaces.Services.Jobs;
 
 namespace TechMeter.Infrastructure.HangfireJobs
 {

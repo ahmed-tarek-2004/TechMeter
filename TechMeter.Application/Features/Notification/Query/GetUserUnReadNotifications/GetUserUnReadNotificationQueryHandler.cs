@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Notification;
 using TechMeter.Application.Features.Notification.Query.GetUserNotifications;
-using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.Services.Notification;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Notification.Query.GetUserUnReadNotifications
