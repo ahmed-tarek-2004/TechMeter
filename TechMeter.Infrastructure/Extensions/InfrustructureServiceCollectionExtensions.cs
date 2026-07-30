@@ -25,7 +25,7 @@ using TechMeter.Application.Interfaces.Services.Profile;
 using TechMeter.Application.Interfaces.Services.Rating;
 using TechMeter.Application.Interfaces.Services.Section;
 using TechMeter.Application.Interfaces.Services.Token;
-using TechMeter.Application.Interfaces.Services.WishList;
+//using TechMeter.Application.Interfaces.Services.WishList;
 //using TechMeter.Application.Interfaces.
 //using TechMeter.Application.Interfaces.UserProfile;
 //using TechMeter.Application.Interfaces.WishList;
@@ -56,7 +56,7 @@ using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.User;
 using TechMeter.Infrastructure.Services.UserConnection;
-using TechMeter.Infrastructure.Services.WishList;
+//using TechMeter.Infrastructure.Services.WishList;
 using TechMeter.Shared;
 //using TokenService = TechMeter.Infrastructure.Services.;
 
@@ -88,6 +88,7 @@ namespace TechMeter.Infrastructure.Extensions
             //services.AddScoped<ICartService, CartService>();
             //services.AddScoped<ICategoryService, CategoryService>();
             //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
+            //services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
@@ -96,7 +97,6 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ILessonService, LessonService>();
-            services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IRatingService, RatingService>();
