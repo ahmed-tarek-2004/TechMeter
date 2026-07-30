@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.Features.Cart.Command.AddToCart;
-using TechMeter.Application.Interfaces.Services.Cart;
+//using TechMeter.Application.Interfaces.Services.Cart;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 

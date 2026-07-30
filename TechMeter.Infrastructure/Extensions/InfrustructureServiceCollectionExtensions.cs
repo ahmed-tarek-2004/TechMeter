@@ -10,8 +10,8 @@ using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Services;
 using TechMeter.Application.Interfaces.Services.Auth;
-using TechMeter.Application.Interfaces.Services.Cart;
-using TechMeter.Application.Interfaces.Services.Category;
+//using TechMeter.Application.Interfaces.Services.Cart;
+//using TechMeter.Application.Interfaces.Services.Category;
 using TechMeter.Application.Interfaces.Services.Course;
 using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Application.Interfaces.Services.Jobs;
@@ -38,8 +38,10 @@ using TechMeter.Infrastructure.HangfireJobs;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services;
 using TechMeter.Infrastructure.Services.AuthService;
-using TechMeter.Infrastructure.Services.Cart;
-using TechMeter.Infrastructure.Services.Category;
+//using TechMeter.Infrastructure.Services.Category;
+
+//using TechMeter.Infrastructure.Services.Cart;
+//using TechMeter.Infrastructure.Services.Category;
 using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.Lesson;
@@ -83,23 +85,23 @@ namespace TechMeter.Infrastructure.Extensions
 
         public static IServiceCollection ApplicationService(this IServiceCollection services)
         {
+            //services.AddScoped<ICartService, CartService>();
+            //services.AddScoped<ICategoryService, CategoryService>();
+            //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
             services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IWishListService, WishListService>();
-            services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
-            //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFcmService, FcmService>();

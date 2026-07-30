@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.DTO.Cart;
 using TechMeter.Application.Features.Cart.Command.AddToCart;
-using TechMeter.Application.Interfaces.Services.Cart;
+//using TechMeter.Application.Interfaces.Services.Cart;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Cart.Query.GetStudentCart
