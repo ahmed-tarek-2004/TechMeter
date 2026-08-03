@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Net;
 using System.Reflection;
@@ -24,6 +25,7 @@ using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
+using TechMeter.Domain.Models.Auth.UserTokens;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Services.AuthService;
 
@@ -39,6 +41,7 @@ namespace TechMeter.API.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
+        private readonly ResponseHandler _responseHandler;
         private readonly IMediator _mediator;
 
         public AccountController(ILogger<AccountController> logger, IAuthService authService,
@@ -46,6 +49,7 @@ namespace TechMeter.API.Controllers
         {
             _logger = logger;
             _authService = authService;
+            _responseHandler = responseHandler;
             _mediator = mediator;
         }
 
@@ -141,6 +145,31 @@ namespace TechMeter.API.Controllers
         {
             var response = await _authService.LogoutAsync(User);
             return StatusCode((int)response.StatusCode, response);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+                return BadRequest(_responseHandler.BadRequest<string>("Refresh token is required"));
+            try
+            {
+                var newTokens = await _authService.RefreshTokenAsync(refreshToken);
+
+                return Ok(_responseHandler.Success<UserRefreshTokenResponse>(newTokens, "User token refreshed succsessfully"));
+            }
+            catch (SecurityTokenException ex)
+            {
+                return Unauthorized(_responseHandler.UnAuthorized<string>(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                var error = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    _responseHandler.BadRequest<string>("UnexpectedError" + ": " + error)
+                );
+            }
         }
         private string GetUserId()
         {
