@@ -17,6 +17,7 @@ using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResendOtp;
 using TechMeter.Application.Features.Auth.ResetPassword;
+using TechMeter.Domain.Models.Auth.UserTokens;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Interfaces.AuthService
@@ -33,6 +34,7 @@ namespace TechMeter.Application.Interfaces.AuthService
         public Task<Response<ForgetPasswordResponse>> ForgetPassword(string request);
         public Task<Response<ResetPasswordResponse>> ResetPasswordAsync(string userId, string token, string password, string confirmPassword);
         public Task<Response<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request);
+        public Task<UserRefreshTokenResponse> RefreshTokenAsync(string refreshToken);
         //public Task<Response<string>> Logoutasync(string userId);
     }
 }

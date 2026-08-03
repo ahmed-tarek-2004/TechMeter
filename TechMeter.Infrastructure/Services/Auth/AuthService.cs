@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using Stripe.Forwarding;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ using TechMeter.Application.Interfaces.TokenService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
+using TechMeter.Domain.Models.Auth.UserTokens;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.Persistence;
@@ -554,6 +556,42 @@ namespace TechMeter.Infrastructure.Services.AuthService
             _logger.LogInformation("Existing user updated: {UserId}", user.Id);
         }
 
+
         #endregion
+        public async Task<UserRefreshTokenResponse> RefreshTokenAsync(string refreshToken)
+        {
+            try
+            {
+                var userRefreshToken = await _tokenService.ValidateRefreshTokenAsync(refreshToken);
+                if (userRefreshToken == false)
+                {
+                    throw new SecurityTokenException("Invalid refresh token");
+                }
+                var refreshTokenEntity = await _context.UserRefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
+                var user = await _context.Users.FindAsync(refreshTokenEntity.UserId);
+                if (user == null)
+                {
+                    throw new SecurityTokenException("Invalid user");
+                }
+                await _tokenService.InValidateOldTokenAsync(user.Id);
+                var userTokens = await _tokenService.GenerateTokensAsync(user, user.Id);
+
+                return new UserRefreshTokenResponse
+                {
+                    AccessToken = userTokens.AccessToken,
+                    RefreshToken = userTokens.RefreshToken,
+                };
+            }
+            catch (SecurityTokenException ex)
+            {
+                _logger.LogError(ex, "Security token error during refresh token process for token: {TokenSnippet}", refreshToken.Substring(0, Math.Min(8, refreshToken.Length)));
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during refresh token process for token: {TokenSnippet}", refreshToken.Substring(0, Math.Min(8, refreshToken.Length)));
+                throw;
+            }
+        }
     }
 }

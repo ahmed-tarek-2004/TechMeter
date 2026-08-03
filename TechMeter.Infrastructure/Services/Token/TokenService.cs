@@ -101,9 +101,8 @@ namespace TechMeter.Application.Interfaces.TokenService
 
         public async Task<bool> ValidateRefreshTokenAsync(string refreshToken)
         {
-            var userRefreshToken = await _context.UserRefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
-            if (userRefreshToken == null) return false;
-            return userRefreshToken.Token == refreshToken;
+            return await _context.UserRefreshTokens
+                .AnyAsync(r => r.Token == refreshToken && !r.IsUsed && r.ExpiryDateUtc > DateTime.UtcNow);
         }
     }
 }
