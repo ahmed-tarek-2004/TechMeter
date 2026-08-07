@@ -16,16 +16,16 @@ using TechMeter.Application.Features.Auth.ConfirmEmail;
 using TechMeter.Application.Features.Auth.ConfirmResetPassword;
 using TechMeter.Application.Features.Auth.ForgetPassword.Command;
 using TechMeter.Application.Features.Auth.Login.Command;
+using TechMeter.Application.Features.Auth.Logout;
 using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResendOtp;
 using TechMeter.Application.Features.Auth.ResetPassword;
-using TechMeter.Application.Interfaces.Services.Auth;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.Services.AuthService;
+//using TechMeter.Infrastructure.Services.AuthService;
 
 namespace TechMeter.API.Controllers
 {
@@ -38,40 +38,38 @@ namespace TechMeter.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly IAuthService _authService;
         private readonly IMediator _mediator;
 
-        public AccountController(ILogger<AccountController> logger, IAuthService authService,
+        public AccountController(ILogger<AccountController> logger,
               ResponseHandler responseHandler, IMediator mediator)
         {
             _logger = logger;
-            _authService = authService;
             _mediator = mediator;
         }
 
 
-        [HttpGet("Assmebly")]
-        public async Task<IActionResult> TestAssembly()
-        {
-            Type t1 = typeof(ResendOtp);
-            var type = _authService.GetType();
-            _logger.LogInformation("type is :{type}", type);
-            _logger.LogInformation("t1 is :{type}", t1);
-            //_logger.LogInformation("FullName is :{type}", type.FullName);
-            _logger.LogInformation("FullName is :{type}", type.FullName);
-            _logger.LogInformation("Name is :{type}", type.Name);
-            _logger.LogInformation("isPublic is :{type}", type.IsPublic);
-            _logger.LogInformation("isInterface is :{type}", type.IsInterface);
-            _logger.LogInformation("namespace is :{type}", type.Namespace);
-            _logger.LogInformation("BaseType is :{type}", type.BaseType);
-            _logger.LogInformation("interface is :{type}", type.GetInterfaces());
-            _logger.LogInformation("T1 interface is :{t1.GetInterfaces()}", t1.GetInterfaces());
-            _logger.LogInformation("is Value Type :{t1.IsValueType}", t1.IsValueType);
+        //[HttpGet("Assmebly")]
+        //public async Task<IActionResult> TestAssembly()
+        //{
+        //    Type t1 = typeof(ResendOtp);
+        //    var type = _authService.GetType();
+        //    _logger.LogInformation("type is :{type}", type);
+        //    _logger.LogInformation("t1 is :{type}", t1);
+        //    //_logger.LogInformation("FullName is :{type}", type.FullName);
+        //    _logger.LogInformation("FullName is :{type}", type.FullName);
+        //    _logger.LogInformation("Name is :{type}", type.Name);
+        //    _logger.LogInformation("isPublic is :{type}", type.IsPublic);
+        //    _logger.LogInformation("isInterface is :{type}", type.IsInterface);
+        //    _logger.LogInformation("namespace is :{type}", type.Namespace);
+        //    _logger.LogInformation("BaseType is :{type}", type.BaseType);
+        //    _logger.LogInformation("interface is :{type}", type.GetInterfaces());
+        //    _logger.LogInformation("T1 interface is :{t1.GetInterfaces()}", t1.GetInterfaces());
+        //    _logger.LogInformation("is Value Type :{t1.IsValueType}", t1.IsValueType);
 
 
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         [HttpPost("student/register")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsStudent([FromForm] StudentRegisterRequest request)
@@ -139,7 +137,7 @@ namespace TechMeter.API.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult<string>> LogoutAsync()
         {
-            var response = await _authService.LogoutAsync(User);
+            var response = await _mediator.Send(new LogoutCommand(User));
             return StatusCode((int)response.StatusCode, response);
         }
         private string GetUserId()

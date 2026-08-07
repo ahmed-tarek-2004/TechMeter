@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth;
+using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Models.Auth.UserTokens;
 
@@ -17,6 +18,7 @@ namespace TechMeter.Application.Common
     public interface IApplicationDbContext
     {
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<Provider> Provider { get; set; }
         public DbSet<Category> Category { get; set; }

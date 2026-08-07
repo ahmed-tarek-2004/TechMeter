@@ -17,6 +17,8 @@ using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
 using TechMeter.Application.Features.Payment.Command.Checkout;
 using TechMeter.Application.Features.Payment.Command.PaymentIntent;
+using TechMeter.Application.Interfaces.Services.Email;
+
 //using TechMeter.Application.Interfaces.Payment;
 using TechMeter.Application.Interfaces.Services.Order;
 using TechMeter.Application.Interfaces.Services.Payment;

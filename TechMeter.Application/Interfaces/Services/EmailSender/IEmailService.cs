@@ -7,7 +7,7 @@ using TechMeter.Application.DTO.Course;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 
-namespace TechMeter.Infrastructure.Adapters.EmailSender
+namespace TechMeter.Application.Interfaces.Services.Email
 {
     public interface IEmailService
     {

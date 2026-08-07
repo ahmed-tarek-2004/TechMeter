@@ -39,7 +39,7 @@ namespace TechMeter.Infrastructure.Services.TokenService
                 new Claim(ClaimTypes.Name,user.UserName),
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Email,user.Email),
-                new Claim(ClaimTypes.MobilePhone,user.PhoneNumber)
+                new Claim("st", user.SecurityStamp!)
             };
 
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
