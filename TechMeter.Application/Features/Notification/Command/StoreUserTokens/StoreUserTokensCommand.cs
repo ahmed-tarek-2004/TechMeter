@@ -8,5 +8,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Notification.Command.StoreNotification
 {
-    public sealed record StoreNotificationCommand(string userId, string token) : IRequest<Response<bool>>;
+    public sealed record StoreUserTokensCommand(string userId, string token) : IRequest<Response<bool>>;
 }

@@ -11,7 +11,6 @@ using TechMeter.Application.Common;
 using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.Interfaces.Services;
 using TechMeter.Application.Interfaces.Services.Jobs;
-using TechMeter.Application.Interfaces.Services.Lesson;
 using TechMeter.Application.Interfaces.Transaction;
 using TechMeter.Domain.Shared.Bases;
 

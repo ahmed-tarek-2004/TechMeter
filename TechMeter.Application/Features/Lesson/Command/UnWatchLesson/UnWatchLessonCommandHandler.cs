@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.DTO.Lesson;
-using TechMeter.Application.Interfaces.Services.Lesson;
 using TechMeter.Application.Interfaces.Transaction;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Users;

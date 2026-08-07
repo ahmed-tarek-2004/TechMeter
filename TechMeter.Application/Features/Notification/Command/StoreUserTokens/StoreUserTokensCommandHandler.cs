@@ -9,9 +9,9 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Notification.Command.StoreNotification
 {
-    public class StoreNotificationCommandHandler(INotificationService notificationService) : IRequestHandler<StoreNotificationCommand, Response<bool>>
+    public class StoreUserTokensCommandHandler(INotificationService notificationService) : IRequestHandler<StoreUserTokensCommand, Response<bool>>
     {
-        public async Task<Response<bool>> Handle(StoreNotificationCommand request, CancellationToken cancellationToken)
+        public async Task<Response<bool>> Handle(StoreUserTokensCommand request, CancellationToken cancellationToken)
         {
             return await notificationService.StoreUserTokensAsync(request.userId, request.token);
         }
