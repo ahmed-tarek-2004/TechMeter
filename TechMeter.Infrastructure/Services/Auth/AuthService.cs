@@ -323,6 +323,7 @@ namespace TechMeter.Infrastructure.Services.AuthService
                     return _responseHandler.NotFound<string>("User Not Authenticated");
                 }
                 await _tokenService.InValidateOldTokenAsync(userId);
+                await _userManager.UpdateSecurityStampAsync(await _userManager.FindByIdAsync(userId));
                 return _responseHandler.Success<string>(null, "User Logout Successfully");
             }
             catch (Exception ex)
