@@ -9,7 +9,6 @@ using System.Net.Mail;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Services;
-using TechMeter.Application.Interfaces.Services.Course;
 using TechMeter.Application.Interfaces.Services.Email;
 using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Application.Interfaces.Services.Jobs;
@@ -31,22 +30,12 @@ using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.HangfireJobs;
-
-//using TechMeter.Infrastructure.Jobs;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services;
-//using TechMeter.Infrastructure.Services.AuthService;
-//using TechMeter.Infrastructure.Services.Category;
-
-//using TechMeter.Infrastructure.Services.Cart;
-//using TechMeter.Infrastructure.Services.Category;
-using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.Lesson;
 using TechMeter.Infrastructure.Services.LessonComment;
 using TechMeter.Infrastructure.Services.Notification;
-
-//using TechMeter.Infrastructure.Services.Notification;
 using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.Rating;
@@ -54,9 +43,7 @@ using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.User;
 using TechMeter.Infrastructure.Services.UserConnection;
-//using TechMeter.Infrastructure.Services.WishList;
 using TechMeter.Shared;
-//using TokenService = TechMeter.Infrastructure.Services.;
 
 namespace TechMeter.Infrastructure.Extensions
 {
@@ -88,11 +75,11 @@ namespace TechMeter.Infrastructure.Extensions
             //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
             //services.AddScoped<IWishListService, WishListService>();
             //services.AddScoped<IAuthService, AuthService>();
+            //services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
             services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
-            services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IOrderService, OrderService>();
