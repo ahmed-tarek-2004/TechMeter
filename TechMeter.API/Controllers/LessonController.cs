@@ -45,7 +45,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new AddLessonCommand
             {
                 SectionId = sectionId,
-                request = request
+                AddLessonRequest = request
             });
             return StatusCode((int)response.StatusCode, response);
         }

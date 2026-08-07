@@ -22,6 +22,8 @@ using TechMeter.Application.Interfaces.Services.Profile;
 using TechMeter.Application.Interfaces.Services.Rating;
 using TechMeter.Application.Interfaces.Services.Section;
 using TechMeter.Application.Interfaces.Services.Token;
+using TechMeter.Application.Interfaces.Transaction;
+
 //using TechMeter.Application.Interfaces.Services.WishList;
 //using TechMeter.Application.Interfaces.
 //using TechMeter.Application.Interfaces.UserProfile;
@@ -43,6 +45,7 @@ using TechMeter.Infrastructure.Services.SectionService;
 using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.User;
 using TechMeter.Infrastructure.Services.UserConnection;
+using TechMeter.Infrastructure.Transaction;
 using TechMeter.Shared;
 
 namespace TechMeter.Infrastructure.Extensions
@@ -93,6 +96,8 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
             services.AddScoped<ILessonCommentService, LessonCommentService>();
             services.AddScoped<IUserConnectionService, UserConnectionService>();
+            services.AddScoped<ITransactionManager,EfTransactionManager>();
+
 
             return services;
         }
