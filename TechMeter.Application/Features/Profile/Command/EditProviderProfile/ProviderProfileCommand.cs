@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Command.EditProviderProfile
 {
-    public sealed record ProviderProfileCommand(string providerId , EditProviderProfileRequest Request): IRequest<Response<string>>;
+    public sealed record ProviderProfileCommand(string providerId , EditProviderProfileRequest EditProviderProfileRequest): IRequest<Response<string>>;
 }
