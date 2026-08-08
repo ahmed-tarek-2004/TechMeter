@@ -25,6 +25,7 @@ namespace TechMeter.Application.Features.WishList.Queries.GetWishListById
             try
             {
                 var wishlistItem = await context.WishlistItem
+                    .AsNoTracking()
                     .Where(b => b.Wishlist.StudentId == request.studentId)
                     .Select(b => new GetWishListResponse
                     {
