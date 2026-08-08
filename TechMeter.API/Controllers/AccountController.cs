@@ -17,65 +17,58 @@ using TechMeter.Application.Features.Auth.ConfirmEmail;
 using TechMeter.Application.Features.Auth.ConfirmResetPassword;
 using TechMeter.Application.Features.Auth.ForgetPassword.Command;
 using TechMeter.Application.Features.Auth.Login.Command;
+using TechMeter.Application.Features.Auth.Logout;
+using TechMeter.Application.Features.Auth.RefreshToken;
 using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResendOtp;
 using TechMeter.Application.Features.Auth.ResetPassword;
-using TechMeter.Application.Interfaces.AuthService;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.UserTokens;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.Services.AuthService;
+//using TechMeter.Infrastructure.Services.AuthService;
 
 namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //provider
-    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFobWVkWmFoZXIiLCJuYW1laWQiOiIwOTM0ZDk0My00OGNhLTQ3OTEtOGY4My0wNTI1MzFjOWJiODIiLCJlbWFpbCI6ImFobWVkdGFyZWs3NTgwQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDExNTg5MDU1ODkiLCJyb2xlIjoicHJvdmlkZXIiLCJuYmYiOjE3NzIyNzQ0MTIsImV4cCI6MTc3NTI5ODQxMiwiaWF0IjoxNzcyMjc0NDEyfQ.uHPlhh7soy84ZadWSVqpGNtv8XKr_BpCjIUS-iyvrUg
-    //student
-    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFobWVkVGFyZWtaYWhlciIsIm5hbWVpZCI6ImE1YzdhMThlLTFhOTUtNDkzOS05YmQxLWQ4MTU1NjM1NzgyNiIsImVtYWlsIjoiaWdub3JlZG1lbWJlckBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6IjAxMDMwMTg3MDEzIiwicm9sZSI6InN0dWRlbnQiLCJuYmYiOjE3NzIyNzQ3MDgsImV4cCI6MTc3NTI5ODcwOCwiaWF0IjoxNzcyMjc0NzA4fQ.HG7NJxfd4PA6BMUoFxSJC4xmGXuN6tFzvjFBVUSFJfk
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly IAuthService _authService;
-        private readonly ResponseHandler _responseHandler;
         private readonly IMediator _mediator;
 
-        public AccountController(ILogger<AccountController> logger, IAuthService authService,
+        public AccountController(ILogger<AccountController> logger,
               ResponseHandler responseHandler, IMediator mediator)
         {
             _logger = logger;
-            _authService = authService;
-            _responseHandler = responseHandler;
             _mediator = mediator;
         }
 
 
-        [HttpGet("Assmebly")]
-        public async Task<IActionResult> TestAssembly()
-        {
-            Type t1 = typeof(ResendOtp);
-            var type = _authService.GetType();
-            _logger.LogInformation("type is :{type}", type);
-            _logger.LogInformation("t1 is :{type}", t1);
-            //_logger.LogInformation("FullName is :{type}", type.FullName);
-            _logger.LogInformation("FullName is :{type}", type.FullName);
-            _logger.LogInformation("Name is :{type}", type.Name);
-            _logger.LogInformation("isPublic is :{type}", type.IsPublic);
-            _logger.LogInformation("isInterface is :{type}", type.IsInterface);
-            _logger.LogInformation("namespace is :{type}", type.Namespace);
-            _logger.LogInformation("BaseType is :{type}", type.BaseType);
-            _logger.LogInformation("interface is :{type}", type.GetInterfaces());
-            _logger.LogInformation("T1 interface is :{t1.GetInterfaces()}", t1.GetInterfaces());
-            _logger.LogInformation("is Value Type :{t1.IsValueType}", t1.IsValueType);
+        //[HttpGet("Assmebly")]
+        //public async Task<IActionResult> TestAssembly()
+        //{
+        //    Type t1 = typeof(ResendOtp);
+        //    var type = _authService.GetType();
+        //    _logger.LogInformation("type is :{type}", type);
+        //    _logger.LogInformation("t1 is :{type}", t1);
+        //    //_logger.LogInformation("FullName is :{type}", type.FullName);
+        //    _logger.LogInformation("FullName is :{type}", type.FullName);
+        //    _logger.LogInformation("Name is :{type}", type.Name);
+        //    _logger.LogInformation("isPublic is :{type}", type.IsPublic);
+        //    _logger.LogInformation("isInterface is :{type}", type.IsInterface);
+        //    _logger.LogInformation("namespace is :{type}", type.Namespace);
+        //    _logger.LogInformation("BaseType is :{type}", type.BaseType);
+        //    _logger.LogInformation("interface is :{type}", type.GetInterfaces());
+        //    _logger.LogInformation("T1 interface is :{t1.GetInterfaces()}", t1.GetInterfaces());
+        //    _logger.LogInformation("is Value Type :{t1.IsValueType}", t1.IsValueType);
 
 
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         [HttpPost("student/register")]
         public async Task<ActionResult<Response<StudentRegisterResponse>>> RegisterAsStudent([FromForm] StudentRegisterRequest request)
@@ -143,33 +136,16 @@ namespace TechMeter.API.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult<string>> LogoutAsync()
         {
-            var response = await _authService.LogoutAsync(User);
+            var response = await _mediator.Send(new LogoutCommand(User));
             return StatusCode((int)response.StatusCode, response);
         }
-
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
         {
-            if (string.IsNullOrWhiteSpace(refreshToken))
-                return BadRequest(_responseHandler.BadRequest<string>("Refresh token is required"));
-            try
-            {
-                var newTokens = await _authService.RefreshTokenAsync(refreshToken);
 
-                return Ok(_responseHandler.Success<UserRefreshTokenResponse>(newTokens, "User token refreshed succsessfully"));
-            }
-            catch (SecurityTokenException ex)
-            {
-                return Unauthorized(_responseHandler.UnAuthorized<string>(ex.Message));
-            }
-            catch (Exception ex)
-            {
-                var error = ex.InnerException?.Message ?? ex.Message;
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    _responseHandler.BadRequest<string>("UnexpectedError" + ": " + error)
-                );
-            }
+            var newTokens = await _mediator.Send(new RefreshTokenCommand(refreshToken));
+
+            return StatusCode((int)newTokens.StatusCode, newTokens);
         }
         private string GetUserId()
         {

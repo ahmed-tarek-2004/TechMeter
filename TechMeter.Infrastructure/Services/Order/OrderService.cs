@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Order;
-using TechMeter.Application.Interfaces.Order;
+using TechMeter.Application.Interfaces.Services.Order;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;

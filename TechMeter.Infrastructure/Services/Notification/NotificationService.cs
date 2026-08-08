@@ -10,10 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Notification;
-using TechMeter.Application.Interfaces.Fcm;
-using TechMeter.Application.Interfaces.Jobs;
-using TechMeter.Application.Interfaces.Notification;
-using TechMeter.Application.Interfaces.NotificationSender;
+using TechMeter.Application.Interfaces.Services.Fcm;
+using TechMeter.Application.Interfaces.Services.Jobs;
+using TechMeter.Application.Interfaces.Services.Notification;
+using TechMeter.Application.Interfaces.Services.NotificationSender;
+
+//using TechMeter.Application.Interfaces.Services.NotificationSender;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -30,10 +32,9 @@ namespace TechMeter.Infrastructure.Services.Notification
         private readonly ResponseHandler _responseHandler;
         private readonly INotificationSenderService _notificationSenderService;
         private readonly IBackgroundJobService _backgroundJobService;
-        private readonly IFcmService _fcmService;
 
 
-        public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context,IFcmService fcmService,
+        public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context,
             ResponseHandler responseHandler,INotificationSenderService notificationSenderService,IBackgroundJobService backgroundJobService)
         {
             _logger = logger;
@@ -41,55 +42,9 @@ namespace TechMeter.Infrastructure.Services.Notification
             _responseHandler = responseHandler;
             _notificationSenderService = notificationSenderService;
             _backgroundJobService = backgroundJobService;
-            _fcmService = fcmService;
         }
 
-        public async Task<Response<List<NotificationResponseDto>>> GetUserNotifications(string userId)
-        {
-            var notifications = await _context.Notification
-                .AsNoTracking()
-                .Where(n => n.ReceiptId == userId)
-                .Select(n => new NotificationResponseDto
-                {
-                    Id = n.Id,
-                    Title = n.Title,
-                    Message = n.Message,
-                    CreatedAt = n.CreatedAt,
-                    IsRead = n.IsRead,
-                    ReceiptId = n.ReceiptId
-                }).ToListAsync();
-
-            return _responseHandler.Success(notifications, "user notification returned successfully");
-        }
-        public async Task<Response<List<NotificationResponseDto>>> GetUnReadUserNotifications(string userId)
-        {
-            var notifications = await _context.Notification
-                .AsNoTracking()
-                .Where(n => n.ReceiptId == userId && n.IsRead == false)
-                .Select(n => new NotificationResponseDto
-                {
-                    Id = n.Id,
-                    Title = n.Title,
-                    Message = n.Message,
-                    CreatedAt = n.CreatedAt,
-                    IsRead = n.IsRead,
-                    ReceiptId = n.ReceiptId
-                }).ToListAsync();
-
-            return _responseHandler.Success(notifications, "user notification returned successfully");
-        }
-        public async Task<Response<bool>> ReadNotification(string userId, string notificationId)
-        {
-            var rows = await _context.Notification
-                .Where(n => n.ReceiptId == userId && n.Id == notificationId && !n.IsRead)
-                .ExecuteUpdateAsync(b => b.SetProperty(b => b.IsRead, true));
-            if (rows == 0)
-            {
-                return _responseHandler.Success(false, "notification not found or already read");
-            }
-            return _responseHandler.Success(true, "notification marked as read successfully");
-
-        }
+       
         public async Task<Response<string>> SendUserNotifications(string userId, string Title, string message, NotificationType type)
         {
 

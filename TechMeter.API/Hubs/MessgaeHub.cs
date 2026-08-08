@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using TechMeter.Application.Interfaces;
-using TechMeter.Application.Interfaces.Notification;
-using TechMeter.Application.Interfaces.NotificationSender;
+//using TechMeter.Application.Interfaces.NotificationSender;
+using TechMeter.Application.Interfaces.Services;
+using TechMeter.Application.Interfaces.Services.Notification;
 using TechMeter.Domain.Enums;
 
 namespace TechMeter.API.Hubs

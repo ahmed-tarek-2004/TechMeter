@@ -17,8 +17,11 @@ using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
 using TechMeter.Application.Features.Payment.Command.Checkout;
 using TechMeter.Application.Features.Payment.Command.PaymentIntent;
-using TechMeter.Application.Interfaces.Order;
-using TechMeter.Application.Interfaces.Payment;
+using TechMeter.Application.Interfaces.Services.Email;
+
+//using TechMeter.Application.Interfaces.Payment;
+using TechMeter.Application.Interfaces.Services.Order;
+using TechMeter.Application.Interfaces.Services.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;

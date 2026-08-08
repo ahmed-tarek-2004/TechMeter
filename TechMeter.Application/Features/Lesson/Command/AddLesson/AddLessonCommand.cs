@@ -13,6 +13,6 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
     public class AddLessonCommand:IRequest<Response<GetLessonResponse>>
     {
         public string SectionId { get; set; }
-        public AddLessonRequest request { get; set; }
+        public AddLessonRequest AddLessonRequest { get; set; }
     }
 }

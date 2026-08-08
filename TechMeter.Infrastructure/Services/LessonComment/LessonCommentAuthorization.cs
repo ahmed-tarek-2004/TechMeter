@@ -7,7 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using TechMeter.Application.Interfaces.LessonComment;
+using TechMeter.Application.Interfaces.Services.LessonComment;
 using TechMeter.Domain.Models;
 using TechMeter.Infrastructure.Persistence;
 

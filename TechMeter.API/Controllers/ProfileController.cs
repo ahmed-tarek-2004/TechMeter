@@ -13,7 +13,7 @@ using TechMeter.Application.Features.Profile.Query.StudentProfile.StudentProfile
 //using TechMeter.Application.Features.Profile.Query.StudentProfile.StudentProfileQuery;
 //using TechMeter.Application.Features.ProviderProfile.Command;
 
-using TechMeter.Application.Interfaces.UserProfile;
+//using TechMeter.Application.Interfaces.UserProfile;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.API.Controllers

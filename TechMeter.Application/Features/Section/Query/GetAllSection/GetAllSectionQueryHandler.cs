@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Section;
-using TechMeter.Application.Interfaces.SectionService;
+//using TechMeter.Application.Interfaces.SectionService;
+using TechMeter.Application.Interfaces.Services.Section;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Section.Query.GetAllSection

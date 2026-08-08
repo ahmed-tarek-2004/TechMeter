@@ -10,7 +10,7 @@ using TechMeter.Application.Features.Category.Command.DeleteCategory;
 using TechMeter.Application.Features.Category.Command.UpdateCategory;
 using TechMeter.Application.Features.Category.Query.GetCategories;
 using TechMeter.Application.Features.Category.Query.GetCategoryById;
-using TechMeter.Application.Interfaces.Category;
+//using TechMeter.Application.Interfaces.Category;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.API.Controllers

@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
+using TechMeter.Application.Interfaces.Services.Email;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 

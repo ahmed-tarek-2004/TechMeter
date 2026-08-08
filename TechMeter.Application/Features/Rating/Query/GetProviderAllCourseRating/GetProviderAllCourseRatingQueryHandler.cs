@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Rating;
-using TechMeter.Application.Interfaces.Rating;
+//using TechMeter.Application.Interfaces.Rating;
+using TechMeter.Application.Interfaces.Services.Rating;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Rating.Query.GetProviderAllCourseRating

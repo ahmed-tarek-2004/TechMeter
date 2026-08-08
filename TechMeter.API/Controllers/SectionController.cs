@@ -10,7 +10,7 @@ using TechMeter.Application.Features.Section.Command.DeleteSection;
 using TechMeter.Application.Features.Section.Command.EditSection;
 using TechMeter.Application.Features.Section.Query.GetAllSection;
 using TechMeter.Application.Features.Section.Query.GetSectionById;
-using TechMeter.Application.Interfaces.SectionService;
+//using TechMeter.Application.Interfaces.SectionService;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 
