@@ -22,11 +22,6 @@ using TechMeter.Application.Interfaces.Services.Rating;
 using TechMeter.Application.Interfaces.Services.Section;
 using TechMeter.Application.Interfaces.Services.Token;
 using TechMeter.Application.Interfaces.Transaction;
-
-//using TechMeter.Application.Interfaces.Services.WishList;
-//using TechMeter.Application.Interfaces.
-//using TechMeter.Application.Interfaces.UserProfile;
-//using TechMeter.Application.Interfaces.WishList;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
@@ -78,6 +73,7 @@ namespace TechMeter.Infrastructure.Extensions
             //services.AddScoped<IAuthService, AuthService>();
             //services.AddScoped<ICourseService, CourseService>();
             //services.AddScoped<ILessonService, LessonService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
@@ -89,7 +85,6 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
-            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFcmService, FcmService>();
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
             services.AddScoped<ILessonCommentService, LessonCommentService>();

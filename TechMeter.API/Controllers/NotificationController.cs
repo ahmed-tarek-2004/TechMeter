@@ -13,13 +13,12 @@ using TechMeter.Application.Features.Notification.Query.GetUserUnReadNotificatio
 //using TechMeter.Application.Interfaces.Notification;
 using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.Services.Notification;
 
 namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationController(IMediator mediator, IFcmService fcmService) : ControllerBase
+    public class NotificationController(IMediator mediator) : ControllerBase
     {
 
         [HttpGet("all")]
