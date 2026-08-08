@@ -18,8 +18,6 @@ using TechMeter.Application.Interfaces.Services.Order;
 using TechMeter.Application.Interfaces.Services.OTP;
 using TechMeter.Application.Interfaces.Services.Payment;
 using TechMeter.Application.Interfaces.Services.Profile;
-using TechMeter.Application.Interfaces.Services.Rating;
-//using TechMeter.Application.Interfaces.Services.Section;
 using TechMeter.Application.Interfaces.Services.Token;
 using TechMeter.Application.Interfaces.Transaction;
 using TechMeter.Application.Service.OTPService;
@@ -33,7 +31,6 @@ using TechMeter.Infrastructure.Services.LessonComment;
 using TechMeter.Infrastructure.Services.Notification;
 using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.Payment;
-using TechMeter.Infrastructure.Services.Rating;
 using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.User;
 using TechMeter.Infrastructure.Services.UserConnection;
@@ -73,16 +70,16 @@ namespace TechMeter.Infrastructure.Extensions
             //services.AddScoped<ICourseService, CourseService>();
             //services.AddScoped<ILessonService, LessonService>();
             //services.AddScoped<ISectionService, SectionService>();
+            //services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
-            services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IProfileService, ProfileService>();
-            services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
+            services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interface
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
             services.AddScoped<IFcmService, FcmService>();
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
