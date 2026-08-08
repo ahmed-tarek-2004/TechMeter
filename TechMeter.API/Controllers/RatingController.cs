@@ -10,7 +10,7 @@ using TechMeter.Application.Features.Rating.Command.DeleteStudentRating;
 using TechMeter.Application.Features.Rating.Command.EditStudentRating;
 using TechMeter.Application.Features.Rating.Query.GetProviderAllCourseRating;
 using TechMeter.Application.Features.Rating.Query.GetStudentRating;
-using TechMeter.Application.Interfaces.Rating;
+//using TechMeter.Application.Interfaces.Rating;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.API.Controllers

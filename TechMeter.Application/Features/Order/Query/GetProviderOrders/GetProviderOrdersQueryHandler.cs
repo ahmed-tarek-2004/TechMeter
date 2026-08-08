@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Order;
-using TechMeter.Application.Interfaces.Order;
+using TechMeter.Application.Interfaces.Services.Order;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Order.Query.GetProviderOrders

@@ -8,50 +8,38 @@ using System.Net;
 using System.Net.Mail;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
-using TechMeter.Application.Interfaces.AuthService;
-using TechMeter.Application.Interfaces.Cart;
-using TechMeter.Application.Interfaces.Category;
-using TechMeter.Application.Interfaces.CourseService;
-using TechMeter.Application.Interfaces.Fcm;
-using TechMeter.Application.Interfaces.Jobs;
-using TechMeter.Application.Interfaces.Lesson;
-using TechMeter.Application.Interfaces.LessonComment;
-using TechMeter.Application.Interfaces.Notification;
-using TechMeter.Application.Interfaces.Order;
-using TechMeter.Application.Interfaces.OTPService;
-using TechMeter.Application.Interfaces.Payment;
-using TechMeter.Application.Interfaces.Rating;
-using TechMeter.Application.Interfaces.SectionService;
-using TechMeter.Application.Interfaces.TokenService;
-using TechMeter.Application.Interfaces.UserProfile;
-using TechMeter.Application.Interfaces.WishList;
+using TechMeter.Application.Interfaces.Services;
+using TechMeter.Application.Interfaces.Services.Email;
+using TechMeter.Application.Interfaces.Services.Fcm;
+using TechMeter.Application.Interfaces.Services.Jobs;
+using TechMeter.Application.Interfaces.Services.LessonComment;
+using TechMeter.Application.Interfaces.Services.Notification;
+using TechMeter.Application.Interfaces.Services.Order;
+using TechMeter.Application.Interfaces.Services.OTP;
+using TechMeter.Application.Interfaces.Services.Payment;
+using TechMeter.Application.Interfaces.Services.Profile;
+using TechMeter.Application.Interfaces.Services.Rating;
+using TechMeter.Application.Interfaces.Services.Section;
+using TechMeter.Application.Interfaces.Services.Token;
+using TechMeter.Application.Interfaces.Transaction;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.HangfireJobs;
-
-//using TechMeter.Infrastructure.Jobs;
 using TechMeter.Infrastructure.Persistence;
 using TechMeter.Infrastructure.Services;
-using TechMeter.Infrastructure.Services.AuthService;
-using TechMeter.Infrastructure.Services.Cart;
-using TechMeter.Infrastructure.Services.Category;
-using TechMeter.Infrastructure.Services.CourseService;
 using TechMeter.Infrastructure.Services.Fcm;
-using TechMeter.Infrastructure.Services.Lesson;
 using TechMeter.Infrastructure.Services.LessonComment;
 using TechMeter.Infrastructure.Services.Notification;
-
-//using TechMeter.Infrastructure.Services.Notification;
 using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.Rating;
 using TechMeter.Infrastructure.Services.SectionService;
+using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.User;
 using TechMeter.Infrastructure.Services.UserConnection;
-using TechMeter.Infrastructure.Services.WishList;
+using TechMeter.Infrastructure.Transaction;
 using TechMeter.Shared;
-using TokenService = TechMeter.Application.Interfaces.TokenService.TokenService;
 
 namespace TechMeter.Infrastructure.Extensions
 {
@@ -78,29 +66,31 @@ namespace TechMeter.Infrastructure.Extensions
 
         public static IServiceCollection ApplicationService(this IServiceCollection services)
         {
+            //services.AddScoped<ICartService, CartService>();
+            //services.AddScoped<ICategoryService, CategoryService>();
+            //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
+            //services.AddScoped<IWishListService, WishListService>();
+            //services.AddScoped<IAuthService, AuthService>();
+            //services.AddScoped<ICourseService, CourseService>();
+            //services.AddScoped<ILessonService, LessonService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<ISectionService, SectionService>();
-            services.AddScoped<ILessonService, LessonService>();
-            services.AddScoped<IWishListService, WishListService>();
-            services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interfacr
-            //services.AddScoped<IEnrollmentNotificationJob, EnrollmentNotificationJob>();
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
-            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFcmService, FcmService>();
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
             services.AddScoped<ILessonCommentService, LessonCommentService>();
             services.AddScoped<IUserConnectionService, UserConnectionService>();
+            services.AddScoped<ITransactionManager,EfTransactionManager>();
+
 
             return services;
         }

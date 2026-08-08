@@ -14,11 +14,11 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
         public AddLessonCommandValidator()
         {
             RuleFor(b => b)
-                .Must(b => !string.IsNullOrEmpty(b.request.Name) && b.request.LessonStream != null)
+                .Must(b => !string.IsNullOrEmpty(b.AddLessonRequest.Name) && b.AddLessonRequest.LessonStream != null)
                 .WithMessage("Lesson Name And LessonStream Is Required");
 
             RuleFor(b => b)
-                .Must(b => videoExtensions.Contains(Path.GetExtension(b.request.LessonStream.FileName).ToLower()) || imageExtensions.Contains(Path.GetExtension(b.request.LessonStream.FileName).ToLower()))
+                .Must(b => videoExtensions.Contains(Path.GetExtension(b.AddLessonRequest.LessonStream.FileName).ToLower()) || imageExtensions.Contains(Path.GetExtension(b.AddLessonRequest.LessonStream.FileName).ToLower()))
                 .WithMessage("Invalid file type. Please upload a video or image file.");
         }
     }

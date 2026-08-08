@@ -10,16 +10,15 @@ using TechMeter.Application.Features.Notification.Command.ReadNotification;
 using TechMeter.Application.Features.Notification.Command.StoreNotification;
 using TechMeter.Application.Features.Notification.Query.GetUserNotifications;
 using TechMeter.Application.Features.Notification.Query.GetUserUnReadNotifications;
-using TechMeter.Application.Interfaces.Fcm;
-using TechMeter.Application.Interfaces.Notification;
+//using TechMeter.Application.Interfaces.Notification;
+using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.Services.Notification;
 
 namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationController(IMediator mediator, IFcmService fcmService) : ControllerBase
+    public class NotificationController(IMediator mediator) : ControllerBase
     {
 
         [HttpGet("all")]
@@ -54,7 +53,7 @@ namespace TechMeter.API.Controllers
         [Authorize]
         public async Task<IActionResult> StoreTokenAsync([FromBody] FcmUserTokenRequest request)
         {
-            var result = await mediator.Send(new StoreNotificationCommand(GetUserId(), request.token));
+            var result = await mediator.Send(new StoreUserTokensCommand(GetUserId(), request.token));
             return StatusCode((int)result.StatusCode, result);
         }
 

@@ -2,8 +2,8 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using TechMeter.API.Hubs;
 using TechMeter.Application.Common;
-using TechMeter.Application.Interfaces.Jobs;
-using TechMeter.Application.Interfaces.NotificationSender;
+//using TechMeter.Application.Interfaces.Jobs;
+using TechMeter.Application.Interfaces.Services.NotificationSender;
 using TechMeter.Domain.Enums;
 
 namespace TechMeter.API.Services

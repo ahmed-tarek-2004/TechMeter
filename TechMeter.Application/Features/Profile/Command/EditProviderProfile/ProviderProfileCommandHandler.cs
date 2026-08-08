@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Features.Profile.Command.EditProviderProfile;
-using TechMeter.Application.Interfaces.UserProfile;
+using TechMeter.Application.Interfaces.Services.Profile;
+//using TechMeter.Application.Interfaces.UserProfile;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Command.EditPRoviderProfile

@@ -11,7 +11,8 @@ using TechMeter.Application.Features.Payment.Command.Checkout;
 using TechMeter.Application.Features.Payment.Command.PaymentIntent;
 using TechMeter.Application.Features.Payment.Query.AdminTransaction;
 using TechMeter.Application.Features.Payment.Query.ProviderQuery;
-using TechMeter.Application.Interfaces.Payment;
+//using TechMeter.Application.Interfaces.Payment;
+using TechMeter.Application.Interfaces.Services.Payment;
 using TechMeter.Domain.Shared.Bases;
 
 

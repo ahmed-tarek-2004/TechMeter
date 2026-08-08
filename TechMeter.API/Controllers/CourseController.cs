@@ -16,7 +16,7 @@ using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Features.Course.Query.GetCategoryById;
 using TechMeter.Application.Features.Course.Query.GetProviderCourses;
 using TechMeter.Application.Features.Course.Query.GetStudentCourses;
-using TechMeter.Application.Interfaces.CourseService;
+//using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 

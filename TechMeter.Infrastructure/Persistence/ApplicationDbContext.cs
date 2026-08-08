@@ -18,6 +18,7 @@ namespace TechMeter.Infrastructure.Persistence
 
         }
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<Provider> Provider { get; set; }
         public DbSet<Category> Category { get; set; }

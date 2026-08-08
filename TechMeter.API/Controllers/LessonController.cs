@@ -21,7 +21,7 @@ using TechMeter.Application.Features.Lesson.Query.GetLessonById;
 using TechMeter.Application.Features.Lesson.Query.GetLessonComments;
 using TechMeter.Application.Features.Lesson.Query.GetSectionLessons;
 using TechMeter.Application.Features.Lesson.Query.StudentLessonWatched;
-using TechMeter.Application.Interfaces.Lesson;
+//using TechMeter.Application.Interfaces.Lesson;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.API.Controllers
@@ -45,7 +45,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new AddLessonCommand
             {
                 SectionId = sectionId,
-                request = request
+                AddLessonRequest = request
             });
             return StatusCode((int)response.StatusCode, response);
         }
