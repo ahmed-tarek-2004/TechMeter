@@ -32,10 +32,9 @@ namespace TechMeter.Infrastructure.Services.Notification
         private readonly ResponseHandler _responseHandler;
         private readonly INotificationSenderService _notificationSenderService;
         private readonly IBackgroundJobService _backgroundJobService;
-        private readonly IFcmService _fcmService;
 
 
-        public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context,IFcmService fcmService,
+        public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context,
             ResponseHandler responseHandler,INotificationSenderService notificationSenderService,IBackgroundJobService backgroundJobService)
         {
             _logger = logger;
@@ -43,7 +42,6 @@ namespace TechMeter.Infrastructure.Services.Notification
             _responseHandler = responseHandler;
             _notificationSenderService = notificationSenderService;
             _backgroundJobService = backgroundJobService;
-            _fcmService = fcmService;
         }
 
        

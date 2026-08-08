@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Net;
 using System.Reflection;
@@ -17,6 +18,7 @@ using TechMeter.Application.Features.Auth.ConfirmResetPassword;
 using TechMeter.Application.Features.Auth.ForgetPassword.Command;
 using TechMeter.Application.Features.Auth.Login.Command;
 using TechMeter.Application.Features.Auth.Logout;
+using TechMeter.Application.Features.Auth.RefreshToken;
 using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResendOtp;
@@ -24,6 +26,7 @@ using TechMeter.Application.Features.Auth.ResetPassword;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
+using TechMeter.Domain.Models.Auth.UserTokens;
 using TechMeter.Domain.Shared.Bases;
 //using TechMeter.Infrastructure.Services.AuthService;
 
@@ -135,6 +138,14 @@ namespace TechMeter.API.Controllers
         {
             var response = await _mediator.Send(new LogoutCommand(User));
             return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        {
+
+            var newTokens = await _mediator.Send(new RefreshTokenCommand(refreshToken));
+
+            return StatusCode((int)newTokens.StatusCode, newTokens);
         }
         private string GetUserId()
         {
