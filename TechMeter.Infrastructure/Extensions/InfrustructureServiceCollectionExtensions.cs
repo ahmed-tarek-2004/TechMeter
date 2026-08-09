@@ -14,7 +14,6 @@ using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Application.Interfaces.Services.Jobs;
 using TechMeter.Application.Interfaces.Services.LessonComment;
 using TechMeter.Application.Interfaces.Services.Notification;
-using TechMeter.Application.Interfaces.Services.Order;
 using TechMeter.Application.Interfaces.Services.OTP;
 using TechMeter.Application.Interfaces.Services.Payment;
 using TechMeter.Application.Interfaces.Services.Token;
@@ -28,7 +27,6 @@ using TechMeter.Infrastructure.Services;
 using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.LessonComment;
 using TechMeter.Infrastructure.Services.Notification;
-using TechMeter.Infrastructure.Services.Order;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.UserConnection;
@@ -70,18 +68,18 @@ namespace TechMeter.Infrastructure.Extensions
             //services.AddScoped<ISectionService, SectionService>();
             //services.AddScoped<IRatingService, RatingService>();
             //services.AddScoped<IProfileService, ProfileService>();
+            //services.AddScoped<IOrderService, OrderService>();
+            //services.AddScoped<ILessonCommentService, LessonCommentService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
-            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interface
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
             services.AddScoped<IFcmService, FcmService>();
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
-            services.AddScoped<ILessonCommentService, LessonCommentService>();
             services.AddScoped<IUserConnectionService, UserConnectionService>();
             services.AddScoped<ITransactionManager,EfTransactionManager>();
 

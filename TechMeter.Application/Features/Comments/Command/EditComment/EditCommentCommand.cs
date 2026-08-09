@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.LessonComment;
 using TechMeter.Domain.Shared.Bases;
 
-namespace TechMeter.Application.Features.Lesson.Query.GetLessonComments
+namespace TechMeter.Application.Features.Comments.Command.EditComment
 {
-    public sealed record GetLessonCommentsQuery(string userId,string LessonId,bool isAdmin=false) : IRequest<Response<List<LessonCommentResponse>>>;
+    public sealed record EditCommentCommand(string commentId, string userId, string content) : IRequest<Response<LessonCommentResponse>>;
 }

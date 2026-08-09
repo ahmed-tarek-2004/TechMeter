@@ -9,8 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Order.Command.CreateOrder
 {
-    public class CreateOrderCommand:IRequest<Response<OrderResponse>>
-    {
-        public string StudentId { get; set; }
-    }
+    public sealed record CreateOrderCommand(string StudentId, string PaymentIntentId) : IRequest<Response<OrderResponse>>;
 }
