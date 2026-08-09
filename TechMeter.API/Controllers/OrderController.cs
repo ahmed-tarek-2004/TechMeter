@@ -81,7 +81,7 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<OrderResponse>>> updateOrderAsync([FromRoute] string orderId, [FromBody] UpdateOrderStatusRequest updateOrderStatus)
         {
 
-            var response = await _mediator.Send(new UpdateOrderStatusCommand() { OrderId = orderId, Status = updateOrderStatus.Status });
+            var response = await _mediator.Send(new UpdateOrderStatusCommand(orderId,updateOrderStatus.Status));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpDelete("{orderId}")]

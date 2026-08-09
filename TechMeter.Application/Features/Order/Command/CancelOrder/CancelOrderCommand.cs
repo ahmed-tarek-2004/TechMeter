@@ -9,7 +9,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Order.Command.CancelOrder
 {
-    public class CancelOrderCommand:IRequest<Response<OrderResponse>>
+    public class CancelOrderCommand:IRequest<Response<string>>
     {
         public string OrderId { get; set; } = string.Empty;
     }
