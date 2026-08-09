@@ -9,9 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Order.Command.UpdateOrderStatus
 {
-    public class UpdateOrderStatusCommand:IRequest<Response<OrderResponse>>
-    {
-        public string OrderId { get; set; }
-        public string Status { get; set; }
-    }
+    public sealed record UpdateOrderStatusCommand(string OrderId, string Status) : IRequest<Response<string>>;
 }

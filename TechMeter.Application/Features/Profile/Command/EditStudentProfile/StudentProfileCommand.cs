@@ -10,5 +10,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Command.EditStudentProfile
 {
-    public sealed record StudentProfileCommand(string studnetId , EditStudentProfileRequest Request): IRequest<Response<string>>;
+    public sealed record StudentProfileCommand(string studnetId , EditStudentProfileRequest EditStudentProfileRequest) : IRequest<Response<string>>;
 }

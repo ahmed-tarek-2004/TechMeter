@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using TechMeter.Application.DTO.LessonComment;
-using TechMeter.Application.Features.Lesson.Command.AddLessonComment;
-using TechMeter.Application.Features.Lesson.Command.DeleteLessonComment;
-using TechMeter.Application.Features.Lesson.Command.EditLessonComment;
-using TechMeter.Application.Features.Lesson.Command.LikeOnLessonComment;
-using TechMeter.Application.Features.Lesson.Query.GetLessonComments;
-using TechMeter.Application.Features.Lesson.Query.GetLessonsCommentLikes;
+using TechMeter.Application.Features.Comments.Command.AddComment;
+using TechMeter.Application.Features.Comments.Command.DeleteComment;
+using TechMeter.Application.Features.Comments.Command.EditComment;
+using TechMeter.Application.Features.Comments.Command.LikeOnComment;
+using TechMeter.Application.Features.Comments.Command.UnLikeOnComment;
+using TechMeter.Application.Features.Comments.Query.GetCommentLike;
+using TechMeter.Application.Features.Comments.Query.GetLessonComments;
+using TechMeter.Application.Features.Lesson.Command.EditLesson;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.API.Controllers
@@ -25,7 +27,7 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<LessonCommentResponse>>> EditLessonCommentByIdAsync([FromRoute] string Id, [FromBody] LessonCommentRequest request)
         {
-            var response = await mediator.Send(new EditLessonCommentCommand(Id, GetUserId(), request.Content));
+            var response = await mediator.Send(new EditCommentCommand(Id, GetUserId(), request.Content));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -33,7 +35,7 @@ namespace TechMeter.API.Controllers
         [Authorize(Roles ="provider")]
         public async Task<ActionResult<Response<LessonCommentResponse>>> AddCommentToLesson([FromRoute] string lessonId, [FromBody] LessonCommentRequest request)
         {
-            var response = await mediator.Send(new AddLessonCommentCommand(GetUserId(), lessonId, request.Content,request.ParentCommentId!));
+            var response = await mediator.Send(new AddCommentCommand(GetUserId(), lessonId, request.Content,request.ParentCommentId!));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -43,7 +45,7 @@ namespace TechMeter.API.Controllers
         [EnableRateLimiting("TogglePolicy")]
         public async Task<ActionResult<Response<string>>> LikeCommentToLesson([FromRoute] string Id)
         {
-            var response = await mediator.Send(new LikeOnLessonCommentCommand(Id, GetUserId()));
+            var response = await mediator.Send(new LikeOnCommentCommand(Id, GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpDelete("{Id}/like")]
@@ -51,7 +53,7 @@ namespace TechMeter.API.Controllers
         [EnableRateLimiting("TogglePolicy")]
         public async Task<ActionResult<Response<string>>> UnLikeCommentToLesson([FromRoute] string Id)
         {
-            var response = await mediator.Send(new UnLikeOnLessonCommentCommand(Id, GetUserId()));
+            var response = await mediator.Send(new UnLikeOnCommentCommand(Id, GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -60,7 +62,7 @@ namespace TechMeter.API.Controllers
         [Authorize]
         public async Task<ActionResult<Response<string>>> DeleteLessonCommentByIdAsync([FromRoute] string lessonId, [FromRoute] string Id)
         {
-            var response = await mediator.Send(new DeleteLessonCommentCommand(lessonId, Id, GetUserId(), IsInRole()));
+            var response = await mediator.Send(new DeleteCommentCommand(lessonId, Id, GetUserId(), IsInRole()));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -68,7 +70,7 @@ namespace TechMeter.API.Controllers
         [Authorize]
         public async Task<ActionResult<Response<List<LessonCommentResponse>>>> GetLessonCommentsAsync([FromRoute] string lessonId)
         {
-            var response = await mediator.Send(new GetLessonCommentsQuery(GetUserId(), lessonId,IsInRole()));
+            var response = await mediator.Send(new GetAllLessonCommentQuery(GetUserId(), lessonId,IsInRole()));
             return StatusCode((int)response.StatusCode, response);
         }
 
@@ -76,7 +78,7 @@ namespace TechMeter.API.Controllers
         [Authorize]
         public async Task<ActionResult<Response<List<LessonCommentLikesResponse>>>> GetLessonCommentsLikesAsync([FromRoute] string Id)
         {
-            var response = await mediator.Send(new GetLessonsCommentLikesQuery(Id, GetUserId(),IsInRole()));
+            var response = await mediator.Send(new GetCommentLikesQuery(Id, GetUserId(),IsInRole()));
             return StatusCode((int)response.StatusCode, response);
         }
         private string GetUserId()
