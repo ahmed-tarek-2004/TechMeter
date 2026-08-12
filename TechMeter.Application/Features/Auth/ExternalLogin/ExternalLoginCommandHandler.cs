@@ -25,8 +25,7 @@ namespace TechMeter.Application.Features.Auth.ExternalLogin
             try
             {
                 var payload = await googleAuthService.GetUserInfoAsync(request.idToken, configuration, cancellationToken);
-                if (payload == null)
-                    throw new UnauthorizedAccessException("Invalid Google token");
+                
 
                 var user = await userManager.FindByLoginAsync("google", payload.subjects);
                 if (user == null)
@@ -76,7 +75,7 @@ namespace TechMeter.Application.Features.Auth.ExternalLogin
                     Role = "student",
                     PhotoUrl = user.ProfileUrl
                 };
-                return responseHandler.Success<LoginResponseDto>(response, "Login successful");
+                return responseHandler.Success(response, "Login successful");
             }
             catch (UnauthorizedAccessException ex)
             {
