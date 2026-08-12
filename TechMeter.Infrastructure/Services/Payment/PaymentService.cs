@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,10 @@ using System.Threading.Tasks;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.DTO.Order;
 using TechMeter.Application.DTO.Payment;
+using TechMeter.Application.Features.Order.Command.CreateOrder;
 using TechMeter.Application.Features.Payment.Command.Checkout;
 using TechMeter.Application.Features.Payment.Command.PaymentIntent;
 using TechMeter.Application.Interfaces.Services.Email;
-
-//using TechMeter.Application.Interfaces.Payment;
-using TechMeter.Application.Interfaces.Services.Order;
 using TechMeter.Application.Interfaces.Services.Payment;
 using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
@@ -41,18 +40,18 @@ namespace TechMeter.Infrastructure.Services.Payment
         private readonly IEmailService _emailService;
         private readonly ResponseHandler _responseHandler;
         private readonly ILogger<PaymentService> _logger;
-        private readonly IOrderService _orderService;
+        private readonly IMediator _mediator;
         private readonly StripeSettings stripe;
 
         public PaymentService(ApplicationDbContext context, ResponseHandler responseHandler,
-            ILogger<PaymentService> logger, IOptions<StripeSettings> option, IOrderService orderService,
+            ILogger<PaymentService> logger, IOptions<StripeSettings> option, IMediator mediator,
             IEmailService emailService)
         {
             _context = context;
             _responseHandler = responseHandler;
             _logger = logger;
             stripe = option.Value;
-            _orderService = orderService;
+            _mediator = mediator;
             _emailService = emailService;
         }
         public async Task<Response<PaymentResponse>> CreateACheckOut(CheckoutCommand command)
@@ -228,12 +227,12 @@ namespace TechMeter.Infrastructure.Services.Payment
                         if (cartId == null)
                             return _responseHandler.BadRequest<object>("Missing cartId in metadata.");
 
-                        var order = await _context.Order.FirstOrDefaultAsync(b => b.Id == cartId);
-                        if (order == null)
-                            return _responseHandler.BadRequest<object>("Order not found.");
+                        var cart = await _context.Cart.FirstOrDefaultAsync(b => b.Id == cartId);
+                        if (cart == null)
+                            return _responseHandler.BadRequest<object>("Cart not found.");
 
                         var userId = paymentIntent.Metadata.ContainsKey("clientId") ? paymentIntent.Metadata["clientId"] : null;
-                        await AddingTransctionAndEditOrderStatusAsync(order, TransactionStatus.Canceled, OrderStatus.Canceled, userId);
+                        //await AddingTransctionAndEditOrderStatusAsync(cart, TransactionStatus.Canceled, OrderStatus.Canceled, userId);
                     }
                 }
                 else
@@ -385,7 +384,7 @@ namespace TechMeter.Infrastructure.Services.Payment
             if (!isExsist)
             {
 
-                var orderResponse = await _orderService.CreateStudentOrder(clientId, paymentIntentId);
+                var orderResponse = await _mediator.Send(new CreateOrderCommand(clientId, paymentIntentId));
                 if (!orderResponse.Succeeded)
                 {
                     _logger.LogError("Failed to create order for client {ClientId}: {ErrorMessage}", clientId, orderResponse.Message);

@@ -9,7 +9,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Order.Command.DeleteOrder
 {
-    public class DeleteOrderCommand:IRequest<Response<OrderResponse>>
+    public class DeleteOrderCommand:IRequest<Response<string>>
     {
         public string OrderId { get; set; }
     }

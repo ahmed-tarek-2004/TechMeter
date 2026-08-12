@@ -20,6 +20,7 @@ using TechMeter.Application.Behaviors;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
 //using TechMeter.Application.Interfaces.Notification;
+using Microsoft.AspNetCore.Authentication.Google;
 using TechMeter.Application.Interfaces.Services.NotificationSender;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -75,6 +76,12 @@ namespace TechMeter.Extensions
                 opt.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+                 .AddGoogle(options =>
+                 {
+                     options.ClientId = configuration["Authorization:Google:ClientId"]!;
+                     options.ClientSecret = configuration["Authorization:Google:clientSecret"]!;
+                 })
+
             .AddJwtBearer(options =>
             {
                 var jwtSettings = configuration.GetSection("JWT").Get<JwtSettings>();
