@@ -11,10 +11,12 @@ using System.Security.Claims;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
 using TechMeter.Application.DTO.Auth.ResetPassword;
+using TechMeter.Application.DTO.OAuth;
 using TechMeter.Application.DTO.Otp;
 using TechMeter.Application.Features.Auth.ChangePassword;
 using TechMeter.Application.Features.Auth.ConfirmEmail;
 using TechMeter.Application.Features.Auth.ConfirmResetPassword;
+using TechMeter.Application.Features.Auth.ExternalLogin;
 using TechMeter.Application.Features.Auth.ForgetPassword.Command;
 using TechMeter.Application.Features.Auth.Login.Command;
 using TechMeter.Application.Features.Auth.Logout;
@@ -144,6 +146,14 @@ namespace TechMeter.API.Controllers
         {
 
             var newTokens = await _mediator.Send(new RefreshTokenCommand(refreshToken));
+
+            return StatusCode((int)newTokens.StatusCode, newTokens);
+        }
+        [HttpPost("external-login")]
+        public async Task<IActionResult> ExternalLogin([FromBody] ExternalLoginRequest request)
+        {
+
+            var newTokens = await _mediator.Send(new ExternalLoginCommand(request.idToken));
 
             return StatusCode((int)newTokens.StatusCode, newTokens);
         }

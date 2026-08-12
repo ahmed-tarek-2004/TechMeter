@@ -14,6 +14,7 @@ using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Application.Interfaces.Services.Jobs;
 using TechMeter.Application.Interfaces.Services.LessonComment;
 using TechMeter.Application.Interfaces.Services.Notification;
+using TechMeter.Application.Interfaces.Services.OAuth;
 using TechMeter.Application.Interfaces.Services.OTP;
 using TechMeter.Application.Interfaces.Services.Payment;
 using TechMeter.Application.Interfaces.Services.Token;
@@ -27,6 +28,7 @@ using TechMeter.Infrastructure.Services;
 using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.LessonComment;
 using TechMeter.Infrastructure.Services.Notification;
+using TechMeter.Infrastructure.Services.OAuth;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.UserConnection;
@@ -82,6 +84,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
             services.AddScoped<IUserConnectionService, UserConnectionService>();
             services.AddScoped<ITransactionManager,EfTransactionManager>();
+            services.AddScoped<IGoogleAuthService,GoogleAuthService>();
 
 
             return services;
