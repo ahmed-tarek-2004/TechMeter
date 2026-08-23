@@ -32,7 +32,7 @@ namespace TechMeter.Infrastructure.Seeder
                         if (pending.Any())
                         {
                             _logger.LogInformation($"Applying migrations: {string.Join(", ", pending)}");
-                           // await _context.Database.MigrateAsync();
+                             await _context.Database.MigrateAsync();
                         }
                     }
                 }
@@ -44,7 +44,7 @@ namespace TechMeter.Infrastructure.Seeder
                 }
 
                 var PendingMigrations = await _context.Database.GetPendingMigrationsAsync();
-                if (!PendingMigrations.Any())
+                if (PendingMigrations.Any())
                 {
                     await _context.Database.MigrateAsync();
 
