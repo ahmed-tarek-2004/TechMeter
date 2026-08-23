@@ -1,0 +1,55 @@
+services:
+
+ techmeter-api:
+    build: 
+     context: .
+     dockerfile: TechMeter.API/Dockerfile
+    container_name: TechMeter-Api
+    ports:
+        - "8081:80"
+    depends_on:
+        - techmeter-database
+        - techmeter-cache
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=http://+:80;
+        - ConnectionStrings__DevCS=Server=techmeter-database,1433;Database=techmeter;User Id=sa;Password=YourStrong!Pass123;TrustServerCertificate=True;Encrypt=False;
+        - ConnectionStrings__Hangfire=Server=techmeter-database,1433;Database=techmeter;User Id=sa;Password=YourStrong!Pass123;TrustServerCertificate=True;Encrypt=False;
+    networks:
+      - techmeterapi_network
+
+ techmeter-database:
+  image: mcr.microsoft.com/mssql/server:2022-latest
+  container_name: techmeter-database
+  ports:
+        - "8002:1433"
+  environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong!Pass123
+  volumes:
+      - sql_techmeter:/var/opt/mssql
+  networks:
+      - techmeterapi_network
+
+
+ techmeter-cache:
+  image: redis:latest
+  container_name: redis
+  ports: 
+    - "6379:6379" 
+  volumes:
+      - techmeter-cache:/data
+  networks:
+      - techmeterapi_network
+
+
+volumes:
+  techmeter-cache:
+  sql_techmeter:
+
+networks: 
+  techmeterapi_network:
+
+
+
+
