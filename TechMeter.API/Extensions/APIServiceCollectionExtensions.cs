@@ -27,8 +27,8 @@ using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
-using TechMeter.Infrastructure.Persistence;
 using TechMeter.Shared;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 
 
 namespace TechMeter.Extensions

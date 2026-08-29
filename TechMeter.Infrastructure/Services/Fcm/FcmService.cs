@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 
 namespace TechMeter.Infrastructure.Services.Fcm
 {

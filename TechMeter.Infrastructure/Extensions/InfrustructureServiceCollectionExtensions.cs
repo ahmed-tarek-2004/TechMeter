@@ -23,7 +23,8 @@ using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
 using TechMeter.Infrastructure.HangfireJobs;
-using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
+using TechMeter.Infrastructure.Persistence.Transaction;
 using TechMeter.Infrastructure.Services;
 using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.LessonComment;
@@ -32,7 +33,6 @@ using TechMeter.Infrastructure.Services.OAuth;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.TokenService;
 using TechMeter.Infrastructure.Services.UserConnection;
-using TechMeter.Infrastructure.Transaction;
 using TechMeter.Shared;
 
 namespace TechMeter.Infrastructure.Extensions
