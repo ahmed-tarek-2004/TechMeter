@@ -27,7 +27,7 @@ using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.EmailSender;
-using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 using TechMeter.Shared;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;

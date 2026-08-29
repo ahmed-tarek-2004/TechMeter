@@ -16,12 +16,12 @@ using TechMeter.Domain.Shared.Bases;
 using TechMeter.Extensions;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Extensions;
-using TechMeter.Infrastructure.Persistence;
-using TechMeter.Infrastructure.Seeder;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using TechMeter.Infrastructure.BackgroundJob.Dashboard;
 using TechMeter.Shared;
+using TechMeter.Infrastructure.Persistence.Seeder;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 
 namespace TechMeter
 {

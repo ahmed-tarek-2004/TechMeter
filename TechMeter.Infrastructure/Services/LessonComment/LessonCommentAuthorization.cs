@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Interfaces.Services.LessonComment;
 using TechMeter.Domain.Models;
-using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 
 namespace TechMeter.Infrastructure.Services.LessonComment
 {

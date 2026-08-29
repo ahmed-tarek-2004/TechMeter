@@ -11,10 +11,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using TechMeter.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using TechMeter.Shared;
 using TechMeter.Application.Interfaces.Services.Token;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 //using User = TechMeter.Domain.Models.Auth.Identity.User;
 namespace TechMeter.Infrastructure.Services.TokenService
 {

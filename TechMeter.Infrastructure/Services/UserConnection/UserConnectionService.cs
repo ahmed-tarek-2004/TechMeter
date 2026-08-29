@@ -11,7 +11,7 @@ using TechMeter.Application.DTO.Messeage;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Services;
 using TechMeter.Domain.Models.Auth.Identity;
-using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 
 namespace TechMeter.Infrastructure.Services.UserConnection
 {

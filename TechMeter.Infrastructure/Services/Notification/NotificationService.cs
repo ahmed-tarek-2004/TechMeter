@@ -20,7 +20,7 @@ using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
-using TechMeter.Infrastructure.Persistence;
+using TechMeter.Infrastructure.Persistence.AppDbContext;
 using TechMeter.Infrastructure.Services.Fcm;
 
 namespace TechMeter.Infrastructure.Services.Notification
