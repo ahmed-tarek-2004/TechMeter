@@ -7,12 +7,15 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.OAuth;
+using TechMeter.Application.Interfaces.Services;
+using TechMeter.Application.Interfaces.Services.Jobs;
 using TechMeter.Application.Interfaces.Services.OAuth;
 using TechMeter.Domain.Models.Auth.Users;
 
 namespace TechMeter.Infrastructure.Services.OAuth
 {
-    public class FacebookAuthService(HttpClient client, IConfiguration configuration) : IFacebookAuthService
+    public class FacebookAuthService(HttpClient client, IConfiguration configuration,
+        IMediaUploading mediaUploadingService) : IFacebookAuthService
     {
         public async Task<GetUserInfoResponse> GetUserInfoAsync(string accessToken, CancellationToken cancellationToken = default)
         {
@@ -67,7 +70,7 @@ namespace TechMeter.Infrastructure.Services.OAuth
 
                 var meUrl =
                     $"https://graph.facebook.com/me" +
-                    $"?fields=id,name,email" +
+                    $"?fields=id,name,email,picture.type(large)" +
                     $"&access_token={Uri.EscapeDataString(accessToken)}";
 
                 var meResp = await client.GetAsync(meUrl, cancellationToken);
@@ -96,12 +99,15 @@ namespace TechMeter.Infrastructure.Services.OAuth
                 if (meRoot.TryGetProperty("name", out var nameProp))
                     fullName = nameProp.GetString();
 
+                var imageBytes = await GetFacebookProfilePictureAsync(meRoot, accessToken, cancellationToken);
                 return new GetUserInfoResponse
                 {
                     name = fullName ?? string.Empty,
                     email = email ?? string.Empty,
                     subjects = providerId,
-                    picture = $"https://graph.facebook.com/{providerId}/picture?type=large"
+                    picture = imageBytes != null ?
+                    await mediaUploadingService.UploadImageBytesAsync(imageBytes ?? Array.Empty<byte>(), $"{providerId}_facebook_profile")
+                    : string.Empty
                 };
             }
             catch (Exception ex)
@@ -109,6 +115,28 @@ namespace TechMeter.Infrastructure.Services.OAuth
                 Console.WriteLine($"Facebook Exception: {ex}");
                 return new GetUserInfoResponse();
             }
+        }
+
+        private async Task<byte[]> GetFacebookProfilePictureAsync(JsonElement meRoot, string accessToken, CancellationToken cancellationToken)
+        {
+            string? picture = null;
+
+            if (meRoot.TryGetProperty("picture", out var pictureProp) &&
+                pictureProp.TryGetProperty("data", out var pictureData))
+            {
+                if (pictureData.TryGetProperty("url", out var pictureUrl))
+                {
+                    picture = pictureUrl.GetString();
+                }
+            }
+
+            byte[]? imageBytes = null;
+            if (!string.IsNullOrEmpty(picture))
+            {
+                Console.WriteLine("Facebook picture URL is null or empty.");
+                imageBytes = await client.GetByteArrayAsync(picture ?? string.Empty, cancellationToken);
+            }
+            return imageBytes ?? Array.Empty<byte>();
         }
     }
 }

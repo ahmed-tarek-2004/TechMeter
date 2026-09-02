@@ -41,7 +41,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                 if (user != null && !user.EmailConfirmed)
                 {
 
-                    await UpdateStudentReRegister(user, request.StudentRegisterRequest);
+                    await UpdateStudentReRegister(user, request.StudentRegisterRequest, cancellationToken);
                 }
                 else
                 {
@@ -54,7 +54,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                         Country = request.StudentRegisterRequest.Country,
                         Gender = request.StudentRegisterRequest.Gender,
                         ProfileUrl = request.StudentRegisterRequest.ProfilePhoto != null
-                            ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.StudentRegisterRequest.ProfilePhoto))
+                            ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.StudentRegisterRequest.ProfilePhoto,cancellationToken))
                             : string.Empty,
                     };
 
@@ -114,7 +114,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
 
 
         }
-        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterRequest request)
+        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterRequest request, CancellationToken cancellationToken)
         {
 
             user.UserName = request.UserName;
@@ -123,7 +123,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
             user.Gender = request.Gender;
             if (request.ProfilePhoto != null)
             {
-                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto));
+                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto, cancellationToken));
             }
             user.Student.BirthDate = request.BirthDate;
             user.Student.EducationLevel = request.EducationLevel;

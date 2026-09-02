@@ -32,7 +32,7 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
             string LessonUrl = string.Empty;
             try
             {
-                LessonUrl = await UploadMedia(request.AddLessonRequest.LessonStream);
+                LessonUrl = await UploadMedia(request.AddLessonRequest.LessonStream, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -81,18 +81,18 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
             }
         }
 
-        private async Task<string> UploadMedia(IFormFile file)
+        private async Task<string> UploadMedia(IFormFile file,CancellationToken cancellationToken)
         {
             var fileExtension = Path.GetExtension(file.FileName).ToLower();
             try
             {
                 if (videoExtensions.Contains(fileExtension))
                 {
-                    return backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadVideoAsync(file));
+                    return backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadVideoAsync(file, cancellationToken));
                 }
                 else if (imageExtensions.Contains(fileExtension))
                 {
-                    return backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(file));
+                    return backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(file, cancellationToken));
                 }
                 else
                 {
