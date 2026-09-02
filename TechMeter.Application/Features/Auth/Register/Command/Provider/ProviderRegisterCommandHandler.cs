@@ -124,7 +124,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
             user.Gender = request.Gender;
             if (request.ProfilePhoto != null)
             {
-                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto));
+                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service =>service.UploadAsync(request.ProfilePhoto));
             }
             user.Provider.Brief = request.Brief;
             user.Provider.BankAccount = request.BankAccount;

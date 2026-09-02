@@ -11,5 +11,6 @@ namespace TechMeter.Application.Interfaces.Services
     {
         public Task<string> UploadAsync(IFormFile file);
         public Task<string> UploadVideoAsync(IFormFile file);
+        public Task<string> UploadImageBytesAsync(byte[] imageBytes, string? name);
     }
 }
