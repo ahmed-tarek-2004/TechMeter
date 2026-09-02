@@ -8,7 +8,7 @@ namespace TechMeter.Application.DTO.OAuth
 {
     public class ExternalLoginRequest
     {
-        //public string provider { get; set; }
+        public string provider { get; set; }
         public string idToken { get; set; }
     }
 }

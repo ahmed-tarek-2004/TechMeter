@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.ExternalLogin
 {
-    public sealed record ExternalLoginCommand(string idToken) : IRequest<Response<LoginResponseDto>>;
+    public sealed record ExternalLoginCommand(string idToken,string provider) : IRequest<Response<LoginResponseDto>>;
 }

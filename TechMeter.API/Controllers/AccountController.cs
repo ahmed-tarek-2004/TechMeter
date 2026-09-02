@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -48,6 +50,7 @@ namespace TechMeter.API.Controllers
             _mediator = mediator;
         }
 
+        
 
         //[HttpGet("Assmebly")]
         //public async Task<IActionResult> TestAssembly()
@@ -153,7 +156,7 @@ namespace TechMeter.API.Controllers
         public async Task<IActionResult> ExternalLogin([FromBody] ExternalLoginRequest request)
         {
 
-            var newTokens = await _mediator.Send(new ExternalLoginCommand(request.idToken));
+            var newTokens = await _mediator.Send(new ExternalLoginCommand(request.idToken, request.provider));
 
             return StatusCode((int)newTokens.StatusCode, newTokens);
         }

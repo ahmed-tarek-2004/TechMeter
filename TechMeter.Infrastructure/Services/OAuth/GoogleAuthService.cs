@@ -10,30 +10,27 @@ using TechMeter.Application.Interfaces.Services.OAuth;
 
 namespace TechMeter.Infrastructure.Services.OAuth
 {
-    public class GoogleAuthService : IGoogleAuthService
+    public class GoogleAuthService(IConfiguration configuration) : IGoogleAuthService
     {
-        public async Task<GetUserInfoResponse> GetUserInfoAsync(string accessToken, IConfiguration configuration
-            , CancellationToken cancellationToken = default)
+        public async Task<GetUserInfoResponse> GetUserInfoAsync(string accessToken, CancellationToken cancellationToken = default)
         {
             try
             {
                 var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken,
           new GoogleJsonWebSignature.ValidationSettings
           {
-              Audience = new[] { configuration["Authorization:Google:ClientId"] }
+              Audience = new[] { configuration["Authentication:Google:ClientId"] }
           });
 
                 if (payload == null || string.IsNullOrEmpty(payload.Email))
                     throw new UnauthorizedAccessException("Invalid Google Token: Payload is null or missing email");
 
-                //var s = payload.se
                 return new GetUserInfoResponse
                 {
                     name = payload.Name,
                     email = payload.Email,
                     picture = payload.Picture,
                     subjects = payload.Subject,
-                    //birthday = payload.b
                 };
 
             }
