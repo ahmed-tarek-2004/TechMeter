@@ -10,7 +10,7 @@ namespace TechMeter.API.Common.Exceptions
     {
         private readonly ILogger<GlobalExceptionHandler> _logger;
         private readonly IProblemDetailsService _problemDetailsService;
-        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger,IProblemDetailsService problemDetailsService)
+        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IProblemDetailsService problemDetailsService)
         {
             _logger = logger;
             _problemDetailsService = problemDetailsService;
@@ -26,6 +26,21 @@ namespace TechMeter.API.Common.Exceptions
                 Detail = exception.Message,
                 Instance = httpContext.Request.Path
             };
+            if (exception is UnauthorizedAccessException)
+            {
+                problemDeatils.Status = StatusCodes.Status401Unauthorized;
+                problemDeatils.Title = "Unauthorized";
+            }
+            else if (exception is ArgumentException)
+            {
+                problemDeatils.Status = StatusCodes.Status400BadRequest;
+                problemDeatils.Title = "Bad Request";
+            }
+            else if (exception is HttpRequestException)
+            {
+                problemDeatils.Status = StatusCodes.Status502BadGateway;
+                problemDeatils.Title = "External service error";
+            }
             if (exception is ValidationException validationException)
             {
                 var errors = validationException.Errors
@@ -36,12 +51,13 @@ namespace TechMeter.API.Common.Exceptions
                 {
                     Title = "Validation Failed",
                     Status = StatusCodes.Status400BadRequest,
-                    Detail = string.Join(",",errors.SelectMany(b=>b.Value.ToList())),
+                    Detail = string.Join(",", errors.SelectMany(b => b.Value.ToList())),
                     Instance = httpContext.Request.Path
                 };
             }
-            _logger.LogError(exception.Message);
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            _logger.LogError(exception, "An unhandled exception occurred.");
+            httpContext.Response.StatusCode = problemDeatils.Status ?? StatusCodes.Status500InternalServerError;
             await httpContext.Response.WriteAsJsonAsync(problemDeatils, cancellationToken: default);
             //await _problemDetailsService.WriteAsync(new ProblemDetailsContext
             //{
