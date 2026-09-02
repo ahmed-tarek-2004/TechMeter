@@ -31,7 +31,7 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
             };
         }
 
-        public async Task<string> UploadAsync(IFormFile file)
+        public async Task<string> UploadAsync(IFormFile file, CancellationToken cancellationToken = default)
         {
             if (file == null || file.Length == 0)
                 throw new ArgumentException("File is empty or null");
@@ -48,7 +48,7 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
                 Overwrite = true
             };
 
-            var result = await _cloudinary.UploadAsync(uploadParams);
+            var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
 
             if (result == null)
                 throw new Exception("Upload result was null from Cloudinary.");
@@ -59,21 +59,21 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
             return result.Url?.ToString() ?? throw new Exception("Cloudinary returned empty URL.");
         }
 
-        public async Task<string> UploadImageBytesAsync(byte[] imageBytes,string? name)
+        public async Task<string> UploadImageBytesAsync(byte[] imageBytes, string? name, CancellationToken cancellationToken = default)
         {
             await using var stream = new MemoryStream(imageBytes);
             var uploadParams = new ImageUploadParams
             {
-                File = new FileDescription($"{name ?? "image"}.jpg",stream)
+                File = new FileDescription($"{name ?? "image"}.jpg", stream)
             };
 
-            var result = await _cloudinary.UploadAsync(uploadParams);
+            var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
 
             var imageUrl = result.Url?.ToString() ?? throw new Exception("Cloudinary returned empty URL.");
             return imageUrl;
         }
 
-        public async Task<string> UploadVideoAsync(IFormFile file)
+        public async Task<string> UploadVideoAsync(IFormFile file, CancellationToken cancellationToken = default)
         {
             if (file == null || file.Length == 0)
                 throw new ArgumentException("File is empty or null");
@@ -84,7 +84,7 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
                 File = new FileDescription(file.FileName, stream)
             };
 
-            var result = await _cloudinary.UploadAsync(uploadParams);
+            var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
 
             if (result == null)
                 throw new Exception("Upload result was null from Cloudinary.");

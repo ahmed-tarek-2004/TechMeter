@@ -9,8 +9,8 @@ namespace TechMeter.Application.Interfaces.Services
 {
     public interface IMediaUploading
     {
-        public Task<string> UploadAsync(IFormFile file);
-        public Task<string> UploadVideoAsync(IFormFile file);
-        public Task<string> UploadImageBytesAsync(byte[] imageBytes, string? name);
+        public Task<string> UploadAsync(IFormFile file, CancellationToken cancellationToken = default);
+        public Task<string> UploadVideoAsync(IFormFile file, CancellationToken cancellationToken = default);
+        public Task<string> UploadImageBytesAsync(byte[] imageBytes, string? name, CancellationToken cancellationToken = default);
     }
 }

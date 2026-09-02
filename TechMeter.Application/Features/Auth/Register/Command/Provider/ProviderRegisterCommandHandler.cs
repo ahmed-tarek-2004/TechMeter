@@ -27,7 +27,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
     {
         public async Task<Response<ProviderRegisterResponse>> Handle(ProviderRegisterCommand request, CancellationToken cancellationToken)
         {
-         
+
             var user = await context.Users.Include(b => b.Provider)
                 .FirstOrDefaultAsync(b => b.Email == request.ProviderRegisterRequest.Email);
             //if (checkifEmailorPhone != null)
@@ -44,7 +44,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
             {
                 if (user != null && !user.EmailConfirmed)
                 {
-                    await UpdateProviderReRegister(user, request.ProviderRegisterRequest);
+                    await UpdateProviderReRegister(user, request.ProviderRegisterRequest, cancellationToken);
                 }
                 else
                 {
@@ -56,7 +56,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
                         PhoneNumber = request.ProviderRegisterRequest.PhoneNumber,
                         Country = request.ProviderRegisterRequest.Country,
                         Gender = request.ProviderRegisterRequest.Gender,
-                        ProfileUrl = request.ProviderRegisterRequest.ProfilePhoto != null ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProviderRegisterRequest.ProfilePhoto)) : string.Empty,
+                        ProfileUrl = request.ProviderRegisterRequest.ProfilePhoto != null ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProviderRegisterRequest.ProfilePhoto, cancellationToken)) : string.Empty,
                     };
                     var result = await userManager.CreateAsync(user, request.ProviderRegisterRequest.Password);
                     if (!result.Succeeded)
@@ -116,7 +116,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
             }
 
         }
-        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterRequest request)
+        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterRequest request, CancellationToken cancellationToken)
         {
             user.UserName = request.UserName;
             user.PhoneNumber = request.PhoneNumber;
@@ -124,7 +124,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
             user.Gender = request.Gender;
             if (request.ProfilePhoto != null)
             {
-                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service =>service.UploadAsync(request.ProfilePhoto));
+                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto, cancellationToken));
             }
             user.Provider.Brief = request.Brief;
             user.Provider.BankAccount = request.BankAccount;
