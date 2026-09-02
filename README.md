@@ -337,8 +337,7 @@ You should update the appsettings.json file with the correct values, for example
 * POST /api/Account/student/register
 * POST /api/Account/provider/register
 * POST /api/Account/login
-* **POST /api/Account/login-google**
-* **POST /api/Account/login-facebook**
+* **POST /api/Account/external-login**
 * POST /api/Account/confirm-email
 * POST /api/Account/forget-password
 * POST /api/Account/reset-password
