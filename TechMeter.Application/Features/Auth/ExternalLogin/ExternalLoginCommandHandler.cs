@@ -54,7 +54,7 @@ namespace TechMeter.Application.Features.Auth.ExternalLogin
                         {
                             Id = user.Id,
                             EducationLevel = "Not Specified",
-                            BirthDate = default,
+                            BirthDate = new DateTime(2000, 1, 1),
                         };
                         await context.Student.AddAsync(student, cancellationToken);
                         await context.SaveChangesAsync(cancellationToken);
