@@ -16,18 +16,17 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.ExternalLogin
 {
-    public class ExternalLoginCommandHandler(IApplicationDbContext context, IGoogleAuthService googleAuthService,
-        UserManager<User> userManager, IConfiguration configuration, ITokenService tokenService, ResponseHandler responseHandler)
+    public class ExternalLoginCommandHandler(IApplicationDbContext context, IExternalLoginService externalLoginService,
+        UserManager<User> userManager, ITokenService tokenService, ResponseHandler responseHandler)
         : IRequestHandler<ExternalLoginCommand, Response<LoginResponseDto>>
     {
         public async Task<Response<LoginResponseDto>> Handle(ExternalLoginCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var payload = await googleAuthService.GetUserInfoAsync(request.idToken, configuration, cancellationToken);
-                
+                var payload = await externalLoginService.AuthenticateAsync(request.provider, request.idToken, cancellationToken);
 
-                var user = await userManager.FindByLoginAsync("google", payload.subjects);
+                var user = await userManager.FindByLoginAsync(request.provider, payload.subjects);
                 if (user == null)
                 {
                     user = await userManager.FindByEmailAsync(payload.email);
@@ -60,7 +59,7 @@ namespace TechMeter.Application.Features.Auth.ExternalLogin
                         await context.Student.AddAsync(student, cancellationToken);
                         await context.SaveChangesAsync(cancellationToken);
                     }
-                    await userManager.AddLoginAsync(user, new UserLoginInfo("google", payload.subjects, "Google"));
+                    await userManager.AddLoginAsync(user, new UserLoginInfo(request.provider, payload.subjects, request.provider));
                 }
                 var token = await tokenService.GenerateTokensAsync(user, user.Id);
                 var response = new LoginResponseDto

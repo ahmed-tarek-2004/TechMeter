@@ -8,8 +8,9 @@ using TechMeter.Application.DTO.OAuth;
 
 namespace TechMeter.Application.Interfaces.Services.OAuth
 {
-    public interface IGoogleAuthService
+    public interface IFacebookAuthService
     {
         Task<GetUserInfoResponse> GetUserInfoAsync(string accessToken, CancellationToken cancellationToken = default);
+
     }
 }

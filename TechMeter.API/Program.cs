@@ -143,6 +143,7 @@ namespace TechMeter
                 Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
             });
 
+            
             app.Run();
         }
     }

@@ -78,13 +78,15 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IMediaUploading, CloudinaryImageService>();
             services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped<IApplicationDbContext, ApplicationDbContext>();//if not using repository and unitOfWork using AppDbContext interface
+            services.AddScoped<IApplicationDbContext, ApplicationDbContext>(); //if not using repository and unitOfWork using AppDbContext interface
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
             services.AddScoped<IFcmService, FcmService>();
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
             services.AddScoped<IUserConnectionService, UserConnectionService>();
             services.AddScoped<ITransactionManager,EfTransactionManager>();
             services.AddScoped<IGoogleAuthService,GoogleAuthService>();
+            services.AddScoped<IExternalLoginService, ExternalLoginService>();
+            services.AddHttpClient<IFacebookAuthService, FacebookAuthService>();
 
 
             return services;
