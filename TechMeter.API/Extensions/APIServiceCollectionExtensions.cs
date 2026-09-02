@@ -78,11 +78,15 @@ namespace TechMeter.Extensions
             })
                  .AddGoogle(options =>
                  {
-                     options.ClientId = configuration["Authorization:Google:ClientId"]!;
-                     options.ClientSecret = configuration["Authorization:Google:clientSecret"]!;
+                     options.ClientId = configuration["Authentication:Google:ClientId"]!;
+                     options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
                  })
-
-            .AddJwtBearer(options =>
+                 .AddFacebook(options =>
+                 {
+                     options.AppId = configuration["Authentication:Facebook:ClientId"]!;
+                     options.AppSecret = configuration["Authentication:Facebook:ClientSecret"]!;
+                 })
+                 .AddJwtBearer(options =>
             {
                 var jwtSettings = configuration.GetSection("JWT").Get<JwtSettings>();
                 options.TokenValidationParameters = new TokenValidationParameters
