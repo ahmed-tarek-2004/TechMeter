@@ -1,4 +1,5 @@
 ﻿using FluentEmail.Core;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,9 @@ namespace TechMeter.Infrastructure.Services.OAuth
             if (string.IsNullOrEmpty(fbAppId) || string.IsNullOrEmpty(fbAppSecret))
             {
                 Console.WriteLine("Facebook App ID or Secret is not configured.");
-                return new GetUserInfoResponse();
+                throw new InvalidOperationException("Facebook App ID or Secret is not configured.");
             }
+
             var appToken = $"{fbAppId}|{fbAppSecret}";
 
             var debugUrl =
@@ -42,7 +44,8 @@ namespace TechMeter.Infrastructure.Services.OAuth
                 if (!dbgResp.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"FACEBOOK ERROR: {fbResponse}");
-                    return new GetUserInfoResponse();
+                    throw new HttpRequestException(
+                        $"Facebook token validation failed. Status Code: {dbgResp.StatusCode}");
                 }
 
                 using var dbgStream = await dbgResp.Content.ReadAsStreamAsync(cancellationToken);
@@ -65,7 +68,8 @@ namespace TechMeter.Infrastructure.Services.OAuth
                 else
                 {
                     Console.WriteLine($"Token Invalid Data: {fbResponse}");
-                    return new GetUserInfoResponse();
+                    throw new UnauthorizedAccessException(
+                        "Facebook access token is invalid.");
                 }
 
                 var meUrl =
@@ -81,7 +85,8 @@ namespace TechMeter.Infrastructure.Services.OAuth
 
                     Console.WriteLine($"FACEBOOK ME ERROR: {meErr}");
 
-                    return new GetUserInfoResponse();
+                    throw new HttpRequestException(
+                        $"Failed to retrieve Facebook user information. Status Code: {meResp.StatusCode}");
                 }
 
                 using var meStream = await meResp.Content.ReadAsStreamAsync(cancellationToken);
@@ -100,6 +105,7 @@ namespace TechMeter.Infrastructure.Services.OAuth
                     fullName = nameProp.GetString();
 
                 var imageBytes = await GetFacebookProfilePictureAsync(meRoot, accessToken, cancellationToken);
+
                 return new GetUserInfoResponse
                 {
                     name = fullName ?? string.Empty,
@@ -113,7 +119,7 @@ namespace TechMeter.Infrastructure.Services.OAuth
             catch (Exception ex)
             {
                 Console.WriteLine($"Facebook Exception: {ex}");
-                return new GetUserInfoResponse();
+                throw new InvalidOperationException("An error occurred while retrieving user information from Facebook.", ex);
             }
         }
 
