@@ -22,69 +22,59 @@ namespace TechMeter.Application.Features.Auth.ExternalLogin
     {
         public async Task<Response<LoginResponseDto>> Handle(ExternalLoginCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var payload = await externalLoginService.AuthenticateAsync(request.provider, request.idToken, cancellationToken);
+            var payload = await externalLoginService.AuthenticateAsync(request.provider, request.idToken, cancellationToken);
 
-                var user = await userManager.FindByLoginAsync(request.provider, payload.subjects);
+            var user = await userManager.FindByLoginAsync(request.provider, payload.subjects);
+            if (user == null)
+            {
+                user = await userManager.FindByEmailAsync(payload.email);
                 if (user == null)
                 {
-                    user = await userManager.FindByEmailAsync(payload.email);
-                    if (user == null)
+                    user = new User
                     {
-                        user = new User
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Email = payload.email,
-                            UserName = payload.email,
-                            PhoneNumber = "",
-                            EmailConfirmed = true,
-                            ProfileUrl = payload.picture,
-                            Country = "Not Specified",
-                            //bir
-                        };
-                        var result = await userManager.CreateAsync(user);
-                        if (!result.Succeeded)
-                        {
-                            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                            throw new Exception($"Failed to create user: {errors}");
-                        }
-                        await userManager.AddToRoleAsync(user, "student");
-                        var student = new Student
-                        {
-                            Id = user.Id,
-                            EducationLevel = "Not Specified",
-                            BirthDate = new DateTime(2000, 1, 1),
-                        };
-                        await context.Student.AddAsync(student, cancellationToken);
-                        await context.SaveChangesAsync(cancellationToken);
+                        Id = Guid.NewGuid().ToString(),
+                        Email = payload.email,
+                        UserName = payload.email,
+                        PhoneNumber = "",
+                        EmailConfirmed = true,
+                        ProfileUrl = payload.picture,
+                        Country = "Not Specified",
+                        //bir
+                    };
+                    var result = await userManager.CreateAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                        throw new InvalidOperationException($"Failed to create user: {errors}");
                     }
-                    await userManager.AddLoginAsync(user, new UserLoginInfo(request.provider, payload.subjects, request.provider));
+                    await userManager.AddToRoleAsync(user, "student");
+                    var student = new Student
+                    {
+                        Id = user.Id,
+                        EducationLevel = "Not Specified",
+                        BirthDate = new DateTime(2000, 1, 1),
+                    };
+                    await context.Student.AddAsync(student, cancellationToken);
+                    await context.SaveChangesAsync(cancellationToken);
                 }
-                var token = await tokenService.GenerateTokensAsync(user, user.Id);
-                var response = new LoginResponseDto
-                {
-                    AccessToken = token.AccessToken,
-                    RefreshToken = token.RefreshToken,
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    IsEmailConfirmed = user.EmailConfirmed,
-                    PhoneNumber = user.PhoneNumber,
-                    Role = "student",
-                    PhotoUrl = user.ProfileUrl
-                };
-                return responseHandler.Success(response, "Login successful");
+                await userManager.AddLoginAsync(user, new UserLoginInfo(request.provider, payload.subjects, request.provider));
             }
-            catch (UnauthorizedAccessException ex)
+            var token = await tokenService.GenerateTokensAsync(user, user.Id);
+            var response = new LoginResponseDto
             {
-                return responseHandler.InternalServerError<LoginResponseDto>(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return responseHandler.InternalServerError<LoginResponseDto>(ex.Message);
-            }
-
+                AccessToken = token.AccessToken,
+                RefreshToken = token.RefreshToken,
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                IsEmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
+                Role = "student",
+                PhotoUrl = user.ProfileUrl
+            };
+            return responseHandler.Success(response, "Login successful");
         }
+
+
     }
 }
