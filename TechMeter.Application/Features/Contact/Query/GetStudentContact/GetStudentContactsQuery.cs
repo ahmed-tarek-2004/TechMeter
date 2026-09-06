@@ -1,0 +1,14 @@
+﻿using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TechMeter.Application.DTO.Contact;
+using TechMeter.Domain.Shared.Bases;
+
+namespace TechMeter.Application.Features.Contact.Query.GetStudentContact
+{
+    public sealed record GetStudentContactsQuery(string StudentId) : IRequest<Response<List<AvailableContactResponse>>>;
+
+}
