@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Messeage;
 
-namespace TechMeter.Application.Interfaces.Services
+namespace TechMeter.Application.Interfaces.Services.UserConnections
 {
     public interface IUserConnectionService
     {
@@ -14,8 +14,6 @@ namespace TechMeter.Application.Interfaces.Services
         Task<bool> JoinConversation(string coversationId,string userId);
         Task<bool> RemoveUserConnections(string connectionId);
         Task<SenderInfoResponse> GetSenderInfo(string sendeerId);
-        Task<MessageResponse> StoreMessages(string sendeerId , string recipientId , string message);
-        Task<bool> ReadMessage(int messageId,string userId);
         //Task<bool> RemoveUserFromGroup(string userId, string groupId);
     }
 }

@@ -1,14 +1,17 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using TechMeter.Application.Interfaces;
+using TechMeter.Application.Interfaces.Services.Message;
+
 //using TechMeter.Application.Interfaces.NotificationSender;
-using TechMeter.Application.Interfaces.Services;
 using TechMeter.Application.Interfaces.Services.Notification;
+using TechMeter.Application.Interfaces.Services.UserConnections;
 using TechMeter.Domain.Enums;
 
 namespace TechMeter.API.Hubs
 {
-    public class MessgaeHub(IUserConnectionService userConnectionService, INotificationService notificationService) : Hub
+    public class MessgaeHub(IUserConnectionService userConnectionService, IMessageService messageService,
+        INotificationService notificationService) : Hub
     {
         public override async Task OnConnectedAsync()
         {
@@ -30,7 +33,7 @@ namespace TechMeter.API.Hubs
                 return;
             }
             var senderInfo = await userConnectionService.GetSenderInfo(senderId);
-            var messageStored = await userConnectionService.StoreMessages(senderInfo.SenderId, userId, msg);
+            var messageStored = await messageService.StoreMessages(senderInfo.SenderId, userId, msg);
             if (messageStored == null)
             {
                 return;
@@ -58,12 +61,12 @@ namespace TechMeter.API.Hubs
             {
                 return;
             }
-            var isRead = await userConnectionService.ReadMessage(int.TryParse(messageId, out int messageIdValue) ? messageIdValue : 0, userId);
+            var isRead = await messageService.ReadMessage(int.TryParse(messageId, out int messageIdValue) ? messageIdValue : 0, userId);
             await Clients.User(senderId).SendAsync("IsRead", isRead);
         }
 
 
-       
+
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             await userConnectionService.RemoveUserConnections(Context.ConnectionId);

@@ -8,8 +8,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.OAuth;
-using TechMeter.Application.Interfaces.Services;
 using TechMeter.Application.Interfaces.Services.Jobs;
+using TechMeter.Application.Interfaces.Services.MediaUpload;
 using TechMeter.Application.Interfaces.Services.OAuth;
 using TechMeter.Domain.Models.Auth.Users;
 

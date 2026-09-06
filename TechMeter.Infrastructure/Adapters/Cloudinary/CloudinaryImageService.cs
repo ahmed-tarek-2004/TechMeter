@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Interfaces;
-using TechMeter.Application.Interfaces.Services;
+using TechMeter.Application.Interfaces.Services.MediaUpload;
 using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Shared;
 

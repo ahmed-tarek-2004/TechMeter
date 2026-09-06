@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
-using TechMeter.Application.Interfaces.Services;
+using TechMeter.Application.Interfaces.Services.MediaUpload;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Command.EditStudentProfile
