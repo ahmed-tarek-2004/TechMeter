@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.DTO.Auth;
+using TechMeter.Application.Interfaces.Services.Email;
+using TechMeter.Application.Interfaces.Services.Jobs;
+using TechMeter.Application.Interfaces.Services.OTP;
 using TechMeter.Application.Interfaces.Services.Token;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
@@ -16,12 +19,15 @@ namespace TechMeter.Application.Features.Auth.Login.Command
     public class LoginCommandHandler(ILogger<LoginCommandHandler> logger,
         UserManager<User> userManager,
         ResponseHandler responseHandler,
+        IOTPService oTPService,
+        IBackgroundJobService backgroundJobService,
         ITokenService tokenService) : IRequestHandler<LoginCommand, Response<LoginResponseDto>>
     {
         public async Task<Response<LoginResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             try
             {
+                string otp = request.otp;
                 var user = await userManager.FindByEmailAsync(request.email);
                 if (user == null)
                 {
@@ -38,21 +44,21 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                 {
                     return responseHandler.BadRequest<LoginResponseDto>("verify Your Email");
                 }
-                //if (string.IsNullOrEmpty(otp))
-                //{
-                //    otp = await otpService.GenerateAndSetOTP(user.Id);
-                //    backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); logger.LogInformation($"Otp Sent is : {otp}");
+                if (string.IsNullOrEmpty(otp))
+                {
+                    otp = await oTPService.GenerateAndSetOTP(user.Id);
+                    backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, request.otp)); logger.LogInformation($"Otp Sent is : {request.otp}");
 
-                //    return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
-                //}
-                //else
-                //{
-                //    var confirmOTP = await otpService.ValidateOtp(otp, user.Id);
-                //    if (!confirmOTP)
-                //    {
-                //        return responseHandler.BadRequest<LoginResponseDto>("Enter A correct OTP");
-                //    }
-                //}
+                    return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
+                }
+                else
+                {
+                    var confirmOTP = await oTPService.ValidateOtp(request.otp, user.Id);
+                    if (!confirmOTP)
+                    {
+                        return responseHandler.BadRequest<LoginResponseDto>("Enter A correct OTP");
+                    }
+                }
                 var roles = await userManager.GetRolesAsync(user);
                 var token = await tokenService.GenerateTokensAsync(user, user.Id);
                 var respone = new LoginResponseDto()
