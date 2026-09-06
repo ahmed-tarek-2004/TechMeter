@@ -31,12 +31,12 @@ namespace TechMeter.API.Services
                 UserId = userId,
                 Titile = Titile,
                 Message = Message,
-                CreatedAt=dateTime,
+                CreatedAt = dateTime,
             });
             //await _hubContext.Clients.All.SendAsync("enrollment", Titile, Message);
             _logger.LogInformation("notification is sent");
         }
-      
-      
+
+
     }
 }

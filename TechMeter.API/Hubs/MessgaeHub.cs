@@ -48,7 +48,7 @@ namespace TechMeter.API.Hubs
         public async Task IsOnline(string recieverId)
         {
             var isOnline = await userConnectionService.IsOnline(recieverId);
-            await Clients.User(recieverId).SendAsync("CheckReceiverAvailability", isOnline);
+            await Clients.Caller.SendAsync("CheckReceiverAvailability", isOnline);
         }
         [HubMethodName("markasread")]
         public async Task MarkAsRead(string messageId, string senderId)
@@ -63,11 +63,7 @@ namespace TechMeter.API.Hubs
         }
 
 
-        //[HubMethodName("JoinConversation")]
-        public void JoinConversation(string conversationId)
-        {
-
-        }
+       
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             await userConnectionService.RemoveUserConnections(Context.ConnectionId);
