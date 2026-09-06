@@ -11,23 +11,25 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Contact.Query.GetStudentContact
 {
-    public class GetStudentContactsQueryHandler(IApplicationDbContext context,ResponseHandler responseHandler) : IRequestHandler<GetStudentContactsQuery, Response<List<AvailableContactResponse>>>
+    public class GetStudentContactsQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler)
+        : IRequestHandler<GetStudentContactsQuery, Response<PaginatedList<AvailableContactResponse>>>
     {
-        public async Task<Response<List<AvailableContactResponse>>> Handle(GetStudentContactsQuery request, CancellationToken cancellationToken)
+        public async Task<Response<PaginatedList<AvailableContactResponse>>> Handle(GetStudentContactsQuery request, CancellationToken cancellationToken)
         {
-           var userContacts = await context.CourseStudent
-                .AsNoTracking()
-                .Where(c => c.StudentId == request.StudentId)
-                .Select(c => new AvailableContactResponse
-                {
-                    Id = c.Course.ProviderId,
-                    Name = c.Course.Provider.User.UserName??"",
-                    UserProfilePictureUrl = c.Course.Provider.User.ProfileUrl??""
-                })
-                .ToListAsync(cancellationToken);
-            return responseHandler.Success(userContacts,"Student contacts retrieved successfully");
+            var userContactsQuery = context.CourseStudent
+                 .AsNoTracking()
+                 .Where(c => c.StudentId == request.StudentId)
+                 .Select(c => new AvailableContactResponse
+                 {
+                     Id = c.Course.ProviderId,
+                     Name = c.Course.Provider.User.UserName ?? "",
+                     UserProfilePictureUrl = c.Course.Provider.User.ProfileUrl ?? ""
+                 });
+
+            var userContacts = await PaginatedList<AvailableContactResponse>.CreatePaginatedList(userContactsQuery, request.PageNumber, request.PageSize, cancellationToken);
+            return responseHandler.Success(userContacts, "Student contacts retrieved successfully");
         }
 
-       
+
     }
 }

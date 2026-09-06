@@ -12,11 +12,11 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.Application.Features.Contact.Query.GetProviderContact
 {
     public class GetProviderContactQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler)
-        : IRequestHandler<GetProviderContactQuery, Response<List<AvailableContactResponse>>>
+        : IRequestHandler<GetProviderContactQuery, Response<PaginatedList<AvailableContactResponse>>>
     {
-        public async Task<Response<List<AvailableContactResponse>>> Handle(GetProviderContactQuery request, CancellationToken cancellationToken)
+        public async Task<Response<PaginatedList<AvailableContactResponse>>> Handle(GetProviderContactQuery request, CancellationToken cancellationToken)
         {
-            var providerContacts = await context.CourseStudent
+            var providerContactsQuery = context.CourseStudent
                 .AsNoTracking()
                 .Where(p => p.Course.ProviderId == request.ProviderId)
                 .Select(p => new AvailableContactResponse
@@ -24,8 +24,8 @@ namespace TechMeter.Application.Features.Contact.Query.GetProviderContact
                     Id = p.Student.Id,
                     Name = p.Student.User.UserName ?? "",
                     UserProfilePictureUrl = p.Student.User.ProfileUrl ?? ""
-                })
-                .ToListAsync(cancellationToken);
+                });
+            var providerContacts = await PaginatedList<AvailableContactResponse>.CreatePaginatedList(providerContactsQuery, request.PageNumber, request.PageSize,cancellationToken);
             return responseHandler.Success(providerContacts, "Provider contacts retrieved successfully"); 
         }
     }

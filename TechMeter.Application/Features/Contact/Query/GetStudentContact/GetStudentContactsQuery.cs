@@ -9,6 +9,6 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Contact.Query.GetStudentContact
 {
-    public sealed record GetStudentContactsQuery(string StudentId) : IRequest<Response<List<AvailableContactResponse>>>;
+    public sealed record GetStudentContactsQuery(string StudentId, int PageNumber , int PageSize ) : IRequest<Response<PaginatedList<AvailableContactResponse>>>;
 
 }

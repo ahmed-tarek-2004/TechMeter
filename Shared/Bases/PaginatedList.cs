@@ -17,10 +17,10 @@ namespace TechMeter.Domain.Shared.Bases
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => TotalPages > PageNumber;
 
-        public async static Task<PaginatedList<T>> CreatePaginatedList(IQueryable<T> source, int PageNumber, int PageSize)
+        public async static Task<PaginatedList<T>> CreatePaginatedList(IQueryable<T> source, int PageNumber=1, int PageSize=10,CancellationToken cancellationToken = default)
         {
-            var Count = await source.CountAsync();
-            var Items = await source.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToListAsync();
+            var Count = await source.CountAsync(cancellationToken);
+            var Items = await source.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToListAsync(cancellationToken);
             return new PaginatedList<T>(Items, PageNumber, PageSize, Count);
         }
 

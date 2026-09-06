@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Contact.Query.GetProviderContact
 {
-    public sealed record GetProviderContactQuery(string ProviderId) : IRequest<Response<List<AvailableContactResponse>>>;
+    public sealed record GetProviderContactQuery(string ProviderId,int PageNumber,int PageSize) : IRequest<Response<PaginatedList<AvailableContactResponse>>>;
 }
