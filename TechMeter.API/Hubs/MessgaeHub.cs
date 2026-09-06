@@ -27,11 +27,8 @@ namespace TechMeter.API.Hubs
         [HubMethodName("sendmessage")]
         public async Task SendMessage(string msg, string userId)
         {
-            var senderId = Context.UserIdentifier;
-            if (string.IsNullOrEmpty(senderId))
-            {
-                return;
-            }
+            var senderId = Context.UserIdentifier?? throw new HubException("User not authenticated");
+           
             var senderInfo = await userConnectionService.GetSenderInfo(senderId);
             var messageStored = await messageService.StoreMessages(senderInfo.SenderId, userId, msg);
             if (messageStored == null)
@@ -56,11 +53,7 @@ namespace TechMeter.API.Hubs
         [HubMethodName("markasread")]
         public async Task MarkAsRead(string messageId, string senderId)
         {
-            var userId = Context.UserIdentifier;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return;
-            }
+            var userId = Context.UserIdentifier?? throw new HubException("User not authenticated");
             var isRead = await messageService.ReadMessage(int.TryParse(messageId, out int messageIdValue) ? messageIdValue : 0, userId);
             await Clients.User(senderId).SendAsync("IsRead", isRead);
         }
