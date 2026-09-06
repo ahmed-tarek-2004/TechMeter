@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.DTO.Lesson;
-using TechMeter.Application.Interfaces.Services;
 using TechMeter.Application.Interfaces.Services.Jobs;
+using TechMeter.Application.Interfaces.Services.MediaUpload;
 using TechMeter.Application.Interfaces.Transaction;
 using TechMeter.Domain.Shared.Bases;
 

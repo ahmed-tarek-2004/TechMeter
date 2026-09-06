@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechMeter.Application.Interfaces.Services
+namespace TechMeter.Application.Interfaces.Services.MediaUpload
 {
     public interface IMediaUploading
     {

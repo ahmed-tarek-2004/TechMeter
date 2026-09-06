@@ -8,16 +8,18 @@ using System.Net;
 using System.Net.Mail;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
-using TechMeter.Application.Interfaces.Services;
 using TechMeter.Application.Interfaces.Services.Email;
 using TechMeter.Application.Interfaces.Services.Fcm;
 using TechMeter.Application.Interfaces.Services.Jobs;
 using TechMeter.Application.Interfaces.Services.LessonComment;
+using TechMeter.Application.Interfaces.Services.MediaUpload;
+using TechMeter.Application.Interfaces.Services.Message;
 using TechMeter.Application.Interfaces.Services.Notification;
 using TechMeter.Application.Interfaces.Services.OAuth;
 using TechMeter.Application.Interfaces.Services.OTP;
 using TechMeter.Application.Interfaces.Services.Payment;
 using TechMeter.Application.Interfaces.Services.Token;
+using TechMeter.Application.Interfaces.Services.UserConnections;
 using TechMeter.Application.Interfaces.Transaction;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
@@ -28,6 +30,7 @@ using TechMeter.Infrastructure.Persistence.Transaction;
 using TechMeter.Infrastructure.Services;
 using TechMeter.Infrastructure.Services.Fcm;
 using TechMeter.Infrastructure.Services.LessonComment;
+using TechMeter.Infrastructure.Services.Message;
 using TechMeter.Infrastructure.Services.Notification;
 using TechMeter.Infrastructure.Services.OAuth;
 using TechMeter.Infrastructure.Services.Payment;
@@ -86,6 +89,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<ITransactionManager,EfTransactionManager>();
             services.AddScoped<IGoogleAuthService,GoogleAuthService>();
             services.AddScoped<IExternalLoginService, ExternalLoginService>();
+            services.AddScoped<IMessageService, MessageService>();
             services.AddHttpClient<IFacebookAuthService, FacebookAuthService>();
 
 
