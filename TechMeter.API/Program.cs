@@ -4,6 +4,7 @@ using Hangfire.SqlServer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Scalar.AspNetCore;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using TechMeter.API.Common.Exceptions;
 using TechMeter.API.Common.Middleware;
@@ -44,6 +45,7 @@ namespace TechMeter
              options.SuppressModelStateInvalidFilter = true)
              .AddJsonOptions(option =>
              {
+                 option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                  option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
              });
 
