@@ -47,7 +47,8 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                 if (string.IsNullOrEmpty(otp))
                 {
                     otp = await oTPService.GenerateAndSetOTP(user.Id);
-                    backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, request.otp)); logger.LogInformation($"Otp Sent is : {request.otp}");
+                    backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); 
+                    logger.LogInformation($"Otp Sent is : {request.otp}");
 
                     return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
                 }
@@ -78,7 +79,7 @@ namespace TechMeter.Application.Features.Auth.Login.Command
             }
             catch (Exception ex)
             {
-                logger.LogInformation("Internal Server Error");
+                logger.LogInformation(ex,ex.Message);
                 return responseHandler.InternalServerError<LoginResponseDto>("Internal Server Error");
             }
         }
