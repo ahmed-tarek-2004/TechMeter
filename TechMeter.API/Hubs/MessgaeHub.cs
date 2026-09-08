@@ -40,7 +40,7 @@ namespace TechMeter.API.Hubs
             {
                 return;
             }
-            await Clients.User(userId).SendAsync("ReceiveMessage", new
+            await Clients.Users(userId,senderId).SendAsync("ReceiveMessage", new
             {
                 Id = messageStored.MessageId,
                 Content = messageStored.Message,
