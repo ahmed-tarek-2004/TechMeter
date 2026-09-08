@@ -26,11 +26,12 @@ namespace TechMeter.Application.Features.Auth.ResendOtp
             }
             if (user.EmailConfirmed)
             {
-                return responseHandler.Success<string>(null, "Email is already verified.");
+                return responseHandler.Success<string>(string.Empty, "Email is already verified.");
             }
             var otp = await otpService.GenerateAndSetOTP(user.Id);
-            backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); logger.LogInformation("Email With {Otp} has ben Sent to {Email}", otp, user.Email);
-            return responseHandler.Success<string>(null, "Email Has been Sent successfully");
+            backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); 
+            logger.LogInformation("Email With {Otp} has ben Sent to {Email}", otp, user.Email);
+            return responseHandler.Success<string>(string.Empty, "Email Has been Sent successfully");
         }
     }
 }
