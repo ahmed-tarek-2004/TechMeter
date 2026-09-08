@@ -14,7 +14,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.ResendOtp
 {
-    public class ResendOtpCommandHandler(UserManager<User> userManager, IOTPService otpService, 
+    public class ResendOtpCommandHandler(UserManager<User> userManager, IOTPService otpService,
         IBackgroundJobService backgroundJobService, ILogger<ResendOtpCommandHandler> logger, ResponseHandler responseHandler) : IRequestHandler<ResendOtpCommand, TechMeter.Domain.Shared.Bases.Response<string>>
     {
         public async Task<Response<string>> Handle(ResendOtpCommand request, CancellationToken cancellationToken)
@@ -24,12 +24,12 @@ namespace TechMeter.Application.Features.Auth.ResendOtp
             {
                 return responseHandler.BadRequest<string>("user is not found");
             }
-            if (user.EmailConfirmed)
-            {
-                return responseHandler.Success<string>(string.Empty, "Email is already verified.");
-            }
+            //if (user.EmailConfirmed)
+            //{
+            //    return responseHandler.Success<string>(string.Empty, "Email is already verified.");
+            //}
             var otp = await otpService.GenerateAndSetOTP(user.Id);
-            backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); 
+            backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
             logger.LogInformation("Email With {Otp} has ben Sent to {Email}", otp, user.Email);
             return responseHandler.Success<string>(string.Empty, "Email Has been Sent successfully");
         }
