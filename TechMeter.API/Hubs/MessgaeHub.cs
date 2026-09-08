@@ -15,8 +15,13 @@ namespace TechMeter.API.Hubs
     {
         public override async Task OnConnectedAsync()
         {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            var userId = Context.UserIdentifier
+                ?? Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? Context.User?.FindFirst("sub")?.Value
+                ?? "";
+            var userName = Context.User?.FindFirst(ClaimTypes.Name)?.Value
+                ?? Context.User?.Identity?.Name
+                ?? "";
             if (!string.IsNullOrEmpty(userId))
             {
                 await userConnectionService.StoreUserConnections(userId, Context.ConnectionId, userName);
