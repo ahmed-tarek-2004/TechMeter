@@ -34,9 +34,11 @@ namespace TechMeter.Application.Features.Course.Command.AddCourse
             }
 
             string imageUrl = "";
+            logger.LogInformation("Start Uploading Image for Course");
             try
             {
                 imageUrl = request.addCourseRequest.CourseProfileImageUrl == null ? "Empty" : await imageUploading.UploadAsync(request.addCourseRequest.CourseProfileImageUrl);
+                logger.LogInformation("Image for Course is {image}", imageUrl);
             }
             catch (Exception ex)
             {

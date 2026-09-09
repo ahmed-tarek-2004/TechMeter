@@ -25,7 +25,7 @@ namespace TechMeter.Application.Features.Lesson.Query.GetSectionLessons
                 {
                     Id = b.Id,
                     Description = b.Description,
-                    //LessonUrl = lesson.LessonUrl,
+                    LessonUrl = b.LessonUrl,
                     Name = b.Name,
                     SectionId = b.SectionId,
                 }).ToListAsync();

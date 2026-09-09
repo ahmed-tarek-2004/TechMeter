@@ -22,7 +22,7 @@ namespace TechMeter.Application.Features.Lesson.Query.StudentLessonWatched
                {
                    Id = b.LessonId,
                    Description = b.Lessons.Description,
-                   //LessonUrl = b.lesson.LessonUrl,
+                   LessonUrl = b.Lessons.LessonUrl,
                    Name = b.Lessons.Name,
                    SectionId = b.Lessons.SectionId,
                }).ToListAsync();
