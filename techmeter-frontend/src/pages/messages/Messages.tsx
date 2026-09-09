@@ -1,0 +1,388 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { messageService } from '../../services/messageService';
+import { messageHubService } from '../../services/messageHubService';
+import { useAuth } from '../../context/AuthContext';
+import { Loader2, Send, Search, Circle, User as UserIcon, MessageSquare } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Contact, MessageEvent, Message } from '../../types';
+
+const Messages: React.FC = () => {
+  const { user, isAuthenticated } = useAuth();
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageText, setMessageText] = useState('');
+  const [isOnline, setIsOnline] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isConnecting, setIsConnecting] = useState(true);
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+
+  const { data: contactsData, isLoading: contactsLoading } = useQuery({
+    queryKey: ['contacts', user?.id, user?.role],
+    queryFn: () => messageService.getContacts(),
+    retry: 1,
+    enabled: !!isAuthenticated,
+  });
+
+  const contacts: Contact[] = useMemo(() => {
+    if (!contactsData?.data) return [];
+    if (Array.isArray(contactsData.data)) return contactsData.data;
+    if (Array.isArray((contactsData.data as any).items)) return (contactsData.data as any).items;
+    return [];
+  }, [contactsData]);
+
+  const filteredContacts = useMemo(() => {
+    return contacts.filter((contact) =>
+      (contact?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [contacts, searchQuery]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setIsConnecting(false);
+      return;
+    }
+
+    let isMounted = true;
+
+    const initConnection = async () => {
+      try {
+        if (!messageHubService.isConnected()) {
+          await messageHubService.connect();
+        }
+      } catch (error) {
+        console.error('Failed to connect to message hub:', error);
+        if (isMounted) {
+          toast.error('Real-time messaging service is currently offline');
+        }
+      } finally {
+        if (isMounted) {
+          setIsConnecting(false);
+        }
+      }
+    };
+
+    initConnection();
+
+    const unsubscribeMessage = messageHubService.onMessageReceived((message: MessageEvent) => {
+      if (!isMounted) return;
+      const newMessage: Message = {
+        id: message.id,
+        messageId: message.id,
+        message: message.content,
+        sentAt: message.sentAt,
+        isRead: false,
+        senderId: message.sender?.senderId,
+        sender: message.sender,
+      };
+      setMessages((prev) => [...prev, newMessage]);
+      scrollToBottom();
+    });
+
+    const unsubscribeOnline = messageHubService.onOnlineStatusChanged((online: boolean) => {
+      if (isMounted) {
+        setIsOnline(online);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribeMessage();
+      unsubscribeOnline();
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!selectedContact) {
+      setIsOnline(false);
+      return;
+    }
+
+    // Reset status when switching contacts
+    setIsOnline(false);
+    setMessages([]);
+
+    let isSubscribed = true;
+
+    const checkStatus = async () => {
+      try {
+        await messageHubService.checkOnlineStatus(selectedContact.id);
+      } catch (err) {
+        console.error('Failed to check online status:', err);
+      }
+    };
+
+    // Query online status immediately
+    checkStatus();
+
+    // Query online status periodically while conversation is open
+    const interval = setInterval(() => {
+      if (isSubscribed) {
+        checkStatus();
+      }
+    }, 5000);
+
+    return () => {
+      isSubscribed = false;
+      clearInterval(interval);
+    };
+  }, [selectedContact]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = messageText.trim();
+    if (!trimmed || !selectedContact || isSending) return;
+
+    setIsSending(true);
+    try {
+      await messageHubService.sendMessage(trimmed, selectedContact.id);
+
+      // Add sent message to local state
+      const sentMessage: Message = {
+        id: Date.now(),
+        messageId: Date.now(),
+        message: trimmed,
+        sentAt: new Date().toISOString(),
+        isRead: false,
+        senderId: user?.id,
+      };
+      setMessages((prev) => [...prev, sentMessage]);
+      setMessageText('');
+      scrollToBottom();
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleContactSelect = (contact: Contact) => {
+    setSelectedContact(contact);
+  };
+
+  const handleImageError = (contactId: string) => {
+    setImgErrors((prev) => ({ ...prev, [contactId]: true }));
+  };
+
+  if (!isAuthenticated || (contactsLoading && isConnecting)) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center transition-colors duration-200">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-6 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100vh-6rem)]">
+        <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden h-full flex flex-col md:flex-row">
+          {/* Contacts Sidebar */}
+          <div className="w-full md:w-80 lg:w-96 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 flex flex-col h-full bg-white dark:bg-gray-900">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+              <h2 className="text-base font-extrabold text-gray-900 dark:text-white mb-3">Messages</h2>
+              <div className="relative">
+                <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search contacts..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800/60">
+              {filteredContacts.length === 0 ? (
+                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                  <UserIcon className="h-10 w-10 mx-auto mb-2 text-gray-400 dark:text-gray-600" />
+                  <p className="text-xs font-bold text-gray-700 dark:text-gray-300">No contacts found</p>
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
+                    {user?.role === 'provider'
+                      ? 'Students enrolled in your courses will appear here.'
+                      : 'Instructors from your enrolled courses will appear here.'}
+                  </p>
+                </div>
+              ) : (
+                filteredContacts.map((contact) => {
+                  const hasImg = !!contact.userProfilePictureUrl && !imgErrors[contact.id];
+                  const firstChar = (contact.name || '?').charAt(0).toUpperCase();
+
+                  return (
+                    <button
+                      key={contact.id}
+                      onClick={() => handleContactSelect(contact)}
+                      className={`w-full p-4 flex items-center hover:bg-gray-50 dark:hover:bg-gray-800/40 transition text-left ${
+                        selectedContact?.id === contact.id
+                          ? 'bg-indigo-50/60 dark:bg-indigo-950/40'
+                          : ''
+                      }`}
+                    >
+                      <div className="relative flex-shrink-0">
+                        {hasImg ? (
+                          <img
+                            src={contact.userProfilePictureUrl}
+                            alt={contact.name}
+                            className="w-10 h-10 rounded-full object-cover border border-gray-100 dark:border-gray-800"
+                            onError={() => handleImageError(contact.id)}
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
+                            <span className="text-white text-sm font-bold">
+                              {firstChar}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="ml-3 flex-1 min-w-0">
+                        <h3 className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                          {contact.name || 'Unknown User'}
+                        </h3>
+                        <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                          {user?.role === 'student' ? 'Instructor' : 'Student'}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* Chat Area */}
+          <div className="flex-1 flex flex-col h-full bg-gray-50/50 dark:bg-gray-950/40">
+            {selectedContact ? (
+              <>
+                {/* Chat Header */}
+                <div className="p-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center justify-between">
+                  <div className="flex items-center">
+                    {selectedContact.userProfilePictureUrl && !imgErrors[selectedContact.id] ? (
+                      <img
+                        src={selectedContact.userProfilePictureUrl}
+                        alt={selectedContact.name}
+                        className="w-10 h-10 rounded-full object-cover border border-gray-100 dark:border-gray-800"
+                        onError={() => handleImageError(selectedContact.id)}
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">
+                          {(selectedContact.name || '?').charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <div className="ml-3">
+                      <h3 className="text-xs font-bold text-gray-900 dark:text-white">
+                        {selectedContact.name || 'User'}
+                      </h3>
+                      <div className="flex items-center mt-0.5">
+                        <Circle
+                          className={`h-2 w-2 ${
+                            isOnline ? 'fill-emerald-500 text-emerald-500' : 'fill-gray-400 text-gray-400'
+                          }`}
+                        />
+                        <span className="ml-1 text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                          {isOnline ? 'Online' : 'Offline'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Messages Feed */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {messages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 dark:text-gray-500">
+                      <MessageSquare className="h-8 w-8 mb-2 opacity-50" />
+                      <p className="text-xs">No messages yet. Send a greeting to start chatting!</p>
+                    </div>
+                  ) : (
+                    messages.map((message) => {
+                      const isOwn = message.senderId === user?.id;
+                      return (
+                        <div
+                          key={message.id}
+                          className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-2.5 rounded-2xl text-xs ${
+                              isOwn
+                                ? 'bg-indigo-600 text-white rounded-tr-none'
+                                : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700/60 rounded-tl-none shadow-xs'
+                            }`}
+                          >
+                            <p className="break-words leading-relaxed">{message.message}</p>
+                            <p
+                              className={`text-[10px] mt-1 text-right ${
+                                isOwn ? 'text-indigo-200' : 'text-gray-400 dark:text-gray-500'
+                              }`}
+                            >
+                              {new Date(message.sentAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Message Input */}
+                <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+                  <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      placeholder="Type your message..."
+                      className="flex-1 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl px-4 py-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+                      disabled={isSending}
+                    />
+                    <button
+                      type="submit"
+                      disabled={!messageText.trim() || isSending}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-xl shadow-xs transition disabled:opacity-50"
+                    >
+                      {isSending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
+                    </button>
+                  </form>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center p-8">
+                <div className="text-center text-gray-400 dark:text-gray-500">
+                  <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 rounded-2xl flex items-center justify-center mx-auto mb-3 text-indigo-600 dark:text-indigo-400">
+                    <UserIcon className="h-7 w-7" />
+                  </div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1">
+                    Select a conversation
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Choose a contact from the list to start messaging</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Messages;

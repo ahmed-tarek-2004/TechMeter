@@ -10,3 +10,5 @@
 /TechMeter.API/appsettings.Development.json
 
 **/Logs/
+SECURITY_LEAKS_AND_API_TASKS.md
+*.md.secret
