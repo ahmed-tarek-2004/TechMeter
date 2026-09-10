@@ -69,7 +69,7 @@ namespace TechMeter.Application.Features.Cart.Command.AddToCart
                 }
                 else
                 {
-                    return responseHandler.BadRequest<string>($"course {request.CourseId} already in the cart for this student");
+                    return responseHandler.Success(string.Empty,$"course {request.CourseId} already in the cart for this student");
                 }
 
                 await context.SaveChangesAsync(cancellationToken);
