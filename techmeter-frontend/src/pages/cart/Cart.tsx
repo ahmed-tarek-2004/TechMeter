@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartService } from '../../services/cartService';
-import { Loader2, Trash2, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Loader2, Trash2, ShoppingCart, ArrowRight, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import { useWishlist } from '../../context/WishlistContext';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import { coursePlaceholder } from '../../utils/placeholders';
 
 const Cart: React.FC = () => {
   const queryClient = useQueryClient();
   const { isAuthenticated, user } = useAuth();
+  const { addToWishlist } = useWishlist();
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
   const [itemToRemove, setItemToRemove] = useState<{ id: string; name: string } | null>(null);
+  const [movingItemId, setMovingItemId] = useState<string | null>(null);
 
   const { data: cartData, isLoading } = useQuery({
     queryKey: ['cart'],
@@ -36,6 +39,21 @@ const Cart: React.FC = () => {
       toast.success('Cart cleared');
     },
   });
+
+  const handleSaveForLater = async (item: { id: string; courseId: string; courseName: string }) => {
+    try {
+      setMovingItemId(item.id);
+      await addToWishlist({ id: item.courseId, title: item.courseName });
+      await cartService.removeFromCart(item.id);
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      toast.success('Moved to wishlist!');
+    } catch {
+      toast.error('Failed to move item to wishlist');
+    } finally {
+      setMovingItemId(null);
+    }
+  };
 
   const cart = cartData?.data;
 
@@ -120,18 +138,30 @@ const Cart: React.FC = () => {
                         Added {new Date(item.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="text-right ml-4">
+                    <div className="text-right ml-4 flex flex-col items-end">
                       <span className="text-base font-extrabold text-gray-900 dark:text-white">
                         ${item.unitPrice.toFixed(2)}
                       </span>
-                      <button
-                        onClick={() => setItemToRemove({ id: item.id, name: item.courseName })}
-                        disabled={removeFromCartMutation.isPending}
-                        className="mt-2 block text-gray-400 hover:text-rose-600 dark:hover:text-rose-400 transition ml-auto"
-                        title="Remove"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center gap-2 mt-2">
+                        <button
+                          onClick={() => handleSaveForLater(item)}
+                          disabled={movingItemId === item.id || removeFromCartMutation.isPending}
+                          className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center transition"
+                          title="Save for later"
+                        >
+                          <Heart className="h-3.5 w-3.5 mr-1 text-rose-500" />
+                          Save for later
+                        </button>
+                        <span className="text-gray-300 dark:text-gray-700">|</span>
+                        <button
+                          onClick={() => setItemToRemove({ id: item.id, name: item.courseName })}
+                          disabled={removeFromCartMutation.isPending || movingItemId === item.id}
+                          className="text-gray-400 hover:text-rose-600 dark:hover:text-rose-400 transition"
+                          title="Remove"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

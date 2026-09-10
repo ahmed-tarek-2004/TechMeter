@@ -133,9 +133,17 @@ export interface Comment {
 export interface WishlistItem {
   id: string;
   courseId: string;
-  courseName: string;
-  courseImageUrl: string;
-  price: number;
+  courseName?: string;
+  courseTitle?: string;
+  courseImageUrl?: string;
+  courseProfileImageUrl?: string;
+  price?: number;
+  currency?: string;
+  categoryId?: string;
+  categoryName?: string;
+  description?: string;
+  addedAt?: string;
+  createdAt?: string;
 }
 
 export interface WishlistResponse {

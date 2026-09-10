@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { WishlistProvider } from './context/WishlistContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -68,7 +69,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AuthProvider>
-            <Router>
+            <WishlistProvider>
+              <Router>
             <Routes>
               {/* Fullscreen Video Player Route */}
               <Route
@@ -256,6 +258,7 @@ function App() {
               </Route>
             </Routes>
           </Router>
+            </WishlistProvider>
         </AuthProvider>
         </ThemeProvider>
         <Toaster

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useWishlist } from '../../context/WishlistContext';
+import { cartService } from '../../services/cartService';
 import {
   Search,
   ShoppingCart,
@@ -26,10 +29,23 @@ import {
 const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const role = user?.role?.toLowerCase();
+
+  const { data: cartData } = useQuery({
+    queryKey: ['cart'],
+    queryFn: () => cartService.getCart(),
+    enabled: isAuthenticated && role === 'student',
+    staleTime: 1000 * 60 * 2,
+    retry: false,
+  });
+
+  const cartCount = cartData?.data?.items?.length ?? 0;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +60,6 @@ const Header: React.FC = () => {
     navigate('/');
     setIsProfileOpen(false);
   };
-
-  const role = user?.role?.toLowerCase();
 
   return (
     <header className="bg-white dark:bg-gray-900 shadow-xs sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800 transition-colors duration-200">
@@ -136,18 +150,30 @@ const Header: React.FC = () => {
                   <>
                     <Link
                       to="/cart"
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
+                      className="relative text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
                       title="Cart"
+                      aria-label="Shopping Cart"
                     >
                       <ShoppingCart className="h-5 w-5" />
+                      {cartCount > 0 && (
+                        <span className="absolute 0 top-0.5 right-0.5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+                          {cartCount > 99 ? '99+' : cartCount}
+                        </span>
+                      )}
                     </Link>
 
                     <Link
                       to="/wishlist"
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
+                      className="relative text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
                       title="Wishlist"
+                      aria-label="Wishlist"
                     >
                       <Heart className="h-5 w-5" />
+                      {wishlistCount > 0 && (
+                        <span className="absolute top-0.5 right-0.5 bg-rose-500 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+                          {wishlistCount > 99 ? '99+' : wishlistCount}
+                        </span>
+                      )}
                     </Link>
                   </>
                 )}
@@ -375,17 +401,33 @@ const Header: React.FC = () => {
                   </Link>
                   <Link
                     to="/cart"
-                    className="block py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
+                    className="flex items-center justify-between py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Cart
+                    <span className="flex items-center">
+                      <ShoppingCart className="h-4 w-4 mr-2 text-gray-400" />
+                      Cart
+                    </span>
+                    {cartCount > 0 && (
+                      <span className="bg-indigo-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5">
+                        {cartCount}
+                      </span>
+                    )}
                   </Link>
                   <Link
                     to="/wishlist"
-                    className="block py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
+                    className="flex items-center justify-between py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Wishlist
+                    <span className="flex items-center">
+                      <Heart className="h-4 w-4 mr-2 text-rose-500" />
+                      Wishlist
+                    </span>
+                    {wishlistCount > 0 && (
+                      <span className="bg-rose-500 text-white text-[10px] font-bold rounded-full px-2 py-0.5">
+                        {wishlistCount}
+                      </span>
+                    )}
                   </Link>
                   <Link
                     to="/orders"

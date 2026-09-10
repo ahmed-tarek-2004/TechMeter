@@ -5,22 +5,17 @@ import { courseService } from '../../services/courseService';
 import { sectionService } from '../../services/sectionService';
 import { lessonService } from '../../services/lessonService';
 import { cartService } from '../../services/cartService';
-import { wishlistService } from '../../services/wishlistService';
 import { ratingService } from '../../services/ratingService';
 import {
   Loader2,
   ShoppingCart,
   Heart,
-  Clock,
-  Users,
   ArrowLeft,
   ChevronDown,
   ChevronRight,
   Star,
   PlayCircle,
-  BookOpen,
   Layers,
-  CheckCircle2,
   Lock,
   Play,
   FileText,
@@ -28,6 +23,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { coursePlaceholder } from '../../utils/placeholders';
 import { Section, Lesson } from '../../types';
 import { getLessonMediaType } from '../../utils/mediaUtils';
@@ -37,6 +33,9 @@ const CourseDetail: React.FC = () => {
   const queryClient = useQueryClient();
   const { isAuthenticated, user } = useAuth();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const [isWishlistPending, setIsWishlistPending] = useState(false);
 
   // 1. Fetch Course Info
   const { data: courseData, isLoading } = useQuery({
@@ -87,13 +86,18 @@ const CourseDetail: React.FC = () => {
     onError: () => toast.error('Failed to add to cart'),
   });
 
-  const addToWishlistMutation = useMutation({
-    mutationFn: (courseId: string) => wishlistService.addToWishlist(courseId),
-    onSuccess: () => toast.success('Added to wishlist'),
-    onError: () => toast.error('Failed to add to wishlist'),
-  });
+  const handleWishlistToggle = async () => {
+    if (!course) return;
+    setIsWishlistPending(true);
+    try {
+      await toggleWishlist(course);
+    } finally {
+      setIsWishlistPending(false);
+    }
+  };
 
   const course = courseData?.data;
+  const wishlisted = course ? isWishlisted(course.id) : false;
   const sections: Section[] = sectionsData?.data || [];
   const lessons: Lesson[] = lessonsData?.data || [];
   const ratings = ratingsData?.data || [];
@@ -215,12 +219,20 @@ const CourseDetail: React.FC = () => {
                           Add to Cart
                         </button>
                         <button
-                          onClick={() => addToWishlistMutation.mutate(course.id)}
-                          disabled={addToWishlistMutation.isPending}
-                          className="w-full border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 py-2.5 rounded-xl text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center transition"
+                          onClick={handleWishlistToggle}
+                          disabled={isWishlistPending}
+                          className={`w-full py-2.5 rounded-xl text-xs font-semibold disabled:opacity-50 flex items-center justify-center transition border ${
+                            wishlisted
+                              ? 'border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60'
+                              : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                          }`}
                         >
-                          <Heart className="h-4 w-4 mr-2 text-rose-500" />
-                          Add to Wishlist
+                          <Heart
+                            className={`h-4 w-4 mr-2 transition-transform duration-150 ${
+                              wishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'text-rose-500'
+                            }`}
+                          />
+                          {wishlisted ? 'Saved in Wishlist (Remove)' : 'Add to Wishlist'}
                         </button>
                       </div>
                     )}
