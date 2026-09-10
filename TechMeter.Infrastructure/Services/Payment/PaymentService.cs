@@ -207,6 +207,7 @@ namespace TechMeter.Infrastructure.Services.Payment
                         return _responseHandler.BadRequest<object>("Missing clientId in metadata.");
 
                     await AddingOrderToDatabaseAsync(userId, paymentIntent.Id);
+                    _logger.LogInformation($"Order created successfully for user {userId} with PaymentIntent {paymentIntent.Id}");
 
                 }
                 else if (stripeEvent.Type == "payment_intent.payment_failed")

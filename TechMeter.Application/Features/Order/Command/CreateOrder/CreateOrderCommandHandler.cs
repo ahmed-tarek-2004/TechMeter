@@ -14,7 +14,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Order.Command.CreateOrder
 {
-    public class CreateOrderCommandHandler(IApplicationDbContext context, ILogger<CreateOrderCommandHandler> logger, 
+    public class CreateOrderCommandHandler(IApplicationDbContext context, ILogger<CreateOrderCommandHandler> logger,
         ResponseHandler responseHandler) : IRequestHandler<CreateOrderCommand, Response<OrderResponse>>
     {
         public async Task<Response<OrderResponse>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -48,6 +48,7 @@ namespace TechMeter.Application.Features.Order.Command.CreateOrder
                     PaymetnIntentId = request.PaymentIntentId,
                     OrderItems = new List<OrderItem>()
                 };
+                var courseStudents = new List<CourseStudent>();
                 foreach (var item in cart.CartItems)
                 {
                     //var Course = item.Course;
@@ -60,11 +61,27 @@ namespace TechMeter.Application.Features.Order.Command.CreateOrder
                         Course = item.Course,
                     };
                     order.OrderItems.Add(orderItem);
+
+                    courseStudents.Add(new CourseStudent()
+                    {
+                        StudentId = Student.Id,
+                        CourseId = item.CourseId,
+                        EnrolmentDate = DateTime.UtcNow,
+                        LastAccess = DateTime.UtcNow,
+                        Progrss = 0,
+                    });
+
                 }
+
                 await context.Order.AddAsync(order);
                 logger.LogInformation("Order Created Successfully");
+                
+                await context.CourseStudent.AddRangeAsync(courseStudents);
+                logger.LogInformation("Course Students Added Successfully");
+
                 context.CartItem.RemoveRange(cart.CartItems);
                 logger.LogInformation("Cart Items Removed Successfully");
+
                 cart.UpdatedAt = DateTime.UtcNow;
                 context.Cart.Update(cart);
                 await context.SaveChangesAsync(cancellationToken);
