@@ -16,16 +16,15 @@ namespace TechMeter.Application.Features.Contact.Query.GetStudentContact
     {
         public async Task<Response<PaginatedList<AvailableContactResponse>>> Handle(GetStudentContactsQuery request, CancellationToken cancellationToken)
         {
-            var userContactsQuery = context.CourseStudent
-                 .AsNoTracking()
-                 .Where(c => c.StudentId == request.StudentId)
-                 .Select(c => new AvailableContactResponse
-                 {
-                     Id = c.Course.ProviderId,
-                     Name = c.Course.Provider.User.UserName ?? "",
-                     UserProfilePictureUrl = c.Course.Provider.User.ProfileUrl ?? ""
-                 });
-
+            var userContactsQuery = context.Provider
+                  .AsNoTracking()
+                  .Where(p => context.CourseStudent.Any(cs => cs.StudentId == request.StudentId && cs.Course.ProviderId == p.Id))
+                  .Select(p => new AvailableContactResponse
+                  {
+                      Id = p.Id,
+                      Name = p.User.UserName ?? "",
+                      UserProfilePictureUrl = p.User.ProfileUrl ?? ""
+                  });
             var userContacts = await PaginatedList<AvailableContactResponse>.CreatePaginatedList(userContactsQuery, request.PageNumber, request.PageSize, cancellationToken);
             return responseHandler.Success(userContacts, "Student contacts retrieved successfully");
         }
