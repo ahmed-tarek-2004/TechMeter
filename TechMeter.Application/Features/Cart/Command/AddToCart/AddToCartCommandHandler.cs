@@ -20,17 +20,23 @@ namespace TechMeter.Application.Features.Cart.Command.AddToCart
         {
             try
             {
-                var Course = await context.Course.FirstOrDefaultAsync(p => p.Id == request.CourseId);
+                var Course = await context.Course.FirstOrDefaultAsync(p => p.Id == request.CourseId, cancellationToken);
                 if (Course == null)
                 {
                     return responseHandler.BadRequest<string>("Course is not found");
                 }
 
+                var isEnrolled = await context.CourseStudent
+                    .AnyAsync(cs => cs.StudentId == request.StudentId && cs.CourseId == request.CourseId, cancellationToken);
+                if (isEnrolled)
+                {
+                    return responseHandler.BadRequest<string>("You are already enrolled in this course");
+                }
 
                 var cart = await context.Cart
                     .Include(b => b.CartItems)
                     //.ThenInclude(b => b.Course)
-                    .FirstOrDefaultAsync(c => c.StudentId == request.StudentId);
+                    .FirstOrDefaultAsync(c => c.StudentId == request.StudentId, cancellationToken);
 
                 if (cart == null)
                 {

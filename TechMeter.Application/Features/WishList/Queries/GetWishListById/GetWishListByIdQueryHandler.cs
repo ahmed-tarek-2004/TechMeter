@@ -24,42 +24,43 @@ namespace TechMeter.Application.Features.WishList.Queries.GetWishListById
         {
             try
             {
-                var wishlistItem = await context.WishlistItem
+                var wishlist = await context.Wishlist
+                    .Include(w => w.WishlistItems)
+                    .ThenInclude(wi => wi.Course)
                     .AsNoTracking()
-                    .Where(b => b.Wishlist.StudentId == request.studentId)
-                    .Select(b => new GetWishListResponse
-                    {
-                        Id = b.WishlistId,
-                        StudentId = b.Wishlist.StudentId,
-                        CreatedAt = b.Wishlist.CreatedAt,
-                        LastUpdated = b.Wishlist.LastUpdated,
-                        Items = new List<WishListItemResponse>
-                        {
-                            new WishListItemResponse
-                            {
-                                Id = b.Id,
-                                CourseId = b.courseId,
-                                AddedAt = b.CreatedAt
-                            }
-                        }
+                    .FirstOrDefaultAsync(w => w.StudentId == request.studentId, cancellationToken);
 
-                    }).FirstOrDefaultAsync();
-
-                if (wishlistItem == null)
+                if (wishlist == null || wishlist.WishlistItems == null || !wishlist.WishlistItems.Any())
                 {
                     var empty = new GetWishListResponse
                     {
-                        Id = Guid.Empty.ToString(),
+                        Id = wishlist?.Id ?? Guid.Empty.ToString(),
                         StudentId = request.studentId,
-                        CreatedAt = DateTime.UtcNow,
-                        LastUpdated = DateTime.UtcNow,
+                        CreatedAt = wishlist?.CreatedAt ?? DateTime.UtcNow,
+                        LastUpdated = wishlist?.LastUpdated ?? DateTime.UtcNow,
                         Items = new List<WishListItemResponse>()
                     };
                     return responseHandler.Success(empty, "Wishlist is empty");
                 }
 
-                //var dto = CreateWishlistResponse(wishlist);
-                return responseHandler.Success(wishlistItem, "Wishlist retrieved successfully");
+                var response = new GetWishListResponse
+                {
+                    Id = wishlist.Id,
+                    StudentId = wishlist.StudentId,
+                    CreatedAt = wishlist.CreatedAt,
+                    LastUpdated = wishlist.LastUpdated,
+                    Items = wishlist.WishlistItems.Select(wi => new WishListItemResponse
+                    {
+                        Id = wi.Id,
+                        CourseId = wi.courseId,
+                        AddedAt = wi.CreatedAt,
+                        CourseName = wi.Course?.Title ?? string.Empty,
+                        CourseImageUrl = wi.Course?.CourseProfileImageUrl ?? string.Empty,
+                        Price = wi.Course?.Price ?? 0
+                    }).ToList()
+                };
+
+                return responseHandler.Success(response, "Wishlist retrieved successfully");
             }
             catch (Exception ex)
             {
