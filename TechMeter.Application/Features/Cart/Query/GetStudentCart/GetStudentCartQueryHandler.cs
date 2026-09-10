@@ -63,9 +63,11 @@ namespace TechMeter.Application.Features.Cart.Query.GetStudentCart
                      .Select(c => new CartItemResponse
                      {
                          Id = c.Id,
-                         CourseName = c.Course.Title,
+                         CourseName = c.Course != null ? c.Course.Title : string.Empty,
                          CourseId = c.CourseId,
                          UnitPrice = c.UnitPrice,
+                         CourseImageUrl = c.Course != null ? c.Course.CourseProfileImageUrl : string.Empty,
+                         CreatedAt = c.CreatedAt,
                      });
 
             var cartResponse = new CartResponse()

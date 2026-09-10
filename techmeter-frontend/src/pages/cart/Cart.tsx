@@ -40,10 +40,22 @@ const Cart: React.FC = () => {
     },
   });
 
-  const handleSaveForLater = async (item: { id: string; courseId: string; courseName: string }) => {
+  const handleSaveForLater = async (item: {
+    id: string;
+    courseId: string;
+    courseName: string;
+    courseImageUrl?: string;
+    courseProfileImageUrl?: string;
+    unitPrice?: number;
+  }) => {
     try {
       setMovingItemId(item.id);
-      await addToWishlist({ id: item.courseId, title: item.courseName });
+      await addToWishlist({
+        id: item.courseId,
+        title: item.courseName,
+        courseProfileImageUrl: item.courseImageUrl || item.courseProfileImageUrl,
+        price: item.unitPrice,
+      });
       await cartService.removeFromCart(item.id);
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       queryClient.invalidateQueries({ queryKey: ['wishlist'] });

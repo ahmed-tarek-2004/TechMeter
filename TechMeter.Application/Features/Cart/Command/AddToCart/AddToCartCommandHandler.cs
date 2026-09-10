@@ -65,17 +65,14 @@ namespace TechMeter.Application.Features.Cart.Command.AddToCart
                         CartId = cart.Id,
                     };
                     cart.CartItems.Add(CartItem);
-                    //await context.AddAsync(CartItem);
                 }
                 else
                 {
-                    return responseHandler.Success(string.Empty,$"course {request.CourseId} already in the cart for this student");
+                    return responseHandler.Success(string.Empty, "Course is already in your cart");
                 }
 
                 await context.SaveChangesAsync(cancellationToken);
-                //var cartResponse = CreateCartResponse(cart);
-                //await transaction.CommitAsync();
-                return responseHandler.Success(string.Empty, "Course Add To Cart Successfully");
+                return responseHandler.Success(string.Empty, "Course added to cart successfully");
 
             }
             catch (Exception ex)

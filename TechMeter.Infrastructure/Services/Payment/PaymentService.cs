@@ -182,37 +182,30 @@ namespace TechMeter.Infrastructure.Services.Payment
                     if (cartId == null)
                         return _responseHandler.BadRequest<object>("Missing cartId in metadata.");
 
-                    var cart = await _context.Order.FirstOrDefaultAsync(b => b.Id == cartId);
-                    if (cart == null)
-                        return _responseHandler.BadRequest<object>("Order not found.");
-
                     var userId = session.Metadata.ContainsKey("clientId") ? session.Metadata["clientId"] : null;
-                    await AddingOrderToDatabaseAsync(userId!, null!);
+                    if (userId == null)
+                        return _responseHandler.BadRequest<object>("Missing clientId in metadata.");
 
-                    _logger.LogInformation($" Checkout session completed for Order {cart.Id}");
+                    await AddingOrderToDatabaseAsync(userId, null!);
+
+                    _logger.LogInformation($"Checkout session completed for user {userId}");
                 }
-                else if (stripeEvent.Type == "payment_intent.amount_capturable_updated"
-                    ||
-                    stripeEvent.Type == "payment_intent.requires_capture"
-                    //|| stripeEvent.Type == "requires_capture"
-                    //|| stripeEvent.Type == "payment_intent.requires_action"
-                    )
+                else if (stripeEvent.Type == "payment_intent.succeeded")
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
                     if (paymentIntent == null)
                         return _responseHandler.BadRequest<object>("Event data object is not a PaymentIntent.");
 
-                    _logger.LogInformation($"PaymentIntent succeeded for: {paymentIntent.Id}");
+                    _logger.LogInformation($"PaymentIntent succeeded (captured): {paymentIntent.Id}");
 
                     var cartId = paymentIntent.Metadata.ContainsKey("cartId") ? paymentIntent.Metadata["cartId"] : null;
                     if (cartId == null)
                         return _responseHandler.BadRequest<object>("Missing cartId in metadata.");
 
-                    var cart = await _context.Order.FirstOrDefaultAsync(b => b.Id == cartId);
-                    if (cart == null)
-                        return _responseHandler.BadRequest<object>("Order not found.");
-
                     var userId = paymentIntent.Metadata.ContainsKey("clientId") ? paymentIntent.Metadata["clientId"] : null;
+                    if (userId == null)
+                        return _responseHandler.BadRequest<object>("Missing clientId in metadata.");
+
                     await AddingOrderToDatabaseAsync(userId, paymentIntent.Id);
 
                 }

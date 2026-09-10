@@ -79,11 +79,23 @@ const CourseDetail: React.FC = () => {
 
   const addToCartMutation = useMutation({
     mutationFn: (courseId: string) => cartService.addToCart(courseId),
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
-      toast.success('Added to cart');
+      const msg = res?.message || 'Added to cart';
+      if (msg.toLowerCase().includes('already')) {
+        toast(msg, { icon: 'ℹ️' });
+      } else {
+        toast.success(msg);
+      }
     },
-    onError: () => toast.error('Failed to add to cart'),
+    onError: (error: any) => {
+      const msg = error?.response?.data?.message || 'Failed to add to cart';
+      if (msg.toLowerCase().includes('already')) {
+        toast(msg, { icon: 'ℹ️' });
+      } else {
+        toast.error(msg);
+      }
+    },
   });
 
   const handleWishlistToggle = async () => {

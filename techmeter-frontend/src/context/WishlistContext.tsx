@@ -156,7 +156,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
 
     try {
-      await cartService.addToCart(courseId);
+      const res = await cartService.addToCart(courseId);
       queryClient.invalidateQueries({ queryKey: ['cart'] });
 
       const itemId = wishlistItemId || getWishlistItem(courseId)?.id;
@@ -165,10 +165,19 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         queryClient.invalidateQueries({ queryKey: ['wishlist'] });
       }
 
-      toast.success('Course moved to cart!');
+      const msg = res?.message || 'Course moved to cart!';
+      if (msg.toLowerCase().includes('already')) {
+        toast(msg, { icon: 'ℹ️' });
+      } else {
+        toast.success(msg);
+      }
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Could not move course to cart';
-      toast.error(msg);
+      if (msg.toLowerCase().includes('already')) {
+        toast(msg, { icon: 'ℹ️' });
+      } else {
+        toast.error(msg);
+      }
     }
   };
 

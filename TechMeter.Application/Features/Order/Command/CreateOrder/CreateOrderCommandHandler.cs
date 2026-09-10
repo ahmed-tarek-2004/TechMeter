@@ -62,7 +62,9 @@ namespace TechMeter.Application.Features.Order.Command.CreateOrder
                     order.OrderItems.Add(orderItem);
                 }
                 await context.Order.AddAsync(order);
+                logger.LogInformation("Order Created Successfully");
                 context.CartItem.RemoveRange(cart.CartItems);
+                logger.LogInformation("Cart Items Removed Successfully");
                 cart.UpdatedAt = DateTime.UtcNow;
                 context.Cart.Update(cart);
                 await context.SaveChangesAsync(cancellationToken);

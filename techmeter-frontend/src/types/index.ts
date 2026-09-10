@@ -75,7 +75,8 @@ export interface CartItemResponse {
   courseId: string;
   unitPrice: number;
   courseName: string;
-  courseImageUrl: string;
+  courseImageUrl?: string;
+  courseProfileImageUrl?: string;
   createdAt: string;
 }
 
