@@ -91,6 +91,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IExternalLoginService, ExternalLoginService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddHttpClient<IFacebookAuthService, FacebookAuthService>();
+            services.AddScoped<IStoreInDisk, StoreInDiskService>();
 
 
             return services;

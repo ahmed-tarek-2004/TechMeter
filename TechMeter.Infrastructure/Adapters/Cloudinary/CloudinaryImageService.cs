@@ -19,10 +19,12 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
     {
         private readonly ILogger<CloudinaryImageService> logger;
         private readonly CloudinarySettings _cloudinarySettings;
+        private readonly IStoreInDisk storeInDisk;
         private readonly CloudinaryDotNet.Cloudinary _cloudinary;
-        public CloudinaryImageService(IOptions<CloudinarySettings> options, ILogger<CloudinaryImageService> logger)
+        public CloudinaryImageService(IOptions<CloudinarySettings> options, ILogger<CloudinaryImageService> logger, IStoreInDisk storeInDisk)
         {
             this.logger = logger;
+            this.storeInDisk = storeInDisk;
             _cloudinarySettings = options.Value ?? throw new ArgumentNullException(nameof(options));
             var account = new Account(_cloudinarySettings.CloudName, _cloudinarySettings.ApiKey, _cloudinarySettings.ApiSecret);
             _cloudinary = new CloudinaryDotNet.Cloudinary(account)
@@ -58,6 +60,27 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
 
             return result.Url?.ToString() ?? throw new Exception("Cloudinary returned empty URL.");
         }
+        //public async Task<string> UploadAsync(string filePath, CancellationToken cancellationToken = default)
+        //{
+        //    await using var stream = File.OpenRead(filePath);
+
+        //    var uploadParams = new ImageUploadParams
+        //    {
+        //        File = new FileDescription(Path.GetFileName(filePath), stream),
+
+        //        //Folder = "TechMeter/Profiles"
+        //    };
+
+        //    var result =  await _cloudinary.UploadAsync(uploadParams);
+
+        //    if (result.Error != null)
+        //    {
+        //        throw new Exception( result.Error.Message);
+        //    }
+        //    storeInDisk.DeleteFile(filePath);
+        //    return result.SecureUrl?.ToString() ?? throw new Exception("Cloudinary returned empty URL.");
+
+        //}
 
         public async Task<string> UploadImageBytesAsync(byte[] imageBytes, string? name, CancellationToken cancellationToken = default)
         {

@@ -26,6 +26,7 @@ namespace TechMeter.Application.Features.Order.Query.GetStudentOrders
             }
             //
             var name = await context.Users.Where(b => b.Id == request.StudentId).Select(b => b.UserName).FirstOrDefaultAsync();
+            
             var orders = context.Order
                    .Where(o => o.StudentId == Student.Id)
                    .Select(o => new OrderSummaryResponse
@@ -36,7 +37,7 @@ namespace TechMeter.Application.Features.Order.Query.GetStudentOrders
                        Status = o.Status,
                        //StudentName = name,
                        //StudentName = name.UserName,
-                       Total = o.TotalPrice
+                       Total = o.TotalPrice,
                    });
 
             var paginaredList = await PaginatedList<OrderSummaryResponse>.CreatePaginatedList(orders, request.GetOrders.PageNumber, request.GetOrders.PageSize);

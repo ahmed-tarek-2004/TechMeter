@@ -37,30 +37,33 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                 bool checkPassword = await userManager.CheckPasswordAsync(user, request.password);
                 if (!checkPassword)
                 {
-                    logger.LogWarning("Password is Incorrext");
-                    return responseHandler.BadRequest<LoginResponseDto>("Password is InCorrect");
+                    logger.LogWarning("Password is Incorrect");
+                    return responseHandler.BadRequest<LoginResponseDto>("Password is Incorrect");
                 }
                 if (!user.EmailConfirmed)
                 {
                     return responseHandler.BadRequest<LoginResponseDto>("verify Your Email");
                 }
-                if (string.IsNullOrEmpty(otp))
+                var roles = await userManager.GetRolesAsync(user);
+                if (roles.FirstOrDefault() != "admin")
                 {
-                    otp = await oTPService.GenerateAndSetOTP(user.Id);
-                    backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp)); 
-                    logger.LogInformation($"Otp Sent is : {request.otp}");
-
-                    return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
-                }
-                else
-                {
-                    var confirmOTP = await oTPService.ValidateOtp(request.otp, user.Id);
-                    if (!confirmOTP)
+                    if (string.IsNullOrEmpty(otp))
                     {
-                        return responseHandler.BadRequest<LoginResponseDto>("Enter A correct OTP");
+                        otp = await oTPService.GenerateAndSetOTP(user.Id);
+                        backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
+                        logger.LogInformation($"Otp Sent is : {request.otp}");
+
+                        return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
+                    }
+                    else
+                    {
+                        var confirmOTP = await oTPService.ValidateOtp(request.otp, user.Id);
+                        if (!confirmOTP)
+                        {
+                            return responseHandler.BadRequest<LoginResponseDto>("Enter A correct OTP");
+                        }
                     }
                 }
-                var roles = await userManager.GetRolesAsync(user);
                 var token = await tokenService.GenerateTokensAsync(user, user.Id);
                 var respone = new LoginResponseDto()
                 {
@@ -79,7 +82,7 @@ namespace TechMeter.Application.Features.Auth.Login.Command
             }
             catch (Exception ex)
             {
-                logger.LogInformation(ex,ex.Message);
+                logger.LogInformation(ex, ex.Message);
                 return responseHandler.InternalServerError<LoginResponseDto>("Internal Server Error");
             }
         }

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -42,20 +43,23 @@ namespace TechMeter.API.Controllers
         //    return StatusCode((int)response.StatusCode, response);
         //}
 
-        [HttpGet("student/orders/{studentId}")]
-        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetStudentOrdersAsync([FromRoute] string studentId, [FromQuery] GetOrders getOrders)
+        [HttpGet("student")]
+        [Authorize(Roles = "student")]
+        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetStudentOrdersAsync([FromQuery] GetOrders getOrders)
         {
-            var response = await _mediator.Send(new GetStudentOrdersQuery() { StudentId = studentId, GetOrders = getOrders });
+            var response = await _mediator.Send(new GetStudentOrdersQuery() { StudentId = GetUserId(), GetOrders = getOrders });
             return StatusCode((int)response.StatusCode, response);
         }
-        [HttpGet("provider/orders/{providerId}")]
-        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetProviderOrdersAsync([FromRoute] string ProviderId, [FromQuery] GetOrders getOrders)
+        [HttpGet("provider")]
+        [Authorize(Roles = "provider")]
+        public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetProviderOrdersAsync([FromQuery] GetOrders getOrders)
         {
-            var response = await _mediator.Send(new GetProviderOrdersQuery() { ProviderId = ProviderId, GetOrders = getOrders });
+            var response = await _mediator.Send(new GetProviderOrdersQuery() { ProviderId = GetUserId(), GetOrders = getOrders });
             return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpGet("admin")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Response<PaginatedList<OrderSummaryResponse>>>> GetAdminOrdersAsync([FromQuery] GetOrders getOrders)
         {
             var response = await _mediator.Send(new GetAdminOrdersQuery() { GetOrders = getOrders });

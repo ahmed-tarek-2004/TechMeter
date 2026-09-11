@@ -76,6 +76,7 @@ namespace TechMeter.Infrastructure.Persistence.Seeder
                         Gender = Domain.Enums.Gender.male
                     };
                     await _userManager.CreateAsync(user, "Passw@rd123");
+                    await _userManager.AddToRoleAsync(user, "admin");
                 }
             }
             catch (Exception ex)
