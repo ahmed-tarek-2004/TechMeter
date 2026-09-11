@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { cartService } from '../../services/cartService';
+import { profileService } from '../../services/profileService';
 import {
   Search,
   ShoppingCart,
@@ -37,6 +38,7 @@ const Header: React.FC = () => {
 
   const role = user?.role?.toLowerCase();
 
+  // Cart Query
   const { data: cartData } = useQuery({
     queryKey: ['cart'],
     queryFn: () => cartService.getCart(),
@@ -44,6 +46,40 @@ const Header: React.FC = () => {
     staleTime: 1000 * 60 * 2,
     retry: false,
   });
+
+  // Profile queries to keep header avatar and name in sync with React Query cache
+  const { data: studentProfileData } = useQuery({
+    queryKey: ['student-profile'],
+    queryFn: () => profileService.getStudentProfile(),
+    enabled: isAuthenticated && role === 'student',
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+
+  const { data: providerProfileData } = useQuery({
+    queryKey: ['provider-profile'],
+    queryFn: () => profileService.getProviderProfile(),
+    enabled: isAuthenticated && role === 'provider',
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+
+  const studentProfile = studentProfileData?.data;
+  const providerProfile = providerProfileData?.data;
+
+  const currentAvatarUrl =
+    role === 'student'
+      ? studentProfile?.profileImage || user?.profileUrl
+      : role === 'provider'
+      ? providerProfile?.profileUrl || user?.profileUrl
+      : user?.profileUrl;
+
+  const currentDisplayName =
+    role === 'student'
+      ? studentProfile?.studentName || user?.userName
+      : role === 'provider'
+      ? providerProfile?.providerName || user?.userName
+      : user?.userName;
 
   const cartCount = cartData?.data?.items?.length ?? 0;
 
@@ -156,7 +192,7 @@ const Header: React.FC = () => {
                     >
                       <ShoppingCart className="h-5 w-5" />
                       {cartCount > 0 && (
-                        <span className="absolute 0 top-0.5 right-0.5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+                        <span className="absolute top-0.5 right-0.5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
                           {cartCount > 99 ? '99+' : cartCount}
                         </span>
                       )}
@@ -200,15 +236,19 @@ const Header: React.FC = () => {
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-1.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition focus:outline-none"
                   >
-                    {user?.profileUrl ? (
+                    {currentAvatarUrl ? (
                       <img
-                        src={user.profileUrl}
-                        alt={user.userName}
+                        src={currentAvatarUrl}
+                        alt={currentDisplayName || 'User'}
                         className="h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+                        onError={(e) => {
+                          // Fallback to text avatar if image fails to load
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
                       />
                     ) : (
                       <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-xs">
-                        {user?.userName?.charAt(0) || 'U'}
+                        {currentDisplayName?.charAt(0)?.toUpperCase() || 'U'}
                       </div>
                     )}
                     <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
@@ -217,7 +257,9 @@ const Header: React.FC = () => {
                   {isProfileOpen && (
                     <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50">
                       <div className="px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
-                        <p className="text-xs font-bold text-gray-900 dark:text-white">{user?.userName}</p>
+                        <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                          {currentDisplayName || user?.userName}
+                        </p>
                         <p className="text-[11px] text-gray-400 dark:text-gray-400 truncate">{user?.email}</p>
                         <span className="inline-block mt-1 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-full uppercase tracking-wider">
                           {role}

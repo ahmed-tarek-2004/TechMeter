@@ -11,6 +11,7 @@ interface AuthContextType {
   register: (data: any) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
+  updateUser: (fields: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,6 +60,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } else {
       localStorage.removeItem('user');
     }
+  };
+
+  const updateUser = (fields: Partial<User>) => {
+    setUserState((prev) => {
+      if (!prev) return null;
+      const updated = { ...prev, ...fields };
+      localStorage.setItem('user', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const login = async (data: { email: string; password: string; otp?: string }): Promise<{ requiresOtp: boolean; userId?: string; user?: User }> => {
@@ -131,6 +141,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       register,
       logout,
       setUser,
+      updateUser,
     }}>
       {children}
     </AuthContext.Provider>

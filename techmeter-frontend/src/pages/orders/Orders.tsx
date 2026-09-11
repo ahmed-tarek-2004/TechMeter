@@ -16,8 +16,19 @@ const Orders: React.FC = () => {
     retry: false,
   });
 
-  const orders = data?.data?.items || [];
+  const orders = data?.data?.items || (Array.isArray(data?.data) ? data.data : []);
   const totalPages = data?.data?.totalPages || 1;
+
+  const getStatusBadge = (status?: string) => {
+    const s = (status || '').toLowerCase();
+    if (['completed', 'paid', 'succeeded', 'success'].includes(s)) {
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40';
+    }
+    if (['pending', 'processing', 'incomplete'].includes(s)) {
+      return 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40';
+    }
+    return 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40';
+  };
 
   if (isLoading) {
     return (
@@ -59,27 +70,23 @@ const Orders: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                   <div>
                     <h3 className="text-sm font-bold text-gray-900 dark:text-white">
-                      Order #{order.id.substring(0, 8)}
+                      Order #{order.id ? order.id.substring(0, 8) : '--------'}
                     </h3>
                     <div className="mt-1 flex items-center text-xs text-gray-400 dark:text-gray-500">
                       <Calendar className="h-3.5 w-3.5 mr-1" />
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
                     </div>
                   </div>
                   <div className="flex items-center sm:text-right gap-3">
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold ${
-                        order.status === 'Completed'
-                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40'
-                          : order.status === 'Pending'
-                          ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40'
-                          : 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40'
-                      }`}
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold ${getStatusBadge(
+                        order.status
+                      )}`}
                     >
-                      {order.status}
+                      {order.status || 'Pending'}
                     </span>
                     <div className="text-lg font-extrabold text-gray-900 dark:text-white">
-                      ${order.totalPrice.toFixed(2)}
+                      ${(Number(order.totalPrice) || 0).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -87,7 +94,7 @@ const Orders: React.FC = () => {
                 <div className="border-t border-gray-100 dark:border-gray-800 pt-4 flex items-center justify-between">
                   <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                     <Package className="h-4 w-4 mr-1.5 text-gray-400 dark:text-gray-500" />
-                    {order.itemCount} {order.itemCount === 1 ? 'course' : 'courses'}
+                    {order.itemCount || 1} {order.itemCount === 1 ? 'course' : 'courses'}
                   </div>
                   <Link
                     to={`/orders/${order.id}`}

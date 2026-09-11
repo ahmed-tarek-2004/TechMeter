@@ -50,7 +50,18 @@ const OrderDetail: React.FC = () => {
     );
   }
 
-  const canCancel = order.status === 'Pending';
+  const getStatusBadge = (status?: string) => {
+    const s = (status || '').toLowerCase();
+    if (['completed', 'paid', 'succeeded', 'success'].includes(s)) {
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40';
+    }
+    if (['pending', 'processing', 'incomplete'].includes(s)) {
+      return 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40';
+    }
+    return 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40';
+  };
+
+  const canCancel = (order.status || '').toLowerCase() === 'pending';
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 transition-colors duration-200">
@@ -67,18 +78,14 @@ const OrderDetail: React.FC = () => {
           <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                Order #{order.id.substring(0, 8)}
+                Order #{order.id ? order.id.substring(0, 8) : '--------'}
               </h1>
               <span
-                className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold w-fit ${
-                  order.status === 'Completed'
-                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40'
-                    : order.status === 'Pending'
-                    ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40'
-                    : 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40'
-                }`}
+                className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold w-fit ${getStatusBadge(
+                  order.status
+                )}`}
               >
-                {order.status}
+                {order.status || 'Pending'}
               </span>
             </div>
 
@@ -88,7 +95,7 @@ const OrderDetail: React.FC = () => {
                 <div>
                   <p className="text-gray-400 dark:text-gray-500 font-medium">Order Date</p>
                   <p className="font-bold text-gray-900 dark:text-white mt-0.5">
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
               </div>
@@ -97,7 +104,9 @@ const OrderDetail: React.FC = () => {
                 <CreditCard className="h-4 w-4 text-gray-400 dark:text-gray-500 mr-2.5 mt-0.5" />
                 <div>
                   <p className="text-gray-400 dark:text-gray-500 font-medium">Total Amount</p>
-                  <p className="font-bold text-gray-900 dark:text-white mt-0.5">${order.totalPrice.toFixed(2)}</p>
+                  <p className="font-bold text-gray-900 dark:text-white mt-0.5">
+                    ${(Number(order.totalPrice) || 0).toFixed(2)}
+                  </p>
                 </div>
               </div>
 
@@ -141,7 +150,9 @@ const OrderDetail: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-extrabold text-gray-900 dark:text-white">${item.price.toFixed(2)}</p>
+                    <p className="text-sm font-extrabold text-gray-900 dark:text-white">
+                      ${(Number(item.price) || 0).toFixed(2)}
+                    </p>
                   </div>
                 </div>
               ))}

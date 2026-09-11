@@ -80,12 +80,12 @@ const AdminLayout: React.FC = () => {
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 bg-gray-900 border-r border-gray-800 text-gray-300 flex flex-col transition-all duration-300 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 flex flex-col transition-all duration-300 ease-in-out ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand Head */}
-        <div className="h-16 px-4 border-b border-gray-800 flex items-center justify-between">
+        <div className="h-16 px-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
           <Link
             to="/admin/dashboard"
             className={`flex items-center space-x-3 overflow-hidden ${
@@ -97,8 +97,8 @@ const AdminLayout: React.FC = () => {
             </div>
             {!isCollapsed && (
               <div className="truncate">
-                <span className="text-base font-black text-white tracking-tight">TechMeter</span>
-                <span className="ml-1.5 text-[9px] font-extrabold uppercase tracking-wider bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded-md">
+                <span className="text-base font-black text-gray-900 dark:text-white tracking-tight">TechMeter</span>
+                <span className="ml-1.5 text-[9px] font-extrabold uppercase tracking-wider bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 px-1.5 py-0.5 rounded-md">
                   Admin
                 </span>
               </div>
@@ -106,7 +106,7 @@ const AdminLayout: React.FC = () => {
           </Link>
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden text-gray-400 hover:text-white p-1 rounded-lg"
+            className="lg:hidden text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1 rounded-lg"
           >
             <X className="h-5 w-5" />
           </button>
@@ -115,7 +115,7 @@ const AdminLayout: React.FC = () => {
         {/* Navigation Links */}
         <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
           {!isCollapsed && (
-            <div className="px-3 pt-2 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+            <div className="px-3 pt-2 pb-1 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
               Management
             </div>
           )}
@@ -133,13 +133,13 @@ const AdminLayout: React.FC = () => {
                   isCollapsed ? 'justify-center px-2 py-3' : 'space-x-3 px-3.5 py-2.5'
                 } rounded-2xl text-xs font-semibold transition-all duration-150 ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-indigo-900/30 shadow-md font-bold'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800/70'
+                    ? 'bg-indigo-600 text-white shadow-indigo-600/30 dark:shadow-indigo-900/30 shadow-md font-bold'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/70'
                 }`}
               >
                 <Icon
                   className={`h-4.5 w-4.5 flex-shrink-0 transition-transform duration-150 group-hover:scale-105 ${
-                    isActive ? 'text-white' : 'text-gray-400 group-hover:text-indigo-400'
+                    isActive ? 'text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
                   }`}
                 />
                 {!isCollapsed && <span className="truncate">{item.name}</span>}
@@ -149,16 +149,16 @@ const AdminLayout: React.FC = () => {
         </nav>
 
         {/* Desktop Collapse Toggle Button */}
-        <div className="hidden lg:flex px-3 py-2 border-t border-gray-800 justify-end">
+        <div className="hidden lg:flex px-3 py-2 border-t border-gray-200 dark:border-gray-800 justify-end">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="w-full flex items-center justify-center p-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 text-xs transition"
+            className="w-full flex items-center justify-center p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 text-xs transition"
             title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />
             ) : (
-              <div className="flex items-center space-x-2 text-[11px] font-medium text-gray-400">
+              <div className="flex items-center space-x-2 text-[11px] font-medium text-gray-500 dark:text-gray-400">
                 <ChevronLeft className="h-4 w-4" />
                 <span>Collapse Sidebar</span>
               </div>
@@ -167,12 +167,12 @@ const AdminLayout: React.FC = () => {
         </div>
 
         {/* Footer actions */}
-        <div className="p-3 border-t border-gray-800 space-y-1">
+        <div className="p-3 border-t border-gray-200 dark:border-gray-800 space-y-1">
           <Link
             to="/"
             className={`flex items-center ${
               isCollapsed ? 'justify-center p-2.5' : 'space-x-3 px-3.5 py-2'
-            } rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800 transition`}
+            } rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition`}
             title={isCollapsed ? 'Main Website' : undefined}
           >
             <Home className="h-4 w-4 flex-shrink-0" />
@@ -182,7 +182,7 @@ const AdminLayout: React.FC = () => {
             onClick={handleLogout}
             className={`w-full flex items-center ${
               isCollapsed ? 'justify-center p-2.5' : 'space-x-3 px-3.5 py-2'
-            } rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition`}
+            } rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition`}
             title={isCollapsed ? 'Sign Out' : undefined}
           >
             <LogOut className="h-4 w-4 flex-shrink-0" />
