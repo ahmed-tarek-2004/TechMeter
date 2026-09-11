@@ -42,7 +42,7 @@ namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
                         x.LessonId == request.LessonId);
 
                 if (exists)
-                    return responseHandler.Success("", "Already watched");
+                    return responseHandler.Success(string.Empty, "Already watched");
 
                 await context.StudentLessonWatched.AddAsync(new StudentLessonWatched
                 {

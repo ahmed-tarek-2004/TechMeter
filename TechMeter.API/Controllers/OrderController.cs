@@ -74,7 +74,9 @@ namespace TechMeter.API.Controllers
         //    return StatusCode((int)response.StatusCode, response);
         //}
 
+
         [HttpPut("cancel/{orderId}")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<OrderResponse>>> StudentCancelOrder([FromRoute] string orderId)
         {
 
@@ -82,14 +84,15 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPut("status/{orderId}")]
+        [Authorize(Roles = "admin,provider")]
         public async Task<ActionResult<Response<OrderResponse>>> updateOrderAsync([FromRoute] string orderId, [FromBody] UpdateOrderStatusRequest updateOrderStatus)
         {
 
-            var response = await _mediator.Send(new UpdateOrderStatusCommand(orderId,updateOrderStatus.Status));
+            var response = await _mediator.Send(new UpdateOrderStatusCommand(orderId, updateOrderStatus.Status));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpDelete("{orderId}")]
-       
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Response<OrderResponse>>> DeleteOrderAsync([FromRoute] string orderId)
         {
             var response = await _mediator.Send(new DeleteOrderCommand() { OrderId = orderId });
