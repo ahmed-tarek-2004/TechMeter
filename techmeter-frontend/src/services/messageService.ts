@@ -14,11 +14,9 @@ export const messageService = {
     return response.data;
   },
 
-  async getMessages(_contactId?: string): Promise<Message[]> {
-    // Messages are loaded through SignalR hub, but this can be used for initial load
-    // Backend would need an endpoint for fetching message history
-    // For now, return empty array as messages come through SignalR
-    return [];
+  async getMessages(contactId: string, pageNumber: number = 1, pageSize: number = 50): Promise<ApiResponse<PaginatedList<Message>>> {
+    const response = await api.get(`/Message/${contactId}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return response.data;
   },
 
   async sendMessage(_recipientId?: string, _message?: string): Promise<void> {

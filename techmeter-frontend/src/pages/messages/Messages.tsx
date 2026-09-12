@@ -11,12 +11,13 @@ const Messages: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [isOnline, setIsOnline] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isConnecting, setIsConnecting] = useState(true);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
 
   const { data: contactsData, isLoading: contactsLoading } = useQuery({
@@ -40,73 +41,112 @@ const Messages: React.FC = () => {
   }, [contacts, searchQuery]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setIsConnecting(false);
-      return;
-    }
+    if (!isAuthenticated) return;
 
     let isMounted = true;
 
-    const initConnection = async () => {
-      try {
-        if (!messageHubService.isConnected()) {
-          await messageHubService.connect();
-        }
-      } catch (error) {
-        console.error('Failed to connect to message hub:', error);
-        if (isMounted) {
-          toast.error('Real-time messaging service is currently offline');
-        }
-      } finally {
-        if (isMounted) {
-          setIsConnecting(false);
-        }
-      }
-    };
-
-    initConnection();
-
     const unsubscribeMessage = messageHubService.onMessageReceived((message: MessageEvent) => {
       if (!isMounted) return;
-      const newMessage: Message = {
-        id: message.id,
-        messageId: message.id,
-        message: message.content,
-        sentAt: message.sentAt,
-        isRead: false,
-        senderId: message.sender?.senderId,
-        sender: message.sender,
-      };
-      setMessages((prev) => [...prev, newMessage]);
-      scrollToBottom();
-    });
+      const incomingSenderId = message.sender?.senderId;
 
-    const unsubscribeOnline = messageHubService.onOnlineStatusChanged((online: boolean) => {
-      if (isMounted) {
-        setIsOnline(online);
+      // If we are currently chatting with this sender, or it's our own message
+      const isRelevant =
+        !selectedContact ||
+        incomingSenderId === selectedContact.id ||
+        incomingSenderId === user?.id;
+
+      if (isRelevant) {
+        const newMessage: Message = {
+          id: message.id,
+          messageId: message.id,
+          message: message.content,
+          sentAt: message.sentAt,
+          isRead: false,
+          senderId: incomingSenderId,
+          sender: message.sender,
+        };
+
+        setMessages((prev) => {
+          // Avoid duplicate messages by messageId / id
+          if (prev.some((m) => (m.messageId && m.messageId === newMessage.messageId) || (m.id && m.id === newMessage.id))) {
+            return prev;
+          }
+          return [...prev, newMessage];
+        });
       }
     });
 
     return () => {
       isMounted = false;
       unsubscribeMessage();
-      unsubscribeOnline();
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, selectedContact, user?.id]);
 
   useEffect(() => {
     if (!selectedContact) {
       setIsOnline(false);
+      setMessages([]);
       return;
     }
 
     // Reset status when switching contacts
     setIsOnline(false);
     setMessages([]);
+    setIsLoadingHistory(true);
 
     let isSubscribed = true;
 
+    // Fetch conversation history
+    const loadHistory = async () => {
+      try {
+        const response = await messageService.getMessages(selectedContact.id);
+        if (!isSubscribed) return;
+
+        let rawItems: any[] = [];
+        if (response?.data) {
+          if (Array.isArray(response.data)) {
+            rawItems = response.data;
+          } else if (Array.isArray(response.data.items)) {
+            rawItems = response.data.items;
+          }
+        }
+
+        const normalized: Message[] = rawItems.map((item: any) => ({
+          id: item.id ?? item.messageId ?? Date.now(),
+          messageId: item.messageId ?? item.id,
+          message: item.message ?? item.content ?? '',
+          sentAt: item.sentAt ?? new Date().toISOString(),
+          isRead: item.isRead ?? false,
+          senderId: item.senderId,
+          sender: item.sender,
+        }));
+
+        // Sort ascending by sentAt (oldest first, newest at the bottom)
+        normalized.sort(
+          (a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()
+        );
+
+        setMessages(normalized);
+      } catch (err) {
+        console.error('Failed to load message history:', err);
+      } finally {
+        if (isSubscribed) {
+          setIsLoadingHistory(false);
+        }
+      }
+    };
+
+    loadHistory();
+
+    // Subscribe to online status updates scoped to this contact selection
+    const unsubscribeOnline = messageHubService.onOnlineStatusChanged((online: boolean) => {
+      if (isSubscribed) {
+        setIsOnline(online);
+      }
+    });
+
     const checkStatus = async () => {
+      if (!isSubscribed) return;
       try {
         await messageHubService.checkOnlineStatus(selectedContact.id);
       } catch (err) {
@@ -118,20 +158,20 @@ const Messages: React.FC = () => {
     checkStatus();
 
     // Query online status periodically while conversation is open
-    const interval = setInterval(() => {
-      if (isSubscribed) {
-        checkStatus();
-      }
-    }, 5000);
+    const interval = setInterval(checkStatus, 5000);
 
     return () => {
       isSubscribed = false;
+      unsubscribeOnline();
       clearInterval(interval);
     };
   }, [selectedContact]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -146,19 +186,8 @@ const Messages: React.FC = () => {
     setIsSending(true);
     try {
       await messageHubService.sendMessage(trimmed, selectedContact.id);
-
-      // Add sent message to local state
-      const sentMessage: Message = {
-        id: Date.now(),
-        messageId: Date.now(),
-        message: trimmed,
-        sentAt: new Date().toISOString(),
-        isRead: false,
-        senderId: user?.id,
-      };
-      setMessages((prev) => [...prev, sentMessage]);
+      // Message will appear via the ReceiveMessage SignalR event
       setMessageText('');
-      scrollToBottom();
     } catch (error) {
       console.error('Failed to send message:', error);
       toast.error('Failed to send message. Please try again.');
@@ -175,7 +204,7 @@ const Messages: React.FC = () => {
     setImgErrors((prev) => ({ ...prev, [contactId]: true }));
   };
 
-  if (!isAuthenticated || (contactsLoading && isConnecting)) {
+  if (!isAuthenticated || contactsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center transition-colors duration-200">
         <Loader2 className="h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
@@ -184,8 +213,8 @@ const Messages: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-6 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100vh-6rem)]">
+    <div className="overflow-hidden bg-gray-50 dark:bg-gray-950 transition-colors duration-200" style={{ height: 'calc(100vh - 4rem)' }}>
+      <div className="overflow-hidden max-w-7xl w-full h-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden h-full flex flex-col md:flex-row">
           {/* Contacts Sidebar */}
           <div className="w-full md:w-80 lg:w-96 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 flex flex-col h-full bg-white dark:bg-gray-900">
@@ -300,8 +329,13 @@ const Messages: React.FC = () => {
                 </div>
 
                 {/* Messages Feed */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                  {messages.length === 0 ? (
+                <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {isLoadingHistory ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 dark:text-gray-500">
+                      <Loader2 className="h-6 w-6 animate-spin text-indigo-600 dark:text-indigo-400 mb-2" />
+                      <p className="text-xs">Loading message history...</p>
+                    </div>
+                  ) : messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 dark:text-gray-500">
                       <MessageSquare className="h-8 w-8 mb-2 opacity-50" />
                       <p className="text-xs">No messages yet. Send a greeting to start chatting!</p>

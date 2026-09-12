@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '../types';
 import { authService } from '../services/authService';
+import { messageHubService } from '../services/messageHubService';
 import toast from 'react-hot-toast';
 
 interface AuthContextType {
@@ -52,6 +53,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     setIsLoading(false);
   }, []);
+
+  // Connect / disconnect SignalR hub whenever auth state changes
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (user && token) {
+      messageHubService.connect().catch((err) =>
+        console.error('SignalR connect error:', err)
+      );
+    } else {
+      messageHubService.disconnect();
+    }
+  }, [user]);
 
   const setUser = (u: User | null) => {
     setUserState(u);
@@ -124,6 +137,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch {
       // silently fail
     } finally {
+      await messageHubService.disconnect();
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');

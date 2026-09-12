@@ -36,11 +36,11 @@ class MessageHubService {
 
       this.connection.on('ReceiveMessage', (message: any) => {
         const normalizedMessage: MessageEvent = {
-          id: message?.id ?? message?.Id ?? Date.now(),
-          content: message?.content ?? message?.Content ?? '',
+          id: message?.id ?? message?.Id ?? message?.messageId ?? message?.MessageId ?? Date.now(),
+          content: message?.content ?? message?.Content ?? message?.message ?? message?.Message ?? '',
           sentAt: message?.sentAt ?? message?.SentAt ?? new Date().toISOString(),
           sender: {
-            senderId: message?.sender?.senderId ?? message?.Sender?.SenderId ?? message?.senderId ?? '',
+            senderId: message?.sender?.senderId ?? message?.Sender?.SenderId ?? message?.senderId ?? message?.SenderId ?? '',
             senderName: message?.sender?.senderName ?? message?.Sender?.SenderName ?? '',
             senderEmail: message?.sender?.senderEmail ?? message?.Sender?.SenderEmail ?? '',
             recipientImageUrl: message?.sender?.recipientImageUrl ?? message?.Sender?.RecipientImageUrl ?? '',

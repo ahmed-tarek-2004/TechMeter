@@ -4,9 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { courseService } from '../services/courseService';
 import { categoryService } from '../services/categoryService';
 import CourseCard from '../components/courses/CourseCard';
+import { useAuth } from '../context/AuthContext';
 import { Loader2, ArrowRight, Users, BookOpen, Award, TrendingUp } from 'lucide-react';
 
 const Home: React.FC = () => {
+  const { isAuthenticated, user } = useAuth();
   const { data: coursesData, isLoading: coursesLoading } = useQuery({
     queryKey: ['courses'],
     queryFn: () => courseService.getAllCourses(),
@@ -50,12 +52,21 @@ const Home: React.FC = () => {
                 Browse Courses
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-              <Link
-                to="/register"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg transition"
-              >
-                Start Learning
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  to={user?.role === 'provider' ? '/provider/dashboard' : '/my-courses'}
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg transition"
+                >
+                  {user?.role === 'provider' ? 'Go to Dashboard' : 'My Learning'}
+                </Link>
+              ) : (
+                <Link
+                  to="/register"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg transition"
+                >
+                  Start Learning
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -151,18 +162,37 @@ const Home: React.FC = () => {
           <h2 className="text-3xl font-extrabold text-white tracking-tight">Ready to Start Learning?</h2>
           <p className="mt-3 text-base text-indigo-200 dark:text-indigo-300">Join thousands of learners and start your journey today.</p>
           <div className="mt-8 flex justify-center gap-4">
-            <Link
-              to="/register"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-indigo-700 dark:text-indigo-400 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 shadow-lg transition"
-            >
-              Get Started Free
-            </Link>
-            <Link
-              to="/courses"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg transition"
-            >
-              Explore Courses
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to={user?.role === 'provider' ? '/provider/dashboard' : '/my-courses'}
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-indigo-700 dark:text-indigo-400 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 shadow-lg transition"
+                >
+                  {user?.role === 'provider' ? 'Go to Dashboard' : 'My Learning'}
+                </Link>
+                <Link
+                  to="/courses"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg transition"
+                >
+                  Explore Courses
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-indigo-700 dark:text-indigo-400 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 shadow-lg transition"
+                >
+                  Get Started Free
+                </Link>
+                <Link
+                  to="/courses"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg transition"
+                >
+                  Explore Courses
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

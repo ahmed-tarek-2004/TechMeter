@@ -35,7 +35,7 @@ const MyCourses: React.FC = () => {
   // Compute progress for each course
   const coursesWithProgress = courses.map((course: any) => {
     // If progress percentage is already supplied by backend
-    const progress = course.progressPercentage ?? (course.isFinished ? 100 : 35);
+    const progress = course.progress ?? course.progressPercentage ?? (course.isFinished ? 100 : 0);
     const isCompleted = progress >= 100 || course.isFinished;
     return {
       ...course,
