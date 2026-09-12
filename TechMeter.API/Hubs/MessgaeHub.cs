@@ -40,13 +40,15 @@ namespace TechMeter.API.Hubs
             {
                 return;
             }
-            await Clients.Users(userId,senderId).SendAsync("ReceiveMessage", new
+            await Clients.Users(userId, senderId).SendAsync("ReceiveMessage", new
             {
                 Id = messageStored.MessageId,
                 Content = messageStored.Message,
                 SentAt = messageStored.SentAt,
+                isRead = false,
                 Sender = senderInfo
             });
+
             await notificationService.SendUserNotifications(userId, "New Message", msg, NotificationType.Message);
         }
         [HubMethodName("isonline")]
@@ -63,6 +65,19 @@ namespace TechMeter.API.Hubs
             await Clients.User(senderId).SendAsync("IsRead", isRead);
         }
 
+        //public async Task OpenChat(string userId)
+        //{
+        //    var currentUserId = Context.UserIdentifier!;
+
+        //    await _userActivityService.SetActiveChat(currentUserId,userId);
+        //}
+
+        //public async Task CloseChat()
+        //{
+        //    var currentUserId = Context.UserIdentifier!;
+
+        //    await _userActivityService.ClearActiveChat(currentUserId);
+        //}
 
 
         public override async Task OnDisconnectedAsync(Exception? exception)

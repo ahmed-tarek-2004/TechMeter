@@ -21,7 +21,6 @@ class MessageHubService {
 
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      console.warn('No authentication token found, user must login first');
       return;
     }
 
@@ -30,43 +29,94 @@ class MessageHubService {
         .withUrl(`${API_BASE_URL}/messageHub`, {
           accessTokenFactory: () => localStorage.getItem('accessToken') || '',
         })
-        .withAutomaticReconnect()
+        .withAutomaticReconnect({
+          nextRetryDelayInMilliseconds: (retryContext) => {
+            if (retryContext.previousRetryCount < 3) return 2000;
+            if (retryContext.previousRetryCount < 6) return 5000;
+            return 10000;
+          },
+        })
         .configureLogging(signalR.LogLevel.Warning)
         .build();
 
-      this.connection.on('ReceiveMessage', (message: any) => {
+      const handleIncomingMessage = (message: any) => {
         const normalizedMessage: MessageEvent = {
-          id: message?.id ?? message?.Id ?? message?.messageId ?? message?.MessageId ?? Date.now(),
-          content: message?.content ?? message?.Content ?? message?.message ?? message?.Message ?? '',
-          sentAt: message?.sentAt ?? message?.SentAt ?? new Date().toISOString(),
+          id: Number(message?.id ?? message?.Id ?? message?.messageId ?? message?.MessageId ?? Date.now()),
+          content: String(message?.content ?? message?.Content ?? message?.message ?? message?.Message ?? ''),
+          sentAt: String(message?.sentAt ?? message?.SentAt ?? new Date().toISOString()),
+          isRead: Boolean(message?.isRead ?? message?.IsRead ?? false),
           sender: {
-            senderId: message?.sender?.senderId ?? message?.Sender?.SenderId ?? message?.senderId ?? message?.SenderId ?? '',
-            senderName: message?.sender?.senderName ?? message?.Sender?.SenderName ?? '',
-            senderEmail: message?.sender?.senderEmail ?? message?.Sender?.SenderEmail ?? '',
-            recipientImageUrl: message?.sender?.recipientImageUrl ?? message?.Sender?.RecipientImageUrl ?? '',
+            senderId: String(
+              message?.sender?.senderId ??
+                message?.Sender?.SenderId ??
+                message?.senderId ??
+                message?.SenderId ??
+                ''
+            ),
+            senderName: String(
+              message?.sender?.senderName ??
+                message?.Sender?.SenderName ??
+                message?.senderName ??
+                message?.SenderName ??
+                'User'
+            ),
+            senderEmail: String(
+              message?.sender?.senderEmail ??
+                message?.Sender?.SenderEmail ??
+                message?.senderEmail ??
+                message?.SenderEmail ??
+                ''
+            ),
+            recipientImageUrl: String(
+              message?.sender?.recipientImageUrl ??
+                message?.Sender?.RecipientImageUrl ??
+                message?.recipientImageUrl ??
+                message?.RecipientImageUrl ??
+                ''
+            ),
           },
         };
-        this.messageCallbacks.forEach(callback => callback(normalizedMessage));
-      });
+
+        this.messageCallbacks.forEach((cb) => {
+          try {
+            cb(normalizedMessage);
+          } catch (err) {
+            console.error('Error in message callback:', err);
+          }
+        });
+      };
+
+      this.connection.on('ReceiveMessage', handleIncomingMessage);
+      this.connection.on('receivemessage', handleIncomingMessage);
 
       this.connection.on('CheckReceiverAvailability', (isOnline: boolean) => {
-        this.onlineStatusCallbacks.forEach(callback => callback(isOnline));
+        this.onlineStatusCallbacks.forEach((cb) => {
+          try {
+            cb(Boolean(isOnline));
+          } catch (err) {
+            console.error('Error in online callback:', err);
+          }
+        });
       });
 
       this.connection.on('IsRead', (isRead: boolean) => {
-        this.readStatusCallbacks.forEach(callback => callback(isRead));
+        this.readStatusCallbacks.forEach((cb) => {
+          try {
+            cb(Boolean(isRead));
+          } catch (err) {
+            console.error('Error in read callback:', err);
+          }
+        });
       });
 
-      this.connection.onreconnecting(() => {
-        console.log('Reconnecting to message hub...');
-      });
-
-      this.connection.onreconnected(() => {
-        console.log('Reconnected to message hub');
-      });
-
-      this.connection.onclose(() => {
-        console.log('Message hub connection closed');
+      this.connection.on('isread', (isRead: boolean) => {
+        this.readStatusCallbacks.forEach((cb) => {
+          try {
+            cb(Boolean(isRead));
+          } catch (err) {
+            console.error('Error in read callback:', err);
+          }
+        });
       });
     }
 
@@ -74,10 +124,8 @@ class MessageHubService {
       this.connectPromise = (async () => {
         try {
           await this.connection?.start();
-          console.log('Connected to message hub');
         } catch (error) {
-          console.error('Error connecting to message hub:', error);
-          throw error;
+          console.warn('Error starting message hub connection:', error);
         } finally {
           this.connectPromise = null;
         }
@@ -91,8 +139,8 @@ class MessageHubService {
     if (this.connection) {
       try {
         await this.connection.stop();
-      } catch (error) {
-        console.error('Error disconnecting from message hub:', error);
+      } catch {
+        // Suppress disconnection errors
       }
     }
   }
@@ -130,36 +178,40 @@ class MessageHubService {
     }
   }
 
-  async markAsRead(messageId: string, senderId: string): Promise<void> {
+  async markAsRead(messageId: string | number, senderId: string): Promise<void> {
+    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
+      await this.connect();
+    }
+
     if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
       return;
     }
 
     try {
-      await this.connection.invoke('markasread', messageId, senderId);
+      await this.connection.invoke('markasread', String(messageId), String(senderId));
     } catch (error) {
-      console.error('Error marking message as read:', error);
+      console.error('Error marking message as read in hub:', error);
     }
   }
 
   onMessageReceived(callback: (message: MessageEvent) => void): () => void {
     this.messageCallbacks.push(callback);
     return () => {
-      this.messageCallbacks = this.messageCallbacks.filter(cb => cb !== callback);
+      this.messageCallbacks = this.messageCallbacks.filter((cb) => cb !== callback);
     };
   }
 
   onOnlineStatusChanged(callback: (isOnline: boolean) => void): () => void {
     this.onlineStatusCallbacks.push(callback);
     return () => {
-      this.onlineStatusCallbacks = this.onlineStatusCallbacks.filter(cb => cb !== callback);
+      this.onlineStatusCallbacks = this.onlineStatusCallbacks.filter((cb) => cb !== callback);
     };
   }
 
   onReadStatusChanged(callback: (isRead: boolean) => void): () => void {
     this.readStatusCallbacks.push(callback);
     return () => {
-      this.readStatusCallbacks = this.readStatusCallbacks.filter(cb => cb !== callback);
+      this.readStatusCallbacks = this.readStatusCallbacks.filter((cb) => cb !== callback);
     };
   }
 
@@ -169,4 +221,3 @@ class MessageHubService {
 }
 
 export const messageHubService = new MessageHubService();
-

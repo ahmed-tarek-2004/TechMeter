@@ -231,6 +231,7 @@ export interface MessageEvent {
   id: number;
   content: string;
   sentAt: string;
+  isRead?: boolean;
   sender: SenderInfo;
 }
 

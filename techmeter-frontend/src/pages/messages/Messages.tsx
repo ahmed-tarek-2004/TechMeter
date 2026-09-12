@@ -1,14 +1,26 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { messageService } from '../../services/messageService';
 import { messageHubService } from '../../services/messageHubService';
+import { activeChatTracker } from '../../services/activeChatTracker';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, Send, Search, Circle, User as UserIcon, MessageSquare } from 'lucide-react';
+import {
+  Loader2,
+  Send,
+  Search,
+  Circle,
+  User as UserIcon,
+  MessageSquare,
+  Check,
+  CheckCheck,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Contact, MessageEvent, Message } from '../../types';
 
 const Messages: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const [searchParams] = useSearchParams();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -16,9 +28,27 @@ const Messages: React.FC = () => {
   const [isOnline, setIsOnline] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [unreadContacts, setUnreadContacts] = useState<Record<string, number>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+
+  // Register active chat page with global tracker
+  useEffect(() => {
+    activeChatTracker.setChatPageOpen(true);
+    return () => {
+      activeChatTracker.setChatPageOpen(false);
+    };
+  }, []);
+
+  // Update active contact in tracker
+  useEffect(() => {
+    activeChatTracker.setActiveContact(selectedContact?.id || null);
+    if (selectedContact?.id) {
+      // Clear unread count for the active contact
+      setUnreadContacts((prev) => ({ ...prev, [selectedContact.id]: 0 }));
+    }
+  }, [selectedContact]);
 
   const { data: contactsData, isLoading: contactsLoading } = useQuery({
     queryKey: ['contacts', user?.id, user?.role],
@@ -34,12 +64,44 @@ const Messages: React.FC = () => {
     return [];
   }, [contactsData]);
 
+  // Handle initial contact selection from URL query params or auto-select first
+  useEffect(() => {
+    if (contacts.length === 0 || selectedContact) return;
+    const targetId = searchParams.get('contactId') || searchParams.get('userId');
+    if (targetId) {
+      const match = contacts.find((c) => String(c.id).toLowerCase() === targetId.toLowerCase());
+      if (match) {
+        setSelectedContact(match);
+        return;
+      }
+    }
+  }, [contacts, searchParams, selectedContact]);
+
   const filteredContacts = useMemo(() => {
     return contacts.filter((contact) =>
       (contact?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [contacts, searchQuery]);
 
+  // Mark all unread messages from a contact as read
+  const markConversationAsRead = useCallback(
+    (contactId: string, messagesList: Message[]) => {
+      if (!isAuthenticated || !contactId) return;
+
+      const unread = messagesList.filter(
+        (m) => !m.isRead && m.senderId && String(m.senderId).toLowerCase() === String(contactId).toLowerCase()
+      );
+
+      unread.forEach((msg) => {
+        if (msg.messageId || msg.id) {
+          messageHubService.markAsRead(msg.messageId || msg.id, contactId);
+        }
+      });
+    },
+    [isAuthenticated]
+  );
+
+  // Real-time message listener
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -48,40 +110,67 @@ const Messages: React.FC = () => {
     const unsubscribeMessage = messageHubService.onMessageReceived((message: MessageEvent) => {
       if (!isMounted) return;
       const incomingSenderId = message.sender?.senderId;
+      const isFromMe = incomingSenderId === user?.id;
 
-      // If we are currently chatting with this sender, or it's our own message
-      const isRelevant =
-        !selectedContact ||
-        incomingSenderId === selectedContact.id ||
-        incomingSenderId === user?.id;
+      // Check if this message belongs to the current conversation
+      const isCurrentConversation =
+        selectedContact &&
+        (String(incomingSenderId).toLowerCase() === String(selectedContact.id).toLowerCase() || isFromMe);
 
-      if (isRelevant) {
+      if (isCurrentConversation) {
         const newMessage: Message = {
           id: message.id,
           messageId: message.id,
           message: message.content,
           sentAt: message.sentAt,
-          isRead: false,
+          isRead: isFromMe ? Boolean(message.isRead) : true,
           senderId: incomingSenderId,
           sender: message.sender,
         };
 
         setMessages((prev) => {
-          // Avoid duplicate messages by messageId / id
-          if (prev.some((m) => (m.messageId && m.messageId === newMessage.messageId) || (m.id && m.id === newMessage.id))) {
+          if (
+            prev.some(
+              (m) =>
+                (m.messageId && m.messageId === newMessage.messageId) ||
+                (m.id && m.id === newMessage.id)
+            )
+          ) {
             return prev;
           }
           return [...prev, newMessage];
         });
+
+        // Automatically mark incoming messages as read on backend via SignalR hub
+        if (!isFromMe && incomingSenderId) {
+          messageHubService.markAsRead(message.id, incomingSenderId);
+        }
+      } else if (!isFromMe && incomingSenderId) {
+        // Message is from another contact while chatting with someone else - update unread counter badge
+        setUnreadContacts((prev) => ({
+          ...prev,
+          [incomingSenderId]: (prev[incomingSenderId] || 0) + 1,
+        }));
+      }
+    });
+
+    // Listen for read receipts when the other user reads our sent messages
+    const unsubscribeRead = messageHubService.onReadStatusChanged((isRead: boolean) => {
+      if (isRead) {
+        setMessages((prev) =>
+          prev.map((m) => (m.senderId === user?.id ? { ...m, isRead: true } : m))
+        );
       }
     });
 
     return () => {
       isMounted = false;
       unsubscribeMessage();
+      unsubscribeRead();
     };
-  }, [isAuthenticated, selectedContact, user?.id]);
+  }, [isAuthenticated, selectedContact, user?.id, contacts]);
 
+  // Load conversation history when switching contacts
   useEffect(() => {
     if (!selectedContact) {
       setIsOnline(false);
@@ -96,7 +185,6 @@ const Messages: React.FC = () => {
 
     let isSubscribed = true;
 
-    // Fetch conversation history
     const loadHistory = async () => {
       try {
         const response = await messageService.getMessages(selectedContact.id);
@@ -112,13 +200,13 @@ const Messages: React.FC = () => {
         }
 
         const normalized: Message[] = rawItems.map((item: any) => ({
-          id: item.id ?? item.messageId ?? Date.now(),
-          messageId: item.messageId ?? item.id,
-          message: item.message ?? item.content ?? '',
-          sentAt: item.sentAt ?? new Date().toISOString(),
-          isRead: item.isRead ?? false,
-          senderId: item.senderId,
-          sender: item.sender,
+          id: item.id ?? item.Id ?? item.messageId ?? item.MessageId ?? Date.now(),
+          messageId: item.messageId ?? item.MessageId ?? item.id ?? item.Id,
+          message: item.message ?? item.Message ?? item.content ?? item.Content ?? '',
+          sentAt: item.sentAt ?? item.SentAt ?? new Date().toISOString(),
+          isRead: Boolean(item.isRead ?? item.IsRead ?? false),
+          senderId: String(item.senderId ?? item.SenderId ?? item.sender?.senderId ?? item.Sender?.SenderId ?? ''),
+          sender: item.sender ?? item.Sender,
         }));
 
         // Sort ascending by sentAt (oldest first, newest at the bottom)
@@ -126,7 +214,17 @@ const Messages: React.FC = () => {
           (a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()
         );
 
-        setMessages(normalized);
+        // Mark all unread incoming messages as read immediately upon opening
+        markConversationAsRead(selectedContact.id, normalized);
+
+        // Update local state marking incoming as read
+        const markedNormalized = normalized.map((m) =>
+          String(m.senderId).toLowerCase() === String(selectedContact.id).toLowerCase()
+            ? { ...m, isRead: true }
+            : m
+        );
+
+        setMessages(markedNormalized);
       } catch (err) {
         console.error('Failed to load message history:', err);
       } finally {
@@ -165,7 +263,7 @@ const Messages: React.FC = () => {
       unsubscribeOnline();
       clearInterval(interval);
     };
-  }, [selectedContact]);
+  }, [selectedContact, markConversationAsRead]);
 
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
@@ -213,7 +311,10 @@ const Messages: React.FC = () => {
   }
 
   return (
-    <div className="overflow-hidden bg-gray-50 dark:bg-gray-950 transition-colors duration-200" style={{ height: 'calc(100vh - 4rem)' }}>
+    <div
+      className="overflow-hidden bg-gray-50 dark:bg-gray-950 transition-colors duration-200"
+      style={{ height: 'calc(100vh - 4rem)' }}
+    >
       <div className="overflow-hidden max-w-7xl w-full h-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden h-full flex flex-col md:flex-row">
           {/* Contacts Sidebar */}
@@ -247,6 +348,7 @@ const Messages: React.FC = () => {
                 filteredContacts.map((contact) => {
                   const hasImg = !!contact.userProfilePictureUrl && !imgErrors[contact.id];
                   const firstChar = (contact.name || '?').charAt(0).toUpperCase();
+                  const unread = unreadContacts[contact.id] || 0;
 
                   return (
                     <button
@@ -254,7 +356,7 @@ const Messages: React.FC = () => {
                       onClick={() => handleContactSelect(contact)}
                       className={`w-full p-4 flex items-center hover:bg-gray-50 dark:hover:bg-gray-800/40 transition text-left ${
                         selectedContact?.id === contact.id
-                          ? 'bg-indigo-50/60 dark:bg-indigo-950/40'
+                          ? 'bg-indigo-50/60 dark:bg-indigo-950/40 border-l-4 border-indigo-600'
                           : ''
                       }`}
                     >
@@ -268,16 +370,21 @@ const Messages: React.FC = () => {
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
-                            <span className="text-white text-sm font-bold">
-                              {firstChar}
-                            </span>
+                            <span className="text-white text-sm font-bold">{firstChar}</span>
                           </div>
+                        )}
+                        {unread > 0 && (
+                          <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-extrabold h-4.5 min-w-[18px] px-1 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-gray-900 animate-pulse">
+                            {unread}
+                          </span>
                         )}
                       </div>
                       <div className="ml-3 flex-1 min-w-0">
-                        <h3 className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                          {contact.name || 'Unknown User'}
-                        </h3>
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                            {contact.name || 'Unknown User'}
+                          </h3>
+                        </div>
                         <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                           {user?.role === 'student' ? 'Instructor' : 'Student'}
                         </p>
@@ -342,30 +449,44 @@ const Messages: React.FC = () => {
                     </div>
                   ) : (
                     messages.map((message) => {
-                      const isOwn = message.senderId === user?.id;
+                      const isOwn =
+                        !!message.senderId &&
+                        !!user?.id &&
+                        String(message.senderId).toLowerCase() === String(user.id).toLowerCase();
                       return (
                         <div
-                          key={message.id}
+                          key={message.id || message.messageId || `msg_${Math.random()}`}
                           className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
                             className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-2.5 rounded-2xl text-xs ${
                               isOwn
-                                ? 'bg-indigo-600 text-white rounded-tr-none'
+                                ? 'bg-indigo-600 text-white rounded-tr-none shadow-xs'
                                 : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700/60 rounded-tl-none shadow-xs'
                             }`}
                           >
                             <p className="break-words leading-relaxed">{message.message}</p>
-                            <p
-                              className={`text-[10px] mt-1 text-right ${
+                            <div
+                              className={`text-[10px] mt-1.5 flex items-center justify-end gap-1 ${
                                 isOwn ? 'text-indigo-200' : 'text-gray-400 dark:text-gray-500'
                               }`}
                             >
-                              {new Date(message.sentAt).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                            </p>
+                              <span>
+                                {new Date(message.sentAt).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                              {isOwn && (
+                                <span>
+                                  {message.isRead ? (
+                                    <CheckCheck className="h-3.5 w-3.5 text-emerald-300 inline" />
+                                  ) : (
+                                    <Check className="h-3.5 w-3.5 text-indigo-300 inline" />
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -408,7 +529,9 @@ const Messages: React.FC = () => {
                   <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1">
                     Select a conversation
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Choose a contact from the list to start messaging</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Choose a contact from the list to start messaging
+                  </p>
                 </div>
               </div>
             )}
