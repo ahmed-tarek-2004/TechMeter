@@ -18,9 +18,11 @@ import {
   ShoppingBag,
   LayoutDashboard,
   Camera,
+  KeyRound,
 } from 'lucide-react';
 import StudentEditForm from './StudentEditForm';
 import ProviderEditForm from './ProviderEditForm';
+import ChangePasswordModal from './ChangePasswordModal';
 import StudentOverviewTab from './StudentOverviewTab';
 import ProviderOverviewTab from './ProviderOverviewTab';
 import ProfileCoursesTab from './ProfileCoursesTab';
@@ -33,6 +35,7 @@ const Profile: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   // Student Profile Query
   const { data: studentProfileData } = useQuery({
@@ -231,6 +234,14 @@ const Profile: React.FC = () => {
                     </button>
                   )}
 
+                  <button
+                    onClick={() => setIsChangePasswordOpen(true)}
+                    className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 text-gray-700 dark:text-gray-200 text-xs font-bold shadow-xs transition"
+                  >
+                    <KeyRound className="h-3.5 w-3.5 text-indigo-500" />
+                    <span>Change Password</span>
+                  </button>
+
                   {user.role === 'student' && (
                     <Link
                       to="/my-learning"
@@ -372,6 +383,7 @@ const Profile: React.FC = () => {
                   coursesCount={courses.length}
                   ordersCount={totalOrdersCount}
                   onNavigateTab={(tab) => setActiveTab(tab)}
+                  onChangePassword={() => setIsChangePasswordOpen(true)}
                 />
               )}
               {user.role === 'provider' && (
@@ -381,6 +393,7 @@ const Profile: React.FC = () => {
                   coursesCount={courses.length}
                   ordersCount={totalOrdersCount}
                   onNavigateTab={(tab) => setActiveTab(tab)}
+                  onChangePassword={() => setIsChangePasswordOpen(true)}
                 />
               )}
               {user.role === 'admin' && (
@@ -440,6 +453,14 @@ const Profile: React.FC = () => {
           profile={providerProfile || null}
           onClose={() => setIsEditOpen(false)}
           onSuccess={() => setIsEditOpen(false)}
+        />
+      )}
+
+      {/* Change Password Modal */}
+      {isChangePasswordOpen && (
+        <ChangePasswordModal
+          onClose={() => setIsChangePasswordOpen(false)}
+          onSuccess={() => setIsChangePasswordOpen(false)}
         />
       )}
     </div>

@@ -16,6 +16,8 @@ import {
   AlertCircle,
   Sparkles,
   ArrowRight,
+  Lock,
+  KeyRound,
 } from 'lucide-react';
 import { ProviderProfile, User } from '../../types';
 
@@ -25,6 +27,7 @@ interface ProviderOverviewTabProps {
   coursesCount: number;
   ordersCount: number;
   onNavigateTab?: (tab: 'overview' | 'courses' | 'orders') => void;
+  onChangePassword?: () => void;
 }
 
 const ProviderOverviewTab: React.FC<ProviderOverviewTabProps> = ({
@@ -33,6 +36,7 @@ const ProviderOverviewTab: React.FC<ProviderOverviewTabProps> = ({
   coursesCount,
   ordersCount,
   onNavigateTab,
+  onChangePassword,
 }) => {
   const experienceYears = profile?.experienceYears ?? 0;
   const experienceText = `${experienceYears} ${experienceYears === 1 ? 'Year' : 'Years'}`;
@@ -296,6 +300,35 @@ const ProviderOverviewTab: React.FC<ProviderOverviewTabProps> = ({
                   {profile?.bankAccount || 'No bank account added yet'}
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Account Security & Password Card */}
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-7 border border-gray-100 dark:border-gray-800 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                    Account Security & Password
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    Manage your account password and security credentials
+                  </p>
+                </div>
+              </div>
+
+              {onChangePassword && (
+                <button
+                  onClick={onChangePassword}
+                  className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition self-start sm:self-auto"
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Change Password</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
