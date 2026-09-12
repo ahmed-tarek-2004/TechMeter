@@ -28,7 +28,7 @@ namespace TechMeter.Application.Features.Course.Query.GetStudentCourses
                     Title = b.Course.Title,
                     LessonCount = b.Course.LessonCount,
                     LastAccess = b.LastAccess,
-                    Progress = b.Progrss,
+                    Progress = b.Course.LessonCount > 0 ? (b.Progrss / b.Course.LessonCount) * 100 : 0,
                     SectionCount = b.Course.SectionCount,
                 }).ToListAsync();
 
