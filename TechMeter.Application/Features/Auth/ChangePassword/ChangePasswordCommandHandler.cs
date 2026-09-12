@@ -35,6 +35,7 @@ namespace TechMeter.Application.Features.Auth.ChangePassword
                 return responseHandler.BadRequest<string>(Errors);
             }
             await tokenService.InValidateOldTokenAsync(request.UserId);
+            await userManager.UpdateSecurityStampAsync(user);
 
             return responseHandler.Success<string>(null, "Password changed successfully. Please login again.");
 
