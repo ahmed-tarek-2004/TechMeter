@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.DTO.Lesson;
+using TechMeter.Application.Interfaces.Services.Notification;
 using TechMeter.Application.Interfaces.Services.NotificationSender;
 using TechMeter.Application.Interfaces.Transaction;
 using TechMeter.Domain.Models;
@@ -16,7 +18,8 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
 {
     public class WatchLessonCommandHandler(IApplicationDbContext context, ITransactionManager transactionManager
-        ,ResponseHandler responseHandler, INotificationSenderService notificationService) : IRequestHandler<WatchLessonCommand, Response<string>>
+        ,ResponseHandler responseHandler, INotificationService notificationService, ILogger<WatchLessonCommandHandler> logger) 
+        : IRequestHandler<WatchLessonCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(WatchLessonCommand request, CancellationToken cancellationToken)
         {
@@ -25,7 +28,8 @@ namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
                .Select(l => new
                {
                    l.section.CourseId,
-                   l.section.Course.LessonCount
+                   l.section.Course.LessonCount,
+                   l.section.Course.Title
                })
                .FirstOrDefaultAsync();
 
@@ -58,6 +62,8 @@ namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
                     .ExecuteUpdateAsync(x =>
                         x.SetProperty(p => p.Progrss, p => p.Progrss + 1));
 
+                logger.LogInformation("Updated progress for student {StudentId} watching lesson {LessonId} in course {CourseId}.", request.StudentId, request.LessonId, courseInfo.CourseId);
+
                 var updatedProgress = await context.CourseStudent
                     .Where(x =>
                         x.StudentId == request.StudentId &&
@@ -67,7 +73,7 @@ namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
 
                 if (updatedProgress >= courseInfo.LessonCount)
                 {
-                    await StoreAndSendNotification(request.StudentId, courseInfo.CourseId);
+                    await StoreAndSendNotification(request.StudentId, courseInfo.Title);
                 }
 
                 await context.SaveChangesAsync(cancellationToken);
@@ -83,22 +89,15 @@ namespace TechMeter.Application.Features.Lesson.Command.ChangeLessonState
                 return responseHandler.InternalServerError<string>(ex.Message);
             }
         }
-        private async Task StoreAndSendNotification(string studentId, string courseId)
+        private async Task StoreAndSendNotification(string studentId, string courseTitle)
         {
-            var notification = new Domain.Models.Notification
-            {
-                Id = Guid.NewGuid().ToString(),
-                Title = "Finished Course",
-                Message = $"Congratulations! You have completed the course {courseId}.",
-                CreatedAt = DateTime.UtcNow
-            };
-            await notificationService.SendNotificationAsync(
+            await notificationService.SendUserNotifications(
                         studentId,
                         "Finished Course",
-                        $"Congratulations! You have completed course {courseId}.",
-                        DateTime.UtcNow
+                        $"Congratulations! You have completed {courseTitle} course.",
+                        Domain.Enums.NotificationType.FinishCourse
                     );
-            await context.Notification.AddAsync(notification);
+            //await context.Notification.AddAsync(notification);
             //await _context.SaveChangesAsync();
         }   
     }

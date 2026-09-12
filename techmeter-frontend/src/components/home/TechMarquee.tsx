@@ -34,10 +34,10 @@ const technologies: TechItem[] = [
 
 export const TechMarquee: React.FC = () => {
   return (
-    <div className="relative py-8 bg-slate-50/70 dark:bg-gray-900/40 border-y border-gray-100 dark:border-gray-800/80 overflow-hidden">
+    <div className="relative py-8 bg-slate-50/80 dark:bg-gray-900/40 border-y border-gray-200/80 dark:border-gray-800/80 overflow-hidden transition-colors duration-200">
       {/* Left/Right Gradient Edge Masks for Smooth Infinite Look */}
-      <div className="absolute top-0 bottom-0 left-0 w-20 sm:w-32 bg-gradient-to-r from-slate-50 dark:from-gray-900 to-transparent z-10 pointer-events-none" />
-      <div className="absolute top-0 bottom-0 right-0 w-20 sm:w-32 bg-gradient-to-l from-slate-50 dark:from-gray-900 to-transparent z-10 pointer-events-none" />
+      <div className="absolute top-0 bottom-0 left-0 w-20 sm:w-32 bg-gradient-to-r from-slate-50 dark:from-gray-950 to-transparent z-10 pointer-events-none" />
+      <div className="absolute top-0 bottom-0 right-0 w-20 sm:w-32 bg-gradient-to-l from-slate-50 dark:from-gray-950 to-transparent z-10 pointer-events-none" />
 
       {/* Infinite Scrolling Track */}
       <div className="animate-marquee flex items-center space-x-4">
@@ -46,7 +46,7 @@ export const TechMarquee: React.FC = () => {
           return (
             <div
               key={idx}
-              className="flex items-center space-x-2.5 px-4 py-2 rounded-2xl bg-white dark:bg-gray-800/80 border border-gray-100 dark:border-gray-700/60 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-md transition duration-200 cursor-default flex-shrink-0"
+              className="flex items-center space-x-2.5 px-4 py-2 rounded-2xl bg-white dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/60 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-md transition duration-200 cursor-default flex-shrink-0"
             >
               <div className={`p-1.5 rounded-xl bg-gray-50 dark:bg-gray-900/80 ${tech.color}`}>
                 <Icon className="w-4 h-4" />
@@ -55,7 +55,7 @@ export const TechMarquee: React.FC = () => {
                 <p className="text-xs font-bold text-gray-900 dark:text-white tracking-tight">
                   {tech.name}
                 </p>
-                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
                   {tech.category}
                 </p>
               </div>

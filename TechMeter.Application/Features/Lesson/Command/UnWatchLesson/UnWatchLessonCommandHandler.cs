@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,8 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.UnWatchLesson
 {
-    public class UnWatchLessonCommandHandler(IApplicationDbContext context,ITransactionManager transactionManager, ResponseHandler responseHandler) : IRequestHandler<UnWatchLessonCommand, Response<string>>
+    public class UnWatchLessonCommandHandler(IApplicationDbContext context,ITransactionManager transactionManager,
+        ResponseHandler responseHandler,ILogger<UnWatchLessonCommandHandler> logger) : IRequestHandler<UnWatchLessonCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(UnWatchLessonCommand request, CancellationToken cancellationToken)
         {
@@ -43,7 +45,7 @@ namespace TechMeter.Application.Features.Lesson.Command.UnWatchLesson
                 var updatedProgress = await context.CourseStudent
                                       .Where(x => x.StudentId == request.StudentId && x.CourseId == courseId)
                                       .ExecuteUpdateAsync(b => b.SetProperty(x => x.Progrss, x => x.Progrss > 0 ? x.Progrss - 1 : 0));
-
+                logger.LogInformation("Updated progress for student {StudentId} unwatch in course {CourseId}. Rows affected: {RowsAffected}", request.StudentId, courseId, updatedProgress);
 
                 await transaction.CommitAsync();
                 return responseHandler.Success("Updated", "Lesson status updated successfully");

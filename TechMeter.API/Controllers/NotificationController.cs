@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using TechMeter.Application.DTO;
 using TechMeter.Application.DTO.Notification;
+using TechMeter.Application.Features.Notification.Command.ReadAllNotification;
 using TechMeter.Application.Features.Notification.Command.ReadNotification;
 using TechMeter.Application.Features.Notification.Command.StoreNotification;
 using TechMeter.Application.Features.Notification.Query.GetUserNotifications;
@@ -17,40 +18,42 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class NotificationController(IMediator mediator) : ControllerBase
     {
 
         [HttpGet("all")]
-        [Authorize(Roles = "student")]
-        public async Task<ActionResult<Response<List<NotificationResponseDto>>>> GetUserNotifications()
+        public async Task<ActionResult<Response<PaginatedList<NotificationResponseDto>>>> GetUserNotifications([FromQuery] PaginatedRequest request)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
 
-            var response = await mediator.Send(new GetUserNotificationQuery(userId));
+            var response = await mediator.Send(new GetUserNotificationQuery(GetUserId(), request.PageNumber, request.PageSize));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpGet("unread")]
-        [Authorize(Roles = "student")]
-        public async Task<ActionResult<Response<List<NotificationResponseDto>>>> GetUserUnReadNotifications()
+        public async Task<ActionResult<Response<PaginatedList<NotificationResponseDto>>>> GetUserUnReadNotifications([FromQuery] PaginatedRequest request)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
 
-            var response = await mediator.Send(new GetUserUnReadNotificationQuery(userId));
+            var response = await mediator.Send(new GetUserUnReadNotificationQuery(GetUserId(), request.PageNumber, request.PageSize));
             return StatusCode((int)response.StatusCode, response);
         }
 
         [EnableRateLimiting("TogglePolicy")]
         [HttpPost("{Id}/read")]
-        [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<bool>>> ReadNotification([FromRoute] string Id)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-            var response = await mediator.Send(new ReadNotificationCommand(userId, Id));
+            var response = await mediator.Send(new ReadNotificationCommand(GetUserId(), Id));
+            return StatusCode((int)response.StatusCode, response);
+        }
+
+        [EnableRateLimiting("TogglePolicy")]
+        [HttpPost("read/all")]
+        public async Task<ActionResult<Response<bool>>> ReadAllNotifications()
+        {
+            var response = await mediator.Send(new ReadAllNotificationsCommand(GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("store/token")]
-        [Authorize]
         public async Task<IActionResult> StoreTokenAsync([FromBody] FcmUserTokenRequest request)
         {
             var result = await mediator.Send(new StoreUserTokensCommand(GetUserId(), request.token));
@@ -100,7 +103,7 @@ namespace TechMeter.API.Controllers
 
         private string GetUserId()
         {
-            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value??"";
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
         }
     }
 }

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { cartService } from '../../services/cartService';
 import { profileService } from '../../services/profileService';
 import {
@@ -31,6 +32,7 @@ const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { wishlistCount } = useWishlist();
+  const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -224,10 +226,16 @@ const Header: React.FC = () => {
 
                 <Link
                   to="/notifications"
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
+                  className="relative text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
                   title="Notifications"
+                  aria-label="Notifications"
                 >
                   <Bell className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0.5 right-0.5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900 animate-pulse">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
 
                 {/* Profile Dropdown */}
@@ -519,23 +527,35 @@ const Header: React.FC = () => {
 
               <Link
                 to="/messages"
-                className="block py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
+                className="flex items-center justify-between py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Messages
+                <span className="flex items-center">
+                  <MessageSquare className="h-4 w-4 mr-2 text-gray-400" />
+                  Messages
+                </span>
               </Link>
               <Link
                 to="/notifications"
-                className="block py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
+                className="flex items-center justify-between py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Notifications
+                <span className="flex items-center">
+                  <Bell className="h-4 w-4 mr-2 text-indigo-500" />
+                  Notifications
+                </span>
+                {unreadCount > 0 && (
+                  <span className="bg-indigo-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </Link>
               <Link
                 to="/profile"
-                className="block py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
+                className="flex items-center py-2 text-xs font-semibold text-gray-700 dark:text-gray-300"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <User className="h-4 w-4 mr-2 text-gray-400" />
                 Profile
               </Link>
               <button

@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Notification.Query.GetUserUnReadNotifications
 {
-    public sealed record GetUserUnReadNotificationQuery(string userId) : IRequest<Response<List<NotificationResponseDto>>>;
+    public sealed record GetUserUnReadNotificationQuery(string userId,int pageNumber,int pageSize) : IRequest<Response<PaginatedList<NotificationResponseDto>>>;
 }

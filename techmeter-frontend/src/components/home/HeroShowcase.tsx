@@ -73,27 +73,27 @@ export const HeroShowcase: React.FC = () => {
   return (
     <div className="relative w-full max-w-xl mx-auto lg:max-w-none">
       {/* Main Glassmorphic Container */}
-      <div className="relative bg-slate-900/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-slate-700/80 dark:border-gray-800 shadow-2xl overflow-hidden transition-colors duration-200">
+      <div className="relative bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-xl dark:shadow-2xl overflow-hidden transition-colors duration-200">
         {/* Terminal Header */}
-        <div className="px-4 py-3 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+        <div className="px-4 py-3 bg-gray-50/90 dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
-            <span className="ml-2 text-xs font-mono text-slate-400 flex items-center gap-1.5">
-              <Terminal className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="ml-2 text-xs font-mono text-gray-500 dark:text-slate-400 flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>techmeter-sandbox</span>
             </span>
           </div>
 
           {/* Mode Tabs */}
-          <div className="flex items-center bg-slate-900 p-0.5 rounded-lg border border-slate-800">
+          <div className="flex items-center bg-gray-200/70 dark:bg-slate-900 p-0.5 rounded-lg border border-gray-200 dark:border-slate-800">
             <button
               onClick={() => setActiveTab('code')}
               className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 activeTab === 'code'
                   ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               <Code className="w-3.5 h-3.5" />
@@ -104,7 +104,7 @@ export const HeroShowcase: React.FC = () => {
               className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 activeTab === 'curriculum'
                   ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -115,7 +115,7 @@ export const HeroShowcase: React.FC = () => {
               className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 activeTab === 'certificate'
                   ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               <Award className="w-3.5 h-3.5" />
@@ -128,7 +128,7 @@ export const HeroShowcase: React.FC = () => {
         {activeTab === 'code' && (
           <div className="p-4 sm:p-5 font-mono text-xs">
             {/* Language Selector */}
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-slate-800/80">
               <div className="flex space-x-1.5">
                 {(['react', 'python', 'cloud'] as const).map((lang) => (
                   <button
@@ -136,8 +136,8 @@ export const HeroShowcase: React.FC = () => {
                     onClick={() => setActiveLang(lang)}
                     className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors ${
                       activeLang === lang
-                        ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                        : 'text-slate-400 hover:text-slate-200 bg-slate-950/60'
+                        ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/40'
+                        : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 bg-gray-100/80 dark:bg-slate-950/60'
                     }`}
                   >
                     {lang === 'react' ? 'app.tsx' : lang === 'python' ? 'model.py' : 'deploy.yaml'}
@@ -160,7 +160,7 @@ export const HeroShowcase: React.FC = () => {
             </div>
 
             {/* Code Body with Line Numbers */}
-            <div className="flex text-slate-300 leading-relaxed overflow-x-auto min-h-[160px] bg-slate-950/70 p-3 rounded-xl border border-slate-800/60">
+            <div className="flex text-slate-200 leading-relaxed overflow-x-auto min-h-[160px] bg-slate-950 p-3 rounded-xl border border-slate-800 shadow-inner">
               <div className="select-none text-slate-600 pr-3 text-right font-mono text-[11px] border-r border-slate-800 mr-3">
                 {codeSnippets[activeLang].split('\n').map((_, i) => (
                   <div key={i}>{i + 1}</div>
@@ -173,12 +173,12 @@ export const HeroShowcase: React.FC = () => {
 
             {/* Run Result Output Toast / Console Log */}
             {runSuccess && (
-              <div className="mt-3 p-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-emerald-400 flex items-center justify-between text-xs transition-all duration-200">
+              <div className="mt-3 p-2.5 rounded-xl bg-emerald-50 dark:bg-slate-950 border border-emerald-300 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-between text-xs transition-all duration-200 shadow-xs">
                 <span className="flex items-center gap-2 font-mono">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>Build complete: 0 errors, 14 passing tests (100% coverage)</span>
                 </span>
-                <span className="text-[10px] font-mono text-slate-400">38ms</span>
+                <span className="text-[10px] font-mono text-emerald-600 dark:text-slate-400">38ms</span>
               </div>
             )}
           </div>
@@ -187,11 +187,11 @@ export const HeroShowcase: React.FC = () => {
         {/* Tab 2: Interactive Curriculum Playlist */}
         {activeTab === 'curriculum' && (
           <div className="p-4 sm:p-5 space-y-2 min-h-[230px]">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-semibold mb-2">
-              <span className="flex items-center gap-1.5 text-indigo-400">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 font-semibold mb-2">
+              <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
                 <Layers className="w-3.5 h-3.5" /> Fullstack Architecture Track
               </span>
-              <span className="font-mono text-slate-300">4 of 5 Completed</span>
+              <span className="font-mono text-gray-700 dark:text-slate-300">4 of 5 Completed</span>
             </div>
 
             {[
@@ -205,26 +205,26 @@ export const HeroShowcase: React.FC = () => {
                 key={idx}
                 className={`flex items-center justify-between p-2.5 rounded-xl border transition-colors ${
                   item.current
-                    ? 'bg-indigo-950/40 border-indigo-500/50 text-white'
+                    ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-500/50 text-indigo-950 dark:text-white'
                     : item.done
-                    ? 'bg-slate-950/40 border-slate-800/80 text-slate-300'
-                    : 'bg-slate-950/20 border-slate-800/40 text-slate-500'
+                    ? 'bg-gray-50/70 dark:bg-slate-950/40 border-gray-200/80 dark:border-slate-800/80 text-gray-800 dark:text-slate-300'
+                    : 'bg-gray-50/30 dark:bg-slate-950/20 border-gray-100 dark:border-slate-800/40 text-gray-400 dark:text-slate-500'
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   {item.done ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
                   ) : item.current ? (
-                    <div className="w-4 h-4 rounded-full border-2 border-indigo-400 flex items-center justify-center flex-shrink-0">
-                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    <div className="w-4 h-4 rounded-full border-2 border-indigo-600 dark:border-indigo-400 flex items-center justify-center flex-shrink-0">
+                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
                     </div>
                   ) : (
-                    <div className="w-4 h-4 rounded-full border border-slate-700 flex-shrink-0" />
+                    <div className="w-4 h-4 rounded-full border border-gray-300 dark:border-slate-700 flex-shrink-0" />
                   )}
                   <span className="text-xs font-medium truncate">{item.title}</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                  <span className="text-[11px] font-mono text-slate-400">{item.time}</span>
+                  <span className="text-[11px] font-mono text-gray-400 dark:text-slate-400">{item.time}</span>
                   {item.current && (
                     <span className="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9px] font-bold uppercase tracking-wider">
                       In Progress
@@ -251,27 +251,27 @@ export const HeroShowcase: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="text-sm font-bold text-white">Verified TechMeter Master Credential</h4>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm">
+              <h4 className="text-sm font-bold text-gray-900 dark:text-white">Verified TechMeter Master Credential</h4>
+              <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 max-w-sm">
                 Cryptographically signed and shareable to LinkedIn, GitHub, and resumes.
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
-              <span className="text-indigo-400 font-semibold">ID:</span>
+            <div className="flex items-center gap-2 text-[11px] font-mono text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-950 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-800">
+              <span className="text-indigo-600 dark:text-indigo-400 font-semibold">ID:</span>
               <span>TM-2026-SHA256-8F92D</span>
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
             </div>
           </div>
         )}
 
         {/* Bottom Status Bar */}
-        <div className="px-4 py-2.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+        <div className="px-4 py-2.5 bg-gray-50/90 dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800 flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 font-mono">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-            <span className="text-[11px] text-slate-300">Ready • Node v22.12</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 inline-block" />
+            <span className="text-[11px] text-gray-700 dark:text-slate-300">Ready • Node v22.12</span>
           </div>
-          <div className="flex items-center gap-3 text-[11px] text-slate-500">
+          <div className="flex items-center gap-3 text-[11px] text-gray-400 dark:text-slate-500">
             <span className="hidden sm:inline flex items-center gap-1">
               <GitBranch className="w-3 h-3" /> main
             </span>

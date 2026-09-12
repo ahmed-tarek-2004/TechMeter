@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useNotifications } from '../../context/NotificationContext';
 import {
   LayoutDashboard,
   Layers,
@@ -25,6 +26,7 @@ import {
 const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { unreadCount } = useNotifications();
   const location = useLocation();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -227,10 +229,15 @@ const AdminLayout: React.FC = () => {
             {/* Notifications Shortcut */}
             <Link
               to="/notifications"
-              className="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="relative p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
               title="Notifications"
             >
               <Bell className="h-4.5 w-4.5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 bg-indigo-600 text-white text-[9px] font-extrabold rounded-full h-3.5 min-w-[14px] px-0.5 flex items-center justify-center ring-2 ring-white dark:ring-gray-900 animate-pulse">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
             </Link>
 
             {/* Theme Toggle Button */}
