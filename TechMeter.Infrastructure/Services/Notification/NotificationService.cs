@@ -50,7 +50,7 @@ namespace TechMeter.Infrastructure.Services.Notification
 
             try
             {
-                var storeNotification = await StoreUserNotidication(userId, Title, message, type);
+                var storeNotification = await StoreUserNotification(userId, Title, message, type);
                 if (!storeNotification)
                 {
                     return _responseHandler.NotFound<string>("user is not found");
@@ -97,7 +97,7 @@ namespace TechMeter.Infrastructure.Services.Notification
             }
             return _responseHandler.Success(true, "Token is Already Stored");
         }
-        private async Task<bool> StoreUserNotidication(string userId, string Title, string message, NotificationType type)
+        private async Task<bool> StoreUserNotification(string userId, string Title, string message, NotificationType type)
         {
             var userExists = await _context.Users.AnyAsync(b => b.Id == userId);
             if (!userExists)
@@ -108,10 +108,12 @@ namespace TechMeter.Infrastructure.Services.Notification
             {
                 var notification = new Domain.Models.Notification
                 {
+                    Id = Guid.NewGuid().ToString(),
                     IsRead = false,
                     Message = message,
                     notificationType = type,
                     ReceiptId = userId,
+                    CreatedAt = DateTime.UtcNow,
                     Title = Title,
                 };
                 await _context.Notification.AddAsync(notification);

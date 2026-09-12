@@ -9,10 +9,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #0f172a;
 }
 
 .dark body {
-  background-color: #0f172a;
+  background-color: #030712;
   color: #f8fafc;
 }
 

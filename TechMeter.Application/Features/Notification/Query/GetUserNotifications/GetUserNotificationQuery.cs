@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Notification.Query.GetUserNotifications
 {
-    public sealed record GetUserNotificationQuery(string userId) : IRequest<Response<List<NotificationResponseDto>>>;
+    public sealed record GetUserNotificationQuery(string userId,int pageNumber,int pageSize) : IRequest<Response<PaginatedList<NotificationResponseDto>>>;
 }

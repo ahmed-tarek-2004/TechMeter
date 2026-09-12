@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { NotificationProvider } from './context/NotificationContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -70,7 +71,8 @@ function App() {
         <ThemeProvider>
           <AuthProvider>
             <WishlistProvider>
-              <Router>
+              <NotificationProvider>
+                <Router>
             <Routes>
               {/* Fullscreen Video Player Route */}
               <Route
@@ -258,6 +260,7 @@ function App() {
               </Route>
             </Routes>
           </Router>
+              </NotificationProvider>
             </WishlistProvider>
         </AuthProvider>
         </ThemeProvider>

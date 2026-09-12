@@ -99,7 +99,7 @@ export const Home: React.FC = () => {
   return (
     <div className="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200 overflow-hidden">
       {/* 1. HERO SECTION WITH DYNAMIC MOVING AMBIENT BACKGROUND */}
-      <section className="relative pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden text-white min-h-[580px] flex items-center">
+      <section className="relative pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden text-gray-900 dark:text-white min-h-[580px] flex items-center">
         {/* Ambient Moving Interactive Canvas Background */}
         <AmbientBackground particleCount={55} interactive={true} />
 
@@ -107,34 +107,34 @@ export const Home: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Column: Headline, Value Prop & Search Prompt */}
             <div className="lg:col-span-6 text-center lg:text-left space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-500/20 border border-indigo-200 dark:border-indigo-400/30 text-indigo-600 dark:text-indigo-300 backdrop-blur-md shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
                 <span>Next-Gen Engineering & Tech Education</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1]">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-gray-900 dark:text-white leading-[1.1]">
                 Master In-Demand <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-sky-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-sky-500 dark:from-indigo-400 dark:via-purple-300 dark:to-sky-400">
                   Tech Skills.
                 </span>
               </h1>
 
               {/* Subtext */}
-              <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 dark:text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 Step into software engineering, AI, and cloud architecture with hands-on projects, live code sandboxes, and direct mentor guidance.
               </p>
 
               {/* Interactive Quick Search Prompt */}
               <form onSubmit={handleSearchSubmit} className="relative max-w-md mx-auto lg:mx-0">
                 <div className="relative flex items-center">
-                  <Search className="absolute left-4 w-5 h-5 text-slate-400" />
+                  <Search className="absolute left-4 w-5 h-5 text-gray-400 dark:text-slate-400" />
                   <input
                     type="text"
                     value={heroSearch}
                     onChange={(e) => setHeroSearch(e.target.value)}
                     placeholder="Search Python, React, DevOps, AI, C#..."
-                    className="w-full pl-12 pr-28 py-3.5 rounded-2xl bg-slate-800/80 backdrop-blur-md border border-slate-700/80 text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xl transition"
+                    className="w-full pl-12 pr-28 py-3.5 rounded-2xl bg-white/90 dark:bg-slate-800/80 backdrop-blur-md border border-gray-200 dark:border-slate-700/80 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-lg dark:shadow-xl transition"
                   />
                   <button
                     type="submit"
@@ -158,14 +158,14 @@ export const Home: React.FC = () => {
                 {isAuthenticated ? (
                   <Link
                     to={user?.role === 'provider' ? '/provider/dashboard' : '/my-learning'}
-                    className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-white border border-slate-700 text-xs sm:text-sm font-bold shadow-md transition"
+                    className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-800 dark:text-white border border-gray-200 dark:border-slate-700 text-xs sm:text-sm font-bold shadow-md transition"
                   >
                     <span>{user?.role === 'provider' ? 'Instructor Dashboard' : 'My Learning'}</span>
                   </Link>
                 ) : (
                   <Link
                     to="/register"
-                    className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-bold backdrop-blur-md transition"
+                    className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-white/10 hover:bg-gray-50 dark:hover:bg-white/20 text-indigo-600 dark:text-white border border-indigo-200 dark:border-white/20 text-xs sm:text-sm font-bold backdrop-blur-md shadow-xs transition"
                   >
                     <span>Get Started Free</span>
                   </Link>
@@ -193,7 +193,7 @@ export const Home: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className="bg-gray-50/70 dark:bg-gray-900/60 rounded-3xl p-6 border border-gray-100 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between"
+                  className="bg-gray-50/70 dark:bg-gray-900/60 rounded-3xl p-6 border border-gray-200/80 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -207,7 +207,7 @@ export const Home: React.FC = () => {
                     <p className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
                       {stat.value}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 font-medium">
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 font-medium">
                       {stat.subtext}
                     </p>
                   </div>
@@ -222,7 +222,7 @@ export const Home: React.FC = () => {
       <BentoFeatures />
 
       {/* 5. POPULAR CATEGORIES EXPLORER */}
-      <section className="py-20 bg-slate-50/50 dark:bg-gray-900/40 border-t border-gray-100 dark:border-gray-800/80 transition-colors duration-200">
+      <section className="py-20 bg-slate-50/50 dark:bg-gray-900/40 border-t border-gray-200/80 dark:border-gray-800/80 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
             <div>
@@ -233,7 +233,7 @@ export const Home: React.FC = () => {
               <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
                 Explore Top Engineering Fields
               </h2>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Choose a specialization and build an industry-ready portfolio.
               </p>
             </div>
@@ -266,7 +266,7 @@ export const Home: React.FC = () => {
                   <Link
                     key={cat.id}
                     to={`/courses?category=${cat.id}`}
-                    className="group relative bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-lg transition-all duration-200 flex flex-col justify-between"
+                    className="group relative bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200/80 dark:border-gray-800 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-lg transition-all duration-200 flex flex-col justify-between"
                   >
                     <div>
                       <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-200 shadow-xs">
@@ -307,7 +307,7 @@ export const Home: React.FC = () => {
               <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
                 Featured Marketplace Courses
               </h2>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Learn from verified engineers and industry practitioners with structured modules.
               </p>
             </div>
@@ -352,7 +352,7 @@ export const Home: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800">
+            <div className="text-center py-16 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-200/80 dark:border-gray-800">
               <BookOpen className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" />
               <h3 className="mt-4 text-base font-bold text-gray-900 dark:text-white">
                 No courses found in this category
@@ -362,7 +362,7 @@ export const Home: React.FC = () => {
               </p>
               <button
                 onClick={() => setSelectedCategoryTab('all')}
-                className="mt-5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold"
+                className="mt-5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-xs hover:bg-indigo-500 transition"
               >
                 Show All Courses
               </button>
@@ -382,20 +382,20 @@ export const Home: React.FC = () => {
       </section>
 
       {/* 7. CLEAN DYNAMIC CTA SECTION WITH AMBIENT BACKGROUND */}
-      <section className="relative py-24 text-white overflow-hidden flex items-center">
+      <section className="relative py-24 text-gray-900 dark:text-white overflow-hidden flex items-center">
         {/* Continuous Dynamic Moving Background */}
         <AmbientBackground particleCount={40} interactive={false} />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 z-10 w-full">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-white/10 text-indigo-300 border border-white/20 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-white/10 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-white/20 backdrop-blur-md shadow-xs">
             <span>TechMeter Continuous Learning</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white max-w-2xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-gray-900 dark:text-white max-w-2xl mx-auto">
             Ready to Level Up Your Tech Career?
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
             Get instant access to top-rated courses, direct instructor communication, and verified credentials.
           </p>
 
@@ -404,14 +404,14 @@ export const Home: React.FC = () => {
               <>
                 <Link
                   to="/courses"
-                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-white text-indigo-950 hover:bg-gray-100 text-xs sm:text-sm font-black shadow-2xl transition"
+                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-indigo-600 dark:bg-white text-white dark:text-indigo-950 hover:bg-indigo-700 dark:hover:bg-gray-100 text-xs sm:text-sm font-black shadow-lg shadow-indigo-600/20 dark:shadow-2xl transition"
                 >
                   <span>Explore All Courses</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to={user?.role === 'provider' ? '/provider/dashboard' : '/my-learning'}
-                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40 text-xs sm:text-sm font-bold backdrop-blur-md transition"
+                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-white dark:bg-indigo-600 hover:bg-gray-50 dark:hover:bg-indigo-500 text-gray-900 dark:text-white border border-gray-200 dark:border-indigo-400/40 text-xs sm:text-sm font-bold shadow-md transition"
                 >
                   <span>{user?.role === 'provider' ? 'Instructor Dashboard' : 'My Learning'}</span>
                 </Link>
@@ -420,14 +420,14 @@ export const Home: React.FC = () => {
               <>
                 <Link
                   to="/register"
-                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-white text-indigo-950 hover:bg-gray-100 text-xs sm:text-sm font-black shadow-2xl transition"
+                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-indigo-600 dark:bg-white text-white dark:text-indigo-950 hover:bg-indigo-700 dark:hover:bg-gray-100 text-xs sm:text-sm font-black shadow-lg shadow-indigo-600/20 dark:shadow-2xl transition"
                 >
                   <span>Get Started Free</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/courses"
-                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40 text-xs sm:text-sm font-bold backdrop-blur-md transition"
+                  className="inline-flex items-center space-x-2 px-8 py-4 rounded-2xl bg-white dark:bg-indigo-600 hover:bg-gray-50 dark:hover:bg-indigo-500 text-gray-900 dark:text-white border border-gray-200 dark:border-indigo-400/40 text-xs sm:text-sm font-bold shadow-md transition"
                 >
                   <span>Browse Courses</span>
                 </Link>

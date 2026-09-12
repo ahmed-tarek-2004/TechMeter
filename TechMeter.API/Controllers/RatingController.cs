@@ -60,7 +60,7 @@ namespace TechMeter.API.Controllers
 
 
         [HttpGet("all/{CourseId}")]
-        [Authorize(Roles = "provider")]
+        [Authorize]
         public async Task<ActionResult<Response<string>>> GetAllCourseRating([FromRoute] string CourseId)
         {
             var query = new GetProviderAllCourseRatingQuery(GetUserId(), CourseId);

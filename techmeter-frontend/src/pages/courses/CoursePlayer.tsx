@@ -7,6 +7,14 @@ import { lessonService } from '../../services/lessonService';
 import { commentService } from '../../services/commentService';
 import { ratingService } from '../../services/ratingService';
 import toast from 'react-hot-toast';
+import { Section, Lesson, Comment, Rating } from '../../types';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useWishlist } from '../../context/WishlistContext';
+import { useNotifications } from '../../context/NotificationContext';
+import { cartService } from '../../services/cartService';
+import { LessonViewer } from '../../components/lessons/LessonViewer';
+import { getLessonMediaType, getMediaMeta } from '../../utils/mediaUtils';
 import {
   PlayCircle,
   CheckCircle,
@@ -29,17 +37,24 @@ import {
   Video,
   Image as ImageIcon,
   Sparkles,
+  ShoppingCart,
+  Bell,
+  Heart,
+  Sun,
+  Moon,
+  User,
+  LogOut,
+  Home,
 } from 'lucide-react';
-import { Section, Lesson, Comment, Rating } from '../../types';
-import { useAuth } from '../../context/AuthContext';
-import { LessonViewer } from '../../components/lessons/LessonViewer';
-import { getLessonMediaType, getMediaMeta } from '../../utils/mediaUtils';
 
 const CoursePlayer: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId?: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
+  const { wishlistCount } = useWishlist();
+  const { unreadCount } = useNotifications();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'comments' | 'reviews'>('overview');
   const [commentText, setCommentText] = useState('');
@@ -48,8 +63,20 @@ const CoursePlayer: React.FC = () => {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
   const [sidebarSearch, setSidebarSearch] = useState('');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [autoplayNext, setAutoplayNext] = useState<boolean>(true);
+
+  // Cart Query
+  const isStudent = isAuthenticated && user?.role === 'student';
+  const { data: cartData } = useQuery({
+    queryKey: ['cart'],
+    queryFn: () => cartService.getCart(),
+    enabled: isStudent,
+    staleTime: 1000 * 60 * 2,
+    retry: false,
+  });
+  const cartCount = cartData?.data?.items?.length ?? 0;
 
   // Rating modal/state
   const [userRating, setUserRating] = useState<number>(5);
@@ -311,13 +338,144 @@ const CoursePlayer: React.FC = () => {
             <Share2 className="h-4 w-4" />
           </button>
 
+          {/* Night / Light Mode Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle Theme"
+          >
+            {isDark ? (
+              <Sun className="h-4.5 w-4.5 text-amber-400" />
+            ) : (
+              <Moon className="h-4.5 w-4.5 text-gray-600 dark:text-gray-400" />
+            )}
+          </button>
+
+          {/* Student Commerce Shortcuts */}
+          {isStudent && (
+            <div className="hidden sm:flex items-center space-x-1">
+              <Link
+                to="/cart"
+                className="relative text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition"
+                title="Cart"
+              >
+                <ShoppingCart className="h-4.5 w-4.5" />
+                {cartCount > 0 && (
+                  <span className="absolute top-0.5 right-0.5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/wishlist"
+                className="relative text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition"
+                title="Wishlist"
+              >
+                <Heart className="h-4.5 w-4.5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute top-0.5 right-0.5 bg-rose-500 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+                    {wishlistCount > 99 ? '99+' : wishlistCount}
+                  </span>
+                )}
+              </Link>
+            </div>
+          )}
+
+          {/* Notifications Shortcut */}
+          <Link
+            to="/notifications"
+            className="relative text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition"
+            title="Notifications"
+          >
+            <Bell className="h-4.5 w-4.5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-0.5 right-0.5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center ring-2 ring-white dark:ring-gray-900 animate-pulse">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </Link>
+
+          {/* User Profile Menu */}
+          {isAuthenticated && (
+            <div className="relative">
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition focus:outline-none"
+              >
+                {user?.profileUrl ? (
+                  <img
+                    src={user.profileUrl}
+                    alt={user?.userName || 'User'}
+                    className="h-7 w-7 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+                  />
+                ) : (
+                  <div className="h-7 w-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                    {user?.userName?.charAt(0)?.toUpperCase() || 'U'}
+                  </div>
+                )}
+                <ChevronDown className="h-3 w-3 text-gray-400 hidden sm:inline" />
+              </button>
+
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                    <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                      {user?.userName}
+                    </p>
+                    <p className="text-[10px] text-gray-400 truncate">{user?.email}</p>
+                  </div>
+                  <div className="py-1">
+                    <Link
+                      to="/"
+                      className="flex items-center px-4 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <Home className="h-4 w-4 mr-2.5 text-gray-400" />
+                      Main Website
+                    </Link>
+                    <Link
+                      to="/my-learning"
+                      className="flex items-center px-4 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <PlayCircle className="h-4 w-4 mr-2.5 text-indigo-500" />
+                      My Courses
+                    </Link>
+                    <Link
+                      to="/profile"
+                      className="flex items-center px-4 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <User className="h-4 w-4 mr-2.5 text-gray-400" />
+                      My Profile
+                    </Link>
+                  </div>
+                  <div className="border-t border-gray-100 dark:border-gray-700 pt-1">
+                    <button
+                      onClick={async () => {
+                        await logout();
+                        navigate('/login');
+                      }}
+                      className="w-full flex items-center px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+                    >
+                      <LogOut className="h-4 w-4 mr-2.5 text-rose-500" />
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Mobile Course Content Toggle */}
           <button
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-            className="lg:hidden inline-flex items-center px-3 py-1.5 bg-indigo-600 dark:bg-indigo-400 text-white hover:bg-indigo-700 dark:hover:bg-indigo-300 rounded-xl text-xs font-semibold shadow-xs transition"
+            className="lg:hidden inline-flex items-center px-2.5 py-1.5 bg-indigo-600 dark:bg-indigo-400 text-white hover:bg-indigo-700 dark:hover:bg-indigo-300 rounded-xl text-xs font-semibold shadow-xs transition"
           >
-            <List className="h-4 w-4 mr-1.5" />
-            Curriculum
+            <List className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">Curriculum</span>
           </button>
         </div>
       </header>

@@ -14,11 +14,11 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.Application.Features.Notification.Query.GetUserUnReadNotifications
 {
     public class GetUserUnReadNotificationQueryHandler(IApplicationDbContext context,ResponseHandler responseHandler)
-        : IRequestHandler<GetUserNotificationQuery, Response<List<NotificationResponseDto>>>
+        : IRequestHandler<GetUserUnReadNotificationQuery, Response<PaginatedList<NotificationResponseDto>>>
     {
-        public async Task<Response<List<NotificationResponseDto>>> Handle(GetUserNotificationQuery request, CancellationToken cancellationToken)
+        public async Task<Response<PaginatedList<NotificationResponseDto>>> Handle(GetUserUnReadNotificationQuery request, CancellationToken cancellationToken)
         {
-            var notifications = await context.Notification
+            var notifications = context.Notification
                 .AsNoTracking()
                 .Where(n => n.ReceiptId == request.userId && n.IsRead == false)
                 .Select(n => new NotificationResponseDto
@@ -29,9 +29,10 @@ namespace TechMeter.Application.Features.Notification.Query.GetUserUnReadNotific
                     CreatedAt = n.CreatedAt,
                     IsRead = n.IsRead,
                     ReceiptId = n.ReceiptId
-                }).ToListAsync();
+                });
+            var response = await PaginatedList<NotificationResponseDto>.CreatePaginatedList(notifications, request.pageNumber, request.pageSize, cancellationToken);
 
-            return responseHandler.Success(notifications, "user notification returned successfully");
+            return responseHandler.Success(response, "user notification returned successfully");
         }
     }
 }

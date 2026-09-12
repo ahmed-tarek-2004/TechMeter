@@ -50,7 +50,7 @@ export const BentoFeatures: React.FC = () => {
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           {/* Card 1: Interactive Video & Code Player */}
-          <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-gray-950 rounded-3xl p-6 sm:p-8 text-white border border-indigo-500/20 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-indigo-400/40 transition duration-200">
+          <div className="bg-gradient-to-br from-indigo-700 via-indigo-900 to-slate-950 dark:from-indigo-950 dark:via-slate-900 dark:to-gray-950 rounded-3xl p-6 sm:p-8 text-white border border-indigo-500/20 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-indigo-400/40 transition duration-200">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
@@ -65,13 +65,13 @@ export const BentoFeatures: React.FC = () => {
               <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white mb-2">
                 Ultra-Smooth Learning Player
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-md leading-relaxed">
+              <p className="text-xs sm:text-sm text-indigo-100 dark:text-slate-300 max-w-md leading-relaxed">
                 Seamless chapter navigation, playback speed controls, interactive code attachments, and automatic progress sync across all your devices.
               </p>
             </div>
 
             {/* Visual Mockup inside card */}
-            <div className="mt-8 bg-slate-950/90 rounded-2xl p-4 border border-slate-800 shadow-md">
+            <div className="mt-8 bg-slate-950/90 rounded-2xl p-4 border border-indigo-400/20 dark:border-slate-800 shadow-md">
               <div className="flex items-center justify-between text-xs text-slate-400 mb-2 font-mono">
                 <span>04:15 / 18:30</span>
                 <span className="text-indigo-400 font-semibold">Lesson 7 • Async Patterns</span>
@@ -84,7 +84,7 @@ export const BentoFeatures: React.FC = () => {
           </div>
 
           {/* Card 2: Real-time SignalR Instructor Chat */}
-          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-gray-800 shadow-xs hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 border border-gray-200/80 dark:border-gray-800 shadow-xs hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="p-2.5 rounded-2xl bg-violet-50 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400">
@@ -105,7 +105,7 @@ export const BentoFeatures: React.FC = () => {
             </div>
 
             {/* Interactive Chat Bubble Simulator */}
-            <div className="mt-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-3.5 border border-gray-100 dark:border-gray-700/60 space-y-2">
+            <div className="mt-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-3.5 border border-gray-200/80 dark:border-gray-700/60 space-y-2">
               {messagesList.slice(-2).map((msg, i) => (
                 <div
                   key={i}
@@ -143,7 +143,7 @@ export const BentoFeatures: React.FC = () => {
           </div>
 
           {/* Card 3: Cryptographically Verified Certificates */}
-          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-gray-800 shadow-xs hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 border border-gray-200/80 dark:border-gray-800 shadow-xs hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="p-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-500">
@@ -177,7 +177,7 @@ export const BentoFeatures: React.FC = () => {
           </div>
 
           {/* Card 4: Secure Global Payments with Stripe */}
-          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-gray-800 shadow-xs hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 border border-gray-200/80 dark:border-gray-800 shadow-xs hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 transition duration-200 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">

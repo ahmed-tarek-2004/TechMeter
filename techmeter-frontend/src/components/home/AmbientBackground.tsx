@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 export type AmbientBackgroundVariant = 'constellation' | 'neural-mesh' | 'cyber-grid' | 'ambient-flow';
 
@@ -32,15 +33,15 @@ export interface AmbientBackgroundProps {
    */
   interactiveRadius?: number;
   /**
-   * Primary glowing accent color (hex or rgb, default: '#6366f1' [indigo])
+   * Primary glowing accent color override
    */
   accentColor?: string;
   /**
-   * Secondary glowing accent color (hex or rgb, default: '#a855f7' [purple])
+   * Secondary glowing accent color override
    */
   secondaryColor?: string;
   /**
-   * Tertiary glowing accent color (hex or rgb, default: '#06b6d4' [cyan])
+   * Tertiary glowing accent color override
    */
   tertiaryColor?: string;
   /**
@@ -52,7 +53,7 @@ export interface AmbientBackgroundProps {
    */
   showGrid?: boolean;
   /**
-   * Dark vignette overlay to guarantee maximum foreground text contrast
+   * Vignette overlay to guarantee maximum foreground text contrast
    */
   showVignette?: boolean;
   /**
@@ -98,15 +99,16 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
   speed = 1.0,
   interactive = true,
   interactiveRadius = 150,
-  accentColor = '#6366f1', // Indigo
-  secondaryColor = '#a855f7', // Purple
-  tertiaryColor = '#06b6d4', // Cyan
+  accentColor: customAccent,
+  secondaryColor: customSecondary,
+  tertiaryColor: customTertiary,
   showNebula = true,
   showGrid = true,
   showVignette = true,
   className = '',
   children,
 }) => {
+  const { isDark } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef<{ x: number; y: number; active: boolean }>({
@@ -116,6 +118,11 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
   });
 
   const [isVisible, setIsVisible] = useState(true);
+
+  // Dynamic Theme-Aware Palette
+  const accentColor = customAccent || (isDark ? '#6366f1' : '#4f46e5'); // Indigo
+  const secondaryColor = customSecondary || (isDark ? '#a855f7' : '#9333ea'); // Purple
+  const tertiaryColor = customTertiary || (isDark ? '#06b6d4' : '#0284c7'); // Cyan / Sky
 
   // Compute total particles based on variant and density
   const particleCount = useMemo(() => {
@@ -212,7 +219,9 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
               baseRadius: layer === 2 ? 2.5 : layer === 1 ? 1.8 : 1.2,
               color,
               glowColor: color,
-              alpha: layer === 2 ? 0.85 : layer === 1 ? 0.6 : 0.35,
+              alpha: isDark
+                ? layer === 2 ? 0.85 : layer === 1 ? 0.6 : 0.35
+                : layer === 2 ? 0.95 : layer === 1 ? 0.75 : 0.5,
               pulseSpeed: 0.02 + Math.random() * 0.03,
               pulsePhase: Math.random() * Math.PI * 2,
               layer,
@@ -239,7 +248,9 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
             baseRadius: layer === 2 ? 2.5 : layer === 1 ? 1.8 : 1.2,
             color,
             glowColor: color,
-            alpha: layer === 2 ? 0.85 : layer === 1 ? 0.6 : 0.35,
+            alpha: isDark
+              ? layer === 2 ? 0.85 : layer === 1 ? 0.6 : 0.35
+              : layer === 2 ? 0.95 : layer === 1 ? 0.75 : 0.5,
             pulseSpeed: 0.02 + Math.random() * 0.03,
             pulsePhase: Math.random() * Math.PI * 2,
             layer,
@@ -321,7 +332,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
               progress: 0,
               speed: 0.7 + Math.random() * 0.5,
               color: colors[Math.floor(Math.random() * colors.length)],
-              size: 2.0,
+              size: 2.2,
             });
           }
         }
@@ -392,7 +403,8 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
             connections++;
             const dist = Math.sqrt(distSq);
             const normDist = 1 - dist / maxLinkDist;
-            const lineAlpha = normDist * 0.2 * Math.min(p1.alpha, p2.alpha);
+            const lineAlphaMultiplier = isDark ? 0.22 : 0.32;
+            const lineAlpha = normDist * lineAlphaMultiplier * Math.min(p1.alpha, p2.alpha);
 
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
@@ -404,7 +416,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
 
             ctx.strokeStyle = grad;
             ctx.globalAlpha = lineAlpha;
-            ctx.lineWidth = variant === 'neural-mesh' ? 0.85 : 0.7;
+            ctx.lineWidth = variant === 'neural-mesh' ? 0.9 : 0.75;
             ctx.stroke();
           }
         }
@@ -417,7 +429,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
 
           if (mDistSq < mouseRadiusSq) {
             const mDist = Math.sqrt(mDistSq);
-            const mAlpha = (1 - mDist / interactiveRadius) * 0.25 * p1.alpha;
+            const mAlpha = (1 - mDist / interactiveRadius) * (isDark ? 0.25 : 0.35) * p1.alpha;
 
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
@@ -454,7 +466,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         ctx.beginPath();
         ctx.arc(currX, currY, pulse.size, 0, Math.PI * 2);
         ctx.fillStyle = pulse.color;
-        ctx.globalAlpha = 0.9;
+        ctx.globalAlpha = isDark ? 0.9 : 0.95;
         ctx.fill();
       }
 
@@ -476,7 +488,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
           glowGrad.addColorStop(0, p.glowColor);
           glowGrad.addColorStop(1, 'transparent');
           ctx.fillStyle = glowGrad;
-          ctx.globalAlpha = p.alpha * 0.3;
+          ctx.globalAlpha = p.alpha * (isDark ? 0.3 : 0.25);
           ctx.fill();
         }
 
@@ -510,6 +522,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
     secondaryColor,
     tertiaryColor,
     variant,
+    isDark,
   ]);
 
   const containerClasses = children
@@ -518,27 +531,27 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
 
   return (
     <div ref={containerRef} className={containerClasses}>
-      {/* 1. Deep Space Base Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-gray-950 pointer-events-none" />
+      {/* 1. Deep Space or Crisp Tech Light Base Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-indigo-50/30 to-white dark:from-slate-950 dark:via-slate-900 dark:to-gray-950 pointer-events-none transition-colors duration-300" />
 
       {/* 2. Ambient Radiant Nebula Glowing Orbs */}
       {showNebula && (
         <>
           <div
-            className="absolute -top-24 -left-20 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none opacity-40 dark:opacity-50 animate-gradient-drift"
+            className="absolute -top-24 -left-20 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none opacity-25 dark:opacity-50 animate-gradient-drift transition-opacity duration-300"
             style={{
               background: `radial-gradient(circle, ${accentColor} 0%, rgba(99, 102, 241, 0) 70%)`,
             }}
           />
           <div
-            className="absolute top-1/4 -right-24 w-[450px] h-[450px] rounded-full blur-[130px] pointer-events-none opacity-35 dark:opacity-45 animate-gradient-drift"
+            className="absolute top-1/4 -right-24 w-[450px] h-[450px] rounded-full blur-[130px] pointer-events-none opacity-20 dark:opacity-45 animate-gradient-drift transition-opacity duration-300"
             style={{
               background: `radial-gradient(circle, ${secondaryColor} 0%, rgba(168, 85, 247, 0) 70%)`,
               animationDelay: '6s',
             }}
           />
           <div
-            className="absolute -bottom-32 left-1/3 w-[600px] h-[500px] rounded-full blur-[140px] pointer-events-none opacity-25 dark:opacity-35 animate-gradient-drift"
+            className="absolute -bottom-32 left-1/3 w-[600px] h-[500px] rounded-full blur-[140px] pointer-events-none opacity-20 dark:opacity-35 animate-gradient-drift transition-opacity duration-300"
             style={{
               background: `radial-gradient(circle, ${tertiaryColor} 0%, rgba(6, 182, 212, 0) 70%)`,
               animationDelay: '12s',
@@ -552,10 +565,15 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.14] dark:opacity-[0.18]"
           style={{
-            backgroundImage: `
-              linear-gradient(to right, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 1px, transparent 1px)
-            `,
+            backgroundImage: isDark
+              ? `
+                linear-gradient(to right, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 1px, transparent 1px)
+              `
+              : `
+                linear-gradient(to right, rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(99, 102, 241, 0.1) 1px, transparent 1px)
+              `,
             backgroundSize: '4rem 4rem',
             maskImage:
               'radial-gradient(ellipse 85% 70% at 50% 30%, #000 60%, transparent 100%)',
@@ -576,10 +594,15 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         <div
           className="absolute inset-0 pointer-events-none z-[2]"
           style={{
-            background: `
-              radial-gradient(circle at 50% 50%, transparent 40%, rgba(2, 6, 23, 0.55) 100%),
-              linear-gradient(to bottom, transparent 80%, rgba(2, 6, 23, 0.95) 100%)
-            `,
+            background: isDark
+              ? `
+                radial-gradient(circle at 50% 50%, transparent 40%, rgba(2, 6, 23, 0.55) 100%),
+                linear-gradient(to bottom, transparent 80%, rgba(2, 6, 23, 0.95) 100%)
+              `
+              : `
+                radial-gradient(circle at 50% 50%, transparent 50%, rgba(248, 250, 252, 0.4) 100%),
+                linear-gradient(to bottom, transparent 80%, rgba(255, 255, 255, 0.95) 100%)
+              `,
           }}
         />
       )}
