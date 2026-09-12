@@ -160,6 +160,14 @@ export const notificationService = {
   },
 
   /**
+   * Mark all notifications as read.
+   */
+  async markAllAsRead(): Promise<ApiResponse<boolean>> {
+    const response = await api.post('/Notification/read/all');
+    return response.data;
+  },
+
+  /**
    * Store FCM device token.
    */
   async storeFcmToken(token: string): Promise<any> {

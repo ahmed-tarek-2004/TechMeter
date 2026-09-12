@@ -2,10 +2,12 @@ import React, { createContext, useContext, useEffect, useState, useMemo, useCall
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notificationService } from '../services/notificationService';
 import { notificationHubService } from '../services/notificationHubService';
+import { messageHubService } from '../services/messageHubService';
+import { activeChatTracker } from '../services/activeChatTracker';
 import { useAuth } from './AuthContext';
 import { Notification, ApiResponse, PaginatedList } from '../types';
 import toast from 'react-hot-toast';
-import { Bell, ArrowRight } from 'lucide-react';
+import { Bell, ArrowRight, MessageSquare } from 'lucide-react';
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -166,10 +168,17 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const markAllAsRead = async () => {
-    if (!isAuthenticated || unreadNotifications.length === 0) return;
-    const unreadIds = unreadNotifications.map((n) => n.id).filter(Boolean);
-    const promises = unreadIds.map((id) => notificationService.markAsRead(id));
-    await Promise.allSettled(promises);
+    if (!isAuthenticated) return;
+    try {
+      await notificationService.markAllAsRead();
+    } catch {
+      // Fallback to individual items if needed
+      const unreadIds = unreadNotifications.map((n) => n.id).filter(Boolean);
+      if (unreadIds.length > 0) {
+        const promises = unreadIds.map((id) => notificationService.markAsRead(id));
+        await Promise.allSettled(promises);
+      }
+    }
     queryClient.invalidateQueries({ queryKey: ['notifications'] });
     queryClient.invalidateQueries({ queryKey: ['unread-notifications'] });
     toast.success('All notifications marked as read');
@@ -180,10 +189,11 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     refetchUnread();
   }, [refetchAll, refetchUnread]);
 
-  // SignalR Notification Hub Connection & Event Listener Lifecycle
+  // SignalR Notification Hub & Message Hub Connection Lifecycle
   useEffect(() => {
     if (!isAuthenticated || !user) {
       notificationHubService.disconnect();
+      messageHubService.disconnect();
       setIsHubConnected(false);
       return;
     }
@@ -193,17 +203,34 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       setIsHubConnected(notificationHubService.isConnected());
     });
 
+    // Connect to message hub for real-time global messages
+    messageHubService.connect();
+
     const unsubscribeState = notificationHubService.onConnectionStateChanged((connected) => {
       setIsHubConnected(connected);
     });
 
-    // Listen for incoming notifications from hub
+    // Listen for incoming general notifications from notificationHub
     const unsubscribeNotifications = notificationHubService.onNotificationReceived((newNotification) => {
-      // Invalidate queries to refresh counts and list
+      const isMessageNotification =
+        (newNotification.title || '').toLowerCase().includes('message') ||
+        (newNotification.message || '').toLowerCase().includes('message');
+
+      // If user is currently on the chat page (/messages), suppress all message notification toasts
+      if (isMessageNotification && activeChatTracker.getIsChatPageOpen()) {
+        if (newNotification.id) {
+          notificationService.markAsRead(newNotification.id).catch(() => {});
+        }
+        queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        queryClient.invalidateQueries({ queryKey: ['unread-notifications'] });
+        return;
+      }
+
+      // Invalidate queries to refresh notification counters
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       queryClient.invalidateQueries({ queryKey: ['unread-notifications'] });
 
-      // Display rich, animated Toast Notification
+      // Display rich animated Toast Notification
       toast.custom(
         (t) => (
           <div
@@ -215,7 +242,11 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
               <div className="flex items-start">
                 <div className="flex-shrink-0 pt-0.5">
                   <div className="h-9 w-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200/60 dark:border-indigo-800/40 shadow-xs">
-                    <Bell className="h-4.5 w-4.5 animate-bounce" />
+                    {isMessageNotification ? (
+                      <MessageSquare className="h-4.5 w-4.5 animate-bounce" />
+                    ) : (
+                      <Bell className="h-4.5 w-4.5 animate-bounce" />
+                    )}
                   </div>
                 </div>
                 <div className="ml-3 flex-1">
@@ -227,11 +258,78 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
                   </p>
                   <div className="mt-2 flex items-center gap-2">
                     <a
-                      href="/notifications"
+                      href={isMessageNotification ? '/messages' : '/notifications'}
                       onClick={() => toast.dismiss(t.id)}
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
                     >
-                      <span>View alerts</span>
+                      <span>{isMessageNotification ? 'Open Chat' : 'View alerts'}</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="ml-2 flex flex-shrink-0 self-start">
+              <button
+                onClick={() => toast.dismiss(t.id)}
+                className="rounded-lg p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
+              >
+                <span className="sr-only">Close</span>
+                <span className="text-xs font-bold">✕</span>
+              </button>
+            </div>
+          </div>
+        ),
+        { duration: 5000 }
+      );
+    });
+
+    // Listen for incoming direct messages via messageHub
+    const unsubscribeMessages = messageHubService.onMessageReceived((incomingMsg) => {
+      const senderId = incomingMsg.sender?.senderId;
+
+      // Ignore our own sent messages
+      if (senderId === user?.id) {
+        return;
+      }
+
+      // If user is currently on the chat page (/messages), do not show global toast
+      if (activeChatTracker.getIsChatPageOpen()) {
+        return;
+      }
+
+      // If user is on another page or chatting with someone else, show real-time message notification
+      toast.custom(
+        (t) => (
+          <div
+            className={`${
+              t.visible ? 'animate-in fade-in slide-in-from-top-4' : 'animate-out fade-out slide-out-to-top-2'
+            } max-w-sm w-full bg-white dark:bg-gray-900 shadow-2xl rounded-2xl pointer-events-auto flex ring-1 ring-black/5 dark:ring-white/10 p-3.5 border border-indigo-200/80 dark:border-indigo-800/60 transition duration-200`}
+          >
+            <div className="flex-1 w-0">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 pt-0.5">
+                  <div className="h-9 w-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                    <MessageSquare className="h-4.5 w-4.5" />
+                  </div>
+                </div>
+                <div className="ml-3 flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold text-gray-900 dark:text-white tracking-tight">
+                      {incomingMsg.sender?.senderName || 'New Message'}
+                    </p>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-500">Just now</span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                    {incomingMsg.content}
+                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <a
+                      href="/messages"
+                      onClick={() => toast.dismiss(t.id)}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+                    >
+                      <span>Open chat to reply</span>
                       <ArrowRight className="h-3 w-3" />
                     </a>
                   </div>
@@ -255,6 +353,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     return () => {
       unsubscribeNotifications();
+      unsubscribeMessages();
       unsubscribeState();
     };
   }, [isAuthenticated, user, queryClient]);
