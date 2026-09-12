@@ -168,10 +168,17 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const markAllAsRead = async () => {
-    if (!isAuthenticated || unreadNotifications.length === 0) return;
-    const unreadIds = unreadNotifications.map((n) => n.id).filter(Boolean);
-    const promises = unreadIds.map((id) => notificationService.markAsRead(id));
-    await Promise.allSettled(promises);
+    if (!isAuthenticated) return;
+    try {
+      await notificationService.markAllAsRead();
+    } catch {
+      // Fallback to individual items if needed
+      const unreadIds = unreadNotifications.map((n) => n.id).filter(Boolean);
+      if (unreadIds.length > 0) {
+        const promises = unreadIds.map((id) => notificationService.markAsRead(id));
+        await Promise.allSettled(promises);
+      }
+    }
     queryClient.invalidateQueries({ queryKey: ['notifications'] });
     queryClient.invalidateQueries({ queryKey: ['unread-notifications'] });
     toast.success('All notifications marked as read');

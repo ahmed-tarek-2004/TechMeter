@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using StackExchange.Redis;
 using System.Security.Claims;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Services.Message;
@@ -30,17 +31,17 @@ namespace TechMeter.API.Hubs
         }
 
         [HubMethodName("sendmessage")]
-        public async Task SendMessage(string msg, string userId)
+        public async Task SendMessage(string msg, string receiverId)
         {
-            var senderId = Context.UserIdentifier?? throw new HubException("User not authenticated");
-           
+            var senderId = Context.UserIdentifier ?? throw new HubException("User not authenticated");
+
             var senderInfo = await userConnectionService.GetSenderInfo(senderId);
-            var messageStored = await messageService.StoreMessages(senderInfo.SenderId, userId, msg);
+            var messageStored = await messageService.StoreMessages(senderInfo.SenderId, receiverId, msg);
             if (messageStored == null)
             {
                 return;
             }
-            await Clients.Users(userId, senderId).SendAsync("ReceiveMessage", new
+            await Clients.Users(receiverId, senderId).SendAsync("ReceiveMessage", new
             {
                 Id = messageStored.MessageId,
                 Content = messageStored.Message,
@@ -49,7 +50,11 @@ namespace TechMeter.API.Hubs
                 Sender = senderInfo
             });
 
-            await notificationService.SendUserNotifications(userId, "New Message", msg, NotificationType.Message);
+            if (await userConnectionService.UserIsOpennigChat(receiverId, senderId) == false)
+            {
+                await notificationService.SendUserNotifications(receiverId, "New Message", msg, NotificationType.Message);
+            }
+            //await notificationService.SendUserNotifications(userId, "New Message", msg, NotificationType.Message);
         }
         [HubMethodName("isonline")]
         public async Task IsOnline(string recieverId)
@@ -60,25 +65,24 @@ namespace TechMeter.API.Hubs
         [HubMethodName("markasread")]
         public async Task MarkAsRead(string messageId, string senderId)
         {
-            var userId = Context.UserIdentifier?? throw new HubException("User not authenticated");
+            var userId = Context.UserIdentifier ?? throw new HubException("User not authenticated");
             var isRead = await messageService.ReadMessage(int.TryParse(messageId, out int messageIdValue) ? messageIdValue : 0, userId);
             await Clients.User(senderId).SendAsync("IsRead", isRead);
         }
 
-        //public async Task OpenChat(string userId)
-        //{
-        //    var currentUserId = Context.UserIdentifier!;
 
-        //    await _userActivityService.SetActiveChat(currentUserId,userId);
-        //}
+        public async Task CloseChat(string userId)
+        {
+            var currentUserId = Context.UserIdentifier ?? throw new HubException("User not authenticated");
 
-        //public async Task CloseChat()
-        //{
-        //    var currentUserId = Context.UserIdentifier!;
+            await userConnectionService.RemoveUserFromChat(currentUserId, userId);
+        }
 
-        //    await _userActivityService.ClearActiveChat(currentUserId);
-        //}
-
+        public async Task SetActiveChat(string userId)
+        {
+            var currentUserId = Context.UserIdentifier ?? throw new HubException("User not authenticated");
+            await userConnectionService.AddUserToChat(currentUserId, userId);
+        }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {

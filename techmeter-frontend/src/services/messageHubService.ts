@@ -10,6 +10,22 @@ class MessageHubService {
   private readStatusCallbacks: ((isRead: boolean) => void)[] = [];
   private connectPromise: Promise<void> | null = null;
 
+  private buildConnection(): signalR.HubConnection {
+    return new signalR.HubConnectionBuilder()
+      .withUrl(`${API_BASE_URL}/messageHub`, {
+        accessTokenFactory: () => localStorage.getItem('accessToken') || '',
+      })
+      .withAutomaticReconnect({
+        nextRetryDelayInMilliseconds: (retryContext) => {
+          if (retryContext.previousRetryCount < 3) return 2000;
+          if (retryContext.previousRetryCount < 6) return 5000;
+          return 10000;
+        },
+      })
+      .configureLogging(signalR.LogLevel.Warning)
+      .build();
+  }
+
   async connect(): Promise<void> {
     if (this.connection?.state === signalR.HubConnectionState.Connected) {
       return;
@@ -25,19 +41,7 @@ class MessageHubService {
     }
 
     if (!this.connection) {
-      this.connection = new signalR.HubConnectionBuilder()
-        .withUrl(`${API_BASE_URL}/messageHub`, {
-          accessTokenFactory: () => localStorage.getItem('accessToken') || '',
-        })
-        .withAutomaticReconnect({
-          nextRetryDelayInMilliseconds: (retryContext) => {
-            if (retryContext.previousRetryCount < 3) return 2000;
-            if (retryContext.previousRetryCount < 6) return 5000;
-            return 10000;
-          },
-        })
-        .configureLogging(signalR.LogLevel.Warning)
-        .build();
+      this.connection = this.buildConnection();
 
       const handleIncomingMessage = (message: any) => {
         const normalizedMessage: MessageEvent = {
@@ -135,6 +139,50 @@ class MessageHubService {
     }
   }
 
+  async ensureConnected(): Promise<void> {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+
+    if (!this.connection) {
+      await this.connect();
+      return;
+    }
+
+    if (this.connection.state === signalR.HubConnectionState.Connected) {
+      return;
+    }
+
+    if (
+      this.connection.state === signalR.HubConnectionState.Connecting ||
+      this.connection.state === signalR.HubConnectionState.Reconnecting
+    ) {
+      return new Promise<void>((resolve, reject) => {
+        const interval = setInterval(() => {
+          if (this.connection?.state === signalR.HubConnectionState.Connected) {
+            clearInterval(interval);
+            resolve();
+          } else if (this.connection?.state === signalR.HubConnectionState.Disconnected) {
+            clearInterval(interval);
+            this.connect().then(resolve).catch(reject);
+          }
+        }, 100);
+
+        setTimeout(() => {
+          clearInterval(interval);
+          if (this.connection?.state === signalR.HubConnectionState.Connected) {
+            resolve();
+          } else {
+            reject(new Error('Connection timeout waiting for Message Hub'));
+          }
+        }, 5000);
+      });
+    }
+
+    if (this.connection.state === signalR.HubConnectionState.Disconnected) {
+      await this.connect();
+    }
+  }
+
   async disconnect(): Promise<void> {
     if (this.connection) {
       try {
@@ -146,9 +194,7 @@ class MessageHubService {
   }
 
   async sendMessage(message: string, recipientId: string): Promise<void> {
-    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
-      await this.connect();
-    }
+    await this.ensureConnected();
 
     if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
       throw new Error('Not connected to message hub');
@@ -163,34 +209,47 @@ class MessageHubService {
   }
 
   async checkOnlineStatus(recipientId: string): Promise<void> {
-    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
-      await this.connect();
-    }
-
-    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
-      return;
-    }
-
     try {
-      await this.connection.invoke('isonline', recipientId);
+      await this.ensureConnected();
+      if (this.connection?.state === signalR.HubConnectionState.Connected) {
+        await this.connection.invoke('isonline', recipientId);
+      }
     } catch (error) {
       console.error('Error checking online status:', error);
     }
   }
 
   async markAsRead(messageId: string | number, senderId: string): Promise<void> {
-    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
-      await this.connect();
-    }
-
-    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
-      return;
-    }
-
     try {
-      await this.connection.invoke('markasread', String(messageId), String(senderId));
+      await this.ensureConnected();
+      if (this.connection?.state === signalR.HubConnectionState.Connected) {
+        await this.connection.invoke('markasread', String(messageId), String(senderId));
+      }
     } catch (error) {
       console.error('Error marking message as read in hub:', error);
+    }
+  }
+
+  async setActiveChat(userId: string): Promise<void> {
+    if (!userId) return;
+    try {
+      await this.ensureConnected();
+      if (this.connection?.state === signalR.HubConnectionState.Connected) {
+        await this.connection.invoke('SetActiveChat', userId);
+      }
+    } catch (error) {
+      console.error('Error setting active chat:', error);
+    }
+  }
+
+  async closeChat(userId: string): Promise<void> {
+    if (!userId) return;
+    try {
+      if (this.connection?.state === signalR.HubConnectionState.Connected) {
+        await this.connection.invoke('CloseChat', userId);
+      }
+    } catch (error) {
+      console.error('Error closing chat:', error);
     }
   }
 

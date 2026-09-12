@@ -89,7 +89,7 @@ namespace TechMeter.Infrastructure.Services.UserConnection
 
         public async Task<SenderInfoResponse> GetSenderInfo(string senderId)
         {
-            
+
             var user = await context.Users
                 .Where(u => u.Id == senderId)
                 .Select(u => new SenderInfoResponse
@@ -103,5 +103,30 @@ namespace TechMeter.Infrastructure.Services.UserConnection
             return user!;
         }
 
+        public async Task<bool> UserIsOpennigChat(string userId, string receiverId)
+        {
+            var isUserOpeningChat = await context.UserConnections
+                .AnyAsync(uc => uc.userId == userId && uc.receiverChatId == receiverId);
+
+            return isUserOpeningChat;
+        }
+
+        public async Task<bool> RemoveUserFromChat(string userId, string receiverId)
+        {
+            var rows = await context.UserConnections
+               .Where(uc => uc.userId == userId && uc.receiverChatId == receiverId)
+               .ExecuteUpdateAsync(b => b.SetProperty(uc => uc.receiverChatId, string.Empty));
+
+            return rows > 0 ? true : false;
+        }
+
+        public async Task<bool> AddUserToChat(string userId, string receiverId)
+        {
+            var rows = await context.UserConnections
+                .Where(uc => uc.userId == userId)
+                .ExecuteUpdateAsync(b => b.SetProperty(uc => uc.receiverChatId, receiverId));
+
+            return rows > 0 ? true : false;
+        }
     }
 }
