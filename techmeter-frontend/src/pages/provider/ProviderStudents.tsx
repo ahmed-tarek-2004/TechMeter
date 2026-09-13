@@ -53,6 +53,8 @@ const ProviderStudents: React.FC = () => {
     if (!searchTerm.trim()) return rawStudents;
     const q = searchTerm.toLowerCase();
     return rawStudents.filter((s: any) =>
+      (s.fullName || '').toLowerCase().includes(q) ||
+      (s.userName || '').toLowerCase().includes(q) ||
       (s.name || '').toLowerCase().includes(q) ||
       (s.email || '').toLowerCase().includes(q) ||
       (s.id || '').toLowerCase().includes(q)
@@ -212,6 +214,7 @@ const ProviderStudents: React.FC = () => {
           /* Grid View */
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {paginatedStudents.map((student: any, idx: number) => {
+              const studentName = student.fullName || student.name || student.userName || 'Enrolled Student';
               // Simulated progress percentage for visual richness
               const progressVal = Math.min(100, Math.max(20, ((idx * 23) % 80) + 20));
               return (
@@ -223,7 +226,7 @@ const ProviderStudents: React.FC = () => {
                     <div className="relative mb-3">
                       <img
                         src={student.userProfilePictureUrl || profilePlaceholder}
-                        alt={student.name || 'Student'}
+                        alt={studentName}
                         className="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-100 dark:border-indigo-900/50 group-hover:scale-105 transition-transform"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = profilePlaceholder;
@@ -233,9 +236,14 @@ const ProviderStudents: React.FC = () => {
                     </div>
 
                     <h3 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                      {student.name || 'Enrolled Student'}
+                      {studentName}
                     </h3>
-                    <p className="text-[11px] text-gray-400 dark:text-gray-500 mb-3 font-medium">
+                    {student.userName && (
+                      <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium truncate max-w-full">
+                        @{student.userName}
+                      </p>
+                    )}
+                    <p className="text-[11px] text-indigo-600/90 dark:text-indigo-400/90 mb-3 font-semibold">
                       Active Learner
                     </p>
 
@@ -265,7 +273,7 @@ const ProviderStudents: React.FC = () => {
                       <Eye className="h-4 w-4" />
                     </button>
                     <Link
-                      to="/messages"
+                      to={`/messages?userId=${student.id}`}
                       className="flex-1 inline-flex items-center justify-center space-x-1.5 py-2 px-3 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl text-xs font-semibold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition"
                     >
                       <MessageSquare className="h-3.5 w-3.5" />
@@ -292,6 +300,7 @@ const ProviderStudents: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-xs">
                   {paginatedStudents.map((student: any, idx: number) => {
+                    const studentName = student.fullName || student.name || student.userName || 'Enrolled Student';
                     const progressVal = Math.min(100, Math.max(20, ((idx * 23) % 80) + 20));
                     return (
                       <tr
@@ -302,7 +311,7 @@ const ProviderStudents: React.FC = () => {
                           <div className="flex items-center space-x-3">
                             <img
                               src={student.userProfilePictureUrl || profilePlaceholder}
-                              alt={student.name || 'Student'}
+                              alt={studentName}
                               className="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-800"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).src = profilePlaceholder;
@@ -310,8 +319,13 @@ const ProviderStudents: React.FC = () => {
                             />
                             <div>
                               <p className="font-bold text-gray-900 dark:text-white">
-                                {student.name || 'Student'}
+                                {studentName}
                               </p>
+                              {student.userName && (
+                                <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">
+                                  @{student.userName}
+                                </p>
+                              )}
                               <p className="text-[11px] text-gray-400 dark:text-gray-500 font-mono">
                                 ID: #{student.id?.substring(0, 8)}...
                               </p>
@@ -352,7 +366,7 @@ const ProviderStudents: React.FC = () => {
                             <Eye className="h-4 w-4" />
                           </button>
                           <Link
-                            to="/messages"
+                            to={`/messages?userId=${student.id}`}
                             className="inline-flex items-center px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl text-xs font-semibold hover:bg-indigo-600 hover:text-white transition"
                           >
                             <MessageSquare className="h-3.5 w-3.5 mr-1" />
@@ -397,78 +411,94 @@ const ProviderStudents: React.FC = () => {
       </div>
 
       {/* Student Details Inspection Modal */}
-      {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
-              <h3 className="text-base font-bold text-gray-900 dark:text-white">
-                Student Profile
-              </h3>
-              <button
-                onClick={() => setSelectedStudent(null)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="py-6 flex flex-col items-center text-center space-y-4">
-              <img
-                src={selectedStudent.userProfilePictureUrl || profilePlaceholder}
-                alt={selectedStudent.name || 'Student'}
-                className="w-20 h-20 rounded-3xl object-cover border-2 border-indigo-100 dark:border-indigo-900 shadow-md"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = profilePlaceholder;
-                }}
-              />
-              <div>
-                <h4 className="text-base font-bold text-gray-900 dark:text-white">
-                  {selectedStudent.name || 'Enrolled Student'}
-                </h4>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                  Registered Learner
-                </p>
+      {selectedStudent && (() => {
+        const modalStudentName = selectedStudent.fullName || selectedStudent.name || selectedStudent.userName || 'Enrolled Student';
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
+                <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                  Student Profile
+                </h3>
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
 
-              <div className="w-full bg-gray-50 dark:bg-gray-800/60 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 text-left space-y-2.5 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500 dark:text-gray-400 font-medium">Student ID:</span>
-                  <span className="font-mono text-gray-800 dark:text-gray-200">
-                    #{selectedStudent.id?.substring(0, 12)}...
-                  </span>
+              <div className="py-6 flex flex-col items-center text-center space-y-4">
+                <img
+                  src={selectedStudent.userProfilePictureUrl || profilePlaceholder}
+                  alt={modalStudentName}
+                  className="w-20 h-20 rounded-3xl object-cover border-2 border-indigo-100 dark:border-indigo-900 shadow-md"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = profilePlaceholder;
+                  }}
+                />
+                <div>
+                  <h4 className="text-base font-bold text-gray-900 dark:text-white">
+                    {modalStudentName}
+                  </h4>
+                  {selectedStudent.userName && (
+                    <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium mt-0.5">
+                      @{selectedStudent.userName}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                    Registered Learner
+                  </p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500 dark:text-gray-400 font-medium">Status:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                    Active in Course Catalog
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500 dark:text-gray-400 font-medium">Direct Message:</span>
-                  <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Available</span>
+
+                <div className="w-full bg-gray-50 dark:bg-gray-800/60 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 text-left space-y-2.5 text-xs">
+                  {selectedStudent.userName && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500 dark:text-gray-400 font-medium">Username:</span>
+                      <span className="font-mono text-gray-800 dark:text-gray-200">
+                        @{selectedStudent.userName}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Student ID:</span>
+                    <span className="font-mono text-gray-800 dark:text-gray-200">
+                      #{selectedStudent.id?.substring(0, 12)}...
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Status:</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                      Active in Course Catalog
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Direct Message:</span>
+                    <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Available</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-3">
-              <button
-                onClick={() => setSelectedStudent(null)}
-                className="px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-              >
-                Close
-              </button>
-              <Link
-                to="/messages"
-                onClick={() => setSelectedStudent(null)}
-                className="flex-1 inline-flex items-center justify-center space-x-1.5 py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-xs"
-              >
-                <Mail className="h-3.5 w-3.5" />
-                <span>Start Direct Conversation</span>
-              </Link>
+              <div className="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-3">
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  className="px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                >
+                  Close
+                </button>
+                <Link
+                  to={`/messages?userId=${selectedStudent.id}`}
+                  onClick={() => setSelectedStudent(null)}
+                  className="flex-1 inline-flex items-center justify-center space-x-1.5 py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-xs"
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                  <span>Start Direct Conversation</span>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };

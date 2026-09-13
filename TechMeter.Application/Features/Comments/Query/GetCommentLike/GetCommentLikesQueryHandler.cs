@@ -41,6 +41,8 @@ namespace TechMeter.Application.Features.Comments.Query.GetCommentLike
                     UserEmail = b.UserEmail,
                     UserId = b.UserId,
                     UserName = b.UserName,
+                    UserFullName = b.UserFullName,
+                    FullName = b.UserFullName,
                     UserImage = b.UserImage,
                 }).ToListAsync();
             return responseHandler.Success(response, "Comment Likes Returned Successfully");

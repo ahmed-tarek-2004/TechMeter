@@ -2,6 +2,7 @@ export interface User {
   id: string;
   email: string;
   userName: string;
+  fullName?: string;
   phoneNumber?: string;
   role: 'student' | 'provider' | 'admin';
   profileUrl?: string;
@@ -20,6 +21,7 @@ export interface AuthResponse {
   id: string;
   email: string;
   userName: string;
+  fullName?: string;
   phoneNumber?: string;
   photoUrl?: string;
   role: string;
@@ -114,6 +116,9 @@ export interface Notification {
   createdAt: string;
   isRead: boolean;
   receiptId: string;
+  fullName?: string;
+  userFullName?: string;
+  userName?: string;
 }
 
 export interface Comment {
@@ -124,11 +129,24 @@ export interface Comment {
   isEdited: boolean;
   userId: string;
   userName: string;
+  userFullName?: string;
+  fullName?: string;
   userEmail: string;
   userImage?: string;
   lessonId: string;
   likesCount: number;
+  isLiked?: boolean;
   replies: Comment[];
+}
+
+export interface CommentLike {
+  commentId: string;
+  userId: string;
+  userName: string;
+  userFullName?: string;
+  userEmail?: string;
+  userImage?: string;
+  addedAt: string;
 }
 
 export interface WishlistItem {
@@ -217,13 +235,18 @@ export interface Message {
 export interface SenderInfo {
   senderId: string;
   senderName: string;
+  senderFullName?: string;
+  senderUserName?: string;
   senderEmail: string;
   recipientImageUrl?: string;
 }
 
 export interface Contact {
   id: string;
-  name: string;
+  name?: string;
+  fullName?: string;
+  userName?: string;
+  email?: string;
   userProfilePictureUrl?: string;
 }
 

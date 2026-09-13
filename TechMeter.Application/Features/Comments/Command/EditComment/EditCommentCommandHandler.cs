@@ -55,7 +55,11 @@ namespace TechMeter.Application.Features.Comments.Command.EditComment
                     UserId = comment.UserId,
                     UserImage = comment.UserImage,
                     UserName = comment.UserName,
-                    ParentCommentId = comment.ParentCommentId
+                    UserFullName = comment.UserFullName,
+                    FullName = comment.UserFullName,
+                    ParentCommentId = comment.ParentCommentId,
+                    LikesCount = await context.LessonCommentLikes.CountAsync(l => l.CommentId == comment.Id, cancellationToken),
+                    IsLiked = await context.LessonCommentLikes.AnyAsync(l => l.CommentId == comment.Id && l.UserId == request.userId, cancellationToken)
                 };
                 return responseHandler.Success(response, "Comment Updated Successfully");
 

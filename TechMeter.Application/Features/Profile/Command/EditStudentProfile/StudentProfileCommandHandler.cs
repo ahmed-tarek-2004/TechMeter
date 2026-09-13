@@ -29,15 +29,15 @@ namespace TechMeter.Application.Features.Profile.Command.EditStudentProfile
                 //Name
                 if (!string.IsNullOrEmpty(request.EditStudentProfileRequest.StudentName))
                 {
-                    student.User.UserName = request.EditStudentProfileRequest.StudentName;
+                    student.User.FullName = request.EditStudentProfileRequest.StudentName;
                     logger.LogInformation($"Student name updated to: {request.EditStudentProfileRequest.StudentName}");
                 }
                 //Email
-                if (!string.IsNullOrEmpty(request.EditStudentProfileRequest.Email))
-                {
-                    student.User.Email = request.EditStudentProfileRequest.Email;
-                    logger.LogInformation($"Student email updated to: {request.EditStudentProfileRequest.Email}");
-                }
+                //if (!string.IsNullOrEmpty(request.EditStudentProfileRequest.Email))
+                //{
+                //    student.User.Email = request.EditStudentProfileRequest.Email;
+                //    logger.LogInformation($"Student email updated to: {request.EditStudentProfileRequest.Email}");
+                //}
                 //phone
                 if (!string.IsNullOrEmpty(request.EditStudentProfileRequest.PhoneNumber))
                 {

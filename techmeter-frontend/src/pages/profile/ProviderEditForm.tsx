@@ -23,12 +23,12 @@ interface FormState {
 
 const ProviderEditForm: React.FC<ProviderEditFormProps> = ({ profile, onClose, onSuccess }) => {
   const queryClient = useQueryClient();
-  const { updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormState>({
-    userName: profile?.providerName || '',
-    phoneNumber: profile?.phoneNumber || '',
+    userName: profile?.providerName || user?.fullName || user?.userName || '',
+    phoneNumber: profile?.phoneNumber || user?.phoneNumber || '',
     country: profile?.country || '',
     bankAccount: profile?.bankAccount || '',
     brief: profile?.brief || '',
@@ -54,6 +54,7 @@ const ProviderEditForm: React.FC<ProviderEditFormProps> = ({ profile, onClose, o
 
         updateUser({
           userName: form.userName,
+          fullName: form.userName,
           phoneNumber: form.phoneNumber,
           ...(newPhoto ? { profileUrl: newPhoto } : {}),
         });
@@ -103,15 +104,18 @@ const ProviderEditForm: React.FC<ProviderEditFormProps> = ({ profile, onClose, o
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
+    formData.append('ProviderName', form.userName);
     formData.append('UserName', form.userName);
+    formData.append('FullName', form.userName);
     formData.append('PhoneNumber', form.phoneNumber);
     formData.append('Country', form.country);
     formData.append('BankAccount', form.bankAccount);
     formData.append('Brief', form.brief);
     formData.append('ExperienceYears', String(form.experienceYears));
     if (selectedFile) {
-      formData.append('ProfilePhoto', selectedFile);
+      formData.append('profileImage', selectedFile);
       formData.append('ProfileImage', selectedFile);
+      formData.append('ProfilePhoto', selectedFile);
     }
     mutation.mutate(formData);
   };

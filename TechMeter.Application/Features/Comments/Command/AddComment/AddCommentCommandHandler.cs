@@ -40,7 +40,7 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
             }
             try
             {
-                if (!await lessonCommentAuthorization.HasCourseAccess(request.  userId, Lesson.Value.CourseId))
+                if (!await lessonCommentAuthorization.HasCourseAccess(request.userId, Lesson.Value.CourseId))
                 {
                     return responseHandler.Forbidden<LessonCommentResponse>("you don't have access to the course");
                 }
@@ -52,16 +52,30 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                     Content = request.content,
                     IsEdited = false,
                     LessonId = request.lessonId,
+                    UserFullName = user.FullName,
                     UserEmail = user.Email,
                     UserId = request.userId,
                     UserImage = user.ProfileUrl,
                     UserName = user.UserName ?? "",
-                    ParentCommentId = request.CommentParentId
+                    ParentCommentId = string.IsNullOrEmpty(request.CommentParentId) ? null : request.CommentParentId
 
                 };
                 await context.lessonComments.AddAsync(comment);
                 await context.SaveChangesAsync(cancellationToken);
-                await notificationService.SendUserNotifications(comment.UserId, " new Comment", $"{user.UserName} added an new comment", Domain.Enums.NotificationType.Comment);
+
+                if (!string.IsNullOrEmpty(comment.ParentCommentId))
+                {
+                    var parentComment = await context.lessonComments.FindAsync(comment.ParentCommentId);
+                    if (parentComment != null && parentComment.UserId != user.Id)
+                    {
+                        await notificationService.SendUserNotifications(parentComment.UserId, "New Reply on Your Comment", $"{user.FullName ?? user.UserName} replied to your comment on {Lesson.Value.LessonName}", Domain.Enums.NotificationType.Comment);
+                    }
+                }
+                else if (Lesson.Value.ProviderId != user.Id)
+                {
+                    await notificationService.SendUserNotifications(Lesson.Value.ProviderId, "New Comment", $"{user.FullName ?? user.UserName} added a comment on {Lesson.Value.LessonName}", Domain.Enums.NotificationType.Comment);
+                }
+
                 var response = new LessonCommentResponse
                 {
                     Id = comment.Id,
@@ -73,7 +87,11 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                     UserId = comment.UserId,
                     UserImage = comment.UserImage,
                     UserName = comment.UserName,
-                    ParentCommentId = comment.ParentCommentId
+                    UserFullName = comment.UserFullName,
+                    FullName = comment.UserFullName,
+                    ParentCommentId = comment.ParentCommentId,
+                    LikesCount = 0,
+                    IsLiked = false
                 };
                 return responseHandler.Success(response, "Comment Added Successfully");
             }

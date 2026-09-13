@@ -7,7 +7,7 @@ import { lessonService } from '../../services/lessonService';
 import { commentService } from '../../services/commentService';
 import { ratingService } from '../../services/ratingService';
 import toast from 'react-hot-toast';
-import { Section, Lesson, Comment, Rating } from '../../types';
+import { Section, Lesson, Comment, Rating, CommentLike } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -45,7 +45,343 @@ import {
   User,
   LogOut,
   Home,
+  Loader2,
+  Edit2,
+  Trash2,
+  CornerDownRight,
 } from 'lucide-react';
+
+interface UserAvatarProps {
+  src?: string;
+  name?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const UserAvatar: React.FC<UserAvatarProps> = ({
+  src,
+  name,
+  size = 'md',
+  className = '',
+}) => {
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [src]);
+
+  const displayName = name?.trim() || 'Learner';
+  const initial = displayName.charAt(0).toUpperCase() || 'U';
+
+  const sizeClasses = {
+    xs: 'w-5 h-5 text-[9px]',
+    sm: 'w-7 h-7 text-[10px]',
+    md: 'w-8 h-8 text-xs',
+    lg: 'w-10 h-10 text-sm',
+  }[size];
+
+  if (src && !imgError) {
+    return (
+      <img
+        src={src}
+        alt={displayName}
+        onError={() => setImgError(true)}
+        className={`${sizeClasses} rounded-full object-cover border border-gray-200 dark:border-gray-700 flex-shrink-0 ${className}`}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`${sizeClasses} rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-700 flex items-center justify-center font-bold text-white shadow-xs flex-shrink-0 select-none ${className}`}
+    >
+      {initial}
+    </div>
+  );
+};
+
+interface CommentItemProps {
+  comment: Comment;
+  depth?: number;
+  currentUserId?: string;
+  isAdmin?: boolean;
+  isProvider?: boolean;
+  replyingTo: string | null;
+  setReplyingTo: (id: string | null) => void;
+  replyText: { [key: string]: string };
+  setReplyText: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
+  onPostReply: (parentId: string) => void;
+  isPostingReply: boolean;
+  editingCommentId: string | null;
+  setEditingCommentId: (id: string | null) => void;
+  editContent: string;
+  setEditContent: (val: string) => void;
+  onSaveEdit: (commentId: string) => void;
+  isSavingEdit: boolean;
+  onDelete: (comment: Comment) => void;
+  isDeleting: boolean;
+  onToggleLike: (commentId: string, isLiked: boolean) => void;
+  isLiking: boolean;
+  onViewLikes: (commentId: string) => void;
+}
+
+const CommentItem: React.FC<CommentItemProps> = ({
+  comment,
+  depth = 0,
+  currentUserId,
+  isAdmin,
+  isProvider,
+  replyingTo,
+  setReplyingTo,
+  replyText,
+  setReplyText,
+  onPostReply,
+  isPostingReply,
+  editingCommentId,
+  setEditingCommentId,
+  editContent,
+  setEditContent,
+  onSaveEdit,
+  isSavingEdit,
+  onDelete,
+  isDeleting,
+  onToggleLike,
+  isLiking,
+  onViewLikes,
+}) => {
+  const primaryName = comment.userFullName || comment.userName || 'Learner';
+  const showHandle = Boolean(
+    comment.userFullName &&
+    comment.userName &&
+    comment.userFullName.trim().toLowerCase() !== comment.userName.trim().toLowerCase()
+  );
+  const isAuthor = Boolean(currentUserId && comment.userId && currentUserId === comment.userId);
+  const canDelete = Boolean(isAuthor || isAdmin || isProvider);
+  const isEditing = editingCommentId === comment.id;
+  const isReplying = replyingTo === comment.id;
+
+  const startEdit = () => {
+    setEditingCommentId(comment.id);
+    setEditContent(comment.content);
+  };
+
+  const cancelEdit = () => {
+    setEditingCommentId(null);
+    setEditContent('');
+  };
+
+  return (
+    <div
+      className={`rounded-2xl transition-all ${
+        depth === 0
+          ? 'bg-gray-100 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800/70 p-4 sm:p-5 space-y-3'
+          : 'bg-white/80 dark:bg-gray-950/70 border border-gray-200/80 dark:border-gray-800/60 p-3.5 sm:p-4 space-y-2.5 mt-2.5'
+      }`}
+    >
+      {/* Header */}
+      <div className="flex items-start sm:items-center justify-between gap-2">
+        <div className="flex items-center space-x-2.5 min-w-0">
+          <UserAvatar
+            src={comment.userImage}
+            name={primaryName}
+            size={depth === 0 ? 'md' : 'sm'}
+          />
+          <div className="min-w-0">
+            <div className="flex items-center space-x-1.5 flex-wrap">
+              <span className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                {primaryName}
+              </span>
+              {showHandle && (
+                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-normal">
+                  @{comment.userName}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center space-x-1.5 text-[10px] text-gray-500 dark:text-gray-400">
+              <span>{comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : ''}</span>
+              {comment.isEdited && (
+                <span className="italic text-gray-400 dark:text-gray-500 font-medium">(edited)</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Action Controls (Like, Edit, Delete) */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+          {/* Like / Unlike Button */}
+          <button
+            type="button"
+            onClick={() => onToggleLike(comment.id, Boolean(comment.isLiked))}
+            disabled={isLiking}
+            className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-lg transition focus:outline-none ${
+              comment.isLiked
+                ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 font-bold border border-indigo-200 dark:border-indigo-800/60'
+                : 'text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+            }`}
+            title={comment.isLiked ? 'Unlike comment' : 'Like comment'}
+          >
+            <ThumbsUp
+              className={`h-3.5 w-3.5 ${comment.isLiked ? 'fill-indigo-600 dark:fill-indigo-400' : ''}`}
+            />
+            <span className="hidden sm:inline text-[11px]">
+              {comment.isLiked ? 'Liked' : 'Like'}
+            </span>
+          </button>
+
+          {/* Likes Count Viewer Pill */}
+          <button
+            type="button"
+            onClick={() => onViewLikes(comment.id)}
+            className={`inline-flex items-center space-x-1 px-2 py-0.5 text-xs font-semibold rounded-full border transition shadow-2xs focus:outline-none ${
+              (comment.likesCount || 0) > 0
+                ? 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border-indigo-200 dark:border-indigo-800/60'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 bg-gray-50 dark:bg-gray-800/60 border-gray-200 dark:border-gray-700'
+            }`}
+            title="View who liked this comment"
+          >
+            <span>{comment.likesCount || 0}</span>
+          </button>
+
+          {/* Edit Button (Author only) */}
+          {isAuthor && !isEditing && (
+            <button
+              type="button"
+              onClick={startEdit}
+              className="p-1 text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition"
+              title="Edit comment"
+            >
+              <Edit2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+
+          {/* Delete Button (Author or Admin/Provider) */}
+          {canDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(comment)}
+              disabled={isDeleting}
+              className="p-1 text-gray-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition"
+              title="Delete comment"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Content / Edit Form */}
+      {isEditing ? (
+        <div className="space-y-2 pt-1">
+          <textarea
+            rows={2}
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            className="w-full bg-white dark:bg-gray-950 border border-indigo-300 dark:border-indigo-800 rounded-xl p-3 text-xs sm:text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <div className="flex justify-end space-x-2">
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="px-3 py-1.5 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => onSaveEdit(comment.id)}
+              disabled={!editContent.trim() || isSavingEdit}
+              className="px-4 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50 transition shadow-xs flex items-center space-x-1"
+            >
+              {isSavingEdit && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+              <span>Save</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+          {comment.content}
+        </p>
+      )}
+
+      {/* Reply Trigger */}
+      {!isEditing && (
+        <div className="pt-0.5 flex items-center space-x-3 text-xs">
+          <button
+            onClick={() => setReplyingTo(isReplying ? null : comment.id)}
+            className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center space-x-1"
+          >
+            <CornerDownRight className="h-3 w-3" />
+            <span>{isReplying ? 'Cancel' : 'Reply'}</span>
+          </button>
+        </div>
+      )}
+
+      {/* Reply Form */}
+      {isReplying && (
+        <div className="pt-2 flex space-x-2">
+          <input
+            type="text"
+            placeholder={`Reply to ${primaryName}...`}
+            value={replyText[comment.id] || ''}
+            onChange={(e) =>
+              setReplyText((prev) => ({
+                ...prev,
+                [comment.id]: e.target.value,
+              }))
+            }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && replyText[comment.id]?.trim() && !isPostingReply) {
+                onPostReply(comment.id);
+              }
+            }}
+            className="flex-1 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl px-3.5 py-2 text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <button
+            onClick={() => onPostReply(comment.id)}
+            disabled={!replyText[comment.id]?.trim() || isPostingReply}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50 transition shadow-xs flex items-center space-x-1"
+          >
+            {isPostingReply && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+            <span>Reply</span>
+          </button>
+        </div>
+      )}
+
+      {/* Nested Replies (Recursive) */}
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="pl-3 sm:pl-4 border-l-2 border-indigo-200 dark:border-indigo-900/50 space-y-2 mt-3">
+          {comment.replies.map((reply) => (
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              depth={depth + 1}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
+              isProvider={isProvider}
+              replyingTo={replyingTo}
+              setReplyingTo={setReplyingTo}
+              replyText={replyText}
+              setReplyText={setReplyText}
+              onPostReply={onPostReply}
+              isPostingReply={isPostingReply}
+              editingCommentId={editingCommentId}
+              setEditingCommentId={setEditingCommentId}
+              editContent={editContent}
+              setEditContent={setEditContent}
+              onSaveEdit={onSaveEdit}
+              isSavingEdit={isSavingEdit}
+              onDelete={onDelete}
+              isDeleting={isDeleting}
+              onToggleLike={onToggleLike}
+              isLiking={isLiking}
+              onViewLikes={onViewLikes}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const CoursePlayer: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId?: string }>();
@@ -66,6 +402,7 @@ const CoursePlayer: React.FC = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [autoplayNext, setAutoplayNext] = useState<boolean>(true);
+  const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null);
 
   // Cart Query
   const isStudent = isAuthenticated && user?.role === 'student';
@@ -217,13 +554,106 @@ const CoursePlayer: React.FC = () => {
     setReplyText((prev) => ({ ...prev, [parentId]: '' }));
   };
 
-  // Like Comment Mutation
-  const likeMutation = useMutation({
-    mutationFn: (commentId: string) => commentService.likeComment(commentId),
-    onSuccess: () => {
+  // Comment Edit State
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState<string>('');
+
+  // Comment Likes Viewer State
+  const [selectedLikesCommentId, setSelectedLikesCommentId] = useState<string | null>(null);
+
+  // Fetch Comment Likes
+  const {
+    data: commentLikesData,
+    isLoading: isLoadingLikes,
+    isError: isErrorLikes,
+    refetch: refetchCommentLikes,
+  } = useQuery({
+    queryKey: ['comment-likes', selectedLikesCommentId],
+    queryFn: () => commentService.getCommentLikes(selectedLikesCommentId!),
+    enabled: !!selectedLikesCommentId,
+  });
+
+  const commentLikes: CommentLike[] = commentLikesData?.data || [];
+
+  // Close likes modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedLikesCommentId) {
+        setSelectedLikesCommentId(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedLikesCommentId]);
+
+  // Toggle Like / Unlike Comment Mutation
+  const toggleLikeMutation = useMutation({
+    mutationFn: async ({ commentId, isLiked }: { commentId: string; isLiked: boolean }) => {
+      if (isLiked) {
+        return await commentService.unlikeComment(commentId);
+      } else {
+        return await commentService.likeComment(commentId);
+      }
+    },
+    onSuccess: (_data, { commentId }) => {
       queryClient.invalidateQueries({ queryKey: ['lesson-comments', currentLesson?.id] });
+      queryClient.invalidateQueries({ queryKey: ['comment-likes', commentId] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to update like status.');
     },
   });
+
+  const handleToggleLike = (commentId: string, isLiked: boolean) => {
+    toggleLikeMutation.mutate({ commentId, isLiked });
+  };
+
+  // Edit Comment Mutation
+  const editCommentMutation = useMutation({
+    mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
+      commentService.editComment(commentId, content),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lesson-comments', currentLesson?.id] });
+      setEditingCommentId(null);
+      setEditContent('');
+      toast.success('Comment updated successfully!');
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to update comment.');
+    },
+  });
+
+  const handleSaveEdit = (commentId: string) => {
+    if (!editContent.trim()) return;
+    editCommentMutation.mutate({ commentId, content: editContent.trim() });
+  };
+
+  // Delete Comment Mutation
+  const deleteCommentMutation = useMutation({
+    mutationFn: (commentId: string) =>
+      commentService.deleteComment(commentId, currentLesson.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lesson-comments', currentLesson?.id] });
+      toast.success('Comment deleted successfully!');
+      setCommentToDelete(null);
+    },
+    onError: (err: any) => {
+      setCommentToDelete(null);
+      const message = err?.response?.data?.message || 'Failed to delete comment.';
+      // Provide more specific messages based on backend response
+      if (message.includes("you don't have access to delete")) {
+        toast.error('You can only delete your own comments.');
+      } else if (message.includes('Comment is not found')) {
+        toast.error('Comment not found. It may have already been deleted.');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+
+  const handleDeleteComment = (comment: Comment) => {
+    setCommentToDelete(comment);
+  };
 
   // Submit Course Rating
   const handleRatingSubmit = async (e: React.FormEvent) => {
@@ -404,17 +834,11 @@ const CoursePlayer: React.FC = () => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition focus:outline-none"
               >
-                {user?.profileUrl ? (
-                  <img
-                    src={user.profileUrl}
-                    alt={user?.userName || 'User'}
-                    className="h-7 w-7 rounded-full object-cover border border-gray-200 dark:border-gray-700"
-                  />
-                ) : (
-                  <div className="h-7 w-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">
-                    {user?.userName?.charAt(0)?.toUpperCase() || 'U'}
-                  </div>
-                )}
+                <UserAvatar
+                  src={user?.profileUrl}
+                  name={user?.fullName || user?.userName}
+                  size="sm"
+                />
                 <ChevronDown className="h-3 w-3 text-gray-400 hidden sm:inline" />
               </button>
 
@@ -422,8 +846,11 @@ const CoursePlayer: React.FC = () => {
                 <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
                     <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                      {user?.userName}
+                      {user?.fullName || user?.userName}
                     </p>
+                    {user?.fullName && user?.userName && user.fullName.trim().toLowerCase() !== user.userName.trim().toLowerCase() && (
+                      <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">@{user.userName}</p>
+                    )}
                     <p className="text-[10px] text-gray-400 truncate">{user?.email}</p>
                   </div>
                   <div className="py-1">
@@ -685,95 +1112,31 @@ const CoursePlayer: React.FC = () => {
                     </div>
                   ) : (
                     comments.map((comment) => (
-                      <div
+                      <CommentItem
                         key={comment.id}
-                        className="bg-gray-100 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800/70 rounded-2xl p-4 sm:p-5 space-y-3"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2.5">
-                            <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-xs">
-                              {comment.userName?.charAt(0)?.toUpperCase() || 'U'}
-                            </div>
-                            <div>
-                              <p className="text-xs font-bold text-gray-900 dark:text-white">{comment.userName}</p>
-                              <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                                {new Date(comment.createdAt).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={() => likeMutation.mutate(comment.id)}
-                            className="flex items-center space-x-1 text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-2 py-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-                          >
-                            <ThumbsUp className="h-3.5 w-3.5" />
-                            <span>{comment.likesCount || 0}</span>
-                          </button>
-                        </div>
-
-                        <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{comment.content}</p>
-
-                        {/* Reply trigger */}
-                        <div className="pt-1 flex items-center space-x-4 text-xs">
-                          <button
-                            onClick={() =>
-                              setReplyingTo(replyingTo === comment.id ? null : comment.id)
-                            }
-                            className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
-                          >
-                            {replyingTo === comment.id ? 'Cancel' : 'Reply'}
-                          </button>
-                        </div>
-
-                        {/* Reply Form */}
-                        {replyingTo === comment.id && (
-                          <div className="pt-2 flex space-x-2">
-                            <input
-                              type="text"
-                              placeholder="Write a reply..."
-                              value={replyText[comment.id] || ''}
-                              onChange={(e) =>
-                                setReplyText((prev) => ({
-                                  ...prev,
-                                  [comment.id]: e.target.value,
-                                }))
-                              }
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' && replyText[comment.id]?.trim()) {
-                                  handlePostReply(comment.id);
-                                }
-                              }}
-                              className="flex-1 bg-gray-100 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl px-3.5 py-2 text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            />
-                            <button
-                              onClick={() => handlePostReply(comment.id)}
-                              disabled={!replyText[comment.id]?.trim()}
-                              className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
-                            >
-                              Reply
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Nested replies */}
-                        {comment.replies && comment.replies.length > 0 && (
-                          <div className="pl-4 border-l-2 border-indigo-200 dark:border-indigo-900/40 space-y-2 mt-3">
-                            {comment.replies.map((reply) => (
-                              <div key={reply.id} className="bg-gray-100 dark:bg-gray-950/60 p-3 rounded-xl border border-gray-200 dark:border-gray-800/40">
-                                <div className="flex items-center space-x-2 mb-1">
-                                  <div className="w-5 h-5 bg-indigo-700 rounded-full flex items-center justify-center text-[10px] font-bold text-white">
-                                    {reply.userName?.charAt(0)?.toUpperCase() || 'R'}
-                                  </div>
-                                  <p className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                                    {reply.userName}
-                                  </p>
-                                </div>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 pl-7">{reply.content}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                        comment={comment}
+                        depth={0}
+                        currentUserId={user?.id}
+                        isAdmin={user?.role === 'admin'}
+                        isProvider={course?.providerId === user?.id}
+                        replyingTo={replyingTo}
+                        setReplyingTo={setReplyingTo}
+                        replyText={replyText}
+                        setReplyText={setReplyText}
+                        onPostReply={handlePostReply}
+                        isPostingReply={addCommentMutation.isPending}
+                        editingCommentId={editingCommentId}
+                        setEditingCommentId={setEditingCommentId}
+                        editContent={editContent}
+                        setEditContent={setEditContent}
+                        onSaveEdit={handleSaveEdit}
+                        isSavingEdit={editCommentMutation.isPending}
+                        onDelete={handleDeleteComment}
+                        isDeleting={deleteCommentMutation.isPending}
+                        onToggleLike={handleToggleLike}
+                        isLiking={toggleLikeMutation.isPending}
+                        onViewLikes={(id) => setSelectedLikesCommentId(id)}
+                      />
                     ))
                   )}
                 </div>
@@ -1025,6 +1388,226 @@ const CoursePlayer: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Comment Likes Modal */}
+      {selectedLikesCommentId && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-gray-900/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setSelectedLikesCommentId(null)}
+          />
+
+          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div className="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 w-full sm:max-w-md border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]">
+              {/* Modal Header */}
+              <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div className="flex items-center space-x-2.5">
+                  <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50">
+                    <ThumbsUp className="h-4 w-4 fill-indigo-600 dark:fill-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">
+                      Comment Likes
+                    </h3>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      {commentLikes.length} {commentLikes.length === 1 ? 'person' : 'people'} liked this comment
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedLikesCommentId(null)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                  title="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Modal Content List */}
+              <div className="p-4 sm:p-5 overflow-y-auto flex-1 divide-y divide-gray-100 dark:divide-gray-700/60">
+                {isLoadingLikes ? (
+                  <div className="py-10 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                    <Loader2 className="h-6 w-6 animate-spin text-indigo-600 dark:text-indigo-400 mb-2" />
+                    <span className="text-xs font-semibold">Loading likes...</span>
+                  </div>
+                ) : isErrorLikes ? (
+                  <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-rose-500 mb-3">Failed to load likes for this comment.</p>
+                    <button
+                      type="button"
+                      onClick={() => refetchCommentLikes()}
+                      className="px-3.5 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : commentLikes.length === 0 ? (
+                  <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+                    <p className="text-xs italic">No likes recorded for this comment yet.</p>
+                  </div>
+                ) : (
+                  commentLikes.map((like, index) => {
+                    const likePrimaryName = like.userFullName || like.userName || 'Learner';
+                    const showLikeHandle = Boolean(
+                      like.userFullName &&
+                      like.userName &&
+                      like.userFullName.trim().toLowerCase() !== like.userName.trim().toLowerCase()
+                    );
+
+                    return (
+                      <div
+                        key={`${like.userId || like.userName}-${index}`}
+                        className="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center space-x-3 min-w-0">
+                          <UserAvatar
+                            src={like.userImage}
+                            name={likePrimaryName}
+                            size="md"
+                          />
+                          <div className="min-w-0">
+                            <div className="flex items-center space-x-1.5 flex-wrap">
+                              <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                                {likePrimaryName}
+                              </p>
+                              {showLikeHandle && (
+                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-normal">
+                                  @{like.userName}
+                                </span>
+                              )}
+                            </div>
+                            {like.addedAt && (
+                              <p className="text-[10px] text-gray-400 dark:text-gray-500">
+                                {new Date(like.addedAt).toLocaleDateString(undefined, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex-shrink-0 text-indigo-500 dark:text-indigo-400 p-1.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-full border border-indigo-100 dark:border-indigo-900/50">
+                          <ThumbsUp className="h-3 w-3 fill-current" />
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-3 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700 text-right">
+                <button
+                  type="button"
+                  onClick={() => setSelectedLikesCommentId(null)}
+                  className="px-4 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Comment Confirmation Modal */}
+      {commentToDelete && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-gray-900/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setCommentToDelete(null)}
+          />
+
+          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div className="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 w-full sm:max-w-md border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-150">
+              {/* Modal Header */}
+              <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div className="flex items-center space-x-2.5">
+                  <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50">
+                    <Trash2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">
+                      {commentToDelete.parentCommentId ? 'Delete Reply' : 'Delete Comment'}
+                    </h3>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      This action cannot be undone
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCommentToDelete(null)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                  title="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-4 sm:p-5">
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                  {commentToDelete.parentCommentId ? (
+                    <>This will permanently delete this reply. Do you want to continue?</>
+                  ) : (
+                    <>
+                      This will permanently delete this comment and{' '}
+                      <span className="font-semibold text-gray-900 dark:text-white">all of its replies</span>.
+                      Do you want to continue?
+                    </>
+                  )}
+                </p>
+
+                {commentToDelete.parentCommentId === null && (
+                  <div className="mt-3 flex items-start space-x-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900/50">
+                    <Sparkles className="h-4 w-4 text-amber-500 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+                      Any replies to this comment will also be permanently deleted.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-3 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setCommentToDelete(null)}
+                  className="px-4 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    deleteCommentMutation.mutate(commentToDelete.id);
+                  }}
+                  disabled={deleteCommentMutation.isPending}
+                  className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-semibold hover:bg-rose-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {deleteCommentMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>Delete</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

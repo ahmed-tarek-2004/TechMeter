@@ -147,11 +147,10 @@ const Profile: React.FC = () => {
       : user.profileUrl;
 
   const displayName =
-    user.role === 'student'
-      ? studentProfile?.studentName || user.userName
-      : user.role === 'provider'
-      ? providerProfile?.providerName || user.userName
-      : user.userName;
+    studentProfile?.studentName ||
+    providerProfile?.providerName ||
+    user.fullName ||
+    user.userName;
 
   const country =
     user.role === 'student'

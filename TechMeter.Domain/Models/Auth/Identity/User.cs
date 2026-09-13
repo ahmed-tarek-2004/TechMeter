@@ -11,7 +11,8 @@ namespace TechMeter.Domain.Models.Auth.Identity
 {
     public class User : IdentityUser<string>
     {
-        public string Country { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
         public string? ProfileUrl { get; set; }
         public Gender Gender { get; set; }
         public Student Student { get; set; }

@@ -24,7 +24,8 @@ namespace TechMeter.Application.Features.Profile.Query.GetProviderProfile
                 Email = b.User.Email,
                 PhoneNumber = b.User.PhoneNumber,
                 ProfileUrl = b.User.ProfileUrl,
-                ProviderName = b.User.UserName,
+                ProviderName = b.User.FullName,
+                UserName = b.User.UserName ?? "",
                 BankAccount = b.BankAccount,
                 Brief = b.Brief!,
                 ExperienceYears = b.ExperienceYears

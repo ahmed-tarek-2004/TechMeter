@@ -56,9 +56,10 @@ namespace TechMeter.Infrastructure.Services.Notification
                     return _responseHandler.NotFound<string>("user is not found");
                 }
                 var isOnline = await _context.UserConnections.AnyAsync(b => b.userId == userId);
+                var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(b => b.Id == userId);
                 if (isOnline)
                 {
-                    await _notificationSenderService.SendNotificationAsync(userId, Title, message, DateTime.UtcNow);
+                    await _notificationSenderService.SendNotificationAsync(userId, Title, message, DateTime.UtcNow, user?.FullName, user?.UserName);
                     //_logger.LogInformation("First send fcm ");
                     ////await _fcmService.SendToTokensAsync(userId, Title, message);
                     //_backgroundJobService.Enqueue<IFcmService>(b => b.SendToTokensAsync(userId, Title, message));

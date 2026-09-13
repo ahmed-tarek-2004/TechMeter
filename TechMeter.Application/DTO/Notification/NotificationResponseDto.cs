@@ -14,5 +14,8 @@ namespace TechMeter.Application.DTO.Notification
         public DateTime CreatedAt { get; set; }
         public bool IsRead { get; set; }
         public string ReceiptId { get; set; }
+        public string? FullName { get; set; }
+        public string? UserFullName { get; set; }
+        public string? UserName { get; set; }
     }
 }

@@ -22,11 +22,11 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
     public class StudentRegisterCommandHandler(IApplicationDbContext context,
         ResponseHandler responseHandler, ILogger<StudentRegisterCommandHandler> logger,
         ITokenService tokenService, IOTPService otpService,
-        IBackgroundJobService backgroundJobService,UserManager<User> userManager) : IRequestHandler<StudentRegisterCommand, Response<StudentRegisterResponse>>
+        IBackgroundJobService backgroundJobService, UserManager<User> userManager) : IRequestHandler<StudentRegisterCommand, Response<StudentRegisterResponse>>
     {
         public async Task<Response<StudentRegisterResponse>> Handle(StudentRegisterCommand request, CancellationToken cancellationToken)
         {
-            
+
             var user = await context.Users.Include(b => b.Student)
                 .FirstOrDefaultAsync(b => b.Email == request.StudentRegisterRequest.Email && b.PhoneNumber == request.StudentRegisterRequest.PhoneNumber);
 
@@ -45,38 +45,39 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                 //}
                 //else
                 //{
-                    user = new Domain.Models.Auth.Identity.User()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserName = request.StudentRegisterRequest.UserName,
-                        Email = request.StudentRegisterRequest.Email,
-                        PhoneNumber = request.StudentRegisterRequest.PhoneNumber,
-                        Country = request.StudentRegisterRequest.Country,
-                        Gender = request.StudentRegisterRequest.Gender,
-                        ProfileUrl = request.StudentRegisterRequest.ProfilePhoto != null
-                            ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.StudentRegisterRequest.ProfilePhoto,cancellationToken))
-                            : string.Empty,
-                    };
+                user = new Domain.Models.Auth.Identity.User()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FullName = request.StudentRegisterRequest.UserName,
+                    Email = request.StudentRegisterRequest.Email,
+                    UserName = request.StudentRegisterRequest.Email.Split('@')[0],
+                    PhoneNumber = request.StudentRegisterRequest.PhoneNumber,
+                    Country = request.StudentRegisterRequest.Country,
+                    Gender = request.StudentRegisterRequest.Gender,
+                    ProfileUrl = request.StudentRegisterRequest.ProfilePhoto != null
+                        ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.StudentRegisterRequest.ProfilePhoto, cancellationToken))
+                        : string.Empty,
+                };
 
-                    var results = await userManager.CreateAsync(user, request.StudentRegisterRequest.Password);
+                var results = await userManager.CreateAsync(user, request.StudentRegisterRequest.Password);
 
-                    if (!results.Succeeded)
-                    {
-                        var errors = string.Join(",", results.Errors.Select(e => e.Description));
-                        logger.LogWarning("Failed to create user: {Errors}", errors);
-                        return responseHandler.BadRequest<StudentRegisterResponse>(errors);
-                    }
+                if (!results.Succeeded)
+                {
+                    var errors = string.Join(",", results.Errors.Select(e => e.Description));
+                    logger.LogWarning("Failed to create user: {Errors}", errors);
+                    return responseHandler.BadRequest<StudentRegisterResponse>(errors);
+                }
 
-                    await userManager.AddToRoleAsync(user, "student");
+                await userManager.AddToRoleAsync(user, "student");
 
-                    logger.LogInformation("New user created: {UserId}", user.Id);
-                    var student = new Domain.Models.Auth.Users.Student()
-                    {
-                        Id = user.Id,
-                        BirthDate = request.StudentRegisterRequest.BirthDate,
-                        EducationLevel = request.StudentRegisterRequest.EducationLevel
-                    };
-                    await context.Student.AddAsync(student);
+                logger.LogInformation("New user created: {UserId}", user.Id);
+                var student = new Domain.Models.Auth.Users.Student()
+                {
+                    Id = user.Id,
+                    BirthDate = request.StudentRegisterRequest.BirthDate,
+                    EducationLevel = request.StudentRegisterRequest.EducationLevel
+                };
+                await context.Student.AddAsync(student);
                 //}
 
                 await context.SaveChangesAsync(cancellationToken);
@@ -90,14 +91,15 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                 {
                     Id = user.Id,
                     Role = "Student",
-                    PhoneNumber = request.StudentRegisterRequest.PhoneNumber,
-                    UserName = request.StudentRegisterRequest.UserName,
-                    Country = request.StudentRegisterRequest.Country,
-                    Gender = request.StudentRegisterRequest.Gender,
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName,
+                    FullName = user.FullName,
+                    Country = user.Country,
+                    Gender = user.Gender,
                     ProfileUrl = user.ProfileUrl,
                     Age = request.StudentRegisterRequest.BirthDate != null ? (DateTime.UtcNow.Year - request.StudentRegisterRequest.BirthDate.Year) : null,
-                    EducationLeveL = request.StudentRegisterRequest.EducationLevel,
-                    EmailAddress = request.StudentRegisterRequest.Email,
+                    EducationLeveL = student.EducationLevel,
+                    EmailAddress = user.Email,
                     isEmailConfirmed = false,
                     accessToken = string.Empty,
                     refreshToken = string.Empty,

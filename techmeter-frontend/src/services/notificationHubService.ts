@@ -8,6 +8,8 @@ export interface SignalRNotificationPayload {
   Id?: string;
   userId?: string;
   UserId?: string;
+  receiptId?: string;
+  ReceiptId?: string;
   title?: string;
   Title?: string;
   titile?: string;
@@ -18,6 +20,12 @@ export interface SignalRNotificationPayload {
   CreatedAt?: string;
   isRead?: boolean;
   IsRead?: boolean;
+  fullName?: string;
+  FullName?: string;
+  userFullName?: string;
+  UserFullName?: string;
+  userName?: string;
+  UserName?: string;
 }
 
 class NotificationHubService {
@@ -56,6 +64,8 @@ class NotificationHubService {
         .build();
 
       const handleIncomingNotification = (raw: SignalRNotificationPayload | any) => {
+        const fullName = raw?.fullName || raw?.FullName || raw?.userFullName || raw?.UserFullName || raw?.senderFullName || raw?.SenderFullName;
+        const userName = raw?.userName || raw?.UserName || raw?.senderUserName || raw?.SenderUserName || raw?.senderName || raw?.SenderName;
         const normalizedNotification: Notification = {
           id: raw?.id || raw?.Id || raw?.notificationId || raw?.NotificationId || `notif_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
           title: raw?.title || raw?.Title || raw?.titile || raw?.Titile || 'New Notification',
@@ -63,6 +73,9 @@ class NotificationHubService {
           createdAt: raw?.createdAt || raw?.CreatedAt || new Date().toISOString(),
           isRead: raw?.isRead ?? raw?.IsRead ?? false,
           receiptId: raw?.userId || raw?.UserId || raw?.receiptId || raw?.ReceiptId || '',
+          fullName: fullName ? String(fullName) : undefined,
+          userFullName: fullName ? String(fullName) : undefined,
+          userName: userName ? String(userName) : undefined,
         };
 
         this.notificationCallbacks.forEach((cb) => {

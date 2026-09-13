@@ -22,12 +22,12 @@ interface FormState {
 
 const StudentEditForm: React.FC<StudentEditFormProps> = ({ profile, onClose, onSuccess }) => {
   const queryClient = useQueryClient();
-  const { updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormState>({
-    userName: profile?.studentName || '',
-    phoneNumber: profile?.phoneNumber || '',
+    userName: profile?.studentName || user?.fullName || user?.userName || '',
+    phoneNumber: profile?.phoneNumber || user?.phoneNumber || '',
     country: profile?.country || '',
     educationLevel: profile?.educationLevel || '',
     birthDay: profile?.birthDay ? profile.birthDay.split('T')[0] : '',
@@ -52,6 +52,7 @@ const StudentEditForm: React.FC<StudentEditFormProps> = ({ profile, onClose, onS
 
         updateUser({
           userName: form.userName,
+          fullName: form.userName,
           phoneNumber: form.phoneNumber,
           ...(newPhoto ? { profileUrl: newPhoto } : {}),
         });
@@ -99,7 +100,9 @@ const StudentEditForm: React.FC<StudentEditFormProps> = ({ profile, onClose, onS
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
+    formData.append('StudentName', form.userName);
     formData.append('UserName', form.userName);
+    formData.append('FullName', form.userName);
     formData.append('PhoneNumber', form.phoneNumber);
     formData.append('Country', form.country);
     formData.append('EducationLevel', form.educationLevel);
@@ -108,8 +111,9 @@ const StudentEditForm: React.FC<StudentEditFormProps> = ({ profile, onClose, onS
       formData.append('BirthDay', form.birthDay);
     }
     if (selectedFile) {
-      formData.append('ProfilePhoto', selectedFile);
+      formData.append('profileImage', selectedFile);
       formData.append('ProfileImage', selectedFile);
+      formData.append('ProfilePhoto', selectedFile);
     }
     mutation.mutate(formData);
   };

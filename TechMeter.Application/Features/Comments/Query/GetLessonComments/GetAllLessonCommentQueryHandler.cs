@@ -14,7 +14,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Comments.Query.GetLessonComments
 {
-    public class GetAllLessonCommentQueryHandler(ILessonCommentAuthorization lessonCommentAuthorization, 
+    public class GetAllLessonCommentQueryHandler(ILessonCommentAuthorization lessonCommentAuthorization,
         ResponseHandler responseHandler, IApplicationDbContext context) : IRequestHandler<GetAllLessonCommentQuery, Response<List<LessonCommentResponse>>>
     {
         public async Task<Response<List<LessonCommentResponse>>> Handle(GetAllLessonCommentQuery request, CancellationToken cancellationToken)
@@ -41,10 +41,13 @@ namespace TechMeter.Application.Features.Comments.Query.GetLessonComments
                IsEdited = c.IsEdited,
                UserId = c.UserId,
                UserName = c.UserName,
+               UserFullName = c.UserFullName,
+               FullName = c.UserFullName,
                UserEmail = c.UserEmail,
                UserImage = c.UserImage,
                LessonId = c.LessonId,
                LikesCount = c.LessonCommentLikes.Count(),
+               IsLiked = c.LessonCommentLikes.Any(l => l.UserId == request.userId),
                ParentCommentId = c.ParentCommentId
            })
            .ToListAsync();
@@ -55,13 +58,17 @@ namespace TechMeter.Application.Features.Comments.Query.GetLessonComments
 
             foreach (var comment in comments)
             {
-                if (comment.ParentCommentId is null)
+                if (string.IsNullOrEmpty(comment.ParentCommentId))
                 {
                     rootComments.Add(comment);
                 }
                 else if (lookup.TryGetValue(comment.ParentCommentId, out var parent))
                 {
                     parent.Replies.Add(comment);
+                }
+                else
+                {
+                    rootComments.Add(comment);
                 }
             }
 

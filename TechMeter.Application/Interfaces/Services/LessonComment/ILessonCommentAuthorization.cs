@@ -9,7 +9,7 @@ namespace TechMeter.Application.Interfaces.Services.LessonComment
     public interface ILessonCommentAuthorization
     {
         Task<bool> HasCourseAccess(string userId, string courseId, bool isAdmin = false);
-        Task<(string LessonId, string CourseId)?> GetLessonAsync(string lessonId);
+        Task<(string LessonId, string CourseId, string ProviderId,string LessonName)?> GetLessonAsync(string lessonId);
         Task<int> CanDeleteAsync(string userId, string CommentId, string LessonId);
     }
 }

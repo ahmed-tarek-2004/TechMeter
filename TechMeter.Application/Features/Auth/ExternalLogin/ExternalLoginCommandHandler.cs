@@ -34,7 +34,8 @@ namespace TechMeter.Application.Features.Auth.ExternalLogin
                     {
                         Id = Guid.NewGuid().ToString(),
                         Email = payload.email,
-                        UserName = payload.email,
+                        UserName = payload.email.Split('@')[0],
+                        FullName = payload.name,
                         PhoneNumber = "",
                         EmailConfirmed = true,
                         ProfileUrl = payload.picture,
@@ -66,11 +67,12 @@ namespace TechMeter.Application.Features.Auth.ExternalLogin
                 RefreshToken = token.RefreshToken,
                 Id = user.Id,
                 UserName = user.UserName,
+                FullName = user.FullName,
                 Email = user.Email,
                 IsEmailConfirmed = user.EmailConfirmed,
                 PhoneNumber = user.PhoneNumber,
                 Role = "student",
-                PhotoUrl = user.ProfileUrl
+                PhotoUrl = user.ProfileUrl,
             };
             return responseHandler.Success(response, "Login successful");
         }

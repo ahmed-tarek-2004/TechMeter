@@ -22,7 +22,8 @@ namespace TechMeter.Application.Features.Contact.Query.GetProviderContact
                        .Select(student => new AvailableContactResponse
                        {
                            Id = student.Id,
-                           Name = student.User.UserName ?? "",
+                           FullName = student.User.FullName ?? "",
+                           UserName = student.User.UserName ?? "",
                            UserProfilePictureUrl = student.User.ProfileUrl ?? ""
                        });
             var providerContacts = await PaginatedList<AvailableContactResponse>.CreatePaginatedList(providerContactsQuery, request.PageNumber, request.PageSize, cancellationToken);

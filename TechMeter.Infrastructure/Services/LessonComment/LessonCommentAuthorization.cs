@@ -37,14 +37,17 @@ namespace TechMeter.Infrastructure.Services.LessonComment
 
             return true;
         }
-        public async Task<(string LessonId, string CourseId)?> GetLessonAsync(string lessonId)
+        public async Task<(string LessonId, string CourseId, string ProviderId, string LessonName)?> GetLessonAsync(string lessonId)
         {
             return await context.Lessons
                 .Where(x => x.Id == lessonId)
-                .Select(x => new ValueTuple<string, string>
+                .Select(x => new ValueTuple<string, string, string,string>
                 (
                     x.Id,
-                    x.section.CourseId
+                    x.section.CourseId,
+                    x.section.Course.ProviderId,
+                    x.Name
+                    //x
                 ))
                 .FirstOrDefaultAsync();
         }
@@ -63,11 +66,11 @@ namespace TechMeter.Infrastructure.Services.LessonComment
             }
             else if (isProvider)
             {
-                canDelete = await context.lessonComments.AnyAsync(c => c.Lesson.section.Course.ProviderId == userId);
+                canDelete = await context.lessonComments.AnyAsync(c => c.Id == CommentId && c.Lesson.section.Course.ProviderId == userId);
             }
             else
             {
-                canDelete = await context.lessonComments.AnyAsync(c => c.UserId == userId && c.LessonId == LessonId);
+                canDelete = await context.lessonComments.AnyAsync(c => c.Id == CommentId && c.UserId == userId && c.LessonId == LessonId);
             }
             if (!canDelete)
                 return 0;

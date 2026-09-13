@@ -99,8 +99,14 @@ const Messages: React.FC = () => {
   }, [contacts, searchParams, selectedContact]);
 
   const filteredContacts = useMemo(() => {
+    if (!searchQuery.trim()) return contacts;
+    const q = searchQuery.toLowerCase();
     return contacts.filter((contact) =>
-      (contact?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
+      (contact?.fullName || '').toLowerCase().includes(q) ||
+      (contact?.userName || '').toLowerCase().includes(q) ||
+      (contact?.name || '').toLowerCase().includes(q) ||
+      (contact?.email || '').toLowerCase().includes(q) ||
+      (contact?.id || '').toLowerCase().includes(q)
     );
   }, [contacts, searchQuery]);
 
@@ -486,8 +492,14 @@ const Messages: React.FC = () => {
                 </div>
               ) : (
                 filteredContacts.map((contact) => {
+                  const contactDisplayName = contact.fullName || contact.name || contact.userName || 'Unknown User';
+                  const hasDistinctUserName = Boolean(
+                    contact.userName &&
+                    contact.fullName &&
+                    contact.userName.toLowerCase() !== contact.fullName.toLowerCase()
+                  );
                   const hasImg = !!contact.userProfilePictureUrl && !imgErrors[contact.id];
-                  const firstChar = (contact.name || '?').charAt(0).toUpperCase();
+                  const firstChar = contactDisplayName.charAt(0).toUpperCase();
                   const unread = unreadContacts[contact.id] || 0;
                   const isSelected = selectedContact?.id === contact.id;
 
@@ -505,7 +517,7 @@ const Messages: React.FC = () => {
                         {hasImg ? (
                           <img
                             src={contact.userProfilePictureUrl}
-                            alt={contact.name}
+                            alt={contactDisplayName}
                             className="w-11 h-11 rounded-2xl object-cover border-2 border-white dark:border-gray-800 shadow-2xs"
                             onError={() => handleImageError(contact.id)}
                           />
@@ -530,9 +542,14 @@ const Messages: React.FC = () => {
                                 : 'text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
                             }`}
                           >
-                            {contact.name || 'Unknown User'}
+                            {contactDisplayName}
                           </h3>
                         </div>
+                        {hasDistinctUserName && (
+                          <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate font-normal">
+                            @{contact.userName}
+                          </p>
+                        )}
                         <div className="flex items-center gap-1.5 mt-0.5">
                           {user?.role === 'student' ? (
                             <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-purple-700 dark:text-purple-400">
@@ -556,7 +573,12 @@ const Messages: React.FC = () => {
 
           {/* Main Chat Area */}
           <div className="flex-1 flex flex-col h-full bg-slate-100/50 dark:bg-gray-950/50 relative overflow-hidden">
-            {selectedContact ? (
+            {selectedContact ? (() => {
+              const activeContactName = selectedContact.fullName || selectedContact.name || selectedContact.userName || 'Unknown User';
+              const activeContactHandle = selectedContact.userName;
+              const activeFirstChar = activeContactName.charAt(0).toUpperCase();
+
+              return (
               <>
                 {/* Chat Header */}
                 <div className="p-4 border-b border-gray-200/80 dark:border-gray-800/80 bg-white/90 dark:bg-gray-900/80 backdrop-blur-md flex items-center justify-between z-20">
@@ -565,14 +587,14 @@ const Messages: React.FC = () => {
                       {selectedContact.userProfilePictureUrl && !imgErrors[selectedContact.id] ? (
                         <img
                           src={selectedContact.userProfilePictureUrl}
-                          alt={selectedContact.name}
+                          alt={activeContactName}
                           className="w-10 h-10 rounded-2xl object-cover border-2 border-white dark:border-gray-800 shadow-2xs"
                           onError={() => handleImageError(selectedContact.id)}
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center shadow-2xs border-2 border-white dark:border-gray-800">
                           <span className="text-white text-xs font-black">
-                            {(selectedContact.name || '?').charAt(0).toUpperCase()}
+                            {activeFirstChar}
                           </span>
                         </div>
                       )}
@@ -586,10 +608,15 @@ const Messages: React.FC = () => {
                     </div>
 
                     <div className="ml-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-xs font-black text-gray-900 dark:text-white">
-                          {selectedContact.name || 'User'}
+                          {activeContactName}
                         </h3>
+                        {activeContactHandle && (
+                          <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                            @{activeContactHandle}
+                          </span>
+                        )}
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/40">
                           {user?.role === 'student' ? 'Instructor' : 'Student'}
                         </span>
@@ -636,7 +663,7 @@ const Messages: React.FC = () => {
                         <Sparkles className="h-8 w-8" />
                       </div>
                       <h4 className="text-sm font-black text-gray-900 dark:text-white mb-1.5">
-                        Start a conversation with {selectedContact.name}
+                        Start a conversation with {activeContactName}
                       </h4>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
                         Send a message or select a prompt below to break the ice!
@@ -709,13 +736,13 @@ const Messages: React.FC = () => {
                                   selectedContact.userProfilePictureUrl && !imgErrors[selectedContact.id] ? (
                                     <img
                                       src={selectedContact.userProfilePictureUrl}
-                                      alt={selectedContact.name}
+                                      alt={activeContactName}
                                       className="w-7 h-7 rounded-full object-cover border border-white dark:border-gray-800 shadow-2xs"
                                       onError={() => handleImageError(selectedContact.id)}
                                     />
                                   ) : (
                                     <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-[10px] text-white font-bold shadow-2xs">
-                                      {(selectedContact.name || '?').charAt(0).toUpperCase()}
+                                      {activeFirstChar}
                                     </div>
                                   )
                                 ) : (
@@ -780,7 +807,7 @@ const Messages: React.FC = () => {
                         type="text"
                         value={messageText}
                         onChange={(e) => setMessageText(e.target.value)}
-                        placeholder={`Message ${selectedContact.name || 'user'}...`}
+                        placeholder={`Message ${activeContactName}...`}
                         className="w-full border border-gray-200 dark:border-gray-700/70 bg-slate-50/80 dark:bg-gray-800/80 text-gray-900 dark:text-white rounded-2xl pl-4 pr-10 py-3 text-xs placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none transition shadow-2xs"
                         disabled={isSending}
                       />
@@ -799,7 +826,8 @@ const Messages: React.FC = () => {
                   </form>
                 </div>
               </>
-            ) : (
+              );
+            })() : (
               /* No Conversation Selected State */
               <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center max-w-sm mx-auto">
