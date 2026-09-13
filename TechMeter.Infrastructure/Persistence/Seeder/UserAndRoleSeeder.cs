@@ -68,6 +68,7 @@ namespace TechMeter.Infrastructure.Persistence.Seeder
                     var user = new User()
                     {
                         Id = Guid.NewGuid().ToString(),
+                        FullName = "Admin",
                         UserName = "Admin",
                         PhoneNumber = "01030187018",
                         Email = "ahmedzaher75802004@gmail.com",

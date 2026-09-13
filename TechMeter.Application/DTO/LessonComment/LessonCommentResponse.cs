@@ -15,6 +15,7 @@ namespace TechMeter.Application.DTO.LessonComment
         public bool IsEdited { get; set; } = false;
         public string UserId { get; set; }
         public string UserName { get; set; }
+        public string UserFullName { get; set; }
         public string UserEmail { get; set; }
         public string? UserImage { get; set; }
         public string LessonId { get; set; }

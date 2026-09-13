@@ -74,6 +74,7 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                     UserName = user.UserName,
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
+                    FullName = user.FullName ?? "",
                     PhotoUrl = user.ProfileUrl,
                     Role = roles.FirstOrDefault(),
                     AccessToken = token.AccessToken,

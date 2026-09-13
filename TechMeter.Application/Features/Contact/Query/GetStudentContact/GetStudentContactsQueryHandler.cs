@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.DTO.Contact;
+using TechMeter.Domain.Models.Auth.Users;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Contact.Query.GetStudentContact
@@ -22,7 +23,8 @@ namespace TechMeter.Application.Features.Contact.Query.GetStudentContact
                   .Select(p => new AvailableContactResponse
                   {
                       Id = p.Id,
-                      Name = p.User.UserName ?? "",
+                      FullName = p.User.FullName ?? "",
+                      UserName = p.User.UserName ?? "",
                       UserProfilePictureUrl = p.User.ProfileUrl ?? ""
                   });
             var userContacts = await PaginatedList<AvailableContactResponse>.CreatePaginatedList(userContactsQuery, request.PageNumber, request.PageSize, cancellationToken);

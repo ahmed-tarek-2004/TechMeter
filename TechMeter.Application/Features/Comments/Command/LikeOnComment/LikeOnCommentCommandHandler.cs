@@ -48,6 +48,7 @@ namespace TechMeter.Application.Features.Comments.Command.LikeOnComment
                     {
                         CommentId = comment.Id,
                         UserEmail = user.Email,
+                        UserFullName = user.FullName ?? "",
                         UserId = user.Id,
                         UserImage = user.ProfileUrl ?? "",
                         UserName = user.UserName,

@@ -41,6 +41,7 @@ namespace TechMeter.Application.Features.Comments.Query.GetLessonComments
                IsEdited = c.IsEdited,
                UserId = c.UserId,
                UserName = c.UserName,
+               UserFullName = c.UserFullName,
                UserEmail = c.UserEmail,
                UserImage = c.UserImage,
                LessonId = c.LessonId,
