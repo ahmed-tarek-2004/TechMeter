@@ -137,31 +137,11 @@ const VerifyOtp: React.FC = () => {
       return;
     }
 
-    const targetUserId = userId || sessionStorage.getItem('otp_userId') || '';
     const targetEmail = email || sessionStorage.getItem('otp_email') || '';
     const targetPassword = password || sessionStorage.getItem('otp_password') || '';
 
     setIsSubmitting(true);
     try {
-      if (targetUserId) {
-        try {
-          const confirmRes = await authService.confirmEmail({ userId: targetUserId, otp: otpString });
-          if (confirmRes && confirmRes.succeeded === false) {
-            const msg = confirmRes.message || 'Email confirmation failed';
-            if (!msg.toLowerCase().includes('already verified')) {
-              toast.error(msg);
-              return;
-            }
-          }
-        } catch (confirmError: any) {
-          const msg = getApiErrorMessage(confirmError, 'Email confirmation failed');
-          if (!msg.toLowerCase().includes('already verified')) {
-            toast.error(msg);
-            return;
-          }
-        }
-      }
-
       if (targetEmail && targetPassword) {
         try {
           await login({ email: targetEmail, password: targetPassword, otp: otpString });

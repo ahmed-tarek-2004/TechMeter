@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Your Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #2c3e50;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+            .header h1 {
+                margin: 0;
+                font-size: 24px;
+            }
+
+        .content {
+            padding: 30px 40px;
+            color: #333;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .confirm-button {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+            .confirm-button:hover {
+                background-color: #1f2d3a;
+            }
+
+        .link-box {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+            word-break: break-all;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .note {
+            font-size: 14px;
+            margin-top: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+
+            .confirm-button {
+                display: block;
+                padding: 14px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>Confirm Your Email</h1>
+        </div>
+
+        <div class="content">
+
+            <p>
+                Hi <strong>{Username}</strong>,
+            </p>
+
+            <p>
+                Thank you for signing up!
+                Please confirm your email address to complete your registration.
+            </p>
+
+            <div class="button-container">
+                <a href="{ConfirmationLink}" class="confirm-button">
+                    Confirm Email Address
+                </a>
+            </div>
+
+            <p class="note">
+                This confirmation link will expire in <strong>{ExpirationTime}</strong>.
+                <br>
+                If you didn’t create an account, you can safely ignore this email.
+            </p>
+
+            <p class="note">
+                If the button above doesn't work, copy and paste the following link
+                into your browser:
+            </p>
+
+            <div class="link-box">
+                {ConfirmationLink}
+            </div>
+
+        </div>
+
+        <div class="footer">
+            &copy; {CurrentYear} TechMeter. All rights reserved.
+        </div>
+
+    </div>
+
+</body>
+</html>

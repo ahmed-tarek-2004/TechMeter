@@ -57,15 +57,19 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                     UserId = request.userId,
                     UserImage = user.ProfileUrl,
                     UserName = user.UserName ?? "",
-                    ParentCommentId = string.IsNullOrEmpty(request.CommentParentId) ? null : request.CommentParentId
+                    ParentCommentId = null
 
                 };
+                var parentComment = await context.lessonComments.FindAsync(request.CommentParentId);
+                if (parentComment != null)
+                {
+                    comment.ParentCommentId = parentComment.Id;
+                }
                 await context.lessonComments.AddAsync(comment);
                 await context.SaveChangesAsync(cancellationToken);
 
                 if (!string.IsNullOrEmpty(comment.ParentCommentId))
                 {
-                    var parentComment = await context.lessonComments.FindAsync(comment.ParentCommentId);
                     if (parentComment != null && parentComment.UserId != user.Id)
                     {
                         await notificationService.SendUserNotifications(parentComment.UserId, "New Reply on Your Comment", $"{user.FullName ?? user.UserName} replied to your comment on {Lesson.Value.LessonName}", Domain.Enums.NotificationType.Comment);

@@ -12,6 +12,7 @@ using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Interfaces.Services.Email;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
+using static System.Net.WebRequestMethods;
 
 namespace TechMeter.Infrastructure.Adapters.EmailSender
 {
@@ -148,6 +149,49 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
             """);
             }
             return sb.ToString();
+        }
+
+        public async Task ConfirmEmailAsync(string UserName, string Email, string ExpirationTime, string confirmationLink,CancellationToken cancellationToken)
+        {
+            try
+            {
+                var rootPath = Directory.GetCurrentDirectory();
+                var templatePath = Path.Combine(rootPath, "wwwroot", "EmailTemplates", "ConfirmationEmail.html");
+
+                if (!System.IO.File.Exists(templatePath))
+                {
+                    _logger.LogError($"Confirmation Email Template not found at path: {templatePath}");
+                    throw new FileNotFoundException("Confirmation Email Template not found.", templatePath);
+                }
+
+                var emailTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
+
+                emailTemplate = emailTemplate
+                    .Replace("{Email}", Email)
+                    .Replace("{ConfirmationLink}", confirmationLink)
+                    .Replace("{ExpirationTime}", ExpirationTime)
+                    .Replace("{CurrentYear}", DateTime.UtcNow.Year.ToString())
+                    .Replace("{Username}", UserName);
+
+                var sendResult = await _fluentEmail
+                    .To(Email)
+                    .Subject("Email Confirmation Code")
+                    .Body(emailTemplate, isHtml: true)
+                    .SendAsync(cancellationToken);
+
+                if (!sendResult.Successful)
+                {
+                    _logger.LogError($"Failed to send OTP email to {Email}. Errors: {string.Join(", ", sendResult.ErrorMessages)}");
+                    throw new Exception("Failed to send OTP email.");
+                }
+
+                _logger.LogInformation($"OTP email successfully sent to {Email}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while sending OTP email to {Email}");
+                throw;
+            }
         }
     }
 }

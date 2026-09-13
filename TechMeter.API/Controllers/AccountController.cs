@@ -10,6 +10,7 @@ using StackExchange.Redis;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
+using TechMeter.Application.DTO.Auth.ConfirmEmail;
 using TechMeter.Application.DTO.Auth.Login;
 using TechMeter.Application.DTO.Auth.Register;
 using TechMeter.Application.DTO.Auth.ResetPassword;
@@ -119,9 +120,9 @@ namespace TechMeter.API.Controllers
 
 
         [HttpPost("confirm-email")]
-        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyConfirmEmailAsync([FromBody] VerifyOtp request)
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyConfirmEmailAsync([FromBody] ConfirmEmail request)
         {
-            var result = await _mediator.Send(new ConfirmEmailCommand(request.userId, request.otp));
+            var result = await _mediator.Send(new ConfirmEmailCommand(request.userId, request.token));
             return StatusCode((int)result.StatusCode, result);
         }
         [HttpPost("verify-reset-password")]

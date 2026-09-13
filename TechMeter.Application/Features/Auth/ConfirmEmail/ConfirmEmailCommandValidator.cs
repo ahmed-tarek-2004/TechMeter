@@ -12,7 +12,7 @@ namespace TechMeter.Application.Features.Auth.ConfirmEmail
         public ConfirmEmailCommandValidator()
         {
             RuleFor(x => x.userId).NotEmpty().WithMessage("UserId is required.");
-            RuleFor(x => x.otp).NotEmpty().WithMessage("OTP is required.");
+            RuleFor(x => x.token).NotEmpty().WithMessage("Token is required.");
         }
     }
 }
