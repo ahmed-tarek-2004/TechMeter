@@ -28,61 +28,60 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
         public async Task<Response<ProviderRegisterResponse>> Handle(ProviderRegisterCommand request, CancellationToken cancellationToken)
         {
 
-            var user = await context.Users.Include(b => b.Provider)
-                .FirstOrDefaultAsync(b => b.Email == request.ProviderRegisterRequest.Email);
+            var user = await userManager.FindByEmailAsync(request.ProviderRegisterRequest.Email);
             //if (checkifEmailorPhone != null)
             //{
             //    logger.LogInformation("{checkifEmailorPhone}", checkifEmailorPhone);
             //    return responseHandler.BadRequest<StudentRegisterResponse>(checkifEmailorPhone);
             //}
-            if (user != null && user.EmailConfirmed)
+            if (user != null)
             {
                 logger.LogInformation("{Email} is registered", user.Email);
                 return responseHandler.BadRequest<ProviderRegisterResponse>("Email is already registered");
             }
             try
             {
-                if (user != null && !user.EmailConfirmed)
+                //if (user != null && !user.EmailConfirmed)
+                //{
+                //    await UpdateProviderReRegister(user, request.ProviderRegisterRequest, cancellationToken);
+                //}
+                //else
+                //{
+                user = new Domain.Models.Auth.Identity.User()
                 {
-                    await UpdateProviderReRegister(user, request.ProviderRegisterRequest, cancellationToken);
-                }
-                else
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = request.ProviderRegisterRequest.UserName,
+                    Email = request.ProviderRegisterRequest.Email,
+                    PhoneNumber = request.ProviderRegisterRequest.PhoneNumber,
+                    Country = request.ProviderRegisterRequest.Country,
+                    Gender = request.ProviderRegisterRequest.Gender,
+                    ProfileUrl = request.ProviderRegisterRequest.ProfilePhoto != null ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProviderRegisterRequest.ProfilePhoto, cancellationToken)) : string.Empty,
+                };
+                var result = await userManager.CreateAsync(user, request.ProviderRegisterRequest.Password);
+                if (!result.Succeeded)
                 {
-                    user = new Domain.Models.Auth.Identity.User()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserName = request.ProviderRegisterRequest.UserName,
-                        Email = request.ProviderRegisterRequest.Email,
-                        PhoneNumber = request.ProviderRegisterRequest.PhoneNumber,
-                        Country = request.ProviderRegisterRequest.Country,
-                        Gender = request.ProviderRegisterRequest.Gender,
-                        ProfileUrl = request.ProviderRegisterRequest.ProfilePhoto != null ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProviderRegisterRequest.ProfilePhoto, cancellationToken)) : string.Empty,
-                    };
-                    var result = await userManager.CreateAsync(user, request.ProviderRegisterRequest.Password);
-                    if (!result.Succeeded)
-                    {
-                        var error = result.Errors.Select(e => e.Description).ToList();
-                        logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.ProviderRegisterRequest.Email, string.Join(",", error));
-                        return responseHandler.BadRequest<ProviderRegisterResponse>(string.Join(",", error));
-                    }
-                    await userManager.AddToRoleAsync(user, "provider");
-
-                    var provider = new Domain.Models.Auth.Users.Provider()
-                    {
-                        User = user,
-                        BankAccount = request.ProviderRegisterRequest.BankAccount,
-                        Brief = request.ProviderRegisterRequest.Brief,
-                        ExperienceYears = request.ProviderRegisterRequest.ExperienceYears,
-                        certificatesUrls = null,
-
-                    };
-
-                    await context.Provider.AddAsync(provider);
-
-                    logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
+                    var error = result.Errors.Select(e => e.Description).ToList();
+                    logger.LogWarning("Failed To create User With Email : {Email}, has error : {errors}", request.ProviderRegisterRequest.Email, string.Join(",", error));
+                    return responseHandler.BadRequest<ProviderRegisterResponse>(string.Join(",", error));
                 }
+                await userManager.AddToRoleAsync(user, "provider");
 
-                var Tokens = await tokenService.GenerateTokensAsync(user, user.Id);
+                var provider = new Domain.Models.Auth.Users.Provider()
+                {
+                    Id = user.Id,
+                    BankAccount = request.ProviderRegisterRequest.BankAccount,
+                    Brief = request.ProviderRegisterRequest.Brief,
+                    ExperienceYears = request.ProviderRegisterRequest.ExperienceYears,
+                    certificatesUrls = null,
+
+                };
+
+                await context.Provider.AddAsync(provider);
+
+                logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
+                //}
+
+                //var Tokens = await tokenService.GenerateTokensAsync(user, user.Id);
                 var otp = await otpService.GenerateAndSetOTP(user.Id);
                 backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
 
@@ -102,11 +101,11 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
                     Email = request.ProviderRegisterRequest.Email,
                     ExperienceYears = request.ProviderRegisterRequest.ExperienceYears,
                     IsEmailConfirmed = false,
-                    AccessToken = Tokens.AccessToken,
-                    RefreshToken = Tokens.RefreshToken,
+                    AccessToken = string.Empty,
+                    RefreshToken = string.Empty,
                 };
 
-                return responseHandler.Success(response, "Provider Created Successfully");
+                return responseHandler.Success(response, "Provider Created Successfully please confirm your email");
 
             }
             catch (Exception ex)
@@ -126,6 +125,12 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
             {
                 user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto, cancellationToken));
             }
+
+            if (user.Provider == null)
+            {
+                throw new InvalidOperationException($"Provider not found for user {user.Id}");
+            }
+
             user.Provider.Brief = request.Brief;
             user.Provider.BankAccount = request.BankAccount;
             user.Provider.ExperienceYears = request.ExperienceYears;
