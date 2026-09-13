@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,7 @@ namespace TechMeter.Application.Features.Auth.Login.Command
         ResponseHandler responseHandler,
         IOTPService oTPService,
         IBackgroundJobService backgroundJobService,
+        IConfiguration configuration,
         ITokenService tokenService) : IRequestHandler<LoginCommand, Response<LoginResponseDto>>
     {
         public async Task<Response<LoginResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -42,10 +45,18 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                 }
                 if (!user.EmailConfirmed)
                 {
-                    otp = await oTPService.GenerateAndSetOTP(user.Id);
-                    backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
-                    logger.LogInformation("OTP has been sent to {Email} for email confirmation", user.Email);
-                    return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id, IsEmailConfirmed = false }, "Please verify your email. OTP has been sent to your email.");
+                    //otp = await oTPService.GenerateAndSetOTP(user.Id);
+                    var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(confirmationToken));
+
+                    var frontendUrl = configuration["FrontendUrl"] ?? "http://localhost:3000";
+
+                    var confirmationLink = $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
+
+                    backgroundJobService.Enqueue<IEmailService>(service => service.ConfirmEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, "30 minuts", confirmationLink, cancellationToken));
+                    
+                    logger.LogInformation("confirmation email has been sent to {Email} for email confirmation", user.Email);
+                    return responseHandler.BadRequest<LoginResponseDto>( "Please verify your email. Confirmation email has been sent to your email.");
                 }
                 var roles = await userManager.GetRolesAsync(user);
                 if (roles.FirstOrDefault() != "admin")

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import {
   CheckCircle2,
   XCircle,
@@ -11,15 +11,22 @@ import {
   Home,
   RefreshCw,
   ShieldCheck,
+  CheckCircle,
 } from 'lucide-react';
 import { authService } from '../../services/authService';
 import toast from 'react-hot-toast';
 import { getApiErrorMessage } from '../../utils/errorUtils';
 
-type VerificationStatus = 'loading' | 'success' | 'already_verified' | 'error';
+type VerificationStatus =
+  | 'loading'
+  | 'success'
+  | 'already_verified'
+  | 'error'
+  | 'awaiting_confirmation';
 
 const ConfirmEmail: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const userId =
@@ -29,7 +36,15 @@ const ConfirmEmail: React.FC = () => {
     '';
   const token = searchParams.get('token') || searchParams.get('Token') || '';
 
-  const [status, setStatus] = useState<VerificationStatus>('loading');
+  const emailFromState =
+    (location.state as any)?.email ||
+    sessionStorage.getItem('unconfirmed_email') ||
+    '';
+
+  const [status, setStatus] = useState<VerificationStatus>(() => {
+    if (userId && token) return 'loading';
+    return 'awaiting_confirmation';
+  });
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [countdown, setCountdown] = useState<number>(5);
@@ -39,10 +54,7 @@ const ConfirmEmail: React.FC = () => {
 
   const verifyEmail = async (uid: string, tok: string) => {
     if (!uid || !tok) {
-      setStatus('error');
-      setErrorMessage(
-        'The confirmation link is invalid or incomplete. Missing user ID or confirmation token.'
-      );
+      setStatus('awaiting_confirmation');
       return;
     }
 
@@ -86,6 +98,11 @@ const ConfirmEmail: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!userId || !token) {
+      setStatus('awaiting_confirmation');
+      return;
+    }
+
     if (verificationAttempted.current) return;
     verificationAttempted.current = true;
 
@@ -119,6 +136,62 @@ const ConfirmEmail: React.FC = () => {
   return (
     <div className="min-h-[85vh] flex items-center justify-center bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
       <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 sm:p-10 rounded-3xl shadow-sm dark:shadow-2xl border border-gray-100 dark:border-gray-800 text-center transition-all">
+        {/* State: Awaiting Confirmation (e.g. redirected from Login or Register) */}
+        {status === 'awaiting_confirmation' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-3xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400">
+              <Mail className="h-10 w-10" />
+            </div>
+
+            <div className="space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                Confirm Your Email
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto leading-relaxed">
+                {emailFromState ? (
+                  <>
+                    A verification link has been sent to{' '}
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {emailFromState}
+                    </span>
+                    . Please check your inbox and click the link to activate your account.
+                  </>
+                ) : (
+                  'Please check your email inbox and click the confirmation link to activate your account.'
+                )}
+              </p>
+            </div>
+
+            <div className="p-4 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 text-left">
+              <div className="flex items-start">
+                <CheckCircle className="h-4 w-4 text-indigo-600 dark:text-indigo-400 mt-0.5 mr-2.5 flex-shrink-0" />
+                <p className="text-[11px] text-indigo-800 dark:text-indigo-300/90 leading-relaxed">
+                  Didn't receive the email? Be sure to check your Spam or Junk folder. The confirmation link will expire soon.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2 space-y-3">
+              <Link
+                to="/login"
+                className="w-full inline-flex items-center justify-center py-3 px-5 border border-transparent text-xs sm:text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md transition-all group"
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Back to Sign In
+                <ArrowRight className="h-4 w-4 ml-1.5 transition-transform group-hover:translate-x-1" />
+              </Link>
+
+              <Link
+                to="/"
+                className="w-full inline-flex items-center justify-center py-2.5 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                <Home className="h-3.5 w-3.5 mr-1.5" />
+                Back to Home
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* State 1: Verifying / Loading */}
         {status === 'loading' && (
           <div className="space-y-6 animate-fade-in">
@@ -240,7 +313,7 @@ const ConfirmEmail: React.FC = () => {
               <div className="flex items-start">
                 <Mail className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 mr-2.5 flex-shrink-0" />
                 <div className="text-[11px] text-amber-800 dark:text-amber-300/90 leading-relaxed">
-                  Confirmation links expire for security purposes. If you need a new confirmation link, you can request one or contact support.
+                  Confirmation links expire for security purposes. If you need a new confirmation link, try signing in to receive a fresh link or contact support.
                 </div>
               </div>
             </div>
