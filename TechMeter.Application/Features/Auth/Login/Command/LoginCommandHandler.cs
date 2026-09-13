@@ -42,7 +42,10 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                 }
                 if (!user.EmailConfirmed)
                 {
-                    return responseHandler.BadRequest<LoginResponseDto>("verify Your Email");
+                    otp = await oTPService.GenerateAndSetOTP(user.Id);
+                    backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
+                    logger.LogInformation("OTP has been sent to {Email} for email confirmation", user.Email);
+                    return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id, IsEmailConfirmed = false }, "Please verify your email. OTP has been sent to your email.");
                 }
                 var roles = await userManager.GetRolesAsync(user);
                 if (roles.FirstOrDefault() != "admin")

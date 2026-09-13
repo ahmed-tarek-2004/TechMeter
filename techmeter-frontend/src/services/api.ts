@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getApiErrorMessage } from '../utils/errorUtils';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7165/api';
 
@@ -24,10 +25,10 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
@@ -35,10 +36,10 @@ api.interceptors.response.use(
             headers: { 'Content-Type': 'application/json' },
           });
           const data = response.data.data;
-          
+
           localStorage.setItem('accessToken', data.accessToken);
           localStorage.setItem('refreshToken', data.refreshToken);
-          
+
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return api(originalRequest);
         }
@@ -50,7 +51,12 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    
+
+    const customMessage = getApiErrorMessage(error, '');
+    if (customMessage) {
+      error.message = customMessage;
+    }
+
     return Promise.reject(error);
   }
 );

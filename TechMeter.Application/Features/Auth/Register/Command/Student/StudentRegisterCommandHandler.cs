@@ -38,13 +38,13 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
 
             try
             {
-                if (user != null && !user.EmailConfirmed)
-                {
+                //if (user != null && !user.EmailConfirmed)
+                //{
 
-                    await UpdateStudentReRegister(user, request.StudentRegisterRequest, cancellationToken);
-                }
-                else
-                {
+                //    await UpdateStudentReRegister(user, request.StudentRegisterRequest, cancellationToken);
+                //}
+                //else
+                //{
                     user = new Domain.Models.Auth.Identity.User()
                     {
                         Id = Guid.NewGuid().ToString(),
@@ -72,17 +72,17 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                     logger.LogInformation("New user created: {UserId}", user.Id);
                     var student = new Domain.Models.Auth.Users.Student()
                     {
-                        User = user,
+                        Id = user.Id,
                         BirthDate = request.StudentRegisterRequest.BirthDate,
                         EducationLevel = request.StudentRegisterRequest.EducationLevel
                     };
                     await context.Student.AddAsync(student);
-                }
+                //}
 
                 await context.SaveChangesAsync(cancellationToken);
                 logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
 
-                var Tokens = await tokenService.GenerateTokensAsync(user, user.Id);
+                //var Tokens = await tokenService.GenerateTokensAsync(user, user.Id);
                 var otp = await otpService.GenerateAndSetOTP(user.Id);
                 backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
                 logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.StudentRegisterRequest.Email);
@@ -99,8 +99,8 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                     EducationLeveL = request.StudentRegisterRequest.EducationLevel,
                     EmailAddress = request.StudentRegisterRequest.Email,
                     isEmailConfirmed = false,
-                    accessToken = Tokens.AccessToken,
-                    refreshToken = Tokens.RefreshToken,
+                    accessToken = string.Empty,
+                    refreshToken = string.Empty,
                 };
 
                 return responseHandler.Success<StudentRegisterResponse>(response, "Student Created Successfully");

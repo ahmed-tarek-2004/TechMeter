@@ -20,17 +20,10 @@ namespace TechMeter.Application.Features.Notification.Command.ReadAllNotificatio
                 return responseHandler.NotFound<bool>("User not found.");
             }
             var rows = await context.Notification
-                .Where(n => n.ReceiptId == request.userId)
+                .Where(n => n.ReceiptId == request.userId && !n.IsRead)
                 .ExecuteUpdateAsync(b => b.SetProperty(b => b.IsRead, true), cancellationToken);
 
-            if (rows > 0)
-            {
-                return responseHandler.NotFound<bool>("No unread notifications found.");
-            }
-            else
-            {
-                return responseHandler.Success<bool>(true, "All notifications marked as read successfully.");
-            }
+            return responseHandler.Success<bool>(true, "All notifications marked as read successfully.");
         }
     }
 }

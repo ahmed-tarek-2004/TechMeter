@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock, Eye, EyeOff, User, Phone, Loader2, MapPin, GraduationCap, Briefcase, Building } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Phone, Loader2, MapPin, GraduationCap, Briefcase, Building, FileText, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getApiErrorMessage } from '../../utils/errorUtils';
 
 const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,11 +40,30 @@ const Register: React.FC = () => {
     }
     setIsSubmitting(true);
     try {
-      await register({ ...formData, role });
-      toast.success('Registration successful! Please check your email for OTP.');
-      navigate('/');
+      const { userId, email } = await register({ ...formData, role });
+      const targetEmail = email || formData.email;
+
+      if (userId) {
+        sessionStorage.setItem('otp_userId', userId);
+      }
+      if (targetEmail) {
+        sessionStorage.setItem('otp_email', targetEmail);
+      }
+      sessionStorage.setItem('otp_password', formData.password);
+
+      toast('Please check your email for the 6-digit verification code', { icon: '📧' });
+      navigate('/verify-otp', {
+        state: {
+          userId,
+          email: targetEmail,
+          password: formData.password,
+          from: '/',
+        },
+        replace: true,
+      });
     } catch (error: any) {
-      toast.error(error.message || 'Registration failed');
+      const errorMessage = getApiErrorMessage(error, 'Registration failed. Please try again.');
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -265,21 +285,32 @@ const Register: React.FC = () => {
                 </div>
                 <div>
                   <label htmlFor="experienceYears" className="block text-xs font-semibold text-gray-700 dark:text-gray-300">Years of Experience</label>
-                  <input
-                    id="experienceYears" name="experienceYears" type="number" min="0"
-                    value={formData.experienceYears} onChange={handleChange}
-                    className="mt-1 block w-full py-2.5 px-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
-                    required
-                  />
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Clock className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <input
+                      id="experienceYears" name="experienceYears" type="number" min="0"
+                      value={formData.experienceYears} onChange={handleChange}
+                      className="block w-full pl-10 pr-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
+                      placeholder="0" required
+                    />
+                  </div>
                 </div>
                 <div>
                   <label htmlFor="brief" className="block text-xs font-semibold text-gray-700 dark:text-gray-300">Brief Bio</label>
-                  <textarea
-                    id="brief" name="brief" rows={3} value={formData.brief}
-                    onChange={handleChange}
-                    className="mt-1 block w-full py-2.5 px-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
-                    placeholder="Tell students about your expertise..."
-                  />
+                  <div className="mt-1 relative">
+                    <div className="absolute top-3 left-0 pl-3.5 flex items-start pointer-events-none">
+                      <FileText className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <textarea
+                      id="brief" name="brief" rows={3} value={formData.brief}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
+                      placeholder="Tell students about your expertise..."
+                      required
+                    />
+                  </div>
                 </div>
               </div>
             )}

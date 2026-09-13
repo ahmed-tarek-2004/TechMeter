@@ -14,6 +14,9 @@ namespace TechMeter.Application.Interfaces.Services.UserConnections
         Task<bool> JoinConversation(string coversationId,string userId);
         Task<bool> RemoveUserConnections(string connectionId);
         Task<SenderInfoResponse> GetSenderInfo(string sendeerId);
+        Task<bool> UserIsOpennigChat(string userId,string receiverId);
+        Task<bool> RemoveUserFromChat(string userId, string receiverId);
+        Task<bool> AddUserToChat(string userId, string receiverId);
         //Task<bool> RemoveUserFromGroup(string userId, string groupId);
     }
 }

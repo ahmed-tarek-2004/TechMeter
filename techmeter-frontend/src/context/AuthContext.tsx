@@ -9,7 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (data: { email: string; password: string; otp?: string }) => Promise<{ requiresOtp: boolean; userId?: string; user?: User }>;
-  register: (data: any) => Promise<void>;
+  register: (data: any) => Promise<{ userId?: string; email?: string }>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   updateUser: (fields: Partial<User>) => void;
@@ -117,18 +117,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   };
 
-  const register = async (data: any) => {
+  const register = async (data: any): Promise<{ userId?: string; email?: string }> => {
     const registerFn = data.role === 'provider'
       ? authService.registerProvider
       : authService.registerStudent;
     const authData = await registerFn(data);
 
-    const { accessToken, refreshToken } = extractTokens(authData);
-    if (accessToken) localStorage.setItem('accessToken', accessToken);
-    if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+    const userId = authData?.id || authData?.Id || authData?.userId || authData?.UserId;
+    const email = authData?.emailAddress || authData?.email || data.email;
 
-    setUser(mapAuthDataToUser(authData));
-    toast.success('Registration successful! Check your email for OTP.');
+    return { userId, email };
   };
 
   const logout = async () => {

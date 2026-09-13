@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
 import { Shield, Loader2, ArrowLeft, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getApiErrorMessage } from '../../utils/errorUtils';
 
 const VerifyOtp: React.FC = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -23,11 +24,13 @@ const VerifyOtp: React.FC = () => {
 
   // Redirect if session expired
   useEffect(() => {
-    if (!email && !sessionStorage.getItem('otp_email')) {
+    const targetEmail = email || sessionStorage.getItem('otp_email');
+    const targetUserId = userId || sessionStorage.getItem('otp_userId');
+    if (!targetEmail && !targetUserId) {
       toast.error('Session expired. Please login again.');
       navigate('/login');
     }
-  }, [email, navigate]);
+  }, [email, userId, navigate]);
 
   // Focus first input once on mount
   useEffect(() => {
@@ -36,7 +39,7 @@ const VerifyOtp: React.FC = () => {
 
   // Countdown timer for resend OTP
   useEffect(() => {
-    if (!canResend) {
+    if (!canResend && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -48,7 +51,7 @@ const VerifyOtp: React.FC = () => {
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [canResend]);
+  }, [canResend, countdown]);
 
   const handleChange = (index: number, value: string) => {
     const digitsOnly = value.replace(/\D/g, '');
@@ -134,14 +137,53 @@ const VerifyOtp: React.FC = () => {
       return;
     }
 
+    const targetUserId = userId || sessionStorage.getItem('otp_userId') || '';
+    const targetEmail = email || sessionStorage.getItem('otp_email') || '';
+    const targetPassword = password || sessionStorage.getItem('otp_password') || '';
+
     setIsSubmitting(true);
     try {
-      // Call login with email, password, and OTP
-      await login({ email, password, otp: otpString });
-      toast.success('Login successful!');
-      navigate(from, { replace: true });
+      if (targetUserId) {
+        try {
+          const confirmRes = await authService.confirmEmail({ userId: targetUserId, otp: otpString });
+          if (confirmRes && confirmRes.succeeded === false) {
+            const msg = confirmRes.message || 'Email confirmation failed';
+            if (!msg.toLowerCase().includes('already verified')) {
+              toast.error(msg);
+              return;
+            }
+          }
+        } catch (confirmError: any) {
+          const msg = getApiErrorMessage(confirmError, 'Email confirmation failed');
+          if (!msg.toLowerCase().includes('already verified')) {
+            toast.error(msg);
+            return;
+          }
+        }
+      }
+
+      if (targetEmail && targetPassword) {
+        try {
+          await login({ email: targetEmail, password: targetPassword, otp: otpString });
+        } catch (loginErr: any) {
+          try {
+            await login({ email: targetEmail, password: targetPassword, otp: '' });
+          } catch {
+            const loginMsg = getApiErrorMessage(loginErr, 'Login failed');
+            toast.error(loginMsg);
+            return;
+          }
+        }
+      }
+
+      sessionStorage.removeItem('otp_userId');
+      sessionStorage.removeItem('otp_email');
+      sessionStorage.removeItem('otp_password');
+
+      toast.success('Verification successful!');
+      navigate(targetEmail && targetPassword ? (from || '/') : '/login', { replace: true });
     } catch (error: any) {
-      const msg = error.message || 'OTP verification failed';
+      const msg = getApiErrorMessage(error, 'OTP verification failed');
       toast.error(msg);
     } finally {
       setIsSubmitting(false);
@@ -158,9 +200,7 @@ const VerifyOtp: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      console.log('Calling POST /Account/resend-otp with Id:', targetUserId);
       const response = await authService.resendOtp(targetUserId);
-      console.log('Resend OTP response:', response);
 
       if (response && response.succeeded === false) {
         toast.error(response.message || 'Failed to resend OTP.');
@@ -173,8 +213,7 @@ const VerifyOtp: React.FC = () => {
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
     } catch (error: any) {
-      console.error('Error in resendOtp:', error);
-      const msg = error.response?.data?.message || error.message || 'Failed to resend OTP. Please try logging in again.';
+      const msg = getApiErrorMessage(error, 'Failed to resend OTP. Please try logging in again.');
       toast.error(msg);
     } finally {
       setIsSubmitting(false);

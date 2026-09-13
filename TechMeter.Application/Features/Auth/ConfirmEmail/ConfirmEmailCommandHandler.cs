@@ -37,6 +37,7 @@ namespace TechMeter.Application.Features.Auth.ConfirmEmail
                     return responseHandler.BadRequest<string>("Otp is not Correct");
                 }
                 user.EmailConfirmed = true;
+                await userManager.UpdateAsync(user);
                 await context.SaveChangesAsync(cancellationToken);
                 return responseHandler.Success<string>(null, "Email is confirmed successfully");
             }

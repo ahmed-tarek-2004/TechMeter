@@ -29,6 +29,9 @@ export const authService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     const result = response.data;
+    if (result && result.succeeded === false) {
+      throw new Error(result.message || result.errors?.join(', ') || 'Registration failed');
+    }
     return result.data || result;
   },
 
@@ -49,6 +52,9 @@ export const authService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     const result = response.data;
+    if (result && result.succeeded === false) {
+      throw new Error(result.message || result.errors?.join(', ') || 'Registration failed');
+    }
     return result.data || result;
   },
 
@@ -62,8 +68,11 @@ export const authService = {
     return response.data;
   },
 
-  async confirmEmail(data: { userId: string; token: string }): Promise<ApiResponse<any>> {
-    const response = await api.post('/Account/confirm-email', data);
+  async confirmEmail(data: { userId: string; otp: string }): Promise<ApiResponse<any>> {
+    const response = await api.post('/Account/confirm-email', {
+      userId: data.userId,
+      otp: data.otp,
+    });
     return response.data;
   },
 

@@ -9,9 +9,10 @@ namespace TechMeter.Domain.Models.Auth
 {
     public class UserConnections
     {
-        public string Id {  get; set; }
+        public string Id { get; set; }
         public string userId { get; set; }
         public string UserName { get; set; }
+        public string? receiverChatId { get; set; } = string.Empty;
         public User User { get; set; }
 
     }
