@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getApiErrorMessage } from '../../utils/errorUtils';
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -58,7 +59,7 @@ const Login: React.FC = () => {
       navigate(from, { replace: true });
 
     } catch (error: any) {
-      const errorMessage = error.message || 'Login failed';
+      const errorMessage = getApiErrorMessage(error, 'Login failed');
 
       // Check if the error indicates OTP is required
       const needsOtpVerification =

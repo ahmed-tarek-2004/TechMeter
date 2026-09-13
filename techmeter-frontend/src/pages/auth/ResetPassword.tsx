@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import { authService } from '../../services/authService';
 import toast from 'react-hot-toast';
+import { getApiErrorMessage } from '../../utils/errorUtils';
 
 const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -31,7 +32,7 @@ const ResetPassword: React.FC = () => {
       setIsSuccess(true);
       toast.success('Password reset successful');
     } catch (error: any) {
-      toast.error(error.message || 'Failed to reset password');
+      toast.error(getApiErrorMessage(error, 'Failed to reset password'));
     } finally {
       setIsSubmitting(false);
     }

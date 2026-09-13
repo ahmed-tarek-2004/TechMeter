@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Mail, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import { authService } from '../../services/authService';
 import toast from 'react-hot-toast';
+import { getApiErrorMessage } from '../../utils/errorUtils';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ const ForgotPassword: React.FC = () => {
       setIsSuccess(true);
       toast.success('Reset link sent to your email');
     } catch (error: any) {
-      toast.error(error.message || 'Failed to send reset link');
+      toast.error(getApiErrorMessage(error, 'Failed to send reset link'));
     } finally {
       setIsSubmitting(false);
     }
