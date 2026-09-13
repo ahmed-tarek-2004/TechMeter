@@ -101,6 +101,8 @@ namespace TechMeter
                         });
                 });
 
+         
+
             builder.Services.AddProblemDetails();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddTransient<StopwatchRequestMiddleware>();

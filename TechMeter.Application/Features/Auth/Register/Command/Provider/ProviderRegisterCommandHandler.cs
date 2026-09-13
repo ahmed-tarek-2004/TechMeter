@@ -93,7 +93,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
 
                 var confirmationLink = $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
 
-                backgroundJobService.Enqueue<IEmailService>(service => service.ConfirmEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, "1 day", confirmationLink, cancellationToken));
+                backgroundJobService.Enqueue<IEmailService>(service => service.ConfirmEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, "30 minuts", confirmationLink, cancellationToken));
 
                 await context.SaveChangesAsync(cancellationToken);
                 logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.ProviderRegisterRequest.Email);

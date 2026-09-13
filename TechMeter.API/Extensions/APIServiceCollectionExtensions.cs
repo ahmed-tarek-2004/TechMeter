@@ -116,6 +116,10 @@ namespace TechMeter.Extensions
                     }
                 };
             });
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromMinutes(30);
+            });
 
             return services;
         }

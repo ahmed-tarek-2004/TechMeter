@@ -181,15 +181,15 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
 
                 if (!sendResult.Successful)
                 {
-                    _logger.LogError($"Failed to send OTP email to {Email}. Errors: {string.Join(", ", sendResult.ErrorMessages)}");
-                    throw new Exception("Failed to send OTP email.");
+                    _logger.LogError($"Failed to send confirmation email to {Email}. Errors: {string.Join(", ", sendResult.ErrorMessages)}");
+                    throw new Exception("Failed to send confirmation email.");
                 }
 
-                _logger.LogInformation($"OTP email successfully sent to {Email}");
+                _logger.LogInformation($"Confirmation email successfully sent to {Email}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred while sending OTP email to {Email}");
+                _logger.LogError(ex, $"An error occurred while sending confirmation email to {Email}");
                 throw;
             }
         }

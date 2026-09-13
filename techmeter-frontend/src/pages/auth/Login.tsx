@@ -61,26 +61,28 @@ const Login: React.FC = () => {
     } catch (error: any) {
       const errorMessage = getApiErrorMessage(error, 'Login failed');
 
-      // Check if the error indicates OTP is required
-      const needsOtpVerification =
-        errorMessage.toLowerCase().includes('otp') ||
-        errorMessage.toLowerCase().includes('not confirmed') ||
-        errorMessage.toLowerCase().includes('verify') ||
-        errorMessage.toLowerCase().includes('confirm your email');
+      // Check if the error indicates email is not confirmed
+      const lower = errorMessage.toLowerCase();
+      const isEmailUnconfirmed =
+        lower.includes('not confirmed') ||
+        lower.includes('confirm your email') ||
+        lower.includes('confirmation email') ||
+        lower.includes('verify your email') ||
+        lower.includes('confirm email') ||
+        lower.includes('email is not confirmed') ||
+        lower.includes('email not confirmed');
 
-      if (needsOtpVerification) {
-        sessionStorage.setItem('otp_email', formData.email);
-        sessionStorage.setItem('otp_password', formData.password);
+      if (isEmailUnconfirmed) {
+        sessionStorage.setItem('unconfirmed_email', formData.email);
 
-        // Email not confirmed - redirect to OTP page
-        toast('Please verify your email with the OTP code', { icon: '📧' });
-        navigate('/verify-otp', {
+        // Email not confirmed - redirect to Confirm Email page
+        toast('Please verify your email. A confirmation link has been sent.', { icon: '📧' });
+        navigate('/confirm-email', {
           state: {
             email: formData.email,
-            password: formData.password,
-            from: from
+            from: from,
           },
-          replace: true
+          replace: true,
         });
       } else {
         // Other error - show error message
