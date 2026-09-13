@@ -22,6 +22,7 @@ namespace TechMeter.Application.Features.Lesson.Command.DeleteLesson
             try
             {
                 context.Lessons.Remove(lesson);
+
                 await context.SaveChangesAsync(cancellationToken);
                 return responseHandler.Deleted<string>($"Lesson {lesson.Name} Deleted Successfully");
             }

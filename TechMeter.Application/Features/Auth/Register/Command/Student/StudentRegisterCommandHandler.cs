@@ -1,7 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +24,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
 {
     public class StudentRegisterCommandHandler(IApplicationDbContext context,
         ResponseHandler responseHandler, ILogger<StudentRegisterCommandHandler> logger,
-        ITokenService tokenService, IOTPService otpService,
+        ITokenService tokenService, IConfiguration configuraion,
         IBackgroundJobService backgroundJobService, UserManager<User> userManager) : IRequestHandler<StudentRegisterCommand, Response<StudentRegisterResponse>>
     {
         public async Task<Response<StudentRegisterResponse>> Handle(StudentRegisterCommand request, CancellationToken cancellationToken)
@@ -84,9 +87,18 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                 logger.LogInformation("Student created and role 'Student' assigned. ID: {UserId}", user.Id);
 
                 //var Tokens = await tokenService.GenerateTokensAsync(user, user.Id);
-                var otp = await otpService.GenerateAndSetOTP(user.Id);
-                backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
+                //var otp = await otpService.GenerateAndSetOTP(user.Id);
+                var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(confirmationToken));
+
+                var frontendUrl = configuraion["FrontendUrl"] ?? "http://localhost:3000";
+
+                var confirmationLink = $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
+               
+                backgroundJobService.Enqueue<IEmailService>(service => service.ConfirmEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, "1 day", confirmationLink,cancellationToken));
+               
                 logger.LogInformation("User registration completed successfully. Email sent to {Email} pls confirm your email", request.StudentRegisterRequest.Email);
+                
                 var response = new StudentRegisterResponse()
                 {
                     Id = user.Id,

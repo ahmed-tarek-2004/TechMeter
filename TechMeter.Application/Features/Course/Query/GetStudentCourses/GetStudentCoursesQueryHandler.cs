@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,14 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Course.Query.GetStudentCourses
 {
-    public class GetStudentCoursesQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler) : IRequestHandler<GetStudentCoursesQuery, Response<List<GetStudentCourseResponse>>>
+    public class GetStudentCoursesQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler,
+         ILogger<GetStudentCoursesQueryHandler> logger)
+        : IRequestHandler<GetStudentCoursesQuery, Response<List<GetStudentCourseResponse>>>
     {
         public async Task<Response<List<GetStudentCourseResponse>>> Handle(GetStudentCoursesQuery request, CancellationToken cancellationToken)
         {
+            logger.LogInformation("Fetching student courses...");
+
             var courses = await context.CourseStudent.Where(b => b.StudentId == request.Id)
                 .AsNoTracking()
                 .Select(b => new GetStudentCourseResponse

@@ -20,6 +20,7 @@ import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import VerifyOtp from './pages/auth/VerifyOtp';
+import ConfirmEmail from './pages/auth/ConfirmEmail';
 import Contact from './pages/contact/Contact';
 
 // Courses & Learning Pages
@@ -115,6 +116,7 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
+                <Route path="confirm-email" element={<ConfirmEmail />} />
                 <Route path="verify-otp" element={<VerifyOtp />} />
                 <Route path="forgot-password" element={<ForgotPassword />} />
                 <Route path="reset-password" element={<ResetPassword />} />

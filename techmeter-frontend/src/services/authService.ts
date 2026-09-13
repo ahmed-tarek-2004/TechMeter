@@ -68,10 +68,10 @@ export const authService = {
     return response.data;
   },
 
-  async confirmEmail(data: { userId: string; otp: string }): Promise<ApiResponse<any>> {
+  async confirmEmail(data: { userId: string; token: string }): Promise<ApiResponse<any>> {
     const response = await api.post('/Account/confirm-email', {
       userId: data.userId,
-      otp: data.otp,
+      token: data.token,
     });
     return response.data;
   },

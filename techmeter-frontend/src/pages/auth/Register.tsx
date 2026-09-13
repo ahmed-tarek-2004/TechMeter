@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock, Eye, EyeOff, User, Phone, Loader2, MapPin, GraduationCap, Briefcase, Building, FileText, Clock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Phone, Loader2, MapPin, GraduationCap, Briefcase, Building, FileText, Clock, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getApiErrorMessage } from '../../utils/errorUtils';
 
@@ -9,9 +9,10 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const [role, setRole] = useState<'student' | 'provider'>('student');
   const { register } = useAuth();
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     userName: '',
@@ -40,27 +41,11 @@ const Register: React.FC = () => {
     }
     setIsSubmitting(true);
     try {
-      const { userId, email } = await register({ ...formData, role });
+      const { email } = await register({ ...formData, role });
       const targetEmail = email || formData.email;
-
-      if (userId) {
-        sessionStorage.setItem('otp_userId', userId);
-      }
-      if (targetEmail) {
-        sessionStorage.setItem('otp_email', targetEmail);
-      }
-      sessionStorage.setItem('otp_password', formData.password);
-
-      toast('Please check your email for the 6-digit verification code', { icon: '📧' });
-      navigate('/verify-otp', {
-        state: {
-          userId,
-          email: targetEmail,
-          password: formData.password,
-          from: '/',
-        },
-        replace: true,
-      });
+      setRegisteredEmail(targetEmail);
+      setIsSuccess(true);
+      toast.success('Registration successful! Please confirm your email.');
     } catch (error: any) {
       const errorMessage = getApiErrorMessage(error, 'Registration failed. Please try again.');
       toast.error(errorMessage);
@@ -68,6 +53,56 @@ const Register: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+        <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 sm:p-10 rounded-3xl shadow-sm dark:shadow-2xl border border-gray-100 dark:border-gray-800 text-center space-y-6">
+          <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-3xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400">
+            <Mail className="h-10 w-10" />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+              Check your email
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto leading-relaxed">
+              We've sent a verification link to{' '}
+              <span className="font-semibold text-gray-900 dark:text-white">{registeredEmail}</span>.
+              Please click the link in the email to activate your account.
+            </p>
+          </div>
+
+          <div className="p-4 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 text-left">
+            <div className="flex items-start">
+              <CheckCircle className="h-4 w-4 text-indigo-600 dark:text-indigo-400 mt-0.5 mr-2.5 flex-shrink-0" />
+              <p className="text-[11px] text-indigo-800 dark:text-indigo-300/90 leading-relaxed">
+                Didn't receive the email? Be sure to check your Spam or Junk folder. The confirmation link will expire soon.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-2 space-y-3">
+            <Link
+              to="/login"
+              className="w-full inline-flex items-center justify-center py-3 px-5 border border-transparent text-xs sm:text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md transition-all group"
+            >
+              Go to Sign In
+              <ArrowRight className="h-4 w-4 ml-1.5 transition-transform group-hover:translate-x-1" />
+            </Link>
+
+            <Link
+              to="/"
+              className="w-full inline-flex items-center justify-center py-2.5 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">

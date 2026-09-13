@@ -13,5 +13,6 @@ namespace TechMeter.Application.Interfaces.Services.Email
     {
         public Task SendOtpEmailAsync(string UserName, string Email, string otp);
         public Task InvoiceEmailAsync(User user, PaymentTransaction transaction,List<GetCourseResponse>courseResponses);
+        public Task ConfirmEmailAsync(string UserName, string Email,string ExpirationTime, string confirmationLink,CancellationToken cancellationToken);
     }
 }

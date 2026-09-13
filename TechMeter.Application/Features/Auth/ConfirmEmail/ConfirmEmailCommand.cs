@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.ConfirmEmail
 {
-    public sealed record ConfirmEmailCommand(string userId, string otp) : IRequest<Response<string>>;
+    public sealed record ConfirmEmailCommand(string userId, string token) : IRequest<Response<string>>;
 }
