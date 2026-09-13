@@ -24,7 +24,8 @@ namespace TechMeter.Application.Features.Profile.Query.StudentProfile.StudentPro
                 Email = b.User.Email,
                 PhoneNumber = b.User.PhoneNumber,
                 profileImage = b.User.ProfileUrl,
-                StudentName = b.User.UserName,
+                StudentName = b.User.FullName,
+                UserName = b.User.UserName ?? ""
 
             }).FirstOrDefaultAsync();
             return responseHandler.Success(response, "Student info retrieved successfully");

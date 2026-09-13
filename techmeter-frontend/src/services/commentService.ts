@@ -1,9 +1,14 @@
 import api from './api';
-import { ApiResponse, Comment } from '../types';
+import { ApiResponse, Comment, CommentLike } from '../types';
 
 export const commentService = {
   async getLessonComments(lessonId: string): Promise<ApiResponse<Comment[]>> {
     const response = await api.get(`/Comments/${lessonId}/all`);
+    return response.data;
+  },
+
+  async getCommentLikes(commentId: string): Promise<ApiResponse<CommentLike[]>> {
+    const response = await api.get(`/Comments/${commentId}/likes`);
     return response.data;
   },
 

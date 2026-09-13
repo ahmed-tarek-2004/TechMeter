@@ -183,14 +183,25 @@ const ProviderOverviewTab: React.FC<ProviderOverviewTabProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-5">
-              {/* Instructor Name */}
+              {/* Full Name */}
               <div className="bg-gray-50/60 dark:bg-gray-800/40 rounded-2xl p-4 border border-gray-100 dark:border-gray-800/80">
                 <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
                   <UserIcon className="w-4 h-4 text-emerald-500" />
-                  <span className="text-xs font-semibold">Instructor / Display Name</span>
+                  <span className="text-xs font-semibold">Full Name</span>
                 </div>
                 <p className="text-sm font-bold text-gray-900 dark:text-white mt-1">
-                  {profile?.providerName || user.userName || 'Not specified'}
+                  {user.fullName || profile?.providerName || 'Not specified'}
+                </p>
+              </div>
+
+              {/* Username */}
+              <div className="bg-gray-50/60 dark:bg-gray-800/40 rounded-2xl p-4 border border-gray-100 dark:border-gray-800/80">
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
+                  <UserIcon className="w-4 h-4 text-emerald-500" />
+                  <span className="text-xs font-semibold">Username</span>
+                </div>
+                <p className="text-sm font-bold text-gray-900 dark:text-white mt-1">
+                  {user.userName || 'Not specified'}
                 </p>
               </div>
 
@@ -224,7 +235,7 @@ const ProviderOverviewTab: React.FC<ProviderOverviewTabProps> = ({
               </div>
 
               {/* Role */}
-              <div className="bg-gray-50/60 dark:bg-gray-800/40 rounded-2xl p-4 border border-gray-100 dark:border-gray-800/80">
+              <div className="sm:col-span-2 bg-gray-50/60 dark:bg-gray-800/40 rounded-2xl p-4 border border-gray-100 dark:border-gray-800/80">
                 <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
                   <ShieldCheck className="w-4 h-4 text-emerald-500" />
                   <span className="text-xs font-semibold">Account Role</span>

@@ -190,7 +190,7 @@ const ProviderDashboard: React.FC = () => {
                 <span>Instructor Management Suite</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
-                Welcome back, {user.userName}!
+                Welcome back, {user.fullName || user.userName}!
               </h1>
               <p className="mt-1.5 text-xs sm:text-sm text-indigo-100/90 leading-relaxed">
                 Monitor your published courses, track student enrollment growth, oversee sales revenue, and manage your teaching curriculum.
@@ -713,42 +713,54 @@ const ProviderDashboard: React.FC = () => {
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100 dark:divide-gray-800 mt-2">
-                  {recentOrders.slice(0, 5).map((order: any, idx: number) => (
-                    <div
-                      key={order.id || idx}
-                      className="py-3 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-800/30 px-2 rounded-xl transition"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/40 flex items-center justify-center text-xs font-bold text-indigo-600 dark:text-indigo-400 flex-shrink-0">
-                          {order.studentName ? order.studentName.charAt(0).toUpperCase() : 'S'}
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-gray-900 dark:text-white">
-                            {order.studentName || `Order #${order.id?.substring(0, 8)}`}
-                          </p>
-                          <div className="flex items-center space-x-2 text-[11px] text-gray-400 dark:text-gray-500">
-                            <span className="flex items-center">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {order.createdAt
-                                ? new Date(order.createdAt).toLocaleDateString()
-                                : 'Recent'}
-                            </span>
-                            <span>•</span>
-                            <span>{order.itemCount || 1} course(s)</span>
+                  {recentOrders.slice(0, 5).map((order: any, idx: number) => {
+                    const studentDisplayName =
+                      order.studentFullName ||
+                      order.studentName ||
+                      order.studentUserName ||
+                      order.fullName ||
+                      order.name ||
+                      order.userName ||
+                      (order.id ? `Order #${order.id.substring(0, 8)}` : 'Student');
+                    const initial = (studentDisplayName || 'S').charAt(0).toUpperCase();
+
+                    return (
+                      <div
+                        key={order.id || idx}
+                        className="py-3 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-800/30 px-2 rounded-xl transition"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/40 flex items-center justify-center text-xs font-bold text-indigo-600 dark:text-indigo-400 flex-shrink-0">
+                            {initial}
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-gray-900 dark:text-white">
+                              {studentDisplayName}
+                            </p>
+                            <div className="flex items-center space-x-2 text-[11px] text-gray-400 dark:text-gray-500">
+                              <span className="flex items-center">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {order.createdAt
+                                  ? new Date(order.createdAt).toLocaleDateString()
+                                  : 'Recent'}
+                              </span>
+                              <span>•</span>
+                              <span>{order.itemCount || 1} course(s)</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="text-right">
-                        <p className="text-xs font-extrabold text-gray-900 dark:text-white">
-                          +${(Number(order.totalPrice) || 0).toFixed(2)}
-                        </p>
-                        <span className="inline-block text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                          {order.status || 'Paid'}
-                        </span>
+                        <div className="text-right">
+                          <p className="text-xs font-extrabold text-gray-900 dark:text-white">
+                            +${(Number(order.totalPrice) || 0).toFixed(2)}
+                          </p>
+                          <span className="inline-block text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                            {order.status || 'Paid'}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

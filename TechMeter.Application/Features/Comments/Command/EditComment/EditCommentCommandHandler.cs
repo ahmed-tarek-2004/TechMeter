@@ -55,6 +55,8 @@ namespace TechMeter.Application.Features.Comments.Command.EditComment
                     UserId = comment.UserId,
                     UserImage = comment.UserImage,
                     UserName = comment.UserName,
+                    UserFullName = comment.UserFullName,
+                    FullName = comment.UserFullName,
                     ParentCommentId = comment.ParentCommentId
                 };
                 return responseHandler.Success(response, "Comment Updated Successfully");

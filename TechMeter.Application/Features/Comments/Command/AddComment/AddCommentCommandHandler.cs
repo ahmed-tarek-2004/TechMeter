@@ -40,7 +40,7 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
             }
             try
             {
-                if (!await lessonCommentAuthorization.HasCourseAccess(request.  userId, Lesson.Value.CourseId))
+                if (!await lessonCommentAuthorization.HasCourseAccess(request.userId, Lesson.Value.CourseId))
                 {
                     return responseHandler.Forbidden<LessonCommentResponse>("you don't have access to the course");
                 }
@@ -52,6 +52,7 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                     Content = request.content,
                     IsEdited = false,
                     LessonId = request.lessonId,
+                    UserFullName = user.FullName,
                     UserEmail = user.Email,
                     UserId = request.userId,
                     UserImage = user.ProfileUrl,
@@ -61,7 +62,7 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                 };
                 await context.lessonComments.AddAsync(comment);
                 await context.SaveChangesAsync(cancellationToken);
-                await notificationService.SendUserNotifications(comment.UserId, " new Comment", $"{user.UserName} added an new comment", Domain.Enums.NotificationType.Comment);
+                await notificationService.SendUserNotifications(Lesson.Value.ProviderId, " new Comment", $"{user.FullName} added an new comment on {Lesson.Value.LessonName}", Domain.Enums.NotificationType.Comment);
                 var response = new LessonCommentResponse
                 {
                     Id = comment.Id,
@@ -73,6 +74,8 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                     UserId = comment.UserId,
                     UserImage = comment.UserImage,
                     UserName = comment.UserName,
+                    UserFullName = comment.UserFullName,
+                    FullName = comment.UserFullName,
                     ParentCommentId = comment.ParentCommentId
                 };
                 return responseHandler.Success(response, "Comment Added Successfully");

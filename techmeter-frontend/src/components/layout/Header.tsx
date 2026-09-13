@@ -77,11 +77,11 @@ const Header: React.FC = () => {
       : user?.profileUrl;
 
   const currentDisplayName =
-    role === 'student'
-      ? studentProfile?.studentName || user?.userName
-      : role === 'provider'
-      ? providerProfile?.providerName || user?.userName
-      : user?.userName;
+    studentProfile?.studentName ||
+    providerProfile?.providerName ||
+    user?.fullName ||
+    user?.userName ||
+    'User';
 
   const cartCount = cartData?.data?.items?.length ?? 0;
 
@@ -266,8 +266,13 @@ const Header: React.FC = () => {
                     <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50">
                       <div className="px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
                         <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                          {currentDisplayName || user?.userName}
+                          {user?.fullName || currentDisplayName}
                         </p>
+                        {user?.fullName && user?.userName && (
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium truncate">
+                            @{user.userName}
+                          </p>
+                        )}
                         <p className="text-[11px] text-gray-400 dark:text-gray-400 truncate">{user?.email}</p>
                         <span className="inline-block mt-1 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-full uppercase tracking-wider">
                           {role}

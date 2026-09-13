@@ -22,6 +22,7 @@ function mapAuthDataToUser(data: any): User {
     id: data.id,
     email: data.email ?? data.emailAddress ?? '',
     userName: data.userName,
+    fullName: data.fullName ?? data.FullName ?? '',
     phoneNumber: data.phoneNumber,
     role: (data.role || '').toLowerCase() as 'student' | 'provider' | 'admin',
     profileUrl: data.photoUrl ?? data.profileUrl,

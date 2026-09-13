@@ -257,13 +257,18 @@ const AdminLayout: React.FC = () => {
             {/* Admin User Avatar Pill */}
             <div className="flex items-center space-x-2.5 pl-2 border-l border-gray-200 dark:border-gray-800">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow-xs">
-                {user?.userName?.charAt(0)?.toUpperCase() || 'A'}
+                {(user?.fullName || user?.userName)?.charAt(0)?.toUpperCase() || 'A'}
               </div>
               <div className="text-left hidden sm:block">
                 <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight">
-                  {user?.userName || 'Administrator'}
+                  {user?.fullName || user?.userName || 'Administrator'}
                 </p>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                {user?.fullName && user?.userName && user.fullName !== user.userName && (
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium truncate max-w-[140px]">
+                    @{user.userName}
+                  </p>
+                )}
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate max-w-[140px]">
                   {user?.email || 'admin@techmeter.com'}
                 </p>
               </div>

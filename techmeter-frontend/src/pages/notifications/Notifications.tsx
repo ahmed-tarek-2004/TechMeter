@@ -175,10 +175,20 @@ const Notifications: React.FC = () => {
                       <Bell className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white truncate">
                           {notification.title || 'Notification'}
                         </h3>
+                        {(notification.fullName || notification.userName) && (
+                          <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                            {notification.fullName || notification.userName}
+                            {notification.fullName && notification.userName && notification.fullName.toLowerCase() !== notification.userName.toLowerCase() && (
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500 ml-1 font-normal">
+                                (@{notification.userName})
+                              </span>
+                            )}
+                          </span>
+                        )}
                         {!notification.isRead && (
                           <span className="w-2 h-2 rounded-full bg-indigo-600 flex-shrink-0 animate-ping" />
                         )}

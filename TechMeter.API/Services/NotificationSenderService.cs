@@ -18,7 +18,7 @@ namespace TechMeter.API.Services
             _logger = logger;
         }
 
-        public async Task SendNotificationAsync(string userId, string Titile, string Message, DateTime dateTime)
+        public async Task SendNotificationAsync(string userId, string Titile, string Message, DateTime dateTime, string? fullName = null, string? userName = null)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -30,8 +30,12 @@ namespace TechMeter.API.Services
             {
                 UserId = userId,
                 Titile = Titile,
+                Title = Titile,
                 Message = Message,
                 CreatedAt = dateTime,
+                FullName = fullName,
+                UserFullName = fullName,
+                UserName = userName,
             });
             //await _hubContext.Clients.All.SendAsync("enrollment", Titile, Message);
             _logger.LogInformation("notification is sent");

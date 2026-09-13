@@ -27,13 +27,13 @@ namespace TechMeter.Application.Features.Profile.Command.EditPRoviderProfile
                 //Name
                 if (!string.IsNullOrEmpty(request.EditProviderProfileRequest.ProviderName))
                 {
-                    provider.User.UserName = request.EditProviderProfileRequest.ProviderName;
+                    provider.User.FullName = request.EditProviderProfileRequest.ProviderName;
                 }
                 //Email
-                if (!string.IsNullOrEmpty(request.EditProviderProfileRequest.Email))
-                {
-                    provider.User.Email = request.EditProviderProfileRequest.Email;
-                }
+                //if (!string.IsNullOrEmpty(request.EditProviderProfileRequest.Email))
+                //{
+                //    provider.User.Email = request.EditProviderProfileRequest.Email;
+                //}
                 //phone
                 if (!string.IsNullOrEmpty(request.EditProviderProfileRequest.PhoneNumber))
                 {

@@ -16,6 +16,22 @@ export function normalizeNotification(item: any): Notification {
     };
   }
 
+  const fullName =
+    item.fullName ??
+    item.FullName ??
+    item.userFullName ??
+    item.UserFullName ??
+    item.senderFullName ??
+    item.SenderFullName;
+
+  const userName =
+    item.userName ??
+    item.UserName ??
+    item.senderUserName ??
+    item.SenderUserName ??
+    item.senderName ??
+    item.SenderName;
+
   return {
     id: String(item.id ?? item.Id ?? item.notificationId ?? item.NotificationId ?? ''),
     title: String(item.title ?? item.Title ?? item.titile ?? item.Titile ?? 'Notification'),
@@ -33,6 +49,9 @@ export function normalizeNotification(item: any): Notification {
     ),
     isRead: Boolean(item.isRead ?? item.IsRead ?? false),
     receiptId: String(item.receiptId ?? item.ReceiptId ?? item.userId ?? item.UserId ?? ''),
+    fullName: fullName ? String(fullName) : undefined,
+    userFullName: fullName ? String(fullName) : undefined,
+    userName: userName ? String(userName) : undefined,
   };
 }
 

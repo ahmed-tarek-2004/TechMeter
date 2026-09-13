@@ -37,14 +37,17 @@ namespace TechMeter.Infrastructure.Services.LessonComment
 
             return true;
         }
-        public async Task<(string LessonId, string CourseId)?> GetLessonAsync(string lessonId)
+        public async Task<(string LessonId, string CourseId, string ProviderId, string LessonName)?> GetLessonAsync(string lessonId)
         {
             return await context.Lessons
                 .Where(x => x.Id == lessonId)
-                .Select(x => new ValueTuple<string, string>
+                .Select(x => new ValueTuple<string, string, string,string>
                 (
                     x.Id,
-                    x.section.CourseId
+                    x.section.CourseId,
+                    x.section.Course.ProviderId,
+                    x.Name
+                    //x
                 ))
                 .FirstOrDefaultAsync();
         }

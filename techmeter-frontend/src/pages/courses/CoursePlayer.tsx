@@ -7,7 +7,7 @@ import { lessonService } from '../../services/lessonService';
 import { commentService } from '../../services/commentService';
 import { ratingService } from '../../services/ratingService';
 import toast from 'react-hot-toast';
-import { Section, Lesson, Comment, Rating } from '../../types';
+import { Section, Lesson, Comment, Rating, CommentLike } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -45,7 +45,57 @@ import {
   User,
   LogOut,
   Home,
+  Loader2,
 } from 'lucide-react';
+
+interface UserAvatarProps {
+  src?: string;
+  name?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const UserAvatar: React.FC<UserAvatarProps> = ({
+  src,
+  name,
+  size = 'md',
+  className = '',
+}) => {
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [src]);
+
+  const displayName = name?.trim() || 'Learner';
+  const initial = displayName.charAt(0).toUpperCase() || 'U';
+
+  const sizeClasses = {
+    xs: 'w-5 h-5 text-[9px]',
+    sm: 'w-7 h-7 text-[10px]',
+    md: 'w-8 h-8 text-xs',
+    lg: 'w-10 h-10 text-sm',
+  }[size];
+
+  if (src && !imgError) {
+    return (
+      <img
+        src={src}
+        alt={displayName}
+        onError={() => setImgError(true)}
+        className={`${sizeClasses} rounded-full object-cover border border-gray-200 dark:border-gray-700 flex-shrink-0 ${className}`}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`${sizeClasses} rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-700 flex items-center justify-center font-bold text-white shadow-xs flex-shrink-0 select-none ${className}`}
+    >
+      {initial}
+    </div>
+  );
+};
 
 const CoursePlayer: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId?: string }>();
@@ -217,11 +267,43 @@ const CoursePlayer: React.FC = () => {
     setReplyText((prev) => ({ ...prev, [parentId]: '' }));
   };
 
+  // Comment Likes Viewer State
+  const [selectedLikesCommentId, setSelectedLikesCommentId] = useState<string | null>(null);
+
+  // Fetch Comment Likes
+  const {
+    data: commentLikesData,
+    isLoading: isLoadingLikes,
+    isError: isErrorLikes,
+    refetch: refetchCommentLikes,
+  } = useQuery({
+    queryKey: ['comment-likes', selectedLikesCommentId],
+    queryFn: () => commentService.getCommentLikes(selectedLikesCommentId!),
+    enabled: !!selectedLikesCommentId,
+  });
+
+  const commentLikes: CommentLike[] = commentLikesData?.data || [];
+
+  // Close likes modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedLikesCommentId) {
+        setSelectedLikesCommentId(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedLikesCommentId]);
+
   // Like Comment Mutation
   const likeMutation = useMutation({
     mutationFn: (commentId: string) => commentService.likeComment(commentId),
-    onSuccess: () => {
+    onSuccess: (_data, commentId) => {
       queryClient.invalidateQueries({ queryKey: ['lesson-comments', currentLesson?.id] });
+      queryClient.invalidateQueries({ queryKey: ['comment-likes', commentId] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to update like status.');
     },
   });
 
@@ -404,17 +486,11 @@ const CoursePlayer: React.FC = () => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition focus:outline-none"
               >
-                {user?.profileUrl ? (
-                  <img
-                    src={user.profileUrl}
-                    alt={user?.userName || 'User'}
-                    className="h-7 w-7 rounded-full object-cover border border-gray-200 dark:border-gray-700"
-                  />
-                ) : (
-                  <div className="h-7 w-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">
-                    {user?.userName?.charAt(0)?.toUpperCase() || 'U'}
-                  </div>
-                )}
+                <UserAvatar
+                  src={user?.profileUrl}
+                  name={user?.fullName || user?.userName}
+                  size="sm"
+                />
                 <ChevronDown className="h-3 w-3 text-gray-400 hidden sm:inline" />
               </button>
 
@@ -422,8 +498,11 @@ const CoursePlayer: React.FC = () => {
                 <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
                     <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                      {user?.userName}
+                      {user?.fullName || user?.userName}
                     </p>
+                    {user?.fullName && user?.userName && user.fullName.trim().toLowerCase() !== user.userName.trim().toLowerCase() && (
+                      <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">@{user.userName}</p>
+                    )}
                     <p className="text-[10px] text-gray-400 truncate">{user?.email}</p>
                   </div>
                   <div className="py-1">
@@ -684,97 +763,173 @@ const CoursePlayer: React.FC = () => {
                       </p>
                     </div>
                   ) : (
-                    comments.map((comment) => (
-                      <div
-                        key={comment.id}
-                        className="bg-gray-100 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800/70 rounded-2xl p-4 sm:p-5 space-y-3"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2.5">
-                            <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-xs">
-                              {comment.userName?.charAt(0)?.toUpperCase() || 'U'}
+                    comments.map((comment) => {
+                      const primaryName = comment.userFullName || comment.userName || 'Learner';
+                      const showHandle = Boolean(
+                        comment.userFullName &&
+                        comment.userName &&
+                        comment.userFullName.trim().toLowerCase() !== comment.userName.trim().toLowerCase()
+                      );
+
+                      return (
+                        <div
+                          key={comment.id}
+                          className="bg-gray-100 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800/70 rounded-2xl p-4 sm:p-5 space-y-3"
+                        >
+                          <div className="flex items-start sm:items-center justify-between gap-2">
+                            <div className="flex items-center space-x-2.5 min-w-0">
+                              <UserAvatar
+                                src={comment.userImage}
+                                name={primaryName}
+                                size="md"
+                              />
+                              <div className="min-w-0">
+                                <div className="flex items-center space-x-1.5 flex-wrap">
+                                  <span className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                                    {primaryName}
+                                  </span>
+                                  {showHandle && (
+                                    <span className="text-[11px] text-gray-500 dark:text-gray-400 font-normal">
+                                      @{comment.userName}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                                  {new Date(comment.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-xs font-bold text-gray-900 dark:text-white">{comment.userName}</p>
-                              <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                                {new Date(comment.createdAt).toLocaleDateString()}
-                              </p>
+
+                            {/* Like Action & Likes Count Viewer */}
+                            <div className="flex items-center space-x-1.5 flex-shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => likeMutation.mutate(comment.id)}
+                                disabled={likeMutation.isPending}
+                                className="flex items-center space-x-1 text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-2 py-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition focus:outline-none"
+                                title="Like comment"
+                              >
+                                <ThumbsUp className="h-3.5 w-3.5" />
+                                <span className="hidden sm:inline text-[11px] font-medium">Like</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setSelectedLikesCommentId(comment.id)}
+                                className={`inline-flex items-center space-x-1 px-2 py-0.5 text-xs font-semibold rounded-full border transition shadow-2xs focus:outline-none ${
+                                  (comment.likesCount || 0) > 0
+                                    ? 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border-indigo-200 dark:border-indigo-800/60'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 bg-gray-50 dark:bg-gray-800/60 border-gray-200 dark:border-gray-700'
+                                }`}
+                                title="View who liked this comment"
+                              >
+                                <ThumbsUp
+                                  className={`h-2.5 w-2.5 ${
+                                    (comment.likesCount || 0) > 0 ? 'fill-indigo-600 dark:fill-indigo-400' : ''
+                                  }`}
+                                />
+                                <span>{comment.likesCount || 0}</span>
+                              </button>
                             </div>
                           </div>
 
-                          <button
-                            onClick={() => likeMutation.mutate(comment.id)}
-                            className="flex items-center space-x-1 text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-2 py-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-                          >
-                            <ThumbsUp className="h-3.5 w-3.5" />
-                            <span>{comment.likesCount || 0}</span>
-                          </button>
-                        </div>
+                          <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {comment.content}
+                          </p>
 
-                        <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{comment.content}</p>
-
-                        {/* Reply trigger */}
-                        <div className="pt-1 flex items-center space-x-4 text-xs">
-                          <button
-                            onClick={() =>
-                              setReplyingTo(replyingTo === comment.id ? null : comment.id)
-                            }
-                            className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
-                          >
-                            {replyingTo === comment.id ? 'Cancel' : 'Reply'}
-                          </button>
-                        </div>
-
-                        {/* Reply Form */}
-                        {replyingTo === comment.id && (
-                          <div className="pt-2 flex space-x-2">
-                            <input
-                              type="text"
-                              placeholder="Write a reply..."
-                              value={replyText[comment.id] || ''}
-                              onChange={(e) =>
-                                setReplyText((prev) => ({
-                                  ...prev,
-                                  [comment.id]: e.target.value,
-                                }))
-                              }
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' && replyText[comment.id]?.trim()) {
-                                  handlePostReply(comment.id);
-                                }
-                              }}
-                              className="flex-1 bg-gray-100 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl px-3.5 py-2 text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            />
+                          {/* Reply trigger */}
+                          <div className="pt-1 flex items-center space-x-4 text-xs">
                             <button
-                              onClick={() => handlePostReply(comment.id)}
-                              disabled={!replyText[comment.id]?.trim()}
-                              className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
+                              onClick={() =>
+                                setReplyingTo(replyingTo === comment.id ? null : comment.id)
+                              }
+                              className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
                             >
-                              Reply
+                              {replyingTo === comment.id ? 'Cancel' : 'Reply'}
                             </button>
                           </div>
-                        )}
 
-                        {/* Nested replies */}
-                        {comment.replies && comment.replies.length > 0 && (
-                          <div className="pl-4 border-l-2 border-indigo-200 dark:border-indigo-900/40 space-y-2 mt-3">
-                            {comment.replies.map((reply) => (
-                              <div key={reply.id} className="bg-gray-100 dark:bg-gray-950/60 p-3 rounded-xl border border-gray-200 dark:border-gray-800/40">
-                                <div className="flex items-center space-x-2 mb-1">
-                                  <div className="w-5 h-5 bg-indigo-700 rounded-full flex items-center justify-center text-[10px] font-bold text-white">
-                                    {reply.userName?.charAt(0)?.toUpperCase() || 'R'}
+                          {/* Reply Form */}
+                          {replyingTo === comment.id && (
+                            <div className="pt-2 flex space-x-2">
+                              <input
+                                type="text"
+                                placeholder="Write a reply..."
+                                value={replyText[comment.id] || ''}
+                                onChange={(e) =>
+                                  setReplyText((prev) => ({
+                                    ...prev,
+                                    [comment.id]: e.target.value,
+                                  }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && replyText[comment.id]?.trim()) {
+                                    handlePostReply(comment.id);
+                                  }
+                                }}
+                                className="flex-1 bg-gray-100 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl px-3.5 py-2 text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                              />
+                              <button
+                                onClick={() => handlePostReply(comment.id)}
+                                disabled={!replyText[comment.id]?.trim()}
+                                className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
+                              >
+                                Reply
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Nested replies */}
+                          {comment.replies && comment.replies.length > 0 && (
+                            <div className="pl-4 border-l-2 border-indigo-200 dark:border-indigo-900/40 space-y-2 mt-3">
+                              {comment.replies.map((reply) => {
+                                const replyPrimaryName = reply.userFullName || reply.userName || 'Learner';
+                                const showReplyHandle = Boolean(
+                                  reply.userFullName &&
+                                  reply.userName &&
+                                  reply.userFullName.trim().toLowerCase() !== reply.userName.trim().toLowerCase()
+                                );
+
+                                return (
+                                  <div
+                                    key={reply.id}
+                                    className="bg-gray-100 dark:bg-gray-950/60 p-3 rounded-xl border border-gray-200 dark:border-gray-800/40 space-y-1.5"
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center space-x-2 min-w-0">
+                                        <UserAvatar
+                                          src={reply.userImage}
+                                          name={replyPrimaryName}
+                                          size="xs"
+                                        />
+                                        <div className="flex items-center space-x-1.5 flex-wrap min-w-0">
+                                          <span className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">
+                                            {replyPrimaryName}
+                                          </span>
+                                          {showReplyHandle && (
+                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 font-normal">
+                                              @{reply.userName}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                      {reply.createdAt && (
+                                        <span className="text-[10px] text-gray-500 dark:text-gray-400 flex-shrink-0 ml-2">
+                                          {new Date(reply.createdAt).toLocaleDateString()}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 pl-7 leading-relaxed">
+                                      {reply.content}
+                                    </p>
                                   </div>
-                                  <p className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                                    {reply.userName}
-                                  </p>
-                                </div>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 pl-7">{reply.content}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               </div>
@@ -1025,6 +1180,131 @@ const CoursePlayer: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Comment Likes Modal */}
+      {selectedLikesCommentId && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-gray-900/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setSelectedLikesCommentId(null)}
+          />
+
+          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div className="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 w-full sm:max-w-md border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]">
+              {/* Modal Header */}
+              <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div className="flex items-center space-x-2.5">
+                  <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50">
+                    <ThumbsUp className="h-4 w-4 fill-indigo-600 dark:fill-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">
+                      Comment Likes
+                    </h3>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      {commentLikes.length} {commentLikes.length === 1 ? 'person' : 'people'} liked this comment
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedLikesCommentId(null)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                  title="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Modal Content List */}
+              <div className="p-4 sm:p-5 overflow-y-auto flex-1 divide-y divide-gray-100 dark:divide-gray-700/60">
+                {isLoadingLikes ? (
+                  <div className="py-10 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                    <Loader2 className="h-6 w-6 animate-spin text-indigo-600 dark:text-indigo-400 mb-2" />
+                    <span className="text-xs font-semibold">Loading likes...</span>
+                  </div>
+                ) : isErrorLikes ? (
+                  <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-rose-500 mb-3">Failed to load likes for this comment.</p>
+                    <button
+                      type="button"
+                      onClick={() => refetchCommentLikes()}
+                      className="px-3.5 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : commentLikes.length === 0 ? (
+                  <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+                    <p className="text-xs italic">No likes recorded for this comment yet.</p>
+                  </div>
+                ) : (
+                  commentLikes.map((like, index) => {
+                    const likePrimaryName = like.userFullName || like.userName || 'Learner';
+                    const showLikeHandle = Boolean(
+                      like.userFullName &&
+                      like.userName &&
+                      like.userFullName.trim().toLowerCase() !== like.userName.trim().toLowerCase()
+                    );
+
+                    return (
+                      <div
+                        key={`${like.userId || like.userName}-${index}`}
+                        className="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center space-x-3 min-w-0">
+                          <UserAvatar
+                            src={like.userImage}
+                            name={likePrimaryName}
+                            size="md"
+                          />
+                          <div className="min-w-0">
+                            <div className="flex items-center space-x-1.5 flex-wrap">
+                              <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                                {likePrimaryName}
+                              </p>
+                              {showLikeHandle && (
+                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-normal">
+                                  @{like.userName}
+                                </span>
+                              )}
+                            </div>
+                            {like.addedAt && (
+                              <p className="text-[10px] text-gray-400 dark:text-gray-500">
+                                {new Date(like.addedAt).toLocaleDateString(undefined, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex-shrink-0 text-indigo-500 dark:text-indigo-400 p-1.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-full border border-indigo-100 dark:border-indigo-900/50">
+                          <ThumbsUp className="h-3 w-3 fill-current" />
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-3 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700 text-right">
+                <button
+                  type="button"
+                  onClick={() => setSelectedLikesCommentId(null)}
+                  className="px-4 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

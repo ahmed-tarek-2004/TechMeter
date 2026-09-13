@@ -12,6 +12,6 @@ namespace TechMeter.Application.Interfaces.Services.NotificationSender
 {
     public interface INotificationSenderService
     {
-        Task SendNotificationAsync(string userId, string Titile, string Message, DateTime dateTime);
+        Task SendNotificationAsync(string userId, string Titile, string Message, DateTime dateTime, string? fullName = null, string? userName = null);
     }
 }
