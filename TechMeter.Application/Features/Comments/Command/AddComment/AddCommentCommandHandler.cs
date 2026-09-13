@@ -57,12 +57,25 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                     UserId = request.userId,
                     UserImage = user.ProfileUrl,
                     UserName = user.UserName ?? "",
-                    ParentCommentId = request.CommentParentId
+                    ParentCommentId = string.IsNullOrEmpty(request.CommentParentId) ? null : request.CommentParentId
 
                 };
                 await context.lessonComments.AddAsync(comment);
                 await context.SaveChangesAsync(cancellationToken);
-                await notificationService.SendUserNotifications(Lesson.Value.ProviderId, " new Comment", $"{user.FullName} added an new comment on {Lesson.Value.LessonName}", Domain.Enums.NotificationType.Comment);
+
+                if (!string.IsNullOrEmpty(comment.ParentCommentId))
+                {
+                    var parentComment = await context.lessonComments.FindAsync(comment.ParentCommentId);
+                    if (parentComment != null && parentComment.UserId != user.Id)
+                    {
+                        await notificationService.SendUserNotifications(parentComment.UserId, "New Reply on Your Comment", $"{user.FullName ?? user.UserName} replied to your comment on {Lesson.Value.LessonName}", Domain.Enums.NotificationType.Comment);
+                    }
+                }
+                else if (Lesson.Value.ProviderId != user.Id)
+                {
+                    await notificationService.SendUserNotifications(Lesson.Value.ProviderId, "New Comment", $"{user.FullName ?? user.UserName} added a comment on {Lesson.Value.LessonName}", Domain.Enums.NotificationType.Comment);
+                }
+
                 var response = new LessonCommentResponse
                 {
                     Id = comment.Id,
@@ -76,7 +89,9 @@ namespace TechMeter.Application.Features.Comments.Command.AddComment
                     UserName = comment.UserName,
                     UserFullName = comment.UserFullName,
                     FullName = comment.UserFullName,
-                    ParentCommentId = comment.ParentCommentId
+                    ParentCommentId = comment.ParentCommentId,
+                    LikesCount = 0,
+                    IsLiked = false
                 };
                 return responseHandler.Success(response, "Comment Added Successfully");
             }

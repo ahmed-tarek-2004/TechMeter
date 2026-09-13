@@ -21,6 +21,7 @@ namespace TechMeter.Application.DTO.LessonComment
         public string? UserImage { get; set; }
         public string LessonId { get; set; }
         public int LikesCount { get; set; }
+        public bool IsLiked { get; set; } = false;
         public List<LessonCommentResponse> Replies { get; set; } = new ();
     }
 }

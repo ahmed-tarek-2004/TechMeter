@@ -20,7 +20,7 @@ namespace TechMeter.Application.Features.Comments.Command.DeleteComment
         public async Task<Response<string>> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
         {
             var comment = await context.lessonComments
-      .AnyAsync(b => b.Id == request.commentId && b.UserId == request.userId);
+                .AnyAsync(b => b.Id == request.commentId);
 
             if (!comment)
             {

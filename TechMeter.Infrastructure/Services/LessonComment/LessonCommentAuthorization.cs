@@ -66,11 +66,11 @@ namespace TechMeter.Infrastructure.Services.LessonComment
             }
             else if (isProvider)
             {
-                canDelete = await context.lessonComments.AnyAsync(c => c.Lesson.section.Course.ProviderId == userId);
+                canDelete = await context.lessonComments.AnyAsync(c => c.Id == CommentId && c.Lesson.section.Course.ProviderId == userId);
             }
             else
             {
-                canDelete = await context.lessonComments.AnyAsync(c => c.UserId == userId && c.LessonId == LessonId);
+                canDelete = await context.lessonComments.AnyAsync(c => c.Id == CommentId && c.UserId == userId && c.LessonId == LessonId);
             }
             if (!canDelete)
                 return 0;

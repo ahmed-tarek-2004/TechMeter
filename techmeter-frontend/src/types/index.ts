@@ -130,10 +130,12 @@ export interface Comment {
   userId: string;
   userName: string;
   userFullName?: string;
+  fullName?: string;
   userEmail: string;
   userImage?: string;
   lessonId: string;
   likesCount: number;
+  isLiked?: boolean;
   replies: Comment[];
 }
 

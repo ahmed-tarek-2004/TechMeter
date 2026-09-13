@@ -51,12 +51,16 @@ namespace TechMeter.Application.Features.Comments.Command.LikeOnComment
                         UserFullName = user.FullName ?? "",
                         UserId = user.Id,
                         UserImage = user.ProfileUrl ?? "",
-                        UserName = user.UserName,
+                        UserName = user.UserName ?? "",
                         AddedAt = DateTime.UtcNow,
                     };
+                    if (comment.UserId != user.Id)
+                    {
+                        await notificationService.SendUserNotifications(comment.UserId, "Like on Your Comment", $"{user.FullName} Liked on your comment", Domain.Enums.NotificationType.Like);
+                    }
                     await context.LessonCommentLikes.AddAsync(lessonCommentLike);
                     await context.SaveChangesAsync(cancellationToken);
-                    await notificationService.SendUserNotifications(comment.UserId, "Like on Your Comment", $"{user.UserName} Liked on your comment", Domain.Enums.NotificationType.Like);
+                    //await notificationService.SendUserNotifications(comment.UserId, "Like on Your Comment", $"{user.UserName} Liked on your comment", Domain.Enums.NotificationType.Like);
                     return responseHandler.Success(string.Empty, "Like added successfully");
                 }
                 return responseHandler.Success(string.Empty, "Like already added");
