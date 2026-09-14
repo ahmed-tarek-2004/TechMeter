@@ -32,6 +32,8 @@
 
 	<ItemGroup>
 		<Folder Include="Extensions\" />
+		<Folder Include="wwwroot\Documents\" />
+		<Folder Include="wwwroot\Images\" />
 	</ItemGroup>
 
 </Project>

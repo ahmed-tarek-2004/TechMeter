@@ -37,7 +37,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="HangfireJobs\Jobs\" />
 		<Folder Include="Persistence\Migrations\" />
 	</ItemGroup>
 

@@ -35,6 +35,7 @@ using TechMeter.Infrastructure.Services.Notification;
 using TechMeter.Infrastructure.Services.OAuth;
 using TechMeter.Infrastructure.Services.Payment;
 using TechMeter.Infrastructure.Services.TokenService;
+using TechMeter.Infrastructure.Services.UploadBackgroundMedia;
 using TechMeter.Infrastructure.Services.UserConnection;
 using TechMeter.Shared;
 
@@ -78,7 +79,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IMediaUploading, CloudinaryImageService>();
+            services.AddScoped<ICloudMediaUploading, CloudinaryMediaService>();
             services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>(); //if not using repository and unitOfWork using AppDbContext interface
@@ -92,6 +93,8 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IMessageService, MessageService>();
             services.AddHttpClient<IFacebookAuthService, FacebookAuthService>();
             services.AddScoped<IStoreInDisk, StoreInDiskService>();
+            services.AddScoped<IUploadBackgroundMediaJob, UploadBackgroundMediaJob>();
+            services.AddScoped<IMediaUploadService, MediaUploadService>();
 
 
             return services;

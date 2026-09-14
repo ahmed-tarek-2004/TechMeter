@@ -7,11 +7,15 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.Interfaces.Services.MediaUpload
 {
-    public interface IMediaUploading
+    public interface ICloudMediaUploading
     {
         public Task<string> UploadAsync(IFormFile file, CancellationToken cancellationToken = default);
         //public Task<string> UploadAsync(string filePath, CancellationToken cancellationToken = default);
         public Task<string> UploadVideoAsync(IFormFile file, CancellationToken cancellationToken = default);
         public Task<string> UploadImageBytesAsync(byte[] imageBytes, string? name, CancellationToken cancellationToken = default);
+        public Task<string> UploadImageByURI(string uri, string? name, CancellationToken cancellationToken = default);
+        public Task<string> UploadFileByURIAsync(string uri, string? name, CancellationToken cancellationToken = default);
+        public Task<string> UploadVideoByURIAsync(string uri, string? name, CancellationToken cancellationToken = default);
+
     }
 }

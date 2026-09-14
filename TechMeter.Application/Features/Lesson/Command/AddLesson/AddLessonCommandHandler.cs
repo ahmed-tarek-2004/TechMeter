@@ -16,33 +16,23 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.AddLesson
 {
-    public class AddLessonCommandHandler(IApplicationDbContext context,ITransactionManager transactionManager,ILogger<AddLessonCommandHandler> logger, 
-        IBackgroundJobService backgroundJobService,ResponseHandler responseHandler) : IRequestHandler<AddLessonCommand, Response<GetLessonResponse>>
+    public class AddLessonCommandHandler(IApplicationDbContext context, ITransactionManager transactionManager, ILogger<AddLessonCommandHandler> logger,
+       IMediaUploadService mediaUpload, ResponseHandler responseHandler) : IRequestHandler<AddLessonCommand, Response<string>>
     {
-        private readonly string[] videoExtensions = new[] { ".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".m4v", ".mpeg", ".mpg", ".3gp", ".ts", ".mts", ".m2ts", ".ogv" };
-        private readonly string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
-
-        public async Task<Response<GetLessonResponse>> Handle(AddLessonCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(AddLessonCommand request, CancellationToken cancellationToken)
         {
             var section = await context.Section.FirstOrDefaultAsync(s => s.Id == request.SectionId);
             if (section == null)
             {
-                return responseHandler.NotFound<GetLessonResponse>("Section is not found");
+                return responseHandler.NotFound<string>("Section is not found");
             }
             string LessonUrl = string.Empty;
-            try
-            {
-                LessonUrl = await UploadMedia(request.AddLessonRequest.LessonStream, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                return responseHandler.BadRequest<GetLessonResponse>(ex.Message);
-            }
+
 
             var course = await context.Course.FirstOrDefaultAsync(b => b.Id == section.CourseId);
             if (course == null)
             {
-                return responseHandler.NotFound<GetLessonResponse>("Course is not found");
+                return responseHandler.NotFound<string>("Course is not found");
             }
             await using var transaction = await transactionManager.BeginTransactionAsync();
             try
@@ -53,7 +43,7 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
                     Name = request.AddLessonRequest.Name,
                     Description = request.AddLessonRequest.Description,
                     SectionId = request.SectionId,
-                    LessonUrl = LessonUrl
+                    LessonUrl = string.Empty
                 };
 
                 await context.Lessons.AddAsync(Lesson);
@@ -65,45 +55,17 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
 
                 await context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync();
-                var response = new GetLessonResponse()
-                {
-                    Id = Lesson.Id,
-                    Name = Lesson.Name,
-                    Description = Lesson.Description,
-                    LessonUrl = Lesson.LessonUrl
-                };
-                return responseHandler.Created(response, $"Lesson {request.AddLessonRequest.Name} Created Successfully");
+                await mediaUpload.UploadLessonMedia(request.AddLessonRequest.LessonStream, Lesson.Id, request.AddLessonRequest.Name, cancellationToken);
+
+                return responseHandler.Created("Lesson Created Successfully", $"Lesson {request.AddLessonRequest.Name} Created Successfully");
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return responseHandler.InternalServerError<GetLessonResponse>(ex.Message);
+                return responseHandler.InternalServerError<string>(ex.Message);
             }
         }
 
-        private async Task<string> UploadMedia(IFormFile file,CancellationToken cancellationToken)
-        {
-            var fileExtension = Path.GetExtension(file.FileName).ToLower();
-            try
-            {
-                if (videoExtensions.Contains(fileExtension))
-                {
-                    return backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadVideoAsync(file, cancellationToken));
-                }
-                else if (imageExtensions.Contains(fileExtension))
-                {
-                    return backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(file, cancellationToken));
-                }
-                else
-                {
-                    throw new InvalidOperationException("Unsupported file type");
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error uploading media file");
-                throw new Exception("An error occurred while uploading the media file. Please try again later.");
-            }
-        }
+        
     }
 }
