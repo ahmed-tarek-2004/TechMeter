@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Application.Helper;
+using TechMeter.Domain.Enums;
 
 namespace TechMeter.Application.Features.Lesson.Command.AddLesson
 {
     public class AddLessonCommandValidator:AbstractValidator<AddLessonCommand>
     {
-        private readonly string[] videoExtensions = new[] { ".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".m4v", ".mpeg", ".mpg", ".3gp", ".ts", ".mts", ".m2ts", ".ogv" };
-        private readonly string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
         public AddLessonCommandValidator()
         {
             RuleFor(b => b)
@@ -18,8 +18,10 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
                 .WithMessage("Lesson Name And LessonStream Is Required");
 
             RuleFor(b => b)
-                .Must(b => videoExtensions.Contains(Path.GetExtension(b.AddLessonRequest.LessonStream.FileName).ToLower()) || imageExtensions.Contains(Path.GetExtension(b.AddLessonRequest.LessonStream.FileName).ToLower()))
-                .WithMessage("Invalid file type. Please upload a video or image file.");
+                .Must(b => MediaExtension.GetMediaType(b.AddLessonRequest.LessonStream.FileName) == MediaType.Video ||
+                MediaExtension.GetMediaType(b.AddLessonRequest.LessonStream.FileName) == MediaType.Image || 
+                MediaExtension.GetMediaType(b.AddLessonRequest.LessonStream.FileName) == MediaType.File)
+                .WithMessage("Invalid file type. Please upload a video or image or ICDL file.");
         }
     }
 }

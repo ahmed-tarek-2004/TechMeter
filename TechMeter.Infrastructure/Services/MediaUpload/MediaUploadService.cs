@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Application.Helper;
 using TechMeter.Application.Interfaces.Services.Jobs;
 using TechMeter.Application.Interfaces.Services.MediaUpload;
+using TechMeter.Domain.Enums;
 using TechMeter.Infrastructure.Persistence.AppDbContext;
 
 namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
@@ -16,14 +18,29 @@ namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
     public class MediaUploadService(IStoreInDisk storeInDisk, ILogger<MediaUploadService> logger,
         IBackgroundJobService backgroundJobService) : IMediaUploadService
     {
-        private readonly string[] videoExtensions = new[] { ".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".m4v", ".mpeg", ".mpg", ".3gp", ".ts", ".mts", ".m2ts", ".ogv" };
-        private readonly string[] imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
 
         public async Task UploadLessonMedia(IFormFile file, string Id, string name, CancellationToken cancellationToken = default)
         {
             try
             {
-                var filePath = await storeInDisk.StoreImageAsync(file, cancellationToken);
+                var filePath = string.Empty;
+                if (MediaExtension.GetMediaType(file.FileName) == MediaType.Image)
+                {
+                    filePath = await storeInDisk.StoreImageAsync(file, cancellationToken);
+                }
+                else if (MediaExtension.GetMediaType(file.FileName) == MediaType.Video)
+                {
+                    filePath = await storeInDisk.StoreVideoAsync(file, cancellationToken);
+                }
+                else if (MediaExtension.GetMediaType(file.FileName) == MediaType.File)
+                {
+                    filePath = await storeInDisk.StoreFileAsync(file, cancellationToken);
+                }
+                else
+                {
+                    throw new Exception("Unsupported media type. Only images , videos and ICDL Files are allowed.");
+                }
+                filePath = await storeInDisk.StoreImageAsync(file, cancellationToken);
                 await UploadMedia(file, Id, filePath, name, cancellationToken);
             }
             catch (Exception ex)
@@ -35,23 +52,9 @@ namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
 
         private async Task UploadMedia(IFormFile file, string Id, string filePath, string name, CancellationToken cancellationToken)
         {
-            var fileExtension = Path.GetExtension(filePath).ToLower();
             try
             {
-                //if (videoExtensions.Contains(fileExtension))
-                //{
-                    // Use the concrete background-job service interface instead of "I"
-                    backgroundJobService.Enqueue<IUploadBackgroundMediaJob>(j => j.UploadLessonVideoJob(Id, name, filePath, cancellationToken));
-                //}
-                //else 
-                    if (imageExtensions.Contains(fileExtension))
-                {
-                    backgroundJobService.Enqueue<IUploadBackgroundMediaJob>(j => j.UploadLessonImageJob(Id, name, filePath, cancellationToken));
-                }
-                else
-                {
-                    throw new InvalidOperationException("Unsupported file type");
-                }
+                backgroundJobService.Enqueue<IUploadBackgroundMediaJob>(j => j.UploadLessonMediaJob(Id, name, filePath, cancellationToken));
             }
             catch (Exception ex)
             {
@@ -60,6 +63,6 @@ namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
             }
         }
 
-      
+
     }
 }

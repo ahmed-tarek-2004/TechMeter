@@ -79,7 +79,7 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<ICloudMediaUploading, CloudinaryImageService>();
+            services.AddScoped<ICloudMediaUploading, CloudinaryMediaService>();
             services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>(); //if not using repository and unitOfWork using AppDbContext interface

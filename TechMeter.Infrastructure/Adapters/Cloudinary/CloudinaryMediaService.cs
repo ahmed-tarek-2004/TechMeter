@@ -15,13 +15,13 @@ using TechMeter.Shared;
 
 namespace TechMeter.Infrastructure.Adapters.Cloudinary
 {
-    public class CloudinaryImageService : ICloudMediaUploading
+    public class CloudinaryMediaService : ICloudMediaUploading
     {
-        private readonly ILogger<CloudinaryImageService> logger;
+        private readonly ILogger<CloudinaryMediaService> logger;
         private readonly CloudinarySettings _cloudinarySettings;
         private readonly IStoreInDisk storeInDisk;
         private readonly CloudinaryDotNet.Cloudinary _cloudinary;
-        public CloudinaryImageService(IOptions<CloudinarySettings> options, ILogger<CloudinaryImageService> logger, IStoreInDisk storeInDisk)
+        public CloudinaryMediaService(IOptions<CloudinarySettings> options, ILogger<CloudinaryMediaService> logger, IStoreInDisk storeInDisk)
         {
             this.logger = logger;
             this.storeInDisk = storeInDisk;
@@ -129,6 +129,57 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
                 throw new Exception($"Cloudinary error occurred: {result.Error.Message}");
 
             return result.SecureUrl.AbsoluteUri ?? throw new Exception("Cloudinary returned empty URL.");
+        }
+        public async Task<string> UploadVideoByURIAsync(string uri, string name, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(uri))
+                throw new ArgumentException("File URI cannot be null or empty.");
+
+            if (!File.Exists(uri))
+                throw new FileNotFoundException("The video file was not found.", uri);
+
+            var uploadParams = new VideoUploadParams
+            {
+                File = new FileDescription(name, uri)
+            };
+
+            var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
+
+            if (result == null)
+                throw new Exception("Upload result was null from Cloudinary.");
+
+            if (result.Error != null)
+                throw new Exception($"Cloudinary error occurred: {result.Error.Message}");
+
+            return result.SecureUrl?.AbsoluteUri ?? throw new Exception("Cloudinary returned empty URL.");
+        }
+        public async Task<string> UploadFileByURIAsync(string uri, string name, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(uri))
+                throw new ArgumentException("File URI cannot be null or empty.", nameof(uri));
+
+            if (!File.Exists(uri))
+                throw new FileNotFoundException("The file was not found.", uri);
+
+            var uploadParams = new RawUploadParams
+            {
+                File = new FileDescription(name, uri)
+            };
+
+            var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken: cancellationToken);
+
+            if (result == null)
+                throw new Exception("Upload result was null from Cloudinary.");
+
+            if (result.Error != null)
+                throw new Exception($"Cloudinary error occurred: {result.Error.Message}");
+
+            var url = result.SecureUrl?.AbsoluteUri;
+
+            if (string.IsNullOrWhiteSpace(url))
+                throw new Exception("Cloudinary returned empty URL.");
+
+            return result.SecureUrl?.AbsoluteUri ?? throw new Exception("Cloudinary returned empty URL.");
         }
     }
 }
