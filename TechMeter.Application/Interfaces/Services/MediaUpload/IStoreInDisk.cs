@@ -9,6 +9,8 @@ namespace TechMeter.Application.Interfaces.Services.MediaUpload
 {
     public interface IStoreInDisk
     {
+        Task<string> StoreImageAsync(IFormFile formFile, CancellationToken cancellationToken);
+        Task<string> StoreVideoAsync(IFormFile formFile, CancellationToken cancellationToken);
         Task<string> StoreFileAsync(IFormFile formFile, CancellationToken cancellationToken);
         void DeleteFile(string filePath);
     }

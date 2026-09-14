@@ -9,6 +9,6 @@ namespace TechMeter.Application.Interfaces.Services.MediaUpload
 {
     public interface IMediaUploadService
     {
-        Task UploadLessonImage(IFormFile file, string Id, string name, CancellationToken cancellationToken = default);
+        Task UploadLessonMedia(IFormFile file, string Id, string name, CancellationToken cancellationToken = default);
     }
 }
