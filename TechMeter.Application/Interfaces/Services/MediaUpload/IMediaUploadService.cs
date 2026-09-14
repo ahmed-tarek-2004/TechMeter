@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace TechMeter.Application.Interfaces.Services.MediaUpload
 {
-    public interface IStoreInDisk
+    public interface IMediaUploadService
     {
-        Task<string> StoreFileAsync(IFormFile formFile, CancellationToken cancellationToken);
-        void DeleteFile(string filePath);
+        Task UploadLessonImage(IFormFile file, string Id, string name, CancellationToken cancellationToken = default);
     }
 }

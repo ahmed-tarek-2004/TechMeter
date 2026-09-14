@@ -14,7 +14,7 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.Application.Features.Course.Command.EditCourse
 {
     public class EditCourseCommandHandler(IApplicationDbContext context, ResponseHandler responseHandler,
-        IMediaUploading imageUploading) : IRequestHandler<EditCourseCommand, Response<string>>
+        ICloudMediaUploading imageUploading) : IRequestHandler<EditCourseCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(EditCourseCommand request, CancellationToken cancellationToken)
         {

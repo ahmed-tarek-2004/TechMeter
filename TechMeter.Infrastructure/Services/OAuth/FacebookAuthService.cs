@@ -16,7 +16,7 @@ using TechMeter.Domain.Models.Auth.Users;
 namespace TechMeter.Infrastructure.Services.OAuth
 {
     public class FacebookAuthService(HttpClient client, IConfiguration configuration,
-        IMediaUploading mediaUploadingService) : IFacebookAuthService
+        ICloudMediaUploading mediaUploadingService) : IFacebookAuthService
     {
         public async Task<GetUserInfoResponse> GetUserInfoAsync(string accessToken, CancellationToken cancellationToken = default)
         {

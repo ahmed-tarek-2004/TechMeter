@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,11 @@ using TechMeter.Application.Interfaces.Services.MediaUpload;
 
 namespace TechMeter.Infrastructure.Adapters.Cloudinary
 {
-    public class StoreInDiskService(IWebHostEnvironment webHostEnvironment) : IStoreInDisk
+    public class StoreInDiskService(IWebHostEnvironment webHostEnvironment,ILogger<StoreInDiskService> logger) : IStoreInDisk
     {
-        public async Task<string> StoreFileAsync(IFormFile formFile,CancellationToken cancellationToken)
+        public async Task<string> StoreFileAsync(IFormFile formFile, CancellationToken cancellationToken)
         {
-            var uploadPath = Path.Combine(webHostEnvironment.WebRootPath,"Images");
+            var uploadPath = Path.Combine(webHostEnvironment.WebRootPath, "Images");
 
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
@@ -23,7 +24,7 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
 
             var filePath = Path.Combine(uploadPath, fileName);
 
-            await using var fileStream = new FileStream(filePath,FileMode.Create);
+            await using var fileStream = new FileStream(filePath, FileMode.Create);
 
             await formFile.CopyToAsync(fileStream, cancellationToken);
 
@@ -37,6 +38,7 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
+                logger.LogInformation($"File deleted: {filePath}");
             }
         }
     }

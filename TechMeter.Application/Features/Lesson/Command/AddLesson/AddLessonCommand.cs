@@ -10,7 +10,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Lesson.Command.AddLesson
 {
-    public class AddLessonCommand:IRequest<Response<GetLessonResponse>>
+    public class AddLessonCommand:IRequest<Response<string>>
     {
         public string SectionId { get; set; }
         public AddLessonRequest AddLessonRequest { get; set; }

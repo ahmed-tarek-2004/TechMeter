@@ -13,7 +13,7 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.Application.Features.Profile.Command.EditStudentProfile
 {
     public class StudentProfileCommandHandler(IApplicationDbContext context, ResponseHandler responseHandler,
-        ILogger<StudentProfileCommandHandler> logger, IMediaUploading imageUploading) : IRequestHandler<StudentProfileCommand, Response<string>>
+        ILogger<StudentProfileCommandHandler> logger, ICloudMediaUploading imageUploading) : IRequestHandler<StudentProfileCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(StudentProfileCommand request, CancellationToken cancellationToken)
         {

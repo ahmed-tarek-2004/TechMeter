@@ -17,7 +17,7 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.Application.Features.Course.Command.AddCourse
 {
     public class AddCourseCommandHandler(IApplicationDbContext context,ResponseHandler responseHandler,
-        ILogger<AddCourseCommandHandler> logger,IMediaUploading imageUploading) : IRequestHandler<AddCourseCommand, Response<AddCourseResponse>>
+        ILogger<AddCourseCommandHandler> logger,ICloudMediaUploading imageUploading) : IRequestHandler<AddCourseCommand, Response<AddCourseResponse>>
     {
         public async Task<Response<AddCourseResponse>> Handle(AddCourseCommand request, CancellationToken cancellationToken)
         {

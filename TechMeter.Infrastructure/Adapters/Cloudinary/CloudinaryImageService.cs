@@ -15,7 +15,7 @@ using TechMeter.Shared;
 
 namespace TechMeter.Infrastructure.Adapters.Cloudinary
 {
-    public class CloudinaryImageService : IMediaUploading
+    public class CloudinaryImageService : ICloudMediaUploading
     {
         private readonly ILogger<CloudinaryImageService> logger;
         private readonly CloudinarySettings _cloudinarySettings;
@@ -93,6 +93,19 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
             var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
 
             var imageUrl = result.Url?.ToString() ?? throw new Exception("Cloudinary returned empty URL.");
+            return imageUrl;
+        }
+
+        public async Task<string> UploadImageByURI(string uri, string? name, CancellationToken cancellationToken = default)
+        {
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription($"{name ?? "image"}.jpg", uri)
+            };
+
+            var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
+
+            var imageUrl = result.SecureUrl?.ToString() ?? throw new Exception("Cloudinary returned empty URL.");
             return imageUrl;
         }
 

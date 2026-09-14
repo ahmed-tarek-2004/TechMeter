@@ -24,7 +24,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
 {
     public class StudentRegisterCommandHandler(IApplicationDbContext context,
         ResponseHandler responseHandler, ILogger<StudentRegisterCommandHandler> logger,
-        ITokenService tokenService, IConfiguration configuraion,
+        ICloudMediaUploading mediaUploading, IConfiguration configuration,
         IBackgroundJobService backgroundJobService, UserManager<User> userManager) : IRequestHandler<StudentRegisterCommand, Response<StudentRegisterResponse>>
     {
         public async Task<Response<StudentRegisterResponse>> Handle(StudentRegisterCommand request, CancellationToken cancellationToken)
@@ -58,7 +58,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                     Country = request.StudentRegisterRequest.Country,
                     Gender = request.StudentRegisterRequest.Gender,
                     ProfileUrl = request.StudentRegisterRequest.ProfilePhoto != null
-                        ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.StudentRegisterRequest.ProfilePhoto, cancellationToken))
+                        ? await mediaUploading.UploadAsync(request.StudentRegisterRequest.ProfilePhoto, cancellationToken)
                         : string.Empty,
                 };
 
@@ -91,7 +91,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
                 var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
                 var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(confirmationToken));
 
-                var frontendUrl = configuraion["FrontendUrl"] ?? "http://localhost:3000";
+                var frontendUrl = configuration["FrontendUrl"] ?? "http://localhost:3000";
 
                 var confirmationLink = $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
                
@@ -128,25 +128,6 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Student
 
 
         }
-        private async Task UpdateStudentReRegister(Domain.Models.Auth.Identity.User user, StudentRegisterRequest request, CancellationToken cancellationToken)
-        {
-
-            user.UserName = request.UserName;
-            user.PhoneNumber = request.PhoneNumber;
-            user.Country = request.Country;
-            user.Gender = request.Gender;
-            if (request.ProfilePhoto != null)
-            {
-                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto, cancellationToken));
-            }
-            user.Student.BirthDate = request.BirthDate;
-            user.Student.EducationLevel = request.EducationLevel;
-
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
-            await userManager.ResetPasswordAsync(user, token, request.Password);
-            await tokenService.InValidateOldTokenAsync(user.Id);
-            await userManager.UpdateAsync(user);
-            logger.LogInformation("Existing user updated: {UserId}", user.Id);
-        }
+      
     }
 }

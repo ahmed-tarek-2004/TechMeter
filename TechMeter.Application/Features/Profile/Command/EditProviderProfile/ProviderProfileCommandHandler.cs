@@ -12,7 +12,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Command.EditPRoviderProfile
 {
-    public class ProviderProfileCommandHandler(IApplicationDbContext context,IMediaUploading mediaUploading,
+    public class ProviderProfileCommandHandler(IApplicationDbContext context,ICloudMediaUploading mediaUploading,
         ResponseHandler responseHandler) : IRequestHandler<ProviderProfileCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(ProviderProfileCommand request, CancellationToken cancellationToken)

@@ -24,8 +24,9 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
 {
     public class ProviderRegisterCommandHandler(IApplicationDbContext context,
         ResponseHandler responseHandler, ILogger<StudentRegisterCommandHandler> logger,
-        ITokenService tokenService, IConfiguration configuration,
-        IBackgroundJobService backgroundJobService, UserManager<User> userManager) : IRequestHandler<ProviderRegisterCommand, Response<ProviderRegisterResponse>>
+         IConfiguration configuration,ICloudMediaUploading mediaUploading,
+        IBackgroundJobService backgroundJobService, ILogger<ProviderRegisterCommandHandler> providerLogger,
+        UserManager<User> userManager) : IRequestHandler<ProviderRegisterCommand, Response<ProviderRegisterResponse>>
     {
         public async Task<Response<ProviderRegisterResponse>> Handle(ProviderRegisterCommand request, CancellationToken cancellationToken)
         {
@@ -58,7 +59,7 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
                     PhoneNumber = request.ProviderRegisterRequest.PhoneNumber,
                     Country = request.ProviderRegisterRequest.Country,
                     Gender = request.ProviderRegisterRequest.Gender,
-                    ProfileUrl = request.ProviderRegisterRequest.ProfilePhoto != null ? backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProviderRegisterRequest.ProfilePhoto, cancellationToken)) : string.Empty,
+                    ProfileUrl = request.ProviderRegisterRequest.ProfilePhoto != null ? await mediaUploading.UploadAsync(request.ProviderRegisterRequest.ProfilePhoto, cancellationToken) : string.Empty,
                 };
                 var result = await userManager.CreateAsync(user, request.ProviderRegisterRequest.Password);
                 if (!result.Succeeded)
@@ -126,33 +127,6 @@ namespace TechMeter.Application.Features.Auth.Register.Command.Provider
             }
 
         }
-        private async Task UpdateProviderReRegister(Domain.Models.Auth.Identity.User user, ProviderRegisterRequest request, CancellationToken cancellationToken)
-        {
-            user.UserName = request.UserName;
-            user.PhoneNumber = request.PhoneNumber;
-            user.Country = request.Country;
-            user.Gender = request.Gender;
-            if (request.ProfilePhoto != null)
-            {
-                user.ProfileUrl = backgroundJobService.Enqueue<IMediaUploading>(service => service.UploadAsync(request.ProfilePhoto, cancellationToken));
-            }
-
-            if (user.Provider == null)
-            {
-                throw new InvalidOperationException($"Provider not found for user {user.Id}");
-            }
-
-            user.Provider.Brief = request.Brief;
-            user.Provider.BankAccount = request.BankAccount;
-            user.Provider.ExperienceYears = request.ExperienceYears;
-            //user.Provider.b
-
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
-            await userManager.ResetPasswordAsync(user, token, request.Password);
-
-            await tokenService.InValidateOldTokenAsync(user.Id);
-            logger.LogInformation("Existing user updated: {UserId}", user.Id);
-        }
-
+       
     }
 }
