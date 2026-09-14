@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechMeter.Application.Helper;
 using TechMeter.Application.Interfaces.Services.Jobs;
 using TechMeter.Application.Interfaces.Services.MediaUpload;
 using TechMeter.Domain.Enums;
 using TechMeter.Infrastructure.Persistence.AppDbContext;
+using TechMeter.Shared.Helpers;
 
 namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
 {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Domain.Enums;
 
-namespace TechMeter.Application.Helper
+namespace TechMeter.Shared.Helpers
 {
     public static class MediaExtension
     {
