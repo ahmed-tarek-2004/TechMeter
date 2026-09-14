@@ -13,10 +13,6 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
 {
     public class StoreInDiskService(IWebHostEnvironment webHostEnvironment, ILogger<StoreInDiskService> logger) : IStoreInDisk
     {
-        public async Task<string> StoreImageAsync(IFormFile formFile, CancellationToken cancellationToken)
-        {
-            return await StoreFileAsync(formFile, "Images", cancellationToken);
-        }
         public void DeleteFile(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -29,6 +25,10 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
             }
         }
 
+        public async Task<string> StoreImageAsync(IFormFile formFile, CancellationToken cancellationToken)
+        {
+            return await StoreFileAsync(formFile, "Images", cancellationToken);
+        }
 
         public async Task<string> StoreVideoAsync(IFormFile formFile, CancellationToken cancellationToken = default)
         {

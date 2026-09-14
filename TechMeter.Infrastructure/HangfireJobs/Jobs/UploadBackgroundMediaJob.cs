@@ -61,7 +61,7 @@ namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
             {
                 return await mediaUploading.UploadFileByURIAsync(filePath, name, cancellationToken);
             }
-            else  throw new Exception("Unsupported media type. Only images are allowed.");
+            else throw new Exception("Unsupported media type. Only images are allowed.");
         }
     }
 }

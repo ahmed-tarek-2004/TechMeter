@@ -18,8 +18,20 @@ namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
     public class MediaUploadService(IStoreInDisk storeInDisk, ILogger<MediaUploadService> logger,
         IBackgroundJobService backgroundJobService) : IMediaUploadService
     {
-
         public async Task UploadLessonMedia(IFormFile file, string Id, string name, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var filePath = await StoreInDisk(file, Id, name, cancellationToken);
+                backgroundJobService.Enqueue<IUploadBackgroundMediaJob>(j => j.UploadLessonMediaJob(Id, name, filePath, cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error uploading media file");
+                throw new Exception("An error occurred while uploading the media file. Please try again later.");
+            }
+        }
+        private async Task<string> StoreInDisk(IFormFile file, string Id, string name, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -40,28 +52,16 @@ namespace TechMeter.Infrastructure.Services.UploadBackgroundMedia
                 {
                     throw new Exception("Unsupported media type. Only images , videos and ICDL Files are allowed.");
                 }
-                filePath = await storeInDisk.StoreImageAsync(file, cancellationToken);
-                await UploadMedia(file, Id, filePath, name, cancellationToken);
+                return filePath;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error uploading image asynchronously");
-                throw new Exception("Error uploading image asynchronously", ex);
+                logger.LogError(ex, "Error Storing in Disk");
+                throw new Exception("Error storing file in disk", ex);
             }
         }
 
-        private async Task UploadMedia(IFormFile file, string Id, string filePath, string name, CancellationToken cancellationToken)
-        {
-            try
-            {
-                backgroundJobService.Enqueue<IUploadBackgroundMediaJob>(j => j.UploadLessonMediaJob(Id, name, filePath, cancellationToken));
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error uploading media file");
-                throw new Exception("An error occurred while uploading the media file. Please try again later.");
-            }
-        }
+
 
 
     }
