@@ -228,6 +228,7 @@ export interface Message {
   messageId: number;
   sentAt: string;
   isRead: boolean;
+  isDeleted?: boolean;
   senderId?: string;
   sender?: SenderInfo;
 }
@@ -256,6 +257,11 @@ export interface MessageEvent {
   sentAt: string;
   isRead?: boolean;
   sender: SenderInfo;
+}
+
+export interface DeleteMessageEvent {
+  messageId: number;
+  isDeleted: boolean;
 }
 
 export interface StudentEnrolledCourse extends Course {

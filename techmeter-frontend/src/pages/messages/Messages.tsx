@@ -20,6 +20,7 @@ import {
   Briefcase,
   Clock,
   ShieldCheck,
+  Trash2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Contact, MessageEvent, Message } from '../../types';
@@ -46,6 +47,7 @@ const Messages: React.FC = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+  const [deletingMessageId, setDeletingMessageId] = useState<number | null>(null);
 
   // Register active chat page with global tracker
   useEffect(() => {
@@ -199,10 +201,24 @@ const Messages: React.FC = () => {
       }
     });
 
+    // Listen for real-time message deletions from either participant
+    const unsubscribeDelete = messageHubService.onMessageDeleted(({ messageId, isDeleted }) => {
+      if (!isMounted) return;
+      setMessages((prev) =>
+        prev.map((m) => {
+          const currentId = Number(m.messageId || m.id);
+          if (currentId === Number(messageId)) {
+            return { ...m, isDeleted: isDeleted !== undefined ? isDeleted : true };
+          }
+          return m;
+        })
+      );
+    });
     return () => {
       isMounted = false;
       unsubscribeMessage();
       unsubscribeRead();
+      unsubscribeDelete();
     };
   }, [isAuthenticated, selectedContact, user?.id, contacts]);
 
@@ -241,6 +257,7 @@ const Messages: React.FC = () => {
           message: item.message ?? item.Message ?? item.content ?? item.Content ?? '',
           sentAt: item.sentAt ?? item.SentAt ?? new Date().toISOString(),
           isRead: Boolean(item.isRead ?? item.IsRead ?? false),
+          isDeleted: Boolean(item.isDeleted ?? item.IsDeleted ?? false),
           senderId: String(item.senderId ?? item.SenderId ?? item.sender?.senderId ?? item.Sender?.SenderId ?? ''),
           sender: item.sender ?? item.Sender,
         }));
@@ -334,6 +351,26 @@ const Messages: React.FC = () => {
     setMessageText(text);
     inputRef.current?.focus();
   };
+
+  const handleDeleteMessage = useCallback(async (messageId: number, recipientId: string) => {
+    // Optimistically mark as deleted so it shows the tombstone immediately
+    setMessages((prev) =>
+      prev.map((m) => (m.messageId || m.id) === messageId ? { ...m, isDeleted: true } : m)
+    );
+    setDeletingMessageId(messageId);
+    try {
+      await messageHubService.deleteMessage(messageId, recipientId);
+    } catch (error) {
+      // Roll back the optimistic update
+      setMessages((prev) =>
+        prev.map((m) => (m.messageId || m.id) === messageId ? { ...m, isDeleted: false } : m)
+      );
+      console.error('Failed to delete message:', error);
+      toast.error('Failed to delete message. Please try again.');
+    } finally {
+      setDeletingMessageId(null);
+    }
+  }, []);
 
   const handleContactSelect = (contact: Contact) => {
     setSelectedContact(contact);
@@ -751,43 +788,70 @@ const Messages: React.FC = () => {
                               </div>
                             )}
 
+                            {/* Delete button — only for own non-deleted messages, visible on group hover */}
+                            {msg.isOwn && !msg.isDeleted && (
+                              <button
+                                onClick={() => handleDeleteMessage(msg.messageId || msg.id, selectedContact.id)}
+                                disabled={deletingMessageId === (msg.messageId || msg.id)}
+                                title="Delete message"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 p-1 rounded-lg text-gray-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 disabled:opacity-40 flex-shrink-0 self-center"
+                              >
+                                {deletingMessageId === (msg.messageId || msg.id) ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                )}
+                              </button>
+                            )}
+
                             {/* Bubble */}
                             <div
                               className={`relative max-w-[85%] sm:max-w-md lg:max-w-lg px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs transition-all duration-150 ${bubbleRadius} ${
-                                msg.isOwn
+                                msg.isDeleted
+                                  ? 'bg-gray-100 dark:bg-gray-800/60 border border-dashed border-gray-300 dark:border-gray-700 shadow-none'
+                                  : msg.isOwn
                                   ? 'bg-gradient-to-tr from-indigo-600 via-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20 border border-white/20'
                                   : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200/90 dark:border-gray-700/70 shadow-xs'
                               }`}
                             >
                               <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                                <span className="break-words leading-relaxed whitespace-pre-wrap selection:bg-indigo-300 selection:text-indigo-950 font-normal">
-                                  {msg.message}
-                                </span>
+                                {msg.isDeleted ? (
+                                  <span className="flex items-center gap-1.5 italic text-gray-400 dark:text-gray-500 select-none">
+                                    <Trash2 className="h-3 w-3 flex-shrink-0" />
+                                    This message was deleted
+                                  </span>
+                                ) : (
+                                  <span className="break-words leading-relaxed whitespace-pre-wrap selection:bg-indigo-300 selection:text-indigo-950 font-normal">
+                                    {msg.message}
+                                  </span>
+                                )}
 
                                 {/* Inline timestamp & status */}
-                                <span
-                                  className={`inline-flex items-center gap-1 text-[10px] ml-auto select-none pt-0.5 ${
-                                    msg.isOwn
-                                      ? 'text-indigo-100 font-medium'
-                                      : 'text-gray-500 dark:text-gray-400 font-medium'
-                                  }`}
-                                >
-                                  <span>
-                                    {new Date(msg.sentAt).toLocaleTimeString([], {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    })}
-                                  </span>
-                                  {msg.isOwn && (
-                                    <span title={msg.isRead ? 'Read' : 'Delivered'}>
-                                      {msg.isRead ? (
-                                        <CheckCheck className="h-3.5 w-3.5 text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)] inline" />
-                                      ) : (
-                                        <Check className="h-3.5 w-3.5 text-indigo-200 inline" />
-                                      )}
+                                {!msg.isDeleted && (
+                                  <span
+                                    className={`inline-flex items-center gap-1 text-[10px] ml-auto select-none pt-0.5 ${
+                                      msg.isOwn
+                                        ? 'text-indigo-100 font-medium'
+                                        : 'text-gray-500 dark:text-gray-400 font-medium'
+                                    }`}
+                                  >
+                                    <span>
+                                      {new Date(msg.sentAt).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                      })}
                                     </span>
-                                  )}
-                                </span>
+                                    {msg.isOwn && (
+                                      <span title={msg.isRead ? 'Read' : 'Delivered'}>
+                                        {msg.isRead ? (
+                                          <CheckCheck className="h-3.5 w-3.5 text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)] inline" />
+                                        ) : (
+                                          <Check className="h-3.5 w-3.5 text-indigo-200 inline" />
+                                        )}
+                                      </span>
+                                    )}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>
