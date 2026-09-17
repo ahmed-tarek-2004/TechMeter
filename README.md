@@ -763,7 +763,7 @@ The following features are tracked and planned for upcoming releases:
 
 ## 👤 Author
 
-**Ahmed Tarek Zaher**  
+**By/Ahmed Tarek Zaher**  
 Built with using ASP.NET Core 9 & Clean Architecture
 
 ---
