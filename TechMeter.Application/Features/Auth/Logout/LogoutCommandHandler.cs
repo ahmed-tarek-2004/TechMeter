@@ -14,21 +14,21 @@ using TechMeter.Domain.Shared.Bases;
 namespace TechMeter.Application.Features.Auth.Logout
 {
     public class LogoutCommandHandler(ILogger<LogoutCommandHandler> logger,
-        UserManager<User> userManager, ITokenService tokenService, 
+        UserManager<User> userManager, ITokenService tokenService,
         ResponseHandler responseHandler) : IRequestHandler<LogoutCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var userId = request.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
+                var user = await userManager.FindByIdAsync(request.userId);
+                if (user == null)
                 {
                     return responseHandler.NotFound<string>("User Not Authenticated");
                 }
-                await tokenService.InValidateOldTokenAsync(userId);
-                await userManager.UpdateSecurityStampAsync(await userManager.FindByIdAsync(userId));
-                return responseHandler.Success<string>(null, "User Logout Successfully");
+                await tokenService.InValidateOldTokenAsync(user.Id);
+                await userManager.UpdateSecurityStampAsync(user);
+                return responseHandler.Success(string.Empty, "User Logout Successfully");
             }
             catch (Exception ex)
             {
