@@ -113,6 +113,26 @@ namespace TechMeter.Extensions
                             context.Token = token;
                         }
                         return Task.CompletedTask;
+                    },
+                    OnTokenValidated = async context =>
+                    {
+                        var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
+
+                        var userId = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        var tokenStamp = context.Principal?.FindFirst("st")?.Value;
+
+                        if (userId == null || tokenStamp == null)
+                        {
+                            context.Fail("Invalid token");
+                            return;
+                        }
+
+                        var user = await userManager.FindByIdAsync(userId);
+
+                        if (user == null || user.SecurityStamp != tokenStamp)
+                        {
+                            context.Fail("Token expired due to security changes");
+                        }
                     }
                 };
             });
