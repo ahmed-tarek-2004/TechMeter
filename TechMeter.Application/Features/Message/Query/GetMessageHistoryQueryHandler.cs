@@ -24,7 +24,7 @@ namespace TechMeter.Application.Features.Message.Query
             var message = context.UserMessages
                 .AsNoTracking()
                 .Where(b => (b.SenderId == request.userId && b.ReciptId == request.receiverId)
-                ||(b.ReciptId == request.userId && b.SenderId == request.receiverId))
+                || (b.ReciptId == request.userId && b.SenderId == request.receiverId))
                 .Select(b => new MessageHistoryResponse
                 {
                     isRead = b.isRead,
@@ -33,6 +33,7 @@ namespace TechMeter.Application.Features.Message.Query
                     ReciverId = b.ReciptId,
                     SenderId = b.SenderId,
                     SentAt = b.SentAt,
+                    isDeleted = b.isDeleted
                 });
             var response = await PaginatedList<MessageHistoryResponse>.CreatePaginatedList(message, request.PaginatedRequest.PageNumber,
                 request.PaginatedRequest.PageSize, cancellationToken);

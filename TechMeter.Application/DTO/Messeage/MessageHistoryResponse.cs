@@ -14,5 +14,6 @@ namespace TechMeter.Application.DTO.Messeage
         public string ReciverId { get; set; }
         public string SenderId { get; set; }
         public bool isRead { get; set; } = false;
+        public bool isDeleted { get; set; } = false;
     }
 }

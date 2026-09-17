@@ -1,5 +1,5 @@
 import * as signalR from '@microsoft/signalr';
-import { MessageEvent } from '../types';
+import { MessageEvent, DeleteMessageEvent } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/api\/?$/, '') || 'https://localhost:7165';
 
@@ -8,6 +8,7 @@ class MessageHubService {
   private messageCallbacks: ((message: MessageEvent) => void)[] = [];
   private onlineStatusCallbacks: ((isOnline: boolean) => void)[] = [];
   private readStatusCallbacks: ((isRead: boolean) => void)[] = [];
+  private deleteMessageCallbacks: ((event: DeleteMessageEvent) => void)[] = [];
   private connectPromise: Promise<void> | null = null;
 
   private buildConnection(): signalR.HubConnection {
@@ -122,6 +123,33 @@ class MessageHubService {
           }
         });
       });
+
+      const handleMessageDeleted = (payload: any) => {
+        let messageId = 0;
+        let isDeleted = true;
+
+        if (typeof payload === 'object' && payload !== null) {
+          messageId = Number(payload.messageId ?? payload.MessageId ?? payload.id ?? payload.Id ?? 0);
+          isDeleted = Boolean(payload.isDeleted ?? payload.IsDeleted ?? true);
+        } else if (typeof payload === 'number') {
+          messageId = payload;
+        } else if (typeof payload === 'string' && !isNaN(Number(payload))) {
+          messageId = Number(payload);
+        }
+
+        if (messageId > 0) {
+          this.deleteMessageCallbacks.forEach((cb) => {
+            try {
+              cb({ messageId, isDeleted });
+            } catch (err) {
+              console.error('Error in delete message callback:', err);
+            }
+          });
+        }
+      };
+
+      this.connection.on('MessageDeleted', handleMessageDeleted);
+      this.connection.on('messagedeleted', handleMessageDeleted);
     }
 
     if (this.connection.state === signalR.HubConnectionState.Disconnected) {
@@ -253,6 +281,21 @@ class MessageHubService {
     }
   }
 
+  async deleteMessage(messageId: number | string, recipientId: string): Promise<void> {
+    await this.ensureConnected();
+
+    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
+      throw new Error('Not connected to message hub');
+    }
+
+    try {
+      await this.connection.invoke('DeleteMessage', String(messageId), recipientId);
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      throw error;
+    }
+  }
+
   onMessageReceived(callback: (message: MessageEvent) => void): () => void {
     this.messageCallbacks.push(callback);
     return () => {
@@ -271,6 +314,13 @@ class MessageHubService {
     this.readStatusCallbacks.push(callback);
     return () => {
       this.readStatusCallbacks = this.readStatusCallbacks.filter((cb) => cb !== callback);
+    };
+  }
+
+  onMessageDeleted(callback: (event: DeleteMessageEvent) => void): () => void {
+    this.deleteMessageCallbacks.push(callback);
+    return () => {
+      this.deleteMessageCallbacks = this.deleteMessageCallbacks.filter((cb) => cb !== callback);
     };
   }
 

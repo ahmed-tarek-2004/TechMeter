@@ -47,6 +47,7 @@ namespace TechMeter.API.Hubs
                 Content = messageStored.Message,
                 SentAt = messageStored.SentAt,
                 isRead = false,
+                isDeleted = false,
                 Sender = senderInfo
             });
 
@@ -70,6 +71,21 @@ namespace TechMeter.API.Hubs
             await Clients.User(senderId).SendAsync("IsRead", isRead);
         }
 
+        [HubMethodName("DeleteMessage")]
+        public async Task DeleteMessage(string messageId, string senderId)
+        {
+            var userId = Context.UserIdentifier ?? throw new HubException("User not authenticated");
+            var id = int.TryParse(messageId, out int messageIdValue) ? messageIdValue : 0;
+            var isDeleted = await messageService.DeleteMessage(id, userId);
+            if (isDeleted)
+            {
+                await Clients.Users(senderId, userId).SendAsync("MessageDeleted", new
+                {
+                    MessageId = id,
+                    IsDeleted = isDeleted
+                });
+            }
+        }
 
         public async Task CloseChat(string userId)
         {

@@ -9,7 +9,8 @@ namespace TechMeter.Application.Interfaces.Services.Message
 {
     public interface IMessageService
     {
-        Task<MessageResponse> StoreMessages(string sendeerId, string recipientId, string message);
+        Task<MessageResponse> StoreMessages(string senderId, string recipientId, string message);
         Task<bool> ReadMessage(int messageId, string userId);
+        Task<bool> DeleteMessage(int messageId, string userId);
     }
 }

@@ -10,22 +10,22 @@ using TechMeter.Infrastructure.Persistence.AppDbContext;
 
 namespace TechMeter.Infrastructure.Services.Message
 {
-    public class MessageService(ApplicationDbContext context):IMessageService
+    public class MessageService(ApplicationDbContext context) : IMessageService
     {
-        public async Task<MessageResponse> StoreMessages(string sendeerId, string recipientId, string message)
+        public async Task<MessageResponse> StoreMessages(string senderId, string recipientId, string message)
         {
-            var SenderExists = await context.Users.AnyAsync(b => b.Id == sendeerId);
+            var SenderExists = await context.Users.AnyAsync(b => b.Id == senderId);
             var RecipientExists = await context.Users.AnyAsync(b => b.Id == recipientId);
             if (!SenderExists || !RecipientExists)
             {
-                return null;
+                return null!;
             }
             try
             {
                 var messageEntity = new Domain.Models.Auth.UserMessages
                 {
                     Content = message,
-                    SenderId = sendeerId,
+                    SenderId = senderId,
                     ReciptId = recipientId,
                     SentAt = DateTime.UtcNow,
                     isRead = false,
@@ -58,6 +58,16 @@ namespace TechMeter.Infrastructure.Services.Message
             message.isRead = true;
             await context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> DeleteMessage(int messageId, string userId)
+        {
+            var affectedRows = await context.UserMessages
+                .Where(m => m.Id == messageId && m.SenderId == userId)
+                .ExecuteUpdateAsync(b =>
+                    b.SetProperty(m => m.isDeleted, true));
+
+            return affectedRows > 0;
         }
     }
 }
