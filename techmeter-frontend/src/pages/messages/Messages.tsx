@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Contact, MessageEvent, Message } from '../../types';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 const quickReplies = [
   '👋 Hello! Hope you are having a great day.',
@@ -48,6 +49,7 @@ const Messages: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
   const [deletingMessageId, setDeletingMessageId] = useState<number | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ messageId: number; recipientId: string } | null>(null);
 
   // Register active chat page with global tracker
   useEffect(() => {
@@ -352,7 +354,15 @@ const Messages: React.FC = () => {
     inputRef.current?.focus();
   };
 
-  const handleDeleteMessage = useCallback(async (messageId: number, recipientId: string) => {
+  const handleDeleteMessage = useCallback((messageId: number, recipientId: string) => {
+    setDeleteConfirm({ messageId, recipientId });
+  }, []);
+
+  const confirmDeleteMessage = useCallback(async () => {
+    if (!deleteConfirm) return;
+    const { messageId, recipientId } = deleteConfirm;
+    setDeleteConfirm(null);
+
     // Optimistically mark as deleted so it shows the tombstone immediately
     setMessages((prev) =>
       prev.map((m) => (m.messageId || m.id) === messageId ? { ...m, isDeleted: true } : m)
@@ -370,7 +380,7 @@ const Messages: React.FC = () => {
     } finally {
       setDeletingMessageId(null);
     }
-  }, []);
+  }, [deleteConfirm]);
 
   const handleContactSelect = (contact: Contact) => {
     setSelectedContact(contact);
@@ -457,10 +467,11 @@ const Messages: React.FC = () => {
   }
 
   return (
-    <div
-      className="relative overflow-hidden bg-gradient-to-br from-slate-100 via-indigo-50/40 to-slate-200 dark:from-gray-950 dark:via-slate-900 dark:to-gray-950 transition-colors duration-300 flex flex-col"
-      style={{ height: 'calc(100vh - 4rem)' }}
-    >
+    <>
+      <div
+        className="relative overflow-hidden bg-gradient-to-br from-slate-100 via-indigo-50/40 to-slate-200 dark:from-gray-950 dark:via-slate-900 dark:to-gray-950 transition-colors duration-300 flex flex-col"
+        style={{ height: 'calc(100vh - 4rem)' }}
+      >
       {/* Radiant Background Ambient Glowing Orbs */}
       <div className="absolute top-10 left-10 w-96 h-96 bg-indigo-500/15 dark:bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/15 dark:bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
@@ -914,6 +925,19 @@ const Messages: React.FC = () => {
         </div>
       </div>
     </div>
+
+    <ConfirmModal
+      isOpen={deleteConfirm !== null}
+      onClose={() => setDeleteConfirm(null)}
+      onConfirm={confirmDeleteMessage}
+      title="Delete message"
+      message="This message will be permanently deleted for everyone in this conversation. This action cannot be undone."
+      confirmText="Delete"
+      cancelText="Cancel"
+      variant="danger"
+      isLoading={deletingMessageId !== null}
+    />
+    </>
   );
 };
 
