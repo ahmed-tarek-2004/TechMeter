@@ -72,14 +72,14 @@ namespace TechMeter.API.Hubs
         }
 
         [HubMethodName("DeleteMessage")]
-        public async Task DeleteMessage(string messageId, string senderId)
+        public async Task DeleteMessage(string messageId, string recieverId)
         {
             var userId = Context.UserIdentifier ?? throw new HubException("User not authenticated");
             var id = int.TryParse(messageId, out int messageIdValue) ? messageIdValue : 0;
             var isDeleted = await messageService.DeleteMessage(id, userId);
             if (isDeleted)
             {
-                await Clients.Users(senderId, userId).SendAsync("MessageDeleted", new
+                await Clients.Users(recieverId, userId).SendAsync("MessageDeleted", new
                 {
                     MessageId = id,
                     IsDeleted = isDeleted
