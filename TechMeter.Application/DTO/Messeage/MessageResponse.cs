@@ -12,5 +12,6 @@ namespace TechMeter.Application.DTO.Messeage
         public int MessageId { get; set; }
         public DateTime SentAt { get; set; }
         public bool isRead { get; set; } = false;
+        public bool isDeleted { get; set; } = false;
     }
 }
