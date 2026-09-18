@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.Logout
 {
-    public sealed record LogoutCommand(ClaimsPrincipal User):IRequest<Response<string>>;
+    public sealed record LogoutCommand(string userId):IRequest<Response<string>>;
 }

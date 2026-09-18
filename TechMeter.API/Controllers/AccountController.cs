@@ -51,7 +51,7 @@ namespace TechMeter.API.Controllers
             _mediator = mediator;
         }
 
-        
+
 
         //[HttpGet("Assmebly")]
         //public async Task<IActionResult> TestAssembly()
@@ -126,7 +126,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
         [HttpPost("verify-reset-password")]
-        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyResetPasswordAsync([FromBody] VerifyOtp request)
+        public async Task<ActionResult<Response<StudentRegisterResponse>>> VertifyForgrtPasswordAsync([FromBody] VerifyOtp request)
         {
             var result = await _mediator.Send(new ConfirmResetPasswordCommand(request.userId, request.otp));
             return StatusCode((int)result.StatusCode, result);
@@ -142,7 +142,7 @@ namespace TechMeter.API.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult<string>> LogoutAsync()
         {
-            var response = await _mediator.Send(new LogoutCommand(User));
+            var response = await _mediator.Send(new LogoutCommand(GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("refresh-token")]

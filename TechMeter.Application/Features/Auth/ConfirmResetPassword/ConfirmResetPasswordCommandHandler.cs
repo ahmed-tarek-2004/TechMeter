@@ -13,7 +13,7 @@ using static System.Net.WebRequestMethods;
 
 namespace TechMeter.Application.Features.Auth.ConfirmResetPassword
 {
-    public class ConfirmResetPasswordCommandHandler(UserManager<User> userManager, IOTPService otpService, 
+    public class ConfirmResetPasswordCommandHandler(UserManager<User> userManager, IOTPService otpService,
         ResponseHandler responseHandler) : IRequestHandler<ConfirmResetPasswordCommand, Response<VerifyResetPasswordResponse>>
     {
         public async Task<Response<VerifyResetPasswordResponse>> Handle(ConfirmResetPasswordCommand request, CancellationToken cancellationToken)
