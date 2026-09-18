@@ -1,0 +1,12 @@
+﻿using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TechMeter.Domain.Shared.Bases;
+
+namespace TechMeter.Application.Features.Auth.TwoFactorAuth.Command.Disable2FactorAuth
+{
+    public sealed record Disable2FactorAuthCommand(string userId) : IRequest<Response<string>>;
+}

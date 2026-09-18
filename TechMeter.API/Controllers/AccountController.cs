@@ -28,6 +28,8 @@ using TechMeter.Application.Features.Auth.Register.Command.Provider;
 using TechMeter.Application.Features.Auth.Register.Command.Student;
 using TechMeter.Application.Features.Auth.ResendOtp;
 using TechMeter.Application.Features.Auth.ResetPassword;
+using TechMeter.Application.Features.Auth.TwoFactorAuth.Command.Disable2FactorAuth;
+using TechMeter.Application.Features.Auth.TwoFactorAuth.Command.Enable2FactorAuth;
 using TechMeter.Application.Service.OTPService;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -159,6 +161,19 @@ namespace TechMeter.API.Controllers
 
             var newTokens = await _mediator.Send(new ExternalLoginCommand(request.idToken, request.provider));
 
+            return StatusCode((int)newTokens.StatusCode, newTokens);
+        }
+
+        [HttpPost("enable-two-factor")]
+        public async Task<IActionResult> EnabTwoFactor()
+        {
+            var newTokens = await _mediator.Send(new Enable2FactorAuthCommand(GetUserId()));
+            return StatusCode((int)newTokens.StatusCode, newTokens);
+        }
+        [HttpPost("disable-two-factor")]
+        public async Task<IActionResult> DisableTwoFactor()
+        {
+            var newTokens = await _mediator.Send(new Disable2FactorAuthCommand(GetUserId()));
             return StatusCode((int)newTokens.StatusCode, newTokens);
         }
         private string GetUserId()
