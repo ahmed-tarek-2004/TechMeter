@@ -21,7 +21,8 @@ namespace TechMeter.Application.Features.Course.Query.GetStudentCourses
         {
             logger.LogInformation("Fetching student courses...");
 
-            var courses = await context.CourseStudent.Where(b => b.StudentId == request.Id)
+            var courses = await context.CourseStudent
+                .Where(b => b.StudentId == request.Id)
                 .AsNoTracking()
                 .Select(b => new GetStudentCourseResponse
                 {
