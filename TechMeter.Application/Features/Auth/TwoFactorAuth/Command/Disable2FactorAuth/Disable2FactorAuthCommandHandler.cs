@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,8 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Auth.TwoFactorAuth.Command.Disable2FactorAuth
 {
-    public class Disable2FactorAuthCommandHandler(ResponseHandler responseHandler, UserManager<User> userManager)
+    public class Disable2FactorAuthCommandHandler(ResponseHandler responseHandler, ILogger<Disable2FactorAuthCommandHandler> logger,
+        UserManager<User> userManager)
         : IRequestHandler<Disable2FactorAuthCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(Disable2FactorAuthCommand request, CancellationToken cancellationToken)
@@ -18,13 +20,16 @@ namespace TechMeter.Application.Features.Auth.TwoFactorAuth.Command.Disable2Fact
             var user = await userManager.FindByIdAsync(request.userId);
             if (user == null)
             {
+                logger.LogWarning("User is not found");
                 return responseHandler.NotFound<string>("User Is Not Found");
             }
 
             var IsEnabled = await userManager.SetTwoFactorEnabledAsync(user, false);
             if (!IsEnabled.Succeeded)
             {
-                return responseHandler.BadRequest<string>(string.Join(",", IsEnabled.Errors.Select(b => b.Description)));
+                var errors = string.Join(",", IsEnabled.Errors.Select(b => b.Description));
+                logger.LogError(errors);
+                return responseHandler.BadRequest<string>(errors);
             }
             return responseHandler.Success(string.Empty, "Two Factor Authentication Disabled Successfully");
         }
