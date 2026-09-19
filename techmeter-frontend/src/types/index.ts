@@ -7,6 +7,7 @@ export interface User {
   role: 'student' | 'provider' | 'admin';
   profileUrl?: string;
   isEmailConfirmed?: boolean;
+  isTwoFactorEnabled?: boolean;
 }
 
 export interface ApiResponse<T> {
