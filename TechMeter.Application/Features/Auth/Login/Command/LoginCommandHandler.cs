@@ -90,6 +90,7 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                     Role = roles.FirstOrDefault(),
                     AccessToken = token.AccessToken,
                     RefreshToken = token.RefreshToken,
+                    requiresTwoFactor = user.TwoFactorEnabled,
                     IsEmailConfirmed = user.EmailConfirmed,
                 };
                 logger.LogInformation("LoggedIn Successfully");
