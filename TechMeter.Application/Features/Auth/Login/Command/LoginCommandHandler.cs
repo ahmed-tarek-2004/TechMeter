@@ -54,12 +54,12 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                     var confirmationLink = $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
 
                     backgroundJobService.Enqueue<IEmailService>(service => service.ConfirmEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, "30 minuts", confirmationLink, cancellationToken));
-                    
+
                     logger.LogInformation("confirmation email has been sent to {Email} for email confirmation", user.Email);
-                    return responseHandler.BadRequest<LoginResponseDto>( "Please verify your email. Confirmation email has been sent to your email.");
+                    return responseHandler.BadRequest<LoginResponseDto>("Please verify your email. Confirmation email has been sent to your email.");
                 }
                 var roles = await userManager.GetRolesAsync(user);
-                if (roles.FirstOrDefault() != "admin")
+                if (user.TwoFactorEnabled)
                 {
                     if (string.IsNullOrEmpty(otp))
                     {
@@ -67,7 +67,7 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                         backgroundJobService.Enqueue<IEmailService>(service => service.SendOtpEmailAsync(user.UserName ?? user.Email ?? "User", user.Email, otp));
                         logger.LogInformation($"Otp Sent is : {request.otp}");
 
-                        return responseHandler.Success<LoginResponseDto>(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
+                        return responseHandler.Success(new LoginResponseDto { Id = user.Id }, "Oto Has sent via Email Plz Confirm");
                     }
                     else
                     {
@@ -90,6 +90,7 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                     Role = roles.FirstOrDefault(),
                     AccessToken = token.AccessToken,
                     RefreshToken = token.RefreshToken,
+                    requiresTwoFactor = user.TwoFactorEnabled,
                     IsEmailConfirmed = user.EmailConfirmed,
                 };
                 logger.LogInformation("LoggedIn Successfully");

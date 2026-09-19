@@ -16,6 +16,7 @@ namespace TechMeter.Application.DTO.Auth
         public string PhotoUrl { get; set; }
         public string Role { get; set; }
         public bool IsEmailConfirmed { get; set; }
+        public bool requiresTwoFactor { get; set; } = true;
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
 
