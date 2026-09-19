@@ -99,4 +99,16 @@ export const authService = {
     const response = await api.post('/Account/resend-otp', { Id: userId });
     return response.data;
   },
+
+  // ── Two-Factor Authentication ─────────────────────────────────────────────
+
+  async enable2FA(): Promise<ApiResponse<string>> {
+    const response = await api.post('/Account/enable-two-factor');
+    return response.data;
+  },
+
+  async disable2FA(): Promise<ApiResponse<string>> {
+    const response = await api.post('/Account/disable-two-factor');
+    return response.data;
+  },
 };
