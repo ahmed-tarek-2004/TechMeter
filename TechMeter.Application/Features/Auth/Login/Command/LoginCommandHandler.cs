@@ -78,7 +78,10 @@ namespace TechMeter.Application.Features.Auth.Login.Command
                         }
                     }
                 }
+
                 var token = await tokenService.GenerateTokensAsync(user, user.Id);
+
+               
                 var respone = new LoginResponseDto()
                 {
                     Id = user.Id,
