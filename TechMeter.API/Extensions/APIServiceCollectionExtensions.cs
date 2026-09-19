@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+//using TechMeter.Application.Interfaces.Notification;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
@@ -9,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Core;
 using StackExchange.Redis;
 using System.Net;
 using System.Net.Mail;
@@ -19,16 +22,14 @@ using TechMeter.API.Services;
 using TechMeter.Application.Behaviors;
 using TechMeter.Application.Common;
 using TechMeter.Application.Interfaces;
-//using TechMeter.Application.Interfaces.Notification;
-using Microsoft.AspNetCore.Authentication.Google;
 using TechMeter.Application.Interfaces.Services.NotificationSender;
 using TechMeter.Application.Service;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
 using TechMeter.Infrastructure.Adapters.EmailSender;
-using TechMeter.Shared;
 using TechMeter.Infrastructure.Persistence.AppDbContext;
+using TechMeter.Shared;
 
 
 namespace TechMeter.Extensions
@@ -128,7 +129,6 @@ namespace TechMeter.Extensions
                         }
 
                         var user = await userManager.FindByIdAsync(userId);
-
                         if (user == null || user.SecurityStamp != tokenStamp)
                         {
                             context.Fail("Token expired due to security changes");
