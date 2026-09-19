@@ -27,6 +27,7 @@ function mapAuthDataToUser(data: any): User {
     role: (data.role || '').toLowerCase() as 'student' | 'provider' | 'admin',
     profileUrl: data.photoUrl ?? data.profileUrl,
     isEmailConfirmed: data.isEmailConfirmed,
+    isTwoFactorEnabled: data.requiresTwoFactor ?? data.isTwoFactorEnabled ?? data.IsTwoFactorEnabled ?? false,
   };
 }
 

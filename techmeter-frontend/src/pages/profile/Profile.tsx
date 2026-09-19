@@ -19,10 +19,12 @@ import {
   LayoutDashboard,
   Camera,
   KeyRound,
+  Shield,
 } from 'lucide-react';
 import StudentEditForm from './StudentEditForm';
 import ProviderEditForm from './ProviderEditForm';
 import ChangePasswordModal from './ChangePasswordModal';
+import TwoFactorModal from './TwoFactorModal';
 import StudentOverviewTab from './StudentOverviewTab';
 import ProviderOverviewTab from './ProviderOverviewTab';
 import ProfileCoursesTab from './ProfileCoursesTab';
@@ -36,6 +38,7 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isTwoFactorOpen, setIsTwoFactorOpen] = useState(false);
 
   // Student Profile Query
   const { data: studentProfileData } = useQuery({
@@ -239,6 +242,18 @@ const Profile: React.FC = () => {
                   >
                     <KeyRound className="h-3.5 w-3.5 text-indigo-500" />
                     <span>Change Password</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsTwoFactorOpen(true)}
+                    className={`inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl border text-xs font-bold shadow-xs transition ${
+                      user.isTwoFactorEnabled
+                        ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/60'
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 text-gray-700 dark:text-gray-200'
+                    }`}
+                  >
+                    <Shield className="h-3.5 w-3.5 text-indigo-500" />
+                    <span>2FA {user.isTwoFactorEnabled ? 'On' : 'Off'}</span>
                   </button>
 
                   {user.role === 'student' && (
@@ -461,6 +476,11 @@ const Profile: React.FC = () => {
           onClose={() => setIsChangePasswordOpen(false)}
           onSuccess={() => setIsChangePasswordOpen(false)}
         />
+      )}
+
+      {/* Two-Factor Authentication Modal */}
+      {isTwoFactorOpen && (
+        <TwoFactorModal onClose={() => setIsTwoFactorOpen(false)} />
       )}
     </div>
   );
