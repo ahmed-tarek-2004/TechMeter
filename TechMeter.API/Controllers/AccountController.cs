@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -150,9 +151,7 @@ namespace TechMeter.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
         {
-
             var newTokens = await _mediator.Send(new RefreshTokenCommand(refreshToken));
-
             return StatusCode((int)newTokens.StatusCode, newTokens);
         }
         [HttpPost("external-login")]
@@ -165,12 +164,14 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("enable-two-factor")]
+        [Authorize]
         public async Task<IActionResult> EnabTwoFactor()
         {
             var newTokens = await _mediator.Send(new Enable2FactorAuthCommand(GetUserId()));
             return StatusCode((int)newTokens.StatusCode, newTokens);
         }
         [HttpPost("disable-two-factor")]
+        [Authorize]
         public async Task<IActionResult> DisableTwoFactor()
         {
             var newTokens = await _mediator.Send(new Disable2FactorAuthCommand(GetUserId()));
