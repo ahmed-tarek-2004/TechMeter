@@ -114,6 +114,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("change-password")]
+        [Authorize]
         public async Task<ActionResult<Response<string>>> ChangePasswordAsync(ChangePasswordRequest request)
         {
             var response = await _mediator.Send(new ChangePasswordCommand(GetUserId(), request));
@@ -143,6 +144,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
         [HttpPost("logout")]
+        [Authorize]
         public async Task<ActionResult<string>> LogoutAsync()
         {
             var response = await _mediator.Send(new LogoutCommand(GetUserId()));

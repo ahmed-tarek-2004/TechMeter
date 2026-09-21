@@ -19,7 +19,7 @@ namespace TechMeter.API.Controllers
     public class WishListController(IMediator mediator) : ControllerBase
     {
        
-        //[Authorize(Roles = "student")]
+        [Authorize(Roles = "student")]
         [HttpGet("")]
         public async Task<ActionResult<Response<GetWishListResponse>>> GetWishlistAsync()
         {
@@ -27,7 +27,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        //[Authorize(Roles = "student")]
+        [Authorize(Roles = "student")]
         [HttpPost("{courseId}")]
         public async Task<ActionResult<Response<GetWishListResponse>>> AddToWishlistAsync(string courseId)
         {
@@ -37,7 +37,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        //[Authorize(Roles = "student")]
+        [Authorize(Roles = "student")]
         [HttpDelete("{wishlistItemId}")]
         public async Task<ActionResult<Response<GetWishListResponse>>> RemoveFromWishlistAsync([FromRoute] string wishlistItemId)
         {
@@ -46,7 +46,7 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        //[Authorize(Roles = "student")]
+        [Authorize(Roles = "student")]
         [HttpDelete("clear")]
         public async Task<ActionResult<Response<object>>> ClearWishlistAsync()
         {

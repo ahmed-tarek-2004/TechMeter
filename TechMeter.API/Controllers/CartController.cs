@@ -45,14 +45,14 @@ namespace TechMeter.API.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("provider/{studentId}")]
-        [Authorize(Roles = "provider")]
-        public async Task<ActionResult<Response<CartResponse>>> GetProviderCartAsync([FromRoute] string studentId)
-        {
-            var command = new GetProviderStudentCartCommand(GetUserId(), studentId);
-            var response = await _mediator.Send(command);
-            return StatusCode((int)response.StatusCode, response);
-        }
+        //[HttpGet("provider/{studentId}")]
+        //[Authorize(Roles = "provider")]
+        //public async Task<ActionResult<Response<CartResponse>>> GetProviderCartAsync([FromRoute] string studentId)
+        //{
+        //    var command = new GetProviderStudentCartCommand(GetUserId(), studentId);
+        //    var response = await _mediator.Send(command);
+        //    return StatusCode((int)response.StatusCode, response);
+        //}
 
         [Authorize(Roles = "student")]
         [HttpPost("student")]
