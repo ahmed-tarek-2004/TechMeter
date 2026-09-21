@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +7,9 @@ using StackExchange.Redis;
 using Stripe;
 using System.Net;
 using System.Net.Mail;
+//using TechMeter.Application.Authorization;
 using TechMeter.Application.Common;
+//using TechMeter.Application.Handler;
 using TechMeter.Application.Interfaces;
 using TechMeter.Application.Interfaces.Services.Email;
 using TechMeter.Application.Interfaces.Services.Fcm;
@@ -80,22 +83,21 @@ namespace TechMeter.Infrastructure.Extensions
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ICloudMediaUploading, CloudinaryMediaService>();
-            services.AddScoped<ITokenService,TechMeter.Infrastructure.Services.TokenService.TokenService>();
+            services.AddScoped<ITokenService, TechMeter.Infrastructure.Services.TokenService.TokenService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>(); //if not using repository and unitOfWork using AppDbContext interface
             services.AddScoped<IBackgroundJobService, HangfireJobService>();
             services.AddScoped<IFcmService, FcmService>();
             services.AddScoped<ILessonCommentAuthorization, LessonCommentAuthorization>();
             services.AddScoped<IUserConnectionService, UserConnectionService>();
-            services.AddScoped<ITransactionManager,EfTransactionManager>();
-            services.AddScoped<IGoogleAuthService,GoogleAuthService>();
+            services.AddScoped<ITransactionManager, EfTransactionManager>();
+            services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IExternalLoginService, ExternalLoginService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddHttpClient<IFacebookAuthService, FacebookAuthService>();
             services.AddScoped<IStoreInDisk, StoreInDiskService>();
             services.AddScoped<IUploadBackgroundMediaJob, UploadBackgroundMediaJob>();
             services.AddScoped<IMediaUploadService, MediaUploadService>();
-
 
             return services;
         }
