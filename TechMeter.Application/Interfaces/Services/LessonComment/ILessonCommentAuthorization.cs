@@ -10,6 +10,6 @@ namespace TechMeter.Application.Interfaces.Services.LessonComment
     {
         Task<bool> HasCourseAccess(string userId, string courseId, bool isAdmin = false);
         Task<(string LessonId, string CourseId, string ProviderId,string LessonName)?> GetLessonAsync(string lessonId);
-        Task<int> CanDeleteAsync(string userId, string CommentId, string LessonId);
+        Task<int> DeleteIfCanAsync(string userId, string CommentId, string LessonId);
     }
 }

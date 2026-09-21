@@ -39,7 +39,7 @@ namespace TechMeter.Application.Features.Comments.Command.DeleteComment
             try
             {
 
-                var rows = await lessonCommentAuthorization.CanDeleteAsync(request.userId, request.commentId, request.lessonId);
+                var rows = await lessonCommentAuthorization.DeleteIfCanAsync(request.userId, request.commentId, request.lessonId);
 
                 if (rows == 0)
                 {

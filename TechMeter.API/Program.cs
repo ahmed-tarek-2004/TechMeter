@@ -1,28 +1,28 @@
 
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TechMeter.API.Common.Exceptions;
 using TechMeter.API.Common.Middleware;
 using TechMeter.API.Hubs;
-using Microsoft.OpenApi;
-
 //using TechMeter.API.Hubs;
 using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 using TechMeter.Extensions;
 using TechMeter.Infrastructure.Adapters.Cloudinary;
-using TechMeter.Infrastructure.Extensions;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
 using TechMeter.Infrastructure.BackgroundJob.Dashboard;
-using TechMeter.Shared;
-using TechMeter.Infrastructure.Persistence.Seeder;
+using TechMeter.Infrastructure.Extensions;
 using TechMeter.Infrastructure.Persistence.AppDbContext;
+using TechMeter.Infrastructure.Persistence.Seeder;
+using TechMeter.Shared;
 
 namespace TechMeter
 {
@@ -133,6 +133,7 @@ namespace TechMeter
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("AllowAll");
+            
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<StopwatchRequestMiddleware>();
