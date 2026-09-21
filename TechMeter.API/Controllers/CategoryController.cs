@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -42,6 +43,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPost("category")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Response<AddCategoryResponse>>> Create([FromBody] AddCategoryRequest request)
         {
             var response = await _mediator.Send(new AddCategoryCommand(request.Name, request.Description));
@@ -49,6 +51,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpPut("{Id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Response<object>>> Update([FromRoute] string Id, [FromBody] UpdateCategoryRequest request)
         {
             var response = await _mediator.Send(new UpdateCategoryCommand(Id, request.Name, request.Description));
@@ -56,6 +59,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpDelete("{Id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Response<string>>> Delete(string Id)
         {
             var response = await _mediator.Send(new DeleteCategoryCommand(Id));

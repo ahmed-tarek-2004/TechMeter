@@ -10,7 +10,11 @@
 ![SignalR](https://img.shields.io/badge/SignalR-Real--time-blue?style=for-the-badge)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
-**A full-featured, production-ready E-Learning REST API built with ASP.NET Core 9**
+**A full-featured, production-ready E-Learning REST API & React SPA built with ASP.NET Core 9, EF Core 8, MediatR CQRS, and React 19**
+
+> 📖 **Direct AI & Developer References:**  
+> - 🧠 **[Master AI Project & Architecture Guide (PROJECT_AI_MASTER_GUIDE.md)](./PROJECT_AI_MASTER_GUIDE.md)** — Complete architecture, database schema, CQRS pipelines, hubs, and API catalog.
+> - 🚀 **[Implementation Roadmap: Wanted APIs & Frontend Pages (ROADMAP_WANTED_APIS_AND_FRONTEND_PAGES.md)](./ROADMAP_WANTED_APIS_AND_FRONTEND_PAGES.md)** — Actionable specification for new backend endpoints and frontend views.
 
 </div>
 

@@ -35,6 +35,7 @@ namespace TechMeter.API.Controllers
 
 
         [HttpPost("{sectionId}")]
+        [Authorize(Roles = "provider")]
         public async Task<ActionResult<Response<GetLessonResponse>>> AddLessonToSectionAsync([FromRoute] string sectionId, [FromForm] AddLessonRequest request)
         {
 
@@ -71,7 +72,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new EditLessonCommand { Id = Id, EditLessonRequest = request });
             return StatusCode((int)response.StatusCode, response);
         }
-       
+
         [HttpGet("{Id}")]
         public async Task<ActionResult<Response<GetLessonResponse>>> GetLessonById(string Id)
         {
@@ -87,7 +88,7 @@ namespace TechMeter.API.Controllers
         }
 
         [HttpGet("student/watched")]
-        [Authorize(Roles="student")]
+        [Authorize(Roles = "student")]
         public async Task<ActionResult<Response<List<GetLessonResponse>>>> GetStudentLessonWatchedAsync()
         {
             var userId = GetUserId();
@@ -109,7 +110,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new DeleteLessonCommand { Id = Id });
             return StatusCode((int)response.StatusCode, response);
         }
-       
+
         private string GetUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
