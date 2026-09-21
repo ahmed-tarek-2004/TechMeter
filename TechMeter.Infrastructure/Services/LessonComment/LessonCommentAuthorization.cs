@@ -51,7 +51,7 @@ namespace TechMeter.Infrastructure.Services.LessonComment
                 ))
                 .FirstOrDefaultAsync();
         }
-        public async Task<int> CanDeleteAsync(string userId, string CommentId, string LessonId)
+        public async Task<int> DeleteIfCanAsync(string userId, string CommentId, string LessonId)
         {
             var user = await context.Users.FindAsync(userId);
             var roles = await userManager.GetRolesAsync(user!);
