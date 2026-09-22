@@ -15,6 +15,7 @@ using TechMeter.Application.Features.Course.Command.EditCourse;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Features.Course.Query.GetCategoryById;
 using TechMeter.Application.Features.Course.Query.GetProviderCourses;
+using TechMeter.Application.Features.Course.Query.GetStudentCourseById;
 using TechMeter.Application.Features.Course.Query.GetStudentCourses;
 //using TechMeter.Application.Interfaces.CourseService;
 using TechMeter.Domain.Models.Auth.Identity;
@@ -58,6 +59,13 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<List<GetStudentCourseResponse>>>> GetStudentCoursesAsync()
         {
             var response = await _mediator.Send(new GetStudentCoursesQuery(GetUserId()));
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpGet("student/{courseId}/learn")]
+        [Authorize(Roles = "student")]
+        public async Task<ActionResult<Response<GetStudentCourseResponse>>> GetStudentCoursesByIdAsync([FromRoute] string courseId)
+        {
+            var response = await _mediator.Send(new GetStudentCourseByIdCommand(GetUserId(), courseId));
             return StatusCode((int)response.StatusCode, response);
         }
 
