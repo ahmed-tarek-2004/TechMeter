@@ -12,7 +12,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Course.Query.GetProviderCourses
 {
-    public class GetProviderCoursesQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler) 
+    public class GetProviderCoursesQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler)
         : IRequestHandler<GetProviderCoursesQuery, Domain.Shared.Bases.Response<List<DTO.Course.GetCourseResponse>>>
     {
         public async Task<Domain.Shared.Bases.Response<List<DTO.Course.GetCourseResponse>>> Handle(GetProviderCoursesQuery request, CancellationToken cancellationToken)

@@ -106,6 +106,7 @@ namespace TechMeter
             builder.Services.AddProblemDetails();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddTransient<StopwatchRequestMiddleware>();
+            builder.Services.AddTransient<CheckBlockingMiddleware>();
             var app = builder.Build();
 
             await using (var scope = app.Services.CreateAsyncScope())
