@@ -101,7 +101,7 @@ namespace TechMeter
                         });
                 });
 
-         
+
 
             builder.Services.AddProblemDetails();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -133,8 +133,9 @@ namespace TechMeter
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("AllowAll");
-            
+
             app.UseAuthentication();
+            app.UseMiddleware<CheckBlockingMiddleware>();
             app.UseAuthorization();
             app.UseMiddleware<StopwatchRequestMiddleware>();
             app.MapHub<NotificationHub>("/notificationHub").RequireAuthorization();
@@ -148,7 +149,7 @@ namespace TechMeter
                 Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
             });
 
-            
+
             app.Run();
         }
     }

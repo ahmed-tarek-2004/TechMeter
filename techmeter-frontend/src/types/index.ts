@@ -289,23 +289,53 @@ export interface Transaction {
   courseTitle?: string;
 }
 
+export interface AdminUserListItem {
+  id: string;
+  email: string;
+  fullName?: string;
+  userName: string;
+  role: 'student' | 'provider' | 'admin' | string;
+  phoneNumber?: string;
+  profilePictureUrl?: string;
+  isEmailConfirmed: boolean;
+  isTwoFactorEnabled: boolean;
+  isLockedOut: boolean;
+  lockoutEnd?: string | null;
+  lockoutReason?: string | null;
+  createdAt: string;
+  coursesEnrolledCount?: number;
+  coursesPublishedCount?: number;
+}
+
 export interface AdminAnalyticsSummary {
   totalRevenue: number;
   totalStudents: number;
   totalProviders: number;
   totalCourses: number;
   totalOrders: number;
-  monthlyRevenue: { month: string; amount: number }[];
+  monthlyRevenue: { month: string; amount: number; students?: number }[];
+  categoryBreakdown?: { category: string; count: number; revenue: number }[];
   recentOrders: OrderSummaryResponse[];
 }
 
 export interface ProviderAnalyticsSummary {
-  totalRevenue: number;
-  totalStudents: number;
-  activeCourses: number;
-  totalReviews: number;
-  averageRating: number;
-  recentSales: OrderSummaryResponse[];
+  totalEarnings: number;
+  netPayoutAvailable: number;
+  totalStudentsEnrolled: number;
+  totalPublishedCourses: number;
+  averageCourseRating: number;
+  topCourses: CourseSalesPerformance[];
+  revenueTrend: { month: string; amount: number; enrollments?: number }[];
+}
+
+export interface CourseSalesPerformance {
+  courseId: string;
+  title: string;
+  categoryName?: string;
+  enrollmentCount: number;
+  revenueGenerated: number;
+  rating: number;
+  thumbnailUrl?: string;
 }
 
 export interface CreateCategoryRequest {

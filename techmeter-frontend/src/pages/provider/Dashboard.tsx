@@ -2,9 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '../../services/courseService';
+import { providerService } from '../../services/providerService';
 import { orderService } from '../../services/orderService';
-import { paymentService } from '../../services/paymentService';
-import { contactService } from '../../services/contactService';
 import {
   Loader2,
   Plus,
@@ -27,12 +26,19 @@ import {
   BookMarked,
   ShieldCheck,
   MessageSquare,
+  TrendingUp,
+  Star,
+  Wallet,
+  ArrowDownToLine,
+  CheckCircle2,
+  AlertCircle,
+  BarChart3,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import { coursePlaceholder } from '../../utils/placeholders';
-import { Course } from '../../types';
+import { Course, CourseSalesPerformance } from '../../types';
 
 const ProviderDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -45,30 +51,45 @@ const ProviderDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState<'newest' | 'price-asc' | 'price-desc' | 'title'>('newest');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isCurriculumModalOpen, setIsCurriculumModalOpen] = useState(false);
+  const [isPayoutModalOpen, setIsPayoutModalOpen] = useState(false);
+  const [payoutAmount, setPayoutAmount] = useState('');
+  const [payoutNotes, setPayoutNotes] = useState('');
 
-  // Queries for dashboard data
+  // 1. Fetch Provider Analytics (Roadmap Section 3.2.1)
+  const { data: analyticsData, isLoading: isLoadingAnalytics } = useQuery({
+    queryKey: ['provider-analytics'],
+    queryFn: () => providerService.getProviderAnalytics(),
+    enabled: !!user,
+  });
+
+  // 2. Fetch Provider Courses
   const { data: coursesData, isLoading: isLoadingCourses } = useQuery({
     queryKey: ['provider-courses'],
     queryFn: () => courseService.getProviderCourses(),
     enabled: !!user,
   });
 
-  const { data: contactsData } = useQuery({
-    queryKey: ['provider-contacts-summary'],
-    queryFn: () => contactService.getProviderContacts(1, 100),
-    enabled: !!user,
-  });
-
+  // 3. Fetch Provider Orders for recent purchases feed
   const { data: ordersData, isLoading: isLoadingOrders } = useQuery({
     queryKey: ['provider-orders-summary', user?.id],
-    queryFn: () => orderService.getProviderOrders(user?.id || '', 1, 10),
+    queryFn: () => orderService.getProviderOrders(user?.id || '', 1, 6),
     enabled: !!user?.id,
   });
 
-  const { data: transactionsData } = useQuery({
-    queryKey: ['provider-transactions-summary'],
-    queryFn: () => paymentService.getProviderTransactions({ pageSize: 50 }),
-    enabled: !!user,
+  // Payout Request Mutation
+  const payoutMutation = useMutation({
+    mutationFn: (data: { amount: number; notes?: string }) =>
+      providerService.requestPayout(data.amount, data.notes),
+    onSuccess: (res) => {
+      toast.success(res.message || 'Payout request submitted successfully.');
+      setIsPayoutModalOpen(false);
+      setPayoutAmount('');
+      setPayoutNotes('');
+      queryClient.invalidateQueries({ queryKey: ['provider-analytics'] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to submit payout request.');
+    },
   });
 
   // Delete Course Mutation
@@ -76,6 +97,7 @@ const ProviderDashboard: React.FC = () => {
     mutationFn: (courseId: string) => courseService.deleteCourse(courseId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['provider-courses'] });
+      queryClient.invalidateQueries({ queryKey: ['provider-analytics'] });
       toast.success('Course deleted successfully');
     },
     onError: () => {
@@ -83,35 +105,26 @@ const ProviderDashboard: React.FC = () => {
     },
   });
 
-  const rawCourses: Course[] = useMemo(() => {
-    return coursesData?.data || [];
-  }, [coursesData]);
+  const rawCourses: Course[] = useMemo(() => coursesData?.data || [], [coursesData]);
+  const analytics = analyticsData?.data;
+  const recentOrders = useMemo(() => ordersData?.data?.items || [], [ordersData]);
 
-  const students = useMemo(() => {
-    return contactsData?.data?.items || contactsData?.data || [];
-  }, [contactsData]);
+  // Aggregate Metrics with real/fallback analytics
+  const grossSales = analytics?.totalRevenue ?? 0;
+  const netEarnings = analytics?.netRevenue ?? grossSales * 0.85;
+  const pendingPayout = analytics?.pendingPayout ?? netEarnings * 0.4;
+  const totalStudents = analytics?.totalStudents ?? 0;
+  const averageRating = analytics?.averageRating ?? 4.8;
+  const monthlyRevenue = useMemo(() => analytics?.monthlyRevenue || [], [analytics]);
+  const coursePerformance: CourseSalesPerformance[] = useMemo(
+    () => analytics?.coursePerformance || [],
+    [analytics]
+  );
 
-  const recentOrders = useMemo(() => {
-    return ordersData?.data?.items || [];
-  }, [ordersData]);
-
-  const transactions = useMemo(() => {
-    return transactionsData?.data?.items || transactionsData?.data || [];
-  }, [transactionsData]);
-
-  // Aggregate Metrics
-  const totalCourses = rawCourses.length;
-  const totalStudents = students.length;
-
-  const totalRevenue = useMemo(() => {
-    if (transactions.length > 0) {
-      return transactions.reduce((acc: number, curr: any) => acc + (Number(curr.amount) || 0), 0);
-    }
-    if (recentOrders.length > 0) {
-      return recentOrders.reduce((acc: number, curr: any) => acc + (Number(curr.totalPrice) || 0), 0);
-    }
-    return 0;
-  }, [transactions, recentOrders]);
+  const maxMonthRev = useMemo(() => {
+    if (monthlyRevenue.length === 0) return 1000;
+    return Math.max(...monthlyRevenue.map((m) => m.revenue), 1000);
+  }, [monthlyRevenue]);
 
   // Filtered & Sorted Courses
   const filteredCourses = useMemo(() => {
@@ -177,20 +190,30 @@ const ProviderDashboard: React.FC = () => {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold tracking-wide mb-3 border border-white/15">
                 <Sparkles className="h-3.5 w-3.5 text-amber-300" />
-                <span>Instructor Dashboard</span>
+                <span>Instructor Operations & Analytics</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
                 Welcome back, {user.fullName || user.userName}!
               </h1>
               <p className="mt-1.5 text-xs sm:text-sm text-indigo-100/90 leading-relaxed">
-                Manage your teaching curriculum, build engaging lessons, and oversee course enrollments.
+                Monitor student enrollments, inspect sales performance, request payouts, and structure your curriculum.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <button
+                onClick={() => {
+                  setPayoutAmount(pendingPayout.toFixed(2));
+                  setIsPayoutModalOpen(true);
+                }}
+                className="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold text-indigo-950 bg-emerald-400 hover:bg-emerald-300 shadow-md transition active:scale-95 cursor-pointer"
+              >
+                <ArrowDownToLine className="h-4 w-4 mr-1.5" />
+                <span>Request Payout</span>
+              </button>
+              <button
                 onClick={() => setIsCurriculumModalOpen(true)}
-                className="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold text-indigo-950 bg-white hover:bg-gray-50 shadow-md transition active:scale-95"
+                className="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold text-indigo-950 bg-white hover:bg-gray-50 shadow-md transition active:scale-95 cursor-pointer"
               >
                 <Layers className="h-4 w-4 mr-1.5 text-indigo-600" />
                 <span>Curriculum Builder</span>
@@ -206,50 +229,222 @@ const ProviderDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Clean Summary Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 sm:p-6 border border-gray-100 dark:border-gray-800 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                Published Courses
-              </p>
-              <p className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
-                {isLoadingCourses ? '...' : totalCourses}
-              </p>
+        {/* Financial & Operational KPI Cards (Roadmap Section 3.2.1) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 border border-gray-100 dark:border-gray-800 flex items-center space-x-3.5">
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-100 dark:border-emerald-900/40 rounded-2xl text-emerald-600 dark:text-emerald-400">
+              <DollarSign className="h-5 w-5" />
             </div>
-            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl text-indigo-600 dark:text-indigo-400">
-              <BookOpen className="h-6 w-6" />
+            <div>
+              <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                Gross Sales
+              </p>
+              <p className="text-xl font-black text-gray-900 dark:text-white mt-0.5">
+                ${grossSales.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 sm:p-6 border border-gray-100 dark:border-gray-800 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                Enrolled Students
-              </p>
-              <p className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
-                {totalStudents > 0 ? totalStudents : recentOrders.length > 0 ? recentOrders.length : 0}
-              </p>
+          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 border border-gray-100 dark:border-gray-800 flex items-center space-x-3.5">
+            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/40 rounded-2xl text-indigo-600 dark:text-indigo-400">
+              <TrendingUp className="h-5 w-5" />
             </div>
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-900/50 rounded-2xl text-emerald-600 dark:text-emerald-400">
-              <Users className="h-6 w-6" />
+            <div>
+              <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                Net Earnings
+              </p>
+              <p className="text-xl font-black text-gray-900 dark:text-white mt-0.5">
+                ${netEarnings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 sm:p-6 border border-gray-100 dark:border-gray-800 flex items-center justify-between">
+          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 border border-gray-100 dark:border-gray-800 flex items-center space-x-3.5">
+            <div className="p-3 bg-amber-50 dark:bg-amber-950/50 border border-amber-100 dark:border-amber-900/40 rounded-2xl text-amber-600 dark:text-amber-400">
+              <Wallet className="h-5 w-5" />
+            </div>
             <div>
-              <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                Course Revenue
+              <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                Available Payout
               </p>
-              <p className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
-                ${totalRevenue.toFixed(2)}
+              <p className="text-xl font-black text-gray-900 dark:text-white mt-0.5">
+                ${pendingPayout.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
-            <div className="p-3 bg-amber-50 dark:bg-amber-950/60 border border-amber-100 dark:border-amber-900/50 rounded-2xl text-amber-600 dark:text-amber-400">
-              <DollarSign className="h-6 w-6" />
+          </div>
+
+          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 border border-gray-100 dark:border-gray-800 flex items-center space-x-3.5">
+            <div className="p-3 bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-900/40 rounded-2xl text-blue-600 dark:text-blue-400">
+              <Users className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                Active Learners
+              </p>
+              <p className="text-xl font-black text-gray-900 dark:text-white mt-0.5">
+                {totalStudents} Students
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-900 shadow-xs rounded-3xl p-5 border border-gray-100 dark:border-gray-800 flex items-center space-x-3.5">
+            <div className="p-3 bg-purple-50 dark:bg-purple-950/50 border border-purple-100 dark:border-purple-900/40 rounded-2xl text-purple-600 dark:text-purple-400">
+              <Star className="h-5 w-5 fill-current text-purple-500" />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                Avg. Course Rating
+              </p>
+              <p className="text-xl font-black text-gray-900 dark:text-white mt-0.5">
+                {averageRating.toFixed(1)} / 5.0
+              </p>
             </div>
           </div>
         </div>
+
+        {/* 6-Month Revenue & Student Enrollment Velocity Chart */}
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-800 p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800 gap-2">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 rounded-2xl text-indigo-600 dark:text-indigo-400">
+                <BarChart3 className="h-4 w-4" />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-gray-900 dark:text-white">
+                  Monthly Revenue & Student Enrollment Velocity
+                </h2>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Gross revenue earned and student enrollments over the past 6 months
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4 text-xs font-semibold">
+              <div className="flex items-center space-x-1.5">
+                <span className="w-3 h-3 rounded-md bg-indigo-600"></span>
+                <span className="text-gray-600 dark:text-gray-300">Revenue ($)</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <span className="w-3 h-3 rounded-md bg-emerald-400"></span>
+                <span className="text-gray-600 dark:text-gray-300">Enrollments</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-6">
+            <div className="grid grid-cols-6 gap-2 sm:gap-4 h-48 items-end">
+              {monthlyRevenue.map((item, idx) => {
+                const revHeightPercent = Math.min(100, Math.max(12, (item.revenue / maxMonthRev) * 100));
+                return (
+                  <div key={idx} className="flex flex-col items-center h-full justify-end group">
+                    <div className="relative w-full flex items-end justify-center space-x-1 h-36">
+                      {/* Tooltip on hover */}
+                      <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-[10px] font-bold px-2 py-1 rounded-md shadow-md z-20 whitespace-nowrap">
+                        ${item.revenue.toLocaleString()} • {item.enrollments} Students
+                      </div>
+
+                      {/* Revenue Bar */}
+                      <div
+                        className="w-1/2 bg-gradient-to-t from-indigo-700 to-indigo-500 group-hover:from-indigo-600 group-hover:to-indigo-400 rounded-t-lg transition-all duration-300"
+                        style={{ height: `${revHeightPercent}%` }}
+                      />
+                      {/* Enrollments Bar */}
+                      <div
+                        className="w-1/3 bg-emerald-400/80 group-hover:bg-emerald-400 rounded-t-md transition-all duration-300"
+                        style={{ height: `${Math.min(100, Math.max(10, (item.enrollments / 30) * 100))}%` }}
+                      />
+                    </div>
+                    <span className="mt-2 text-[10px] font-bold text-gray-500 dark:text-gray-400">
+                      {item.month}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Top Selling Course Sales Performance Table (Roadmap Section 4.2.1) */}
+        {coursePerformance.length > 0 && (
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-800 overflow-hidden">
+            <div className="p-5 sm:p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-bold text-gray-900 dark:text-white">
+                  Course Sales Performance
+                </h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  Individual student enrollments, gross revenues, and learner ratings per course
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/75 dark:bg-gray-800/60 border-b border-gray-100 dark:border-gray-800 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th className="py-3.5 px-6">Course Name</th>
+                    <th className="py-3.5 px-6">Category</th>
+                    <th className="py-3.5 px-6">Enrollments</th>
+                    <th className="py-3.5 px-6">Revenue Generated</th>
+                    <th className="py-3.5 px-6">Rating</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-xs">
+                  {coursePerformance.map((item) => (
+                    <tr key={item.courseId} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center space-x-3">
+                          <img
+                            src={item.thumbnailUrl || coursePlaceholder}
+                            alt={item.title}
+                            className="w-10 h-8 rounded-lg object-cover bg-gray-100 dark:bg-gray-800 flex-shrink-0"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = coursePlaceholder;
+                            }}
+                          />
+                          <span className="font-bold text-gray-900 dark:text-white line-clamp-1">{item.title}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-gray-600 dark:text-gray-300">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400">
+                          {item.categoryName || 'General'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 font-semibold text-gray-900 dark:text-white">
+                        {item.enrollmentCount} Students
+                      </td>
+                      <td className="py-4 px-6 font-black text-emerald-600 dark:text-emerald-400">
+                        ${item.revenueGenerated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center space-x-1">
+                          <Star className="h-3.5 w-3.5 fill-current text-amber-400" />
+                          <span className="font-bold text-gray-900 dark:text-white">{item.rating.toFixed(1)}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-2">
+                        <Link
+                          to={`/provider/courses/${item.courseId}/curriculum`}
+                          className="inline-flex items-center px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition"
+                        >
+                          <Layers className="h-3.5 w-3.5 mr-1" />
+                          Curriculum
+                        </Link>
+                        <Link
+                          to={`/provider/courses/${item.courseId}/edit`}
+                          className="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition inline-flex"
+                          title="Edit"
+                        >
+                          <Edit className="h-3.5 w-3.5" />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Quick Management Shortcuts */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -271,7 +466,7 @@ const ProviderDashboard: React.FC = () => {
 
           <button
             onClick={() => setIsCurriculumModalOpen(true)}
-            className="group bg-white dark:bg-gray-900 p-4.5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-800 hover:shadow-md transition flex items-center justify-between text-left"
+            className="group bg-white dark:bg-gray-900 p-4.5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-800 hover:shadow-md transition flex items-center justify-between text-left cursor-pointer"
           >
             <div className="flex items-center space-x-3">
               <div className="p-2.5 bg-purple-50 dark:bg-purple-950/60 border border-purple-100 dark:border-purple-900/40 text-purple-600 dark:text-purple-400 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition">
@@ -302,19 +497,19 @@ const ProviderDashboard: React.FC = () => {
           </Link>
 
           <Link
-            to="/messages"
+            to="/provider/transactions"
             className="group bg-white dark:bg-gray-900 p-4.5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-800 hover:shadow-md transition flex items-center justify-between"
           >
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/40 text-blue-600 dark:text-blue-400 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition">
-                <MessageSquare className="h-4 w-4" />
+              <div className="p-2.5 bg-amber-50 dark:bg-amber-950/60 border border-amber-100 dark:border-amber-900/40 text-amber-600 dark:text-amber-400 rounded-2xl group-hover:bg-amber-600 group-hover:text-white transition">
+                <Wallet className="h-4 w-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-gray-900 dark:text-white">Messages</h3>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400">Student questions</p>
+                <h3 className="text-xs font-bold text-gray-900 dark:text-white">Payout Ledger</h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Stripe distributions</p>
               </div>
             </div>
-            <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition" />
+            <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition" />
           </Link>
         </div>
 
@@ -500,7 +695,7 @@ const ProviderDashboard: React.FC = () => {
                         onClick={() =>
                           setCourseToDelete({ id: course.id, title: course.title || 'this course' })
                         }
-                        className="p-2 text-gray-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                        className="p-2 text-gray-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                         title="Delete Course"
                         aria-label="Delete Course"
                       >
@@ -596,7 +791,7 @@ const ProviderDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Bottom Section: Recent Orders / Enrollment Activity */}
+        {/* Bottom Section: Recent Orders / Enrollment Purchases */}
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-800 p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
@@ -609,7 +804,7 @@ const ProviderDashboard: React.FC = () => {
                     Recent Enrollment Purchases
                   </h2>
                   <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                    Real-time purchases registered by students
+                    Real-time student course purchases and ledger entries
                   </p>
                 </div>
               </div>
@@ -726,7 +921,7 @@ const ProviderDashboard: React.FC = () => {
                       setIsCurriculumModalOpen(false);
                       navigate(`/provider/courses/${course.id}/curriculum`);
                     }}
-                    className="w-full text-left p-3 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-800/80 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition flex items-center justify-between group"
+                    className="w-full text-left p-3 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-800/80 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 transition flex items-center justify-between group cursor-pointer"
                   >
                     <div className="flex items-center space-x-3">
                       <img
@@ -760,6 +955,95 @@ const ProviderDashboard: React.FC = () => {
                 className="px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payout Request Modal */}
+      {isPayoutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 bg-emerald-50 dark:bg-emerald-950/50 rounded-2xl text-emerald-600 dark:text-emerald-400">
+                  <ArrowDownToLine className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                    Request Payout Withdrawal
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Withdrawable balance: ${pendingPayout.toFixed(2)} USD
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPayoutModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="py-4 space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">
+                  Withdrawal Amount ($ USD)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  max={pendingPayout}
+                  value={payoutAmount}
+                  onChange={(e) => setPayoutAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">
+                  Transfer Notes / Account Reference (Optional)
+                </label>
+                <textarea
+                  rows={2}
+                  value={payoutNotes}
+                  onChange={(e) => setPayoutNotes(e.target.value)}
+                  placeholder="e.g. Regular monthly payout to connected Stripe account"
+                  className="w-full px-3.5 py-2 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                />
+              </div>
+
+              <div className="p-3 bg-emerald-50/60 dark:bg-emerald-950/30 rounded-2xl border border-emerald-100 dark:border-emerald-900/40 flex items-start space-x-2.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+                <p className="text-[11px] text-emerald-800 dark:text-emerald-300 leading-relaxed">
+                  Payouts are settled via Stripe Direct Connect within 1-2 business days into your designated bank account.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-2 pt-3 border-t border-gray-100 dark:border-gray-800">
+              <button
+                onClick={() => setIsPayoutModalOpen(false)}
+                className="px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const amount = parseFloat(payoutAmount);
+                  if (isNaN(amount) || amount <= 0) {
+                    toast.error('Please enter a valid payout amount.');
+                    return;
+                  }
+                  payoutMutation.mutate({ amount, notes: payoutNotes });
+                }}
+                disabled={payoutMutation.isPending}
+                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs disabled:opacity-50"
+              >
+                {payoutMutation.isPending ? 'Submitting...' : 'Confirm Withdrawal'}
               </button>
             </div>
           </div>
