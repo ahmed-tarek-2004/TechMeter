@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
@@ -31,6 +32,8 @@ namespace TechMeter.Application.Common
         public DbSet<WishlistItem> WishlistItem { get; set; }
         public DbSet<Order> Order { get; set; }
         //public DbSet<UserCourses> UserCourses { get; set; }
+        public DbSet<IdentityUserRole<string>> UserRoles { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<OrderItem> OrderItem { get; set; }
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
