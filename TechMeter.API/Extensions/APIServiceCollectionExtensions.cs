@@ -148,6 +148,7 @@ namespace TechMeter.Extensions
             services.AddSwaggerGen(option =>
             {
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "Tech Meter", Version = "v1" });
+                option.EnableAnnotations();
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

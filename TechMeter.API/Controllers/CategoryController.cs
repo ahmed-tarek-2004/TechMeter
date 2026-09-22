@@ -27,6 +27,7 @@ namespace TechMeter.API.Controllers
             _mediator = mediator;
         }
 
+
         [HttpGet]
         public async Task<ActionResult<Response<List<GetCategoryDto>>>> GetAll()
         {

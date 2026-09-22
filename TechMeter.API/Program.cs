@@ -68,13 +68,13 @@ namespace TechMeter
             builder.Services.AddHangfireServer();
 
             builder.Services.AddSwaggerConfiguration();
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddEmailServices(builder.Configuration);
             builder.Services.AddDistributedCache(builder.Configuration);
             builder.Services.AddScoped<ResponseHandler>();
             builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
             builder.Services.ApplicationService();
-            builder.Services.AddEndpointsApiExplorer();
             builder.Services.Configure<Shared.CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
             builder.Services.Configure<Shared.JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.AddingStripePayment(builder.Configuration);
@@ -121,7 +121,7 @@ namespace TechMeter
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
-                //app.MapOpenApi();
+                app.MapOpenApi();
                 //app.MapScalarApiReference();
                 app.UseSwagger();
                 app.UseSwaggerUI();
