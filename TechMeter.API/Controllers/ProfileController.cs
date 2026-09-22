@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Profile;
 using TechMeter.Application.DTO.User;
+using TechMeter.Application.Features.Profile.Command.AdminBlockUser;
 using TechMeter.Application.Features.Profile.Command.EditProviderProfile;
 using TechMeter.Application.Features.Profile.Command.EditStudentProfile;
 using TechMeter.Application.Features.Profile.Query.GetAdminUsers;
@@ -68,6 +69,23 @@ namespace TechMeter.API.Controllers
             var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var response = await mediator.Send(new GetAdminUsersCommand(adminId, request.PageNumber, request.PageSize,
                 usersRequest.UserName, usersRequest.role, usersRequest.IsLocked, usersRequest.IsTwoFactorEnabled));
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [Authorize(Roles = "admin")]
+        [HttpGet("admin/user/{userId}/block")]
+        public async Task<ActionResult<Response<string>>> AdminBlocksUserAsync([FromRoute] string userId)
+        {
+
+            var response = await mediator.Send(new AdminBlockUserCommand(userId));
+            return StatusCode((int)response.StatusCode, response);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet("admin/user/{userId}/unblock")]
+        public async Task<ActionResult<Response<string>>> AdminUnBlocksUserAsync([FromRoute] string userId)
+        {
+
+            var response = await mediator.Send(new AdminUnBlockUserCommand(userId));
             return StatusCode((int)response.StatusCode, response);
         }
     }
