@@ -5,6 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useNotifications } from '../../context/NotificationContext';
 import {
   LayoutDashboard,
+  Users,
   Layers,
   BookOpen,
   ShoppingBag,
@@ -48,8 +49,9 @@ const AdminLayout: React.FC = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard, badge: null },
+    { name: 'User Management', path: '/admin/users', icon: Users, badge: null },
     { name: 'Categories', path: '/admin/categories', icon: Layers, badge: null },
-    { name: 'Courses', path: '/admin/courses', icon: BookOpen, badge: null },
+    { name: 'Courses & Catalog', path: '/admin/courses', icon: BookOpen, badge: null },
     { name: 'Orders', path: '/admin/orders', icon: ShoppingBag, badge: null },
     { name: 'Transactions', path: '/admin/transactions', icon: CreditCard, badge: null },
     { name: 'Reviews Moderation', path: '/admin/reviews', icon: Star, badge: null },
@@ -62,6 +64,7 @@ const AdminLayout: React.FC = () => {
 
   const getPageTitle = () => {
     if (location.pathname.includes('/admin/dashboard')) return 'Platform Overview';
+    if (location.pathname.includes('/admin/users')) return 'User Governance & Access';
     if (location.pathname.includes('/admin/categories')) return 'Category Management';
     if (location.pathname.includes('/admin/courses')) return 'Course Catalog & Moderation';
     if (location.pathname.includes('/admin/orders')) return 'Platform Order Records';

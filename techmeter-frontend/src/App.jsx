@@ -50,6 +50,7 @@ import ProviderStudents from './pages/provider/ProviderStudents';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminOrders from './pages/admin/AdminOrders';
@@ -104,6 +105,7 @@ function App() {
               >
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="users" element={<AdminUsers />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="courses" element={<AdminCourses />} />
                 <Route path="orders" element={<AdminOrders />} />
