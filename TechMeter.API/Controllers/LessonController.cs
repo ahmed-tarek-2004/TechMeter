@@ -13,6 +13,7 @@ using TechMeter.Application.Features.Lesson.Command.AddLesson;
 using TechMeter.Application.Features.Lesson.Command.ChangeLessonState;
 using TechMeter.Application.Features.Lesson.Command.DeleteLesson;
 using TechMeter.Application.Features.Lesson.Command.EditLesson;
+using TechMeter.Application.Features.Lesson.Command.EditLessonOrder;
 using TechMeter.Application.Features.Lesson.Command.UnWatchLesson;
 using TechMeter.Application.Features.Lesson.Query.GetAllLessons;
 using TechMeter.Application.Features.Lesson.Query.GetLessonById;

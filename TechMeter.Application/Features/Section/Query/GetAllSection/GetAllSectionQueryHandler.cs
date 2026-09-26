@@ -22,7 +22,7 @@ namespace TechMeter.Application.Features.Section.Query.GetAllSection
                 Id = b.Id,
                 Name = b.Name,
                 courseId = b.CourseId,
-                LessonCount = b.LessonCount
+                LessonCount = b.Lessons.Count()
             }).ToListAsync();
 
             return responseHandler.Success(Sections, "Sections returned successfully");
