@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.DTO.Section;
+using TechMeter.Application.Features.Lesson.Command.EditLessonOrder;
 using TechMeter.Application.Features.Section.Command.AddSection;
 using TechMeter.Application.Features.Section.Command.DeleteSection;
 using TechMeter.Application.Features.Section.Command.EditSection;
+using TechMeter.Application.Features.Section.Command.EditSectionOrder;
 using TechMeter.Application.Features.Section.Query.GetAllSection;
 using TechMeter.Application.Features.Section.Query.GetSectionById;
 //using TechMeter.Application.Interfaces.SectionService;
@@ -65,6 +68,13 @@ namespace TechMeter.API.Controllers
             var providerId = GetUserId();
             var command = new DeleteSectionCommand(providerId ?? "", courseId, Id);
             var response = await mediator.Send(command);
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [HttpPut("{courseId}/reorder")]
+        [Authorize(Roles = "provider")]
+        public async Task<ActionResult<Response<string>>> EditLessonsOrderAsync([FromRoute] string courseId, [FromBody] EditSectionOrderRequest request)
+        {
+            var response = await mediator.Send(new EditSectionOrderCommand(request.sectionsId, courseId));
             return StatusCode((int)response.StatusCode, response);
         }
         private string GetUserId()
