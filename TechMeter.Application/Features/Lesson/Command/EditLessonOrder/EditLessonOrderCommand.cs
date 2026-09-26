@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Domain.Shared.Bases;
 
-namespace TechMeter.Application.Features.Lesson.Command
+namespace TechMeter.Application.Features.Lesson.Command.EditLessonOrder
 {
     public sealed record EditLessonOrderCommand(List<string> LessonsId, string SectionId) : IRequest<Response<string>>;
 }

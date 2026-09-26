@@ -21,6 +21,7 @@ namespace TechMeter.Application.Features.Lesson.Query.GetSectionLessons
             var lessons = await context.Lessons
                 .AsNoTracking()
                 .Where(l => l.SectionId == request.SectionId)
+                .OrderBy(b=>b.LessonOrder)
                 .Select(b => new GetLessonResponse()
                 {
                     Id = b.Id,

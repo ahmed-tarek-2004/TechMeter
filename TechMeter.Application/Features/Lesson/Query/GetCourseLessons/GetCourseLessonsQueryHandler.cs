@@ -25,7 +25,7 @@ namespace TechMeter.Application.Features.Lesson.Query.GetAllLessons
         }
         private async Task<List<GetLessonResponse>> CreateALessonResponse(IQueryable<TechMeter.Domain.Models.Lessons> lesson)
         {
-            var response = await lesson.Select(b => new GetLessonResponse()
+            var response = await lesson.OrderBy(b=>b.LessonOrder).Select(b => new GetLessonResponse()
             {
                 Id = b.Id,
                 Description = b.Description,

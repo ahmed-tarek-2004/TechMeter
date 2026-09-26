@@ -12,6 +12,5 @@ namespace TechMeter.Application.DTO.Lesson
         public string Name { get; set; }
         public string? Description { get; set; }
         public IFormFile LessonStream { get; set; }
-        public int ? LessonOrder { get; set; }
     }
 }
