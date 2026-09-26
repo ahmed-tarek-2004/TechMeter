@@ -21,13 +21,20 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
     {
         public async Task<Response<string>> Handle(AddLessonCommand request, CancellationToken cancellationToken)
         {
-            var section = await context.Section.FirstOrDefaultAsync(s => s.Id == request.SectionId);
+            var section = await context.Section.AsNoTracking()
+                .Where(b => b.Id == request.SectionId)
+                .Select(b => new
+                {
+                    b.Id,
+                    LessonCount = b.Lessons.Count(),
+                    b.CourseId
+                }).FirstOrDefaultAsync(cancellationToken);
+
             if (section == null)
             {
                 return responseHandler.NotFound<string>("Section is not found");
             }
             string LessonUrl = string.Empty;
-
 
             var course = await context.Course.FirstOrDefaultAsync(b => b.Id == section.CourseId);
             if (course == null)
@@ -43,7 +50,8 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
                     Name = request.AddLessonRequest.Name,
                     Description = request.AddLessonRequest.Description,
                     SectionId = request.SectionId,
-                    LessonUrl = string.Empty
+                    LessonUrl = string.Empty,
+                    LessonOrder = request.AddLessonRequest.LessonOrder.HasValue ? request.AddLessonRequest.LessonOrder.Value : section.LessonCount
                 };
 
                 await context.Lessons.AddAsync(Lesson);
@@ -66,6 +74,6 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
             }
         }
 
-        
+
     }
 }

@@ -15,6 +15,7 @@ namespace TechMeter.Domain.Models
         public string? Description { get; set; }
         public string LessonUrl { get; set; }
         public string SectionId { get; set; }
+        public int LessonOrder { get; set; }
         public Sections section { get; set; }
         public ICollection<StudentLessonWatched> StudentLessonsWatched { get; set; } = new List<StudentLessonWatched>();
         public ICollection<LessonComment> lessonComments { get; set; } = new List<LessonComment>();

@@ -8,6 +8,7 @@ using System.Net;
 using System.Security.Claims;
 using TechMeter.Application.DTO.Lesson;
 using TechMeter.Application.DTO.LessonComment;
+using TechMeter.Application.Features.Lesson.Command;
 using TechMeter.Application.Features.Lesson.Command.AddLesson;
 using TechMeter.Application.Features.Lesson.Command.ChangeLessonState;
 using TechMeter.Application.Features.Lesson.Command.DeleteLesson;
@@ -110,7 +111,13 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new DeleteLessonCommand { Id = Id });
             return StatusCode((int)response.StatusCode, response);
         }
-
+        [HttpPut("{sectionId}/reorder")]
+        [Authorize(Roles = "provider")]
+        public async Task<ActionResult<Response<string>>> EditLessonsOrderAsync([FromRoute] string sectionId, [FromBody] EditLessonOrderRequest request)
+        {
+            var response = await _mediator.Send(new EditLessonOrderCommand(request.LessonsId, sectionId));
+            return StatusCode((int)response.StatusCode, response);
+        }
         private string GetUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
