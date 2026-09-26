@@ -51,7 +51,7 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
                     Description = request.AddLessonRequest.Description,
                     SectionId = request.SectionId,
                     LessonUrl = string.Empty,
-                    LessonOrder = request.AddLessonRequest.LessonOrder.HasValue ? request.AddLessonRequest.LessonOrder.Value : section.LessonCount
+                    LessonOrder = section.LessonCount + 1
                 };
 
                 await context.Lessons.AddAsync(Lesson);
