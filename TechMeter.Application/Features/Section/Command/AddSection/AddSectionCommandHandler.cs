@@ -11,7 +11,7 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Section.Command.AddSection
 {
-    public class AddSectionCommandHandler(IApplicationDbContext context,ResponseHandler responseHandler) : IRequestHandler<AddSectionCommand, Response<string>>
+    public class AddSectionCommandHandler(IApplicationDbContext context, ResponseHandler responseHandler) : IRequestHandler<AddSectionCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(AddSectionCommand request, CancellationToken cancellationToken)
         {
@@ -37,6 +37,7 @@ namespace TechMeter.Application.Features.Section.Command.AddSection
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = request.sectionName,
+                    SectionOrder = course.SectionCount + 1,
                     CourseId = request.courseId
                 };
                 course.SectionCount += 1;

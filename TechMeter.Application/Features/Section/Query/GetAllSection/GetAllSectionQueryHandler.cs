@@ -17,12 +17,16 @@ namespace TechMeter.Application.Features.Section.Query.GetAllSection
     {
         public async Task<Response<List<GetSectionResponse>>> Handle(GetAllSectionQuery request, CancellationToken cancellationToken)
         {
-            var Sections = await context.Section.AsNoTracking().Where(b => b.CourseId == request.courseId).Select(b => new GetSectionResponse
+            var Sections = await context.Section
+                .AsNoTracking()
+                .Where(b => b.CourseId == request.courseId)
+                .OrderBy(b=>b.SectionOrder)
+                .Select(b => new GetSectionResponse
             {
                 Id = b.Id,
                 Name = b.Name,
                 courseId = b.CourseId,
-                LessonCount = b.LessonCount
+                LessonCount = b.Lessons.Count()
             }).ToListAsync();
 
             return responseHandler.Success(Sections, "Sections returned successfully");

@@ -21,20 +21,24 @@ namespace TechMeter.Application.Features.Section.Query.GetSectionById
             {
                 return responseHandler.NotFound<GetSectionResponse>("Course Is Not Found");
             }
-            var section = await context.Section.FirstOrDefaultAsync(b => b.Id == request.sectionId && b.CourseId == request.courseId);
+            var section = await context.Section
+                .Where(b => b.Id == request.sectionId && b.CourseId == request.courseId)
+                .OrderBy(b=>b.SectionOrder)
+                .Select(b => new GetSectionResponse
+                {
+                    courseId = request.courseId,
+                    Id = b.Id,
+                    Name = b.Name,
+                    LessonCount = b.Lessons.Count(),
+                }).FirstOrDefaultAsync(cancellationToken);
+
             if (section == null)
             {
                 return responseHandler.NotFound<GetSectionResponse>("Section is not found");
             }
 
-            var response = new GetSectionResponse
-            {
-                courseId = request.courseId,
-                Id = section.Id,
-                Name = section.Name,
-                LessonCount = section.LessonCount,
-            };
-            return responseHandler.Success(response, "Sections retuned successfully");
+
+            return responseHandler.Success(section, "Sections retuned successfully");
         }
     }
 }

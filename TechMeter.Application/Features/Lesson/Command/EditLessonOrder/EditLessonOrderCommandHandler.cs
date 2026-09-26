@@ -26,7 +26,7 @@ namespace TechMeter.Application.Features.Lesson.Command.EditLessonOrder
                 .Where(b => b.SectionId == request.SectionId)
                 .ToListAsync(cancellationToken);
 
-            if (lessons == null)
+            if (lessons == null||!lessons.Any())
             {
                 return responseHandler.Success(string.Empty, "Section Is Empty");
             }

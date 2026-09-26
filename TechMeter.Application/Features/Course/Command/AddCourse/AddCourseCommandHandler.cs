@@ -60,6 +60,8 @@ namespace TechMeter.Application.Features.Course.Command.AddCourse
                     ProviderId = request.providerId,
                     Price = request.addCourseRequest.Price,
                     Currency = request.addCourseRequest.Currency,
+                    SectionCount = 0,
+
 
                 };
                 await context.Course.AddAsync(course);
