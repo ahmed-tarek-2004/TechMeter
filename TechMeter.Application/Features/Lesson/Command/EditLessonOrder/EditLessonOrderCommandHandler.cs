@@ -11,7 +11,7 @@ using TechMeter.Application.DTO.Course;
 using TechMeter.Domain.Models;
 using TechMeter.Domain.Shared.Bases;
 
-namespace TechMeter.Application.Features.Lesson.Command
+namespace TechMeter.Application.Features.Lesson.Command.EditLessonOrder
 {
     public class EditLessonOrderCommandHandler(IApplicationDbContext context, ResponseHandler responseHandler) : IRequestHandler<EditLessonOrderCommand, Response<string>>
     {
