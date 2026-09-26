@@ -20,7 +20,7 @@ namespace TechMeter.Application.Features.Lesson.Command
             var sesionExists = await context.Section.AnyAsync(b => b.Id == request.SectionId);
             if (!sesionExists)
             {
-                return responseHandler.NotFound<string>("Section Is not Exists");
+                return responseHandler.NotFound<string>("Section Is not found");
             }
             var lessons = await context.Lessons
                 .Where(b => b.SectionId == request.SectionId)
@@ -46,9 +46,13 @@ namespace TechMeter.Application.Features.Lesson.Command
             if (!request.LessonsId.All(b => lessonsIds.Contains(b)))
                 return responseHandler.BadRequest<string>("One or more lessons do not belong to this section.");
 
-            for (int i = 1; i <= lessons.Count(); i++)
+            var lessonsById = lessons.ToDictionary(x => x.Id);
+
+            for (int i = 0; i < request.LessonsId.Count; i++)
             {
-                lessons[i - 1].LessonOrder = i;
+                var lessonId = request.LessonsId[i];
+
+                lessonsById[lessonId].LessonOrder = i + 1;
             }
             await context.SaveChangesAsync(cancellationToken);
             return responseHandler.Success(string.Empty, "Lessons Order Updated Successfully");
