@@ -21,7 +21,9 @@ namespace TechMeter.Application.Features.Section.Query.GetSectionById
             {
                 return responseHandler.NotFound<GetSectionResponse>("Course Is Not Found");
             }
-            var section = await context.Section.Where(b => b.Id == request.sectionId && b.CourseId == request.courseId)
+            var section = await context.Section
+                .Where(b => b.Id == request.sectionId && b.CourseId == request.courseId)
+                .OrderBy(b=>b.SectionOrder)
                 .Select(b => new GetSectionResponse
                 {
                     courseId = request.courseId,
