@@ -177,7 +177,7 @@ namespace TechMeter.Infrastructure.Adapters.Cloudinary
             if (result.Error != null)
                 throw new Exception($"Cloudinary error occurred: {result.Error.Message}");
 
-            var downloaded = result.SecureUrl.AbsoluteUri.Replace("/raw/upload/", $"/raw/upload/fl_attachment/:{Uri.EscapeDataString(name ?? publicId)}");
+            var downloaded = result.SecureUrl.AbsoluteUri;//.Replace("/raw/upload/", $"/raw/upload/fl_attachment/:{Uri.EscapeDataString(name ?? publicId)}");
             return downloaded;
         }
     }
