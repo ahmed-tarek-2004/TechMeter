@@ -5,8 +5,6 @@ import {
   ExternalLink,
   ZoomIn,
   ZoomOut,
-  RotateCw,
-  Maximize2,
   CheckCircle,
 } from 'lucide-react';
 

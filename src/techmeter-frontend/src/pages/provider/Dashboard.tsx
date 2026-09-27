@@ -7,7 +7,6 @@ import { orderService } from '../../services/orderService';
 import {
   Loader2,
   Plus,
-  BookOpen,
   Users,
   DollarSign,
   Edit,
@@ -25,13 +24,11 @@ import {
   X,
   BookMarked,
   ShieldCheck,
-  MessageSquare,
   TrendingUp,
   Star,
   Wallet,
   ArrowDownToLine,
   CheckCircle2,
-  AlertCircle,
   BarChart3,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -56,7 +53,7 @@ const ProviderDashboard: React.FC = () => {
   const [payoutNotes, setPayoutNotes] = useState('');
 
   // 1. Fetch Provider Analytics (Roadmap Section 3.2.1)
-  const { data: analyticsData, isLoading: isLoadingAnalytics } = useQuery({
+  const { data: analyticsData } = useQuery({
     queryKey: ['provider-analytics'],
     queryFn: () => providerService.getProviderAnalytics(),
     enabled: !!user,
@@ -339,7 +336,7 @@ const ProviderDashboard: React.FC = () => {
                     <div className="relative w-full flex items-end justify-center space-x-1 h-36">
                       {/* Tooltip on hover */}
                       <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-[10px] font-bold px-2 py-1 rounded-md shadow-md z-20 whitespace-nowrap">
-                        ${item.revenue.toLocaleString()} • {item.enrollments} Students
+                        ${item.revenue.toLocaleString()} • {item.enrollments ?? item.students ?? 0} Students
                       </div>
 
                       {/* Revenue Bar */}
@@ -350,7 +347,7 @@ const ProviderDashboard: React.FC = () => {
                       {/* Enrollments Bar */}
                       <div
                         className="w-1/3 bg-emerald-400/80 group-hover:bg-emerald-400 rounded-t-md transition-all duration-300"
-                        style={{ height: `${Math.min(100, Math.max(10, (item.enrollments / 30) * 100))}%` }}
+                        style={{ height: `${Math.min(100, Math.max(10, (((item.enrollments ?? item.students ?? 0) / 30) * 100)))}%` }}
                       />
                     </div>
                     <span className="mt-2 text-[10px] font-bold text-gray-500 dark:text-gray-400">

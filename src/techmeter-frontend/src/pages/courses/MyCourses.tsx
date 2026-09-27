@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   ArrowRight,
   GraduationCap,
-  Sparkles,
   Clock,
   Compass,
 } from 'lucide-react';

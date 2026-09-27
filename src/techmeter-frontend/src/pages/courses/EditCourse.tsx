@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '../../services/courseService';
 import { categoryService } from '../../services/categoryService';
 import { coursePlaceholder } from '../../utils/placeholders';
+import { Course, Category } from '../../types';
 import toast from 'react-hot-toast';
 import {
   ArrowLeft,
@@ -13,46 +14,24 @@ import {
   Save,
 } from 'lucide-react';
 
-const EditCourse: React.FC = () => {
-  const { id: courseId } = useParams<{ id: string }>();
+interface EditCourseFormProps {
+  course: Course;
+  categories: Category[];
+}
+
+const EditCourseForm: React.FC<EditCourseFormProps> = ({ course, categories }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [price, setPrice] = useState<number | string>(0);
-  const [currency, setCurrency] = useState('USD');
+  const [formData, setFormData] = useState({
+    title: course.title || '',
+    description: course.description || '',
+    categoryId: course.categoryId || '',
+    price: course.price ?? 0,
+    currency: course.currency || 'USD',
+  });
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
-
-  // 1. Fetch Course Data
-  const { data: courseData, isLoading: isLoadingCourse } = useQuery({
-    queryKey: ['course', courseId],
-    queryFn: () => courseService.getCourseById(courseId!),
-    enabled: !!courseId,
-  });
-
-  // 2. Fetch Categories
-  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => categoryService.getAllCategories(),
-  });
-
-  const categories = categoriesData?.data || [];
-
-  // Populate state once course data loads
-  useEffect(() => {
-    if (courseData?.data) {
-      const c = courseData.data;
-      setTitle(c.title || '');
-      setDescription(c.description || '');
-      setCategoryId(c.categoryId || '');
-      setPrice(c.price ?? 0);
-      setCurrency(c.currency || 'USD');
-      setImagePreview(c.courseProfileImageUrl || '');
-    }
-  }, [courseData]);
+  const [imagePreview, setImagePreview] = useState<string>(course.courseProfileImageUrl || '');
 
   // Handle Image Selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,14 +44,14 @@ const EditCourse: React.FC = () => {
 
   // Update Mutation
   const updateMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      return courseService.updateCourse(courseId!, formData);
+    mutationFn: async (submitData: FormData) => {
+      return courseService.updateCourse(course.id, submitData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['course', courseId] });
+      queryClient.invalidateQueries({ queryKey: ['course', course.id] });
       queryClient.invalidateQueries({ queryKey: ['provider-courses'] });
       toast.success('Course updated successfully!');
-      navigate(`/provider/courses/${courseId}/curriculum`);
+      navigate(`/provider/courses/${course.id}/curriculum`);
     },
     onError: () => {
       toast.error('Failed to update course.');
@@ -81,31 +60,23 @@ const EditCourse: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) {
+    if (!formData.title.trim()) {
       toast.error('Please enter a course title');
       return;
     }
 
-    const formData = new FormData();
-    formData.append('Title', title);
-    formData.append('Description', description);
-    formData.append('CategoryId', categoryId);
-    formData.append('Price', price.toString());
-    formData.append('Currency', currency);
+    const submitData = new FormData();
+    submitData.append('Title', formData.title.trim());
+    submitData.append('Description', formData.description.trim());
+    submitData.append('CategoryId', formData.categoryId);
+    submitData.append('Price', formData.price.toString());
+    submitData.append('Currency', formData.currency);
     if (imageFile) {
-      formData.append('CourseProfileImageUrl', imageFile);
+      submitData.append('CourseProfileImageUrl', imageFile);
     }
 
-    updateMutation.mutate(formData);
+    updateMutation.mutate(submitData);
   };
-
-  if (isLoadingCourse || isLoadingCategories) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center transition-colors duration-200">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8 transition-colors duration-200">
@@ -121,7 +92,7 @@ const EditCourse: React.FC = () => {
           </Link>
           <div className="flex items-center space-x-3">
             <Link
-              to={`/provider/courses/${courseId}/curriculum`}
+              to={`/provider/courses/${course.id}/curriculum`}
               className="inline-flex items-center px-4 py-2 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition"
             >
               <Layers className="h-3.5 w-3.5 mr-1.5" />
@@ -147,8 +118,8 @@ const EditCourse: React.FC = () => {
               </label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g. Complete React & TypeScript Bootcamp"
                 required
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
@@ -162,13 +133,13 @@ const EditCourse: React.FC = () => {
                   Category <span className="text-rose-500">*</span>
                 </label>
                 <select
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
+                  value={formData.categoryId}
+                  onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                   required
                   className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
                 >
                   <option value="" className="dark:bg-gray-800">Select category</option>
-                  {categories.map((cat: any) => (
+                  {categories.map((cat) => (
                     <option key={cat.id} value={cat.id} className="dark:bg-gray-800">
                       {cat.name}
                     </option>
@@ -186,8 +157,8 @@ const EditCourse: React.FC = () => {
                     type="number"
                     step="0.01"
                     min="0"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
                     required
                     className="w-full pl-9 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
                   />
@@ -197,8 +168,8 @@ const EditCourse: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Currency</label>
                 <select
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value)}
+                  value={formData.currency}
+                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
                 >
                   <option value="USD" className="dark:bg-gray-800">USD ($)</option>
@@ -216,8 +187,8 @@ const EditCourse: React.FC = () => {
               </label>
               <textarea
                 rows={5}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Describe what students will learn in this course..."
                 className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition"
               />
@@ -281,6 +252,49 @@ const EditCourse: React.FC = () => {
       </div>
     </div>
   );
+};
+
+const EditCourse: React.FC = () => {
+  const { id: courseId } = useParams<{ id: string }>();
+
+  // 1. Fetch Course Data
+  const { data: courseData, isLoading: isLoadingCourse } = useQuery({
+    queryKey: ['course', courseId],
+    queryFn: () => courseService.getCourseById(courseId!),
+    enabled: !!courseId,
+  });
+
+  // 2. Fetch Categories
+  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryService.getAllCategories(),
+  });
+
+  if (isLoadingCourse || isLoadingCategories) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center transition-colors duration-200">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+      </div>
+    );
+  }
+
+  const course = courseData?.data;
+
+  if (!course) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center justify-center p-4 transition-colors duration-200">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Course not found</h2>
+        <Link
+          to="/provider/dashboard"
+          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition"
+        >
+          Back to Dashboard
+        </Link>
+      </div>
+    );
+  }
+
+  return <EditCourseForm key={course.id} course={course} categories={categoriesData?.data || []} />;
 };
 
 export default EditCourse;

@@ -64,11 +64,8 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   size = 'md',
   className = '',
 }) => {
-  const [imgError, setImgError] = useState(false);
-
-  useEffect(() => {
-    setImgError(false);
-  }, [src]);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const isImageBroken = Boolean(src && failedSrc === src);
 
   const displayName = name?.trim() || 'Learner';
   const initial = displayName.charAt(0).toUpperCase() || 'U';
@@ -80,12 +77,12 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
     lg: 'w-10 h-10 text-sm',
   }[size];
 
-  if (src && !imgError) {
+  if (src && !isImageBroken) {
     return (
       <img
         src={src}
         alt={displayName}
-        onError={() => setImgError(true)}
+        onError={() => setFailedSrc(src)}
         className={`${sizeClasses} rounded-full object-cover border border-gray-200 dark:border-gray-700 flex-shrink-0 ${className}`}
       />
     );
@@ -456,13 +453,6 @@ const CoursePlayer: React.FC = () => {
   // Determine current active lesson
   const currentLesson = lessons.find((l) => l.id === lessonId) || lessons[0];
 
-  // Auto expand current section on load
-  useEffect(() => {
-    if (currentLesson?.sectionId) {
-      setOpenSections((prev) => ({ ...prev, [currentLesson.sectionId]: true }));
-    }
-  }, [currentLesson]);
-
   // 5. Fetch Comments for current lesson
   const { data: commentsData } = useQuery({
     queryKey: ['lesson-comments', currentLesson?.id],
@@ -482,7 +472,7 @@ const CoursePlayer: React.FC = () => {
 
   // Toggle Section
   const toggleSection = (sectionId: string) => {
-    setOpenSections((prev) => ({ ...prev, [sectionId]: !prev[sectionId] }));
+    setOpenSections((prev) => ({ ...prev, [sectionId]: !(prev[sectionId] ?? true) }));
   };
 
   // Mark Watched Mutation
@@ -577,8 +567,9 @@ const CoursePlayer: React.FC = () => {
 
   // Close likes modal on Escape key
   useEffect(() => {
+    if (!selectedLikesCommentId) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedLikesCommentId) {
+      if (e.key === 'Escape') {
         setSelectedLikesCommentId(null);
       }
     };
@@ -1288,7 +1279,7 @@ const CoursePlayer: React.FC = () => {
               }
 
               const sectionCompleted = allSectionLessons.filter((l) => watchedIds.has(l.id)).length;
-              const isOpen = openSections[section.id] !== false;
+              const isOpen = openSections[section.id] ?? true;
 
               return (
                 <div key={section.id} className="bg-white dark:bg-gray-900/40">

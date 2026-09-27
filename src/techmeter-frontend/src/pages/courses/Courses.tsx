@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '../../services/courseService';
 import { categoryService } from '../../services/categoryService';
@@ -11,12 +12,13 @@ import { useAuth } from '../../context/AuthContext';
 const Courses: React.FC = () => {
   const queryClient = useQueryClient();
   const { isAuthenticated, user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [priceFilter, setPriceFilter] = useState<'all' | 'free' | 'paid'>('all');
 
   const { data: coursesData, isLoading: coursesLoading } = useQuery({
-    queryKey: ['courses', searchTerm, selectedCategory, priceFilter],
+    queryKey: ['courses'],
     queryFn: () => courseService.getAllCourses(),
     retry: false,
   });

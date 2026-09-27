@@ -109,7 +109,7 @@ class NotificationHubService {
         try {
           await this.connection?.start();
           this.notifyConnectionState(true);
-        } catch (error) {
+        } catch {
           this.notifyConnectionState(false);
         } finally {
           this.connectPromise = null;

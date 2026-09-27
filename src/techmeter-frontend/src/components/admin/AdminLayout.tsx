@@ -48,13 +48,13 @@ const AdminLayout: React.FC = () => {
   }, [isCollapsed]);
 
   const navItems = [
-    { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard, badge: null },
-    { name: 'User Management', path: '/admin/users', icon: Users, badge: null },
-    { name: 'Categories', path: '/admin/categories', icon: Layers, badge: null },
-    { name: 'Courses & Catalog', path: '/admin/courses', icon: BookOpen, badge: null },
-    { name: 'Orders', path: '/admin/orders', icon: ShoppingBag, badge: null },
-    { name: 'Transactions', path: '/admin/transactions', icon: CreditCard, badge: null },
-    { name: 'Reviews Moderation', path: '/admin/reviews', icon: Star, badge: null },
+    { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'User Management', path: '/admin/users', icon: Users },
+    { name: 'Categories', path: '/admin/categories', icon: Layers },
+    { name: 'Courses & Catalog', path: '/admin/courses', icon: BookOpen },
+    { name: 'Orders', path: '/admin/orders', icon: ShoppingBag },
+    { name: 'Transactions', path: '/admin/transactions', icon: CreditCard },
+    { name: 'Reviews Moderation', path: '/admin/reviews', icon: Star },
   ];
 
   const handleLogout = async () => {

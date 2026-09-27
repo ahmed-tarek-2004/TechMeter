@@ -28,7 +28,6 @@ import {
   XCircle,
   AlertTriangle,
   Play,
-  FileText,
   MessageSquare,
   ShieldAlert,
 } from 'lucide-react';

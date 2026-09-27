@@ -319,13 +319,20 @@ export interface AdminAnalyticsSummary {
 }
 
 export interface ProviderAnalyticsSummary {
-  totalEarnings: number;
-  netPayoutAvailable: number;
-  totalStudentsEnrolled: number;
-  totalPublishedCourses: number;
-  averageCourseRating: number;
-  topCourses: CourseSalesPerformance[];
-  revenueTrend: { month: string; amount: number; enrollments?: number }[];
+  totalEarnings?: number;
+  totalRevenue?: number;
+  netPayoutAvailable?: number;
+  netRevenue?: number;
+  pendingPayout?: number;
+  totalStudentsEnrolled?: number;
+  totalStudents?: number;
+  totalPublishedCourses?: number;
+  averageCourseRating?: number;
+  averageRating?: number;
+  topCourses?: CourseSalesPerformance[];
+  coursePerformance?: CourseSalesPerformance[];
+  revenueTrend?: { month: string; amount?: number; revenue?: number; enrollments?: number; students?: number }[];
+  monthlyRevenue?: { month: string; amount?: number; revenue: number; enrollments?: number; students?: number }[];
 }
 
 export interface CourseSalesPerformance {

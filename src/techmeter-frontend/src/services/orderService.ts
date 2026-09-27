@@ -257,4 +257,20 @@ export const orderService = {
     const response = await api.put<ApiResponse<void>>(`/Order/cancel/${encodeURIComponent(orderId)}`);
     return response.data;
   },
+
+  /**
+   * Update order status (Admin)
+   */
+  async updateOrderStatus(orderId: string, status: string): Promise<ApiResponse<void>> {
+    const response = await api.put<ApiResponse<void>>(`/Order/${encodeURIComponent(orderId)}/status`, { status });
+    return response.data;
+  },
+
+  /**
+   * Delete order record (Admin)
+   */
+  async deleteOrder(orderId: string): Promise<ApiResponse<void>> {
+    const response = await api.delete<ApiResponse<void>>(`/Order/${encodeURIComponent(orderId)}`);
+    return response.data;
+  },
 };

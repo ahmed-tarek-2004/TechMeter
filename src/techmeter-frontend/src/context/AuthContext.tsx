@@ -123,7 +123,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const registerFn = data.role === 'provider'
       ? authService.registerProvider
       : authService.registerStudent;
-    const authData = await registerFn(data);
+    const authData: any = await registerFn(data);
 
     const userId = authData?.id || authData?.Id || authData?.userId || authData?.UserId;
     const email = authData?.emailAddress || authData?.email || data.email;

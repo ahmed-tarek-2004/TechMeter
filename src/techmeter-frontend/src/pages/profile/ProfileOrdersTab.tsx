@@ -231,7 +231,7 @@ const ProfileOrdersTab: React.FC<ProfileOrdersTabProps> = ({
       ) : (
         /* Orders List */
         <div className="space-y-4">
-          {orders.map((order) => {
+          {orders.map((order, idx) => {
             const orderLink = isProvider
               ? '/provider/orders'
               : role === 'admin'
@@ -240,7 +240,7 @@ const ProfileOrdersTab: React.FC<ProfileOrdersTabProps> = ({
 
             return (
               <div
-                key={order.id || Math.random().toString()}
+                key={order.id || `order_item_${idx}`}
                 className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-indigo-100 dark:hover:border-indigo-900/60 transition-all duration-200"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

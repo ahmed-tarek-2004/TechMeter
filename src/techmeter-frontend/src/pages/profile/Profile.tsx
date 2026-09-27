@@ -130,9 +130,9 @@ const Profile: React.FC = () => {
   const ordersList: OrderSummaryResponse[] = Array.isArray(rawOrders?.items)
     ? rawOrders.items
     : Array.isArray(rawOrders)
-    ? rawOrders
-    : Array.isArray(ordersData?.data?.data)
-    ? (ordersData?.data?.data as any)
+    ? (rawOrders as OrderSummaryResponse[])
+    : Array.isArray((rawOrders as any)?.data)
+    ? ((rawOrders as any)?.data as OrderSummaryResponse[])
     : [];
 
   const totalOrdersCount: number =

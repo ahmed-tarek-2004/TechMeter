@@ -13,9 +13,6 @@ import {
   Lock,
   Unlock,
   KeyRound,
-  Mail,
-  Phone,
-  Calendar,
   Eye,
   X,
   Copy,
@@ -24,7 +21,6 @@ import {
   ChevronRight,
   UserCheck,
   GraduationCap,
-  Sparkles,
   AlertTriangle,
   RefreshCw,
   MessageSquare,
@@ -40,7 +36,7 @@ const AdminUsers: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = 10;
 
   // Modals & Selected Item State
   const [selectedUser, setSelectedUser] = useState<AdminUserListItem | null>(null);
@@ -317,7 +313,9 @@ const AdminUsers: React.FC = () => {
                                 {user.fullName || user.userName}
                               </span>
                               {user.isEmailConfirmed && (
-                                <BadgeCheck className="h-3.5 w-3.5 text-indigo-500" title="Email Verified" />
+                                <span title="Email Verified">
+                                  <BadgeCheck className="h-3.5 w-3.5 text-indigo-500" />
+                                </span>
                               )}
                             </div>
                             <p className="text-[11px] text-gray-500 dark:text-gray-400">

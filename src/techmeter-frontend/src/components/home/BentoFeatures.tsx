@@ -5,7 +5,6 @@ import {
   Award,
   ShieldCheck,
   Zap,
-  BookOpen,
 } from 'lucide-react';
 
 const features = [

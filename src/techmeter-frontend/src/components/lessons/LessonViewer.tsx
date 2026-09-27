@@ -3,7 +3,7 @@ import { getLessonMediaType, LessonMediaType, formatMediaUrl } from '../../utils
 import { VideoPlayer } from './VideoPlayer';
 import { PdfViewer } from './PdfViewer';
 import { ImageViewer } from './ImageViewer';
-import { PlayCircle, AlertCircle } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 
 interface LessonViewerProps {
   lessonUrl?: string | null;

@@ -21,6 +21,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Transaction } from '../../types';
 
 const ProviderTransactions: React.FC = () => {
   const [fromDate, setFromDate] = useState('');
@@ -28,7 +29,7 @@ const ProviderTransactions: React.FC = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedTx, setSelectedTx] = useState<any | null>(null);
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const pageSize = 10;
 
   // Fetch Provider Transactions with date filters
@@ -43,7 +44,7 @@ const ProviderTransactions: React.FC = () => {
       }),
   });
 
-  const rawTransactions = useMemo(() => {
+  const rawTransactions: Transaction[] = useMemo(() => {
     return transData?.data?.items || transData?.data || [];
   }, [transData]);
 
@@ -51,7 +52,7 @@ const ProviderTransactions: React.FC = () => {
 
   // Filter by search & status
   const filteredTransactions = useMemo(() => {
-    return rawTransactions.filter((tx: any) => {
+    return rawTransactions.filter((tx: Transaction) => {
       const q = searchTerm.toLowerCase();
       const matchesSearch =
         !q ||
@@ -74,11 +75,11 @@ const ProviderTransactions: React.FC = () => {
   // Aggregate Metrics
   const metrics = useMemo(() => {
     const totalGross = rawTransactions.reduce(
-      (sum: number, tx: any) => sum + (Number(tx.amount) || 0),
+      (sum: number, tx: Transaction) => sum + (Number(tx.amount) || 0),
       0
     );
     const settledCount = rawTransactions.filter(
-      (tx: any) => (tx.status || 'succeeded').toLowerCase() === 'succeeded' || (tx.status || '').toLowerCase() === 'settled'
+      (tx: Transaction) => (tx.status || 'succeeded').toLowerCase() === 'succeeded' || (tx.status || '').toLowerCase() === 'settled'
     ).length;
     const avgTicket = rawTransactions.length > 0 ? totalGross / rawTransactions.length : 0;
 
@@ -332,7 +333,7 @@ const ProviderTransactions: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-xs">
-                  {filteredTransactions.map((tx: any, idx: number) => {
+                  {filteredTransactions.map((tx: Transaction, idx: number) => {
                     const txId = tx.transactionId || tx.id || `TX-${1000 + idx}`;
                     const status = (tx.status || 'succeeded').toLowerCase();
                     return (

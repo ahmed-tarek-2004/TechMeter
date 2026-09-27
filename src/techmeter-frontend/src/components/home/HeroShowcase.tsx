@@ -272,7 +272,7 @@ export const HeroShowcase: React.FC = () => {
             <span className="text-[11px] text-gray-700 dark:text-slate-300">Ready • Node v22.12</span>
           </div>
           <div className="flex items-center gap-3 text-[11px] text-gray-400 dark:text-slate-500">
-            <span className="hidden sm:inline flex items-center gap-1">
+            <span className="hidden sm:inline-flex items-center gap-1">
               <GitBranch className="w-3 h-3" /> main
             </span>
             <span>UTF-8</span>

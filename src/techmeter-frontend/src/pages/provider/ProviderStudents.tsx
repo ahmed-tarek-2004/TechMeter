@@ -52,7 +52,7 @@ const ProviderStudents: React.FC = () => {
   const filteredStudents = useMemo(() => {
     if (!searchTerm.trim()) return rawStudents;
     const q = searchTerm.toLowerCase();
-    return rawStudents.filter((s: any) =>
+    return rawStudents.filter((s: Contact) =>
       (s.fullName || '').toLowerCase().includes(q) ||
       (s.userName || '').toLowerCase().includes(q) ||
       (s.name || '').toLowerCase().includes(q) ||
@@ -213,7 +213,7 @@ const ProviderStudents: React.FC = () => {
         ) : viewMode === 'grid' ? (
           /* Grid View */
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {paginatedStudents.map((student: any, idx: number) => {
+            {paginatedStudents.map((student: Contact, idx: number) => {
               const studentName = student.fullName || student.name || student.userName || 'Enrolled Student';
               // Simulated progress percentage for visual richness
               const progressVal = Math.min(100, Math.max(20, ((idx * 23) % 80) + 20));
@@ -299,7 +299,7 @@ const ProviderStudents: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-xs">
-                  {paginatedStudents.map((student: any, idx: number) => {
+                  {paginatedStudents.map((student: Contact, idx: number) => {
                     const studentName = student.fullName || student.name || student.userName || 'Enrolled Student';
                     const progressVal = Math.min(100, Math.max(20, ((idx * 23) % 80) + 20));
                     return (

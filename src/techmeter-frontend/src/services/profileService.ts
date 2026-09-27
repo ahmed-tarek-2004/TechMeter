@@ -12,14 +12,14 @@ export const profileService = {
     return response.data;
   },
 
-  async updateStudentProfile(data: FormData): Promise<ApiResponse<string>> {
+  async updateStudentProfile(data: FormData): Promise<ApiResponse<any>> {
     const response = await api.put('/Profile/student', data, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },
 
-  async updateProviderProfile(data: FormData): Promise<ApiResponse<string>> {
+  async updateProviderProfile(data: FormData): Promise<ApiResponse<any>> {
     const response = await api.put('/Profile/provider', data, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });

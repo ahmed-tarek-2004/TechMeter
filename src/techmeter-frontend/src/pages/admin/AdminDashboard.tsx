@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { adminService } from '../../services/adminService';
 import { orderService } from '../../services/orderService';
 import { courseService } from '../../services/courseService';
-import { categoryService } from '../../services/categoryService';
 import {
   DollarSign,
   Users,
@@ -50,19 +49,11 @@ const AdminDashboard: React.FC = () => {
     queryFn: () => courseService.getAllCourses(),
   });
 
-  // 4. Categories Query
-  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ['admin-categories-count'],
-    queryFn: () => categoryService.getAllCategories(),
-  });
-
   const rawStats = analyticsData?.data;
   const coursesList = coursesData?.data || [];
-  const categoriesList = categoriesData?.data || [];
-  const recentOrders = ordersData?.data?.items || ordersData?.data || [];
+  const recentOrders = ordersData?.data?.items || [];
 
   const totalCourses = coursesList.length || rawStats?.totalCourses || 128;
-  const totalCategories = categoriesList.length || 5;
   const totalRevenue = rawStats?.totalRevenue || 24850.0;
   const totalStudents = rawStats?.totalStudents || 1420;
   const totalProviders = rawStats?.totalProviders || 85;

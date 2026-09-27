@@ -16,18 +16,15 @@ import {
   ChevronUp,
   Layers,
   Upload,
-  Eye,
   X,
   FileVideo,
   CheckCircle2,
-  AlertCircle,
   Play,
   Film,
   FolderPlus,
   Sparkles,
   FileText,
   Image as ImageIcon,
-  File,
 } from 'lucide-react';
 import { Section, Lesson } from '../../types';
 import { LessonViewer } from '../../components/lessons/LessonViewer';

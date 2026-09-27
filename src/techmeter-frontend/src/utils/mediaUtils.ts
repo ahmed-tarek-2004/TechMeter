@@ -61,7 +61,7 @@ export function formatMediaUrl(url?: string | null): string {
  */
 export function getYouTubeEmbedUrl(url?: string | null): string | null {
   if (!url) return null;
-  const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+  const ytRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
   const match = url.match(ytRegex);
   return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1&enablejsapi=1&rel=0` : null;
 }
@@ -71,7 +71,7 @@ export function getYouTubeEmbedUrl(url?: string | null): string | null {
  */
 export function getVimeoEmbedUrl(url?: string | null): string | null {
   if (!url) return null;
-  const vimeoRegex = /(?:vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|))(\d+)/i;
+  const vimeoRegex = /(?:vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|))(\d+)/i;
   const match = url.match(vimeoRegex);
   return match ? `https://player.vimeo.com/video/${match[1]}?autoplay=1` : null;
 }

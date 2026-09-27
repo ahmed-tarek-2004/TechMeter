@@ -154,9 +154,9 @@ const Notifications: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-3">
-            {displayedNotifications.map((notification) => (
+            {displayedNotifications.map((notification, idx) => (
               <div
-                key={notification.id || `notif_${Math.random()}`}
+                key={notification.id || `notif_${idx}_${notification.createdAt || 'item'}`}
                 className={`bg-white dark:bg-gray-900 rounded-2xl shadow-xs border p-4 sm:p-5 transition-all duration-200 ${
                   !notification.isRead
                     ? 'border-indigo-300 dark:border-indigo-800/80 bg-indigo-50/20 dark:bg-indigo-950/20 ring-1 ring-indigo-500/20'

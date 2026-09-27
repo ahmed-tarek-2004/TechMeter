@@ -6,7 +6,6 @@ interface StripeCardPreviewProps {
   expiryDate: string;
   brand: string;
   last4: string;
-  isFocused?: string | null;
 }
 
 export const StripeCardPreview: React.FC<StripeCardPreviewProps> = ({
@@ -20,10 +19,7 @@ export const StripeCardPreview: React.FC<StripeCardPreviewProps> = ({
     switch (cardBrand.toLowerCase()) {
       case 'visa':
         return {
-          name: 'VISA',
           gradient: 'from-blue-700 via-indigo-800 to-slate-900',
-          accent: 'text-blue-200',
-          badgeBg: 'bg-blue-600/30 border-blue-400/40',
           logo: (
             <span className="font-black italic tracking-wider text-xl text-white font-serif drop-shadow-sm">
               VISA
@@ -32,10 +28,7 @@ export const StripeCardPreview: React.FC<StripeCardPreviewProps> = ({
         };
       case 'mastercard':
         return {
-          name: 'Mastercard',
           gradient: 'from-slate-900 via-red-950 to-orange-950',
-          accent: 'text-amber-200',
-          badgeBg: 'bg-orange-600/30 border-orange-400/40',
           logo: (
             <div className="flex items-center -space-x-2.5">
               <div className="w-6 h-6 rounded-full bg-red-500/90 shadow-sm" />
@@ -46,10 +39,7 @@ export const StripeCardPreview: React.FC<StripeCardPreviewProps> = ({
       case 'amex':
       case 'american express':
         return {
-          name: 'American Express',
           gradient: 'from-cyan-900 via-teal-900 to-slate-950',
-          accent: 'text-cyan-200',
-          badgeBg: 'bg-cyan-600/30 border-cyan-400/40',
           logo: (
             <span className="font-extrabold tracking-widest text-xs px-2 py-1 bg-cyan-400 text-slate-950 rounded uppercase shadow-sm">
               AMEX
@@ -58,10 +48,7 @@ export const StripeCardPreview: React.FC<StripeCardPreviewProps> = ({
         };
       case 'discover':
         return {
-          name: 'Discover',
           gradient: 'from-orange-800 via-amber-900 to-slate-900',
-          accent: 'text-orange-200',
-          badgeBg: 'bg-orange-600/30 border-orange-400/40',
           logo: (
             <span className="font-black tracking-wider text-sm text-orange-400 uppercase">
               DISCOVER
@@ -70,10 +57,7 @@ export const StripeCardPreview: React.FC<StripeCardPreviewProps> = ({
         };
       default:
         return {
-          name: 'Stripe Card',
           gradient: 'from-indigo-700 via-purple-900 to-slate-950',
-          accent: 'text-indigo-200',
-          badgeBg: 'bg-indigo-600/30 border-indigo-400/40',
           logo: (
             <div className="flex items-center gap-1 font-bold text-white tracking-wide text-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
