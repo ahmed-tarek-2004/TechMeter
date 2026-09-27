@@ -26,7 +26,7 @@ namespace TechMeter.Application.Features.Lesson.Command.AddLesson
                 .Select(b => new
                 {
                     b.Id,
-                    LessonCount = b.Lessons.Count(),
+                    LessonCount = b.Lessons.Max(b=>b.LessonOrder),
                     b.CourseId
                 }).FirstOrDefaultAsync(cancellationToken);
 
