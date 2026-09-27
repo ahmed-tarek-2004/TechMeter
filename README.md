@@ -39,6 +39,7 @@
   - [Contact / Chat Discovery](#-contact--chat-discovery)
   - [Background Jobs](#-background-jobs)
 - [API Endpoints Reference](#-api-endpoints-reference)
+- [API Documentation](#-api-documentation)
 - [Configuration & Settings](#-configuration--settings)
 - [Getting Started](#-getting-started)
 - [Future Features (Planned)](#-future-features-planned)
@@ -81,6 +82,7 @@ TechMeter/
 | **Pagination** | `PaginatedList<T>` for all list endpoints |
 | **Background Jobs** | Hangfire with SQL Server storage |
 | **Real-Time** | SignalR hub for notifications & chat |
+| **API Documentation** | Full `[SwaggerOperation]` + `[SwaggerResponse]` annotations on all controllers |
 
 ---
 
@@ -103,7 +105,7 @@ TechMeter/
 | **Caching** | Redis (StackExchange.Redis) |
 | **Rate Limiting** | ASP.NET Core Rate Limiting (OTP policy, toggle policy) |
 | **Logging** | Serilog (Console + File sinks, Thread/Environment enrichers) |
-| **API Docs** | Swagger (Swashbuckle) + Scalar |
+| **API Docs** | Swagger (Swashbuckle + Annotations) + Scalar |
 | **Error Handling** | Hellang ProblemDetails Middleware |
 
 ---
@@ -326,6 +328,7 @@ Three roles: **student**, **provider**, **admin**
 | `POST /api/section/course/{courseId}` | Provider | Add section |
 | `PUT /api/section/{id}` | Provider | Edit section |
 | `DELETE /api/section/{courseId}/section/{id}` | Provider | Delete section |
+| `PUT /api/section/{courseId}/reorder` | Provider | Reorder sections in a course |
 
 **Lessons** are video-based content within sections:
 
@@ -340,6 +343,7 @@ Three roles: **student**, **provider**, **admin**
 | `POST /api/lesson/{id}/finish` | Student | Mark lesson as watched |
 | `DELETE /api/lesson/{id}/unfinish` | Student | Unmark lesson as watched |
 | `GET /api/lesson/student/watched` | Student | Get all watched lessons |
+| `PUT /api/lesson/{sectionId}/reorder` | Provider | Reorder lessons in a section |
 
 > **Note:** Lesson video uploads are processed **asynchronously via Hangfire** to avoid blocking the request thread.
 
@@ -361,10 +365,10 @@ Three roles: **student**, **provider**, **admin**
 
 | Endpoint | Role | Description |
 |---|---|---|
-| `GET /api/wishlist` | Any | View wishlist |
-| `POST /api/wishlist/{courseId}` | Any | Add course to wishlist |
-| `DELETE /api/wishlist/{wishlistItemId}` | Any | Remove item |
-| `DELETE /api/wishlist/clear` | Any | Clear entire wishlist |
+| `GET /api/wishlist` | Student | View wishlist |
+| `POST /api/wishlist/{courseId}` | Student | Add course to wishlist |
+| `DELETE /api/wishlist/{wishlistItemId}` | Student | Remove item |
+| `DELETE /api/wishlist/clear` | Student | Clear entire wishlist |
 
 ---
 
@@ -563,10 +567,15 @@ Authorization: Bearer <JWT_TOKEN>
 | | POST | `/account/logout` | Auth |
 | | POST | `/account/refresh-token` | Public |
 | | POST | `/account/external-login` | Public |
+| | POST | `/account/enable-two-factor` | Auth |
+| | POST | `/account/disable-two-factor` | Auth |
 | **Profile** | GET | `/profile/provider` | Provider |
 | | PUT | `/profile/provider` | Provider |
 | | GET | `/profile/student` | Student |
 | | PUT | `/profile/student` | Student |
+| | GET | `/profile/admin/users` | Admin |
+| | GET | `/profile/admin/user/{userId}/block` | Admin |
+| | GET | `/profile/admin/user/{userId}/unblock` | Admin |
 | **Category** | GET | `/category` | Public |
 | | GET | `/category/detail/{id}` | Public |
 | | POST | `/category/category` | Admin |
@@ -576,6 +585,7 @@ Authorization: Bearer <JWT_TOKEN>
 | | GET | `/course/{id}` | Public |
 | | GET | `/course/provider` | Provider |
 | | GET | `/course/student` | Student |
+| | GET | `/course/student/{courseId}/learn` | Student |
 | | POST | `/course` | Provider |
 | | PUT | `/course/{id}` | Provider |
 | | DELETE | `/course/{id}` | Provider/Admin |
@@ -584,6 +594,7 @@ Authorization: Bearer <JWT_TOKEN>
 | | POST | `/section/course/{courseId}` | Provider |
 | | PUT | `/section/{id}` | Provider |
 | | DELETE | `/section/{courseId}/section/{id}` | Provider |
+| | PUT | `/section/{courseId}/reorder` | Provider |
 | **Lesson** | POST | `/lesson/{sectionId}` | Provider |
 | | GET | `/lesson/{id}` | Public |
 | | GET | `/lesson/course/{courseId}/all` | Public |
@@ -593,15 +604,16 @@ Authorization: Bearer <JWT_TOKEN>
 | | POST | `/lesson/{id}/finish` | Student |
 | | DELETE | `/lesson/{id}/unfinish` | Student |
 | | GET | `/lesson/student/watched` | Student |
+| | PUT | `/lesson/{sectionId}/reorder` | Provider |
 | **Cart** | GET | `/cart/student` | Student |
 | | GET | `/cart/provider/{studentId}` | Provider |
 | | POST | `/cart/student` | Student |
 | | DELETE | `/cart/student/{cartItemId}` | Student |
 | | DELETE | `/cart/clear` | Student |
-| **WishList** | GET | `/wishlist` | Any |
-| | POST | `/wishlist/{courseId}` | Any |
-| | DELETE | `/wishlist/{wishlistItemId}` | Any |
-| | DELETE | `/wishlist/clear` | Any |
+| **WishList** | GET | `/wishlist` | Student |
+| | POST | `/wishlist/{courseId}` | Student |
+| | DELETE | `/wishlist/{wishlistItemId}` | Student |
+| | DELETE | `/wishlist/clear` | Student |
 | **Order** | GET | `/order/{orderId}` | Auth |
 | | GET | `/order/student` | Student |
 | | GET | `/order/provider` | Provider |
@@ -635,6 +647,43 @@ Authorization: Bearer <JWT_TOKEN>
 | | POST | `/notification/store/token` | Auth |
 | **Contact** | GET | `/contact/student` | Student |
 | | GET | `/contact/provider` | Provider |
+
+---
+
+## 📖 API Documentation
+
+All 16 controllers are fully annotated with Swashbuckle annotations, providing a rich, interactive Swagger UI out of the box.
+
+### What's documented on every endpoint
+
+| Annotation | Purpose |
+|---|---|
+| `[SwaggerOperation]` | `Summary`, `Description`, `OperationId`, and `Tags` per action |
+| `[SwaggerResponse]` | Every HTTP response code (200, 400, 401, 403, 404, 429, 500) with typed body |
+| `[Tags]` on class | Groups endpoints under a named tag in Swagger UI |
+| `[Produces("application/json")]` on class | Declares JSON as the response content type |
+| `[Consumes]` | `multipart/form-data` for file uploads, `application/json` for JSON bodies |
+
+### Swagger tag groups
+
+| Tag | Controller |
+|---|---|
+| `Authentication & Accounts` | AccountController |
+| `Cart` | CartController |
+| `Categories` | CategoryController |
+| `Comments` | CommentsController |
+| `Contacts` | ContactController |
+| `Courses` | CourseController |
+| `Lessons` | LessonController |
+| `Messages` | MessageController |
+| `Notifications` | NotificationController |
+| `Orders` | OrderController |
+| `Payments` | PaymentController |
+| `Users & Profile` | ProfileController |
+| `Ratings` | RatingController |
+| `Sections` | SectionController |
+| `Webhook` | WebhookController |
+| `Wishlist` | WishListController |
 
 ---
 
@@ -707,7 +756,7 @@ dotnet run
 ### API Documentation
 
 Once running, browse:
-- **Swagger UI:** `https://localhost:{port}/swagger`
+- **Swagger UI:** `https://localhost:{port}/swagger` — every endpoint has a `Summary`, `Description`, required role, and all response codes documented
 - **Scalar UI:** `https://localhost:{port}/scalar`
 - **Hangfire Dashboard:** `https://localhost:{port}/hangfire`
 
