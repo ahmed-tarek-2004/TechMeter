@@ -122,6 +122,7 @@ namespace TechMeter.API.Controllers
                 usersRequest.UserName, usersRequest.role, usersRequest.IsLocked, usersRequest.IsTwoFactorEnabled));
             return StatusCode((int)response.StatusCode, response);
         }
+
         [Authorize(Roles = "admin")]
         [HttpGet("admin/user/{userId}")]
         [SwaggerOperation(

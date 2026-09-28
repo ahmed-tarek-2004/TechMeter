@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,16 @@ namespace TechMeter.Application.Features.Profile.Query.GetAdminUsers
             if (request.Islocked.HasValue)
             {
                 logger.LogInformation("Start islocked Filter");
-                query = query.Where(u => !u.LockoutEnd.HasValue);
+                var isLocked = request.Islocked.Value;
+
+                query = isLocked
+                    ? query.Where(u =>
+                        u.LockoutEnd.HasValue &&
+                        u.LockoutEnd > DateTime.UtcNow)
+
+                    : query.Where(u =>
+                        !u.LockoutEnd.HasValue ||
+                        u.LockoutEnd <= DateTime.UtcNow);
             }
 
             if (request.IsTwoFactorEnabled.HasValue)
@@ -63,7 +73,7 @@ namespace TechMeter.Application.Features.Profile.Query.GetAdminUsers
                 Email = u.Email,
                 FullName = u.FullName,
                 IsConfirmed = u.EmailConfirmed,
-                IsLocked = u.LockoutEnabled,
+                IsLocked = u.LockoutEnd == null ? false : u.LockoutEnd > DateTime.UtcNow ? false : true,
                 PhoneNumber = u.PhoneNumber,
                 IsTwoFactorEnabled = u.TwoFactorEnabled,
                 profileImageUrl = u.ProfileUrl,
@@ -76,7 +86,7 @@ namespace TechMeter.Application.Features.Profile.Query.GetAdminUsers
                         r => r.Id,
                         (ur, r) => r.Name!
                     )
-                    .ToList()
+                    .ToList(),
             }).OrderBy(b => b.Id);
 
             var PaginationResponse = await PaginatedList<GetAdminUsersResponse>.CreatePaginatedList(users, request.pageNumber, request.pageSize, cancellationToken);

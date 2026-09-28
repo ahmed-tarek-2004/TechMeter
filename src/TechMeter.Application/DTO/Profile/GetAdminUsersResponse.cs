@@ -19,6 +19,7 @@ namespace TechMeter.Application.DTO.Profile
         public bool IsTwoFactorEnabled { get; set; }
         public string? profileImageUrl { get; set; }
         public List<string> Roles { get; set; }
-        //public int totalOrders { get}
+        public int totalOrders { get; set; }
+        //public decimal totalCost { get; set; }
     }
 }
