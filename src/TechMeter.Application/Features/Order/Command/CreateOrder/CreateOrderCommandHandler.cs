@@ -42,7 +42,7 @@ namespace TechMeter.Application.Features.Order.Command.CreateOrder
                     Id = Guid.NewGuid().ToString(),
                     StudentId = request.StudentId,
                     CreatedAt = DateTime.UtcNow,
-                    Status = TechMeter.Domain.Enums.OrderStatus.PendingPayment,
+                    Status = TechMeter.Domain.Enums.OrderStatus.Paid,
                     TotalPrice = cart.CartItems.Sum(b => b.UnitPrice),
                     UpdatedAt = DateTime.UtcNow,
                     PaymetnIntentId = request.PaymentIntentId,

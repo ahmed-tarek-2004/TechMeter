@@ -9,5 +9,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Query.GetAdminUsers
 {
-    public sealed record class GetAdminUsersCommand(string AdminId, int pageNumber, int pageSize, string? name, string? role,bool? Islocked,bool? IsTwoFactorEnabled) : IRequest<Response<PaginatedList<GetAdminUsersResponse>>>;
+    public sealed record class GetAdminUsersQuery(string AdminId, int pageNumber, int pageSize, string? name, string? role,bool? Islocked,bool? IsTwoFactorEnabled) : IRequest<Response<PaginatedList<GetAdminUsersResponse>>>;
 }

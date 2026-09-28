@@ -9,6 +9,7 @@ using TechMeter.Application.DTO.User;
 using TechMeter.Application.Features.Profile.Command.AdminBlockUser;
 using TechMeter.Application.Features.Profile.Command.EditProviderProfile;
 using TechMeter.Application.Features.Profile.Command.EditStudentProfile;
+using TechMeter.Application.Features.Profile.Query.GetAdminUserById;
 using TechMeter.Application.Features.Profile.Query.GetAdminUsers;
 using TechMeter.Application.Features.Profile.Query.GetProviderProfile;
 using TechMeter.Application.Features.Profile.Query.StudentProfile.StudentProfileQuery;
@@ -117,8 +118,25 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<PaginatedList<GetAdminUsersResponse>>>> GetAdminUsersProfile([FromQuery] PaginatedRequest request, [FromQuery] GetAdminUsersRequest usersRequest)
         {
             var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await mediator.Send(new GetAdminUsersCommand(adminId, request.PageNumber, request.PageSize,
+            var response = await mediator.Send(new GetAdminUsersQuery(adminId!, request.PageNumber, request.PageSize,
                 usersRequest.UserName, usersRequest.role, usersRequest.IsLocked, usersRequest.IsTwoFactorEnabled));
+            return StatusCode((int)response.StatusCode, response);
+        }
+        [Authorize(Roles = "admin")]
+        [HttpGet("admin/user/{userId}")]
+        [SwaggerOperation(
+            Summary = "Get user by Id (admin)",
+            Description = "Requires JWT Bearer authentication with the admin role.",
+            OperationId = "Profile_GetAdminUserById",
+            Tags = new[] { "Users & Profile" })]
+        [SwaggerResponse(StatusCodes.Status200OK, "User retrieved successfully", typeof(Response<GetAdminUsersResponse>))]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "Missing or invalid JWT token")]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have the admin role")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error")]
+        public async Task<ActionResult<Response<GetAdminUsersResponse>>> GetAdminUserProfileByIdAsync([FromRoute] string userId)
+        {
+
+            var response = await mediator.Send(new GetAdminUserByIdQuery(userId));
             return StatusCode((int)response.StatusCode, response);
         }
 

@@ -377,7 +377,6 @@ namespace TechMeter.Infrastructure.Services.Payment
 
             if (!isExsist)
             {
-
                 var orderResponse = await _mediator.Send(new CreateOrderCommand(clientId, paymentIntentId));
                 if (!orderResponse.Succeeded)
                 {

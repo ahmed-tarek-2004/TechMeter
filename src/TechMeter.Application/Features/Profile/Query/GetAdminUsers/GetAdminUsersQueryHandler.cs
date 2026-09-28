@@ -15,11 +15,11 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TechMeter.Application.Features.Profile.Query.GetAdminUsers
 {
-    public class GetAdminUsersCommandHandler(IApplicationDbContext context, ResponseHandler responseHandler,
-        UserManager<User> userManager, ILogger<GetAdminUsersCommandHandler> logger) :
-        IRequestHandler<GetAdminUsersCommand, Response<PaginatedList<GetAdminUsersResponse>>>
+    public class GetAdminUsersQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler,
+        UserManager<User> userManager, ILogger<GetAdminUsersQueryHandler> logger) :
+        IRequestHandler<GetAdminUsersQuery, Response<PaginatedList<GetAdminUsersResponse>>>
     {
-        public async Task<Response<PaginatedList<GetAdminUsersResponse>>> Handle(GetAdminUsersCommand request, CancellationToken cancellationToken)
+        public async Task<Response<PaginatedList<GetAdminUsersResponse>>> Handle(GetAdminUsersQuery request, CancellationToken cancellationToken)
         {
             var query = context.Users
                 .AsNoTracking()
