@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,29 +8,32 @@ using System.Text;
 using System.Threading.Tasks;
 using TechMeter.Application.Common;
 using TechMeter.Application.DTO.Profile;
+using TechMeter.Domain.Models.Auth.Identity;
 using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Profile.Query.GetAdminUserById
 {
-    public class GetAdminUserByIdQueryHandler(IApplicationDbContext context, ResponseHandler responseHandler)
+    public class GetAdminUserByIdQueryHandler(IApplicationDbContext context, UserManager<User> userManager, ResponseHandler responseHandler)
         : IRequestHandler<GetAdminUserByIdQuery, Response<GetAdminUsersResponse>>
     {
         public async Task<Response<GetAdminUsersResponse>> Handle(GetAdminUserByIdQuery request, CancellationToken cancellationToken)
         {
-            var userExists = await context.Users.AnyAsync(b => b.Id == request.userId);
-            if (!userExists)
+            var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(b => b.Id == request.userId);
+            if (user == null)
             {
                 return responseHandler.NotFound<GetAdminUsersResponse>("user is not found");
             }
-            var user = await context.Users.AsNoTracking()
+            var role = await userManager.GetRolesAsync(user);
+            var userResposne = await context.Users.AsNoTracking()
                 .Where(b => b.Id == request.userId)
                 .Select(u => new GetAdminUsersResponse
                 {
                     Id = u.Id,
                     Email = u.Email,
+                    UserName = u.UserName,
                     FullName = u.FullName,
                     IsConfirmed = u.EmailConfirmed,
-                    IsLocked = u.LockoutEnabled,
+                    IsLocked = u.LockoutEnd == null ? false : u.LockoutEnd > DateTime.UtcNow ? false : true,
                     PhoneNumber = u.PhoneNumber,
                     IsTwoFactorEnabled = u.TwoFactorEnabled,
                     profileImageUrl = u.ProfileUrl,
@@ -42,10 +46,15 @@ namespace TechMeter.Application.Features.Profile.Query.GetAdminUserById
                         r => r.Id,
                         (ur, r) => r.Name!
                     )
-                    .ToList()
+                    .ToList(),
+                    totalOrders = role.FirstOrDefault() == "student" ?
+                     context.Order.Count(b => b.StudentId == user.Id) :
+                     //u.Student.Orders.Count(b=>b.StudentId==user.Id) :
+                     context.OrderItem.Select(x => x.OrderId).Distinct().Count(),
+                    //tot
                 }).FirstOrDefaultAsync(cancellationToken);
 
-            return responseHandler.Success(user!, "user returned successfully");
+            return responseHandler.Success(userResposne!, "user returned successfully");
 
         }
     }
