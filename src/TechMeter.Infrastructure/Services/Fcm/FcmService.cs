@@ -95,10 +95,10 @@ namespace TechMeter.Infrastructure.Services.Fcm
                     Body = body,
                 },
             };
-            //logger.LogInformation("start senting fcm");
+            logger.LogInformation("start senting fcm");
             await FirebaseMessaging.DefaultInstance
                 .SendEachForMulticastAsync(messages);
-            //logger.LogInformation("Fcm Service for user {id} is sent", userId);
+            logger.LogInformation("Fcm Service for user {id} is sent", userId);
         }
     }
 }

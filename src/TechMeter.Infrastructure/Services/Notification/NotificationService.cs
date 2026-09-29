@@ -35,7 +35,7 @@ namespace TechMeter.Infrastructure.Services.Notification
 
 
         public NotificationService(ILogger<NotificationService> logger, ApplicationDbContext context,
-            ResponseHandler responseHandler,INotificationSenderService notificationSenderService,IBackgroundJobService backgroundJobService)
+            ResponseHandler responseHandler, INotificationSenderService notificationSenderService, IBackgroundJobService backgroundJobService)
         {
             _logger = logger;
             _context = context;
@@ -44,7 +44,7 @@ namespace TechMeter.Infrastructure.Services.Notification
             _backgroundJobService = backgroundJobService;
         }
 
-       
+
         public async Task<Response<string>> SendUserNotifications(string userId, string Title, string message, NotificationType type)
         {
 
@@ -60,9 +60,9 @@ namespace TechMeter.Infrastructure.Services.Notification
                 if (isOnline)
                 {
                     await _notificationSenderService.SendNotificationAsync(userId, Title, message, DateTime.UtcNow, user?.FullName, user?.UserName);
-                    //_logger.LogInformation("First send fcm ");
-                    ////await _fcmService.SendToTokensAsync(userId, Title, message);
-                    //_backgroundJobService.Enqueue<IFcmService>(b => b.SendToTokensAsync(userId, Title, message));
+                    _logger.LogInformation("First send fcm ");
+                    //await _fcmService.SendToTokensAsync(userId, Title, message);
+                    _backgroundJobService.Enqueue<IFcmService>(b => b.SendToTokensAsync(userId, Title, message));
                 }
                 else
                 {

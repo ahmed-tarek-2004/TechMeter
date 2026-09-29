@@ -13,6 +13,8 @@ using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Features.Course.Command.AddCourse;
 using TechMeter.Application.Features.Course.Command.DeleteCourse;
 using TechMeter.Application.Features.Course.Command.EditCourse;
+using TechMeter.Application.Features.Course.Command.ProviderArcieveCourse;
+using TechMeter.Application.Features.Course.Command.ProviderPublishCourse;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Features.Course.Query.GetCategoryById;
 using TechMeter.Application.Features.Course.Query.GetProviderCourses;
@@ -173,7 +175,43 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new DeleteCourseCommand(responsiableId!, courseId));
             return StatusCode((int)response.StatusCode, response);
         }
+        [HttpPost("provider/submit/{courseId}")]
+        [Authorize(Roles = "provider")]
+        [SwaggerOperation(
+            Summary = "Submit a course for review",
+            Description = "Requires JWT Bearer authentication with the provider role. Submits a draft course for admin review. The course state transitions from Draft → UnderReview. An email notification is sent to the admin. Only the course owner can perform this action.",
+            OperationId = "Course_ProviderSubmit",
+            Tags = new[] { "Courses" })]
+        [SwaggerResponse(StatusCodes.Status200OK, "Course submitted for review successfully", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Course is not in a valid state to be submitted (e.g. already under review or published)", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "Missing or invalid JWT token")]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "User is not the course owner or lacks the provider role")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Course not found", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error")]
+        public async Task<ActionResult<Response<string>>> ProviderSubmitANewCourseAsync([FromRoute] string courseId)
+        {
+            var response = await _mediator.Send(new ProviderSubmitCourseCommand(courseId, GetUserId()));
+            return StatusCode((int)response.StatusCode, response);
+        }
 
+        [HttpPost("provider/archive/{courseId}")]
+        [Authorize(Roles = "provider")]
+        [SwaggerOperation(
+            Summary = "Archive a published course",
+            Description = "Requires JWT Bearer authentication with the provider role. Archives a currently published course, making it no longer visible to students. The course state transitions from Published → Archived. Only the course owner can perform this action.",
+            OperationId = "Course_ProviderArchive",
+            Tags = new[] { "Courses" })]
+        [SwaggerResponse(StatusCodes.Status200OK, "Course archived successfully", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Course is not in a valid state to be archived (e.g. not published)", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "Missing or invalid JWT token")]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "User is not the course owner or lacks the provider role")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Course not found", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error")]
+        public async Task<ActionResult<Response<string>>> ProviderarchiveCourseAsync([FromRoute] string courseId)
+        {
+            var response = await _mediator.Send(new ProviderArcieveCourseCommand(courseId, GetUserId()));
+            return StatusCode((int)response.StatusCode, response);
+        }
         private string GetUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";

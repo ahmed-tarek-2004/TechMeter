@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 
 namespace TechMeter.Infrastructure.Persistence.EntitiesConfigurations
@@ -31,6 +32,9 @@ namespace TechMeter.Infrastructure.Persistence.EntitiesConfigurations
 
             builder.Property(b => b.CourseProfileImageUrl)
                 .IsRequired();
+
+            builder.Property(b => b.State)
+                .HasDefaultValue(CourseState.Draft);
 
         }
     }
