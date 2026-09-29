@@ -28,12 +28,13 @@ namespace TechMeter.Application.Features.Category.Query.GetCategoryById
          Id = c.Id,
          Name = c.Name,
          Description = c.Description,
-         courses = c.Courses.Select(course => new GetCourseResponse
+         courses = c.Courses.Where(b=>b.State==Domain.Enums.CourseState.Published).Select(course => new GetCourseResponse
          {
              Id = course.Id,
              Title = course.Title,
              Description = course.Description,
              CategoryId = course.CategoryId,
+             State = course.State,
              ProviderId = course.ProviderId,
              CourseProfileImageUrl = course.CourseProfileImageUrl
          }).ToList()

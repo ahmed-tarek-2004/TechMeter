@@ -8,5 +8,5 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Course.Command.ProviderPublishCourse
 {
-    public sealed record ProviderPublishCourseCommand(string CourseId, string ProviderId) : IRequest<Response<string>>;
+    public sealed record ProviderSubmitCourseCommand(string CourseId, string ProviderId) : IRequest<Response<string>>;
 }

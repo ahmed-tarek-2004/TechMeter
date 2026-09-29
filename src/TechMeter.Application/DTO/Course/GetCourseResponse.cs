@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models;
 
 namespace TechMeter.Application.DTO.Course
@@ -17,5 +18,6 @@ namespace TechMeter.Application.DTO.Course
         public string ProviderId {  get; set; }
         public string Currency { get; set; }
         public decimal Price { get; set; }
+        public CourseState State { get; set; }
     }
 }

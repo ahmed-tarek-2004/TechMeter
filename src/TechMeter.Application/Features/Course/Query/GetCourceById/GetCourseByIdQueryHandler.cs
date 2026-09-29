@@ -15,7 +15,7 @@ namespace TechMeter.Application.Features.Course.Query.GetCategoryById
     {
         public async Task<Response<GetCourseResponse>> Handle(GetCourseByIdQuery request, CancellationToken cancellationToken)
         {
-            var course = await context.Course.AsNoTracking().FirstOrDefaultAsync(b => b.Id == request.Id);
+            var course = await context.Course.AsNoTracking().FirstOrDefaultAsync(b => b.Id == request.Id && b.State == Domain.Enums.CourseState.Published);
             if (course == null)
             {
                 return responseHandler.NotFound<GetCourseResponse>("Course is not found");
@@ -28,6 +28,7 @@ namespace TechMeter.Application.Features.Course.Query.GetCategoryById
                 Description = course.Description,
                 ProviderId = course.ProviderId,
                 Title = course.Title,
+                State = course.State,
                 Price = course.Price,
                 Currency = course.Currency,
             };

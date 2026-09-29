@@ -24,7 +24,7 @@ namespace TechMeter.Application.Features.Category.Query.GetCategories
                 Id = c.Id,
                 Description = c.Description,
                 Name = c.Name,
-                courses = c.Courses.Select(b => new Application.DTO.Course.GetCourseResponse
+                courses = c.Courses.Where(b => b.State == Domain.Enums.CourseState.Published).Select(b => new Application.DTO.Course.GetCourseResponse
                 {
                     Id = b.Id,
                     Description = b.Description,
@@ -32,7 +32,7 @@ namespace TechMeter.Application.Features.Category.Query.GetCategories
                     CourseProfileImageUrl = b.CourseProfileImageUrl,
                     ProviderId = b.ProviderId,
                     Title = b.Title,
-
+                    State = b.State,
                 })
             }).ToListAsync();
 
