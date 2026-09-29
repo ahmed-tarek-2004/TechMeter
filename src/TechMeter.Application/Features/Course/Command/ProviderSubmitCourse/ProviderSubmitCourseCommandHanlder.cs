@@ -12,15 +12,19 @@ using TechMeter.Domain.Shared.Bases;
 
 namespace TechMeter.Application.Features.Course.Command.ProviderPublishCourse
 {
-    public class ProviderPublishCourseCommandHanlder(IApplicationDbContext context, ResponseHandler responseHandler,IMediator mediator) :
-        IRequestHandler<ProviderPublishCourseCommand, Response<string>>
+    public class ProviderSubmitCourseCommandHanlder(IApplicationDbContext context, ResponseHandler responseHandler, IMediator mediator) :
+        IRequestHandler<ProviderSubmitCourseCommand, Response<string>>
     {
-        public async Task<Response<string>> Handle(ProviderPublishCourseCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(ProviderSubmitCourseCommand request, CancellationToken cancellationToken)
         {
             var course = await context.Course.FirstOrDefaultAsync(b => b.Id == request.CourseId && b.ProviderId == request.ProviderId, cancellationToken);
             if (course == null)
             {
                 return responseHandler.NotFound<string>("course not found for this provider");
+            }
+            if (course.State == CourseState.Published)
+            {
+                return responseHandler.BadRequest<string>("course is already Published");
             }
             if (course.State == CourseState.PendingReview)
             {
