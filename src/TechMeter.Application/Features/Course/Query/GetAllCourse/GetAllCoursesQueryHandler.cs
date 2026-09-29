@@ -15,7 +15,7 @@ namespace TechMeter.Application.Features.Course.Query.GetAllCourse
     {
         public async Task<Response<List<GetCourseResponse>>> Handle(GetAllCoursesQuery request, CancellationToken cancellationToken)
         {
-            var response = await context.Course.Select(b => new GetCourseResponse
+            var response = await context.Course.Where(b => b.State == Domain.Enums.CourseState.Published).Select(b => new GetCourseResponse
             {
                 Id = b.Id,
                 ProviderId = b.ProviderId,
@@ -24,6 +24,7 @@ namespace TechMeter.Application.Features.Course.Query.GetAllCourse
                 Description = b.Description,
                 Title = b.Title,
                 Price = b.Price,
+                State = b.State,
                 Currency = b.Currency
             }).ToListAsync();
             return responseHandler.Success(response, "All Courses Returned Successfully");

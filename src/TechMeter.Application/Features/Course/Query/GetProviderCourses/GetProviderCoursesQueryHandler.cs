@@ -30,6 +30,7 @@ namespace TechMeter.Application.Features.Course.Query.GetProviderCourses
                 Description = b.Description,
                 Title = b.Title,
                 Price = b.Price,
+                State = b.State,
                 Currency = b.Currency
             }).ToListAsync();
             return responseHandler.Success(coursesResponse, "Courses returned successfully");
