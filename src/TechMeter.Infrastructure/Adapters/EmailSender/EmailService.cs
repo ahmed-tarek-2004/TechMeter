@@ -27,7 +27,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
             _userManager = userManager;
             _logger = logger;
         }
-        public async Task SendOtpEmailAsync(string UserName,string Email, string otp)
+        public async Task SendOtpEmailAsync(string UserName, string Email, string otp)
         {
             try
             {
@@ -151,7 +151,7 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
             return sb.ToString();
         }
 
-        public async Task ConfirmEmailAsync(string UserName, string Email, string ExpirationTime, string confirmationLink,CancellationToken cancellationToken)
+        public async Task ConfirmEmailAsync(string UserName, string Email, string ExpirationTime, string confirmationLink, CancellationToken cancellationToken)
         {
             try
             {
@@ -190,6 +190,71 @@ namespace TechMeter.Infrastructure.Adapters.EmailSender
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while sending confirmation email to {Email}");
+                throw;
+            }
+        }
+        public async Task SendPublicEmailMessageAsync(string recipientName, string recipientEmail, string senderName, string title, string content, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var rootPath = Directory.GetCurrentDirectory();
+
+                var templatePath = Path.Combine(
+                    rootPath,
+                    "wwwroot",
+                    "EmailTemplates",
+                    "GenericEmailTemplate.html");
+
+                if (!System.IO.File.Exists(templatePath))
+                {
+                    _logger.LogError(
+                        "Email template not found at path: {TemplatePath}",
+                        templatePath);
+
+                    throw new FileNotFoundException(
+                        "Email template not found.",
+                        templatePath);
+                }
+
+                var emailTemplate = await System.IO.File.ReadAllTextAsync(
+                    templatePath,
+                    cancellationToken);
+
+                emailTemplate = emailTemplate
+                    .Replace("{{Subject}}", title)
+                    .Replace("{{RecipientName}}", recipientName)
+                    .Replace("{{SenderName}}", senderName)
+                    .Replace("{{Content}}", content)
+                    .Replace("{{ActionButton}}", "");
+
+                var sendResult = await _fluentEmail
+                    .To(recipientEmail)
+                    .Subject(title)
+                    .Body(emailTemplate, isHtml: true)
+                    .SendAsync(cancellationToken);
+
+                if (!sendResult.Successful)
+                {
+                    _logger.LogError(
+                        "Failed to send email to {Email}. Errors: {Errors}",
+                        recipientEmail,
+                        string.Join(", ", sendResult.ErrorMessages));
+
+                    throw new InvalidOperationException(
+                        "Failed to send email.");
+                }
+
+                _logger.LogInformation(
+                    "Email successfully sent to {Email}",
+                    recipientEmail);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "An error occurred while sending email to {Email}",
+                    recipientEmail);
+
                 throw;
             }
         }
