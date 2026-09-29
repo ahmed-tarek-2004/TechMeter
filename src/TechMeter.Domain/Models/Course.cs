@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechMeter.Domain.Enums;
 using TechMeter.Domain.Models.Auth.Users;
 
 namespace TechMeter.Domain.Models
@@ -19,6 +20,7 @@ namespace TechMeter.Domain.Models
         public int SectionCount {  get; set; }
         public decimal Price { get; set; }
         public string CategoryId { get; set; }
+        public CourseState State { get; set; } = CourseState.Draft;
         public Category Category { get; set; } = null!;
         public Provider Provider { get; set; }
         public ICollection<Sections> Sections { get; set; } = new List<Sections>();

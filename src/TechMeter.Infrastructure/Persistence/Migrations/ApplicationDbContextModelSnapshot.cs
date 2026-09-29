@@ -502,6 +502,12 @@ namespace TechMeter.Infrastructure.Migrations
                     b.Property<int>("SectionCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Draft");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)

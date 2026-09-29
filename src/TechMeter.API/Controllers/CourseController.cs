@@ -13,6 +13,7 @@ using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Features.Course.Command.AddCourse;
 using TechMeter.Application.Features.Course.Command.DeleteCourse;
 using TechMeter.Application.Features.Course.Command.EditCourse;
+using TechMeter.Application.Features.Course.Command.ProviderPublishCourse;
 using TechMeter.Application.Features.Course.Query.GetAllCourse;
 using TechMeter.Application.Features.Course.Query.GetCategoryById;
 using TechMeter.Application.Features.Course.Query.GetProviderCourses;
@@ -173,7 +174,13 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new DeleteCourseCommand(responsiableId!, courseId));
             return StatusCode((int)response.StatusCode, response);
         }
-
+        [HttpPost("provider/submit/{courseId}")]
+        [Authorize]
+        public async Task<ActionResult<Response<string>>> ProviderSubmitANewCourseAsync([FromRoute] string courseId)
+        {
+            var response = await _mediator.Send(new ProviderPublishCourseCommand(courseId, GetUserId()));
+            return StatusCode((int)response.StatusCode, response);
+        }
         private string GetUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
