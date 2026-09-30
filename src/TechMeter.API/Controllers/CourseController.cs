@@ -12,6 +12,7 @@ using TechMeter.API.Validators;
 using TechMeter.Application.DTO.Course;
 using TechMeter.Application.Features.Course.Command.AddCourse;
 using TechMeter.Application.Features.Course.Command.AdminPublishCourse;
+using TechMeter.Application.Features.Course.Command.AdminRejectCourse;
 using TechMeter.Application.Features.Course.Command.DeleteCourse;
 using TechMeter.Application.Features.Course.Command.EditCourse;
 using TechMeter.Application.Features.Course.Command.ProviderArcieveCourse;
@@ -213,6 +214,7 @@ namespace TechMeter.API.Controllers
             var response = await _mediator.Send(new ProviderArcieveCourseCommand(courseId, GetUserId()));
             return StatusCode((int)response.StatusCode, response);
         }
+
         [HttpPost("admin/publish/{courseId}")]
         [Authorize(Roles = "admin")]
         [SwaggerOperation(
@@ -229,6 +231,25 @@ namespace TechMeter.API.Controllers
         public async Task<ActionResult<Response<string>>> AdminPublishCourseAsync([FromRoute] string courseId)
         {
             var response = await _mediator.Send(new AdminPublishCourseCommand(courseId));
+            return StatusCode((int)response.StatusCode, response);
+        }
+
+        [HttpPost("admin/reject/{courseId}")]
+        [Authorize(Roles = "admin")]
+        [SwaggerOperation(
+            Summary = "Reject a course under review",
+            Description = "Requires JWT Bearer authentication with the admin role. Rejects a course that is currently under review, sending it back to the provider. The course state transitions from UnderReview → Draft. A notification is sent to the course provider informing them of the rejection.",
+            OperationId = "Course_AdminReject",
+            Tags = new[] { "Courses" })]
+        [SwaggerResponse(StatusCodes.Status200OK, "Course rejected successfully", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Course is not in a valid state to be rejected (e.g. not under review)", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "Missing or invalid JWT token")]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have the admin role")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Course not found", typeof(Response<string>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error")]
+        public async Task<ActionResult<Response<string>>> AdminRejectCourseAsync([FromRoute] string courseId)
+        {
+            var response = await _mediator.Send(new AdminRejectCourseCommand(courseId));
             return StatusCode((int)response.StatusCode, response);
         }
         private string GetUserId()
