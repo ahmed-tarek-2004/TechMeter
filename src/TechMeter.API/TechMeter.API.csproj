@@ -34,7 +34,6 @@
 	<ItemGroup>
 		<Folder Include="Extensions\" />
 		<Folder Include="Firebase\" />
-		<Folder Include="Firebase\" />
 		<Folder Include="wwwroot\Documents\" />
 		<Folder Include="wwwroot\Images\" />
 	</ItemGroup>
