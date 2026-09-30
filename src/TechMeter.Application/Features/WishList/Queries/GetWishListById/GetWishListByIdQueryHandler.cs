@@ -25,9 +25,9 @@ namespace TechMeter.Application.Features.WishList.Queries.GetWishListById
             try
             {
                 var wishlist = await context.Wishlist
+                    .AsNoTracking()
                     .Include(w => w.WishlistItems)
                     .ThenInclude(wi => wi.Course)
-                    .AsNoTracking()
                     .FirstOrDefaultAsync(w => w.StudentId == request.studentId, cancellationToken);
 
                 if (wishlist == null || wishlist.WishlistItems == null || !wishlist.WishlistItems.Any())
@@ -49,7 +49,7 @@ namespace TechMeter.Application.Features.WishList.Queries.GetWishListById
                     StudentId = wishlist.StudentId,
                     CreatedAt = wishlist.CreatedAt,
                     LastUpdated = wishlist.LastUpdated,
-                    Items = wishlist.WishlistItems.Select(wi => new WishListItemResponse
+                    Items = wishlist.WishlistItems.Where(b=>b.Course.State==Domain.Enums.CourseState.Published).Select(wi => new WishListItemResponse
                     {
                         Id = wi.Id,
                         CourseId = wi.courseId,
